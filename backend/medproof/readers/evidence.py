@@ -50,13 +50,23 @@ def to_findings(
             heat_ref = f"{Path(artifact_dir).as_posix()}/{name}"
         evidence = ImageEvidence(
             evidence_id=eid,
-            kind="heatmap",
+            kind="heatmap" if rf.heatmap is not None else "bbox",
             bbox_xyxy=tuple(float(v) for v in box) if box is not None else None,
             heatmap_ref=heat_ref,
             source_model=out.model_id,
             method=rf.method,
             region_name=rf.region_name,
         )
+        evidences = [evidence]
+        if rf.mask_source and rf.mask is not None and artifact_dir is not None and rf.mask.any():
+            mname = f"mask_{fid}.png"
+            _write_heatmap(rf.mask.astype(np.float32), Path(artifact_dir) / mname)
+            en += 1
+            evidences.append(ImageEvidence(
+                evidence_id=f"ie_{en}", kind="mask", bbox_xyxy=evidence.bbox_xyxy,
+                mask_ref=f"{Path(artifact_dir).as_posix()}/{mname}", source_model=out.model_id, method=rf.mask_source,
+                region_name=rf.region_name,
+            ))
         flags = ["uncalibrated", *out.flags, *rf.flags]
         findings.append(
             Finding(
@@ -68,7 +78,7 @@ def to_findings(
                 conformal_set=[],
                 tier=cfg.tier(float(rf.prob_raw)),
                 status="uncertain",
-                image_evidence=[evidence],
+                image_evidence=evidences,
                 flags=list(dict.fromkeys(flags)),
             )
         )
