@@ -1,0 +1,20 @@
+# Repo-wide lint/type-check config only (no [project] table — backend/pyproject.toml and a
+# future ml/ package own their own packaging metadata). One ruff/mypy config spans both
+# backend/ and ml/ so neither slice needs its own copy.
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["backend/medproof", "backend/tests", "ml", "scripts"]
+exclude = ["backend/tests/readers/test_cxr_real.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]  # long lines in data-heavy modules (splits, fixtures) are fine
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = ["backend", "ml"]
+ignore_missing_imports = true  # torch/torchvision/torchxrayvision/ultralytics have thin or no stubs
+warn_unused_ignores = true
+exclude = ["backend/tests", "ml/tests", "ml/train/notebooks"]

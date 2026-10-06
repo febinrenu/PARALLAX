@@ -97,8 +97,8 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P4.1 | Repo skeleton + Makefile + tooling | todo | | | |
-| P4.2 | Contract + fixtures (G0) | todo | | | |
+| P4.1 | Repo skeleton + Makefile + tooling | done | main | 2026-10-07 | Makefile, root + backend pyproject tooling, pre-commit, minimal `web/` (Vite+React+TS) |
+| P4.2 | Contract + fixtures (G0) | done | main | 2026-10-07 | schemas.py unchanged (additive only); `core/vocab.py`, `core/status_rule.py`; JSON Schema + TS export; 4 fixtures |
 | P4.3 | Pipeline orchestrator | todo | | | |
 | P4.4 | API + SSE | todo | | | |
 | P4.5 | Evidence ledger | todo | | | |
@@ -154,9 +154,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 **MedGemma endpoint:** (where it runs, current URL, last health check)
 
 ### P4 — Experience & Platform
-**Now:**
-**Next:**
-**Blockers:**
+**Now:** P4.1 and P4.2 done (G0). Root `Makefile` (includes `ml/Makefile.inc`), root + `backend/pyproject.toml` tooling (ruff, mypy), `.pre-commit-config.yaml`, `.secrets.baseline`. Contract: `schemas.py` kept byte-for-byte on every existing field (confirmed only `Finding`/`ImageEvidence`/`StageResult` are imported anywhere today, so the freeze is purely additive). Added `core/vocab.py` (label vocab per modality; CXR's 18 labels, others provisional pending P2) and `core/status_rule.py` (`compute_status`, exhaustive tests in `tests/core/test_status_rule.py`). `scripts/export_contract.py` → `contracts/{finding,study_result}.schema.json`; `scripts/gen_contracts_ts.mjs` → `web/src/contracts.ts` (tsc-clean). One hand-written `StudyResult` fixture per core modality in `contracts/fixtures/`, each validated against `compute_status` in `tests/core/test_contract.py`. Minimal `web/` scaffold (Vite + React + TS) so `contracts.ts` has a home and `pnpm install`/`pnpm dev` work; real pages are still P4.6.
+**Next:** P4.3 pipeline orchestrator (this is where `StudyContext` becomes a real typed class — today `intake/run.py` duck-types `ctx`, deliberately left alone by this pass), then P4.4 API + SSE on fixtures, then P4.6/P4.7 web app + viewer.
+**Blockers:** none. Known gaps to flag, not blockers: no `make`/`pnpm` binary on this machine so `make setup`/`make smoke` and `pnpm install` are untested end-to-end here (verified the pieces individually: `python -m pytest`, `node scripts/gen_contracts_ts.mjs`, `npx tsc -b`, `npx eslint .` all green); `ml/` still has no dependency declarations of its own (out of scope for this pass, flagging for P2 if it becomes a problem).
 
 ## Decisions
 
@@ -189,6 +189,10 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P2 · `gen_notes.py` (synthetic notes) is left to P3; P2 supplies seed columns (age, sex, site, body part, label) in `ml/data/splits/*.csv` · P3.4 owns note content and injection cases.
 - 2026-10-06 · P2 · Flag for P1/P4: the LGG segmenter is trained on 3-channel TCGA data; the brain classifier data is single-channel T1-CE. Masks on classifier-style uploads are out of domain, and the model card will say so. Channel-replication augmentation reduces the gap but does not remove it.
 - 2026-10-07 · P2 · BDNeuro-MRI is not an independent external test: 4,238 of its 5,941 images (71%) are near-duplicates (pHash Hamming <= 4, pixel correlation median 0.93 to 1.0 against 0.47 for random same-class pairs) of images in the Kaggle brain dataset. The external test uses only the 1,644 images with no match (`ml/data/splits/bdneuro.csv`, `split == external_test`) · its README claims hospital provenance and exact/near-duplicate removal only within itself.
+- 2026-10-07 · P4 · Acked P2's `.gitignore` carve-out and `ml/Makefile.inc` (2026-10-06 entry above) · both already correct; root `Makefile` now `include`s `ml/Makefile.inc` unchanged.
+- 2026-10-07 · P4 · G0 contract freeze (P4.2) is purely additive: every existing field/class in `schemas.py` is untouched, confirmed by grepping all of `backend/` for `core.schemas` imports (only `Finding`, `ImageEvidence`, `StageResult` are consumed anywhere today) · no Contract change request needed; nothing P1/P2 built against it changes shape.
+- 2026-10-07 · P4 · `StudyContext` (plan.md section 4's stage interface) is deliberately not defined as a class yet; `intake/run.py` already works via duck-typed `ctx.raw_bytes`/`ctx.modality_hint`/`ctx.path` · belongs with the P4.3 orchestrator, where stage ordering and caching actually need a concrete type.
+- 2026-10-07 · P4 · Pydantic's auto-generated per-field `"title"` is stripped before writing `contracts/*.schema.json` and before the TS generation step · untitled, each field became its own hoisted top-level TS type (e.g. `Label1`) instead of an inline property; titles aren't part of the contract, field names/types are.
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -230,3 +234,11 @@ Verified: `python -m pytest ml/tests -q` gives 86 passed (brain and segmenter no
 Next: Kaggle token, push `p2/data`, launch the four jobs, build brain/LGG/RSNA splits, then P2.7 (CXR calibration) and the eval harness.
 Decisions: see Decisions, entries dated 2026-10-06 for P2.
 Contract change requests: none. `.gitignore` carve-out and `ml/Makefile.inc` need a P4 ack (see Decisions).
+
+### 2026-10-07 · P4 · Sonnet 5 · WP P4.1, P4.2 (G0)
+Did: root `Makefile` (`setup`, `test`, `smoke`, `contracts`, stub `dev`/`eval`/`demo`; includes `ml/Makefile.inc`); root `pyproject.toml` (ruff + mypy spanning `backend/` and `ml/`); added ruff/mypy to `backend/pyproject.toml`'s dev extra; `.pre-commit-config.yaml` + `.secrets.baseline`; minimal `web/` (Vite + React + TS) so `pnpm install`/`pnpm dev` work and `contracts.ts` has a home. Contract: reviewed `schemas.py` against every actual import in `backend/` and left it untouched (purely additive freeze); added `core/vocab.py` and `core/status_rule.py` (`compute_status`, precedence rejected > discordant > uncertain > verified); `scripts/export_contract.py` → `contracts/{finding,study_result}.schema.json`; `scripts/gen_contracts_ts.mjs` → `web/src/contracts.ts`; one hand-written `StudyResult` fixture per core modality in `contracts/fixtures/`.
+State: P4.1 and P4.2 done.
+Verified: `cd backend && python -m pytest -q` → 213 passed, 1 skipped, 1 failed (the failure is pre-existing and unrelated: `tests/readers/test_anatomy.py` needs `torchxrayvision`, not installed on this machine). `backend/tests/core` (new) → 28 passed. `cd web && npx tsc -b` and `npx eslint .` → clean. `node scripts/gen_contracts_ts.mjs` regenerates `contracts.ts` byte-identical on a second run.
+Next: P4.3 pipeline orchestrator (define `StudyContext` for real here), then P4.4 API + SSE on these fixtures.
+Decisions: see Decisions, entries dated 2026-10-07 for P4.
+Contract change requests: none (additive only).

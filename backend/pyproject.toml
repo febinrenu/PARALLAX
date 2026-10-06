@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "hypothesis"]
+dev = ["pytest", "hypothesis", "ruff", "mypy"]
 # CPU torch comes from https://download.pytorch.org/whl/cpu
 ml = ["torch", "torchvision", "torchxrayvision"]
 

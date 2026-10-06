@@ -1,0 +1,11 @@
+{
+  "name": "parallax",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "generate:contracts": "node scripts/gen_contracts_ts.mjs"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^15.0.0"
+  }
+}

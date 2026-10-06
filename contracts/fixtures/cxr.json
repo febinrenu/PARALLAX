@@ -1,0 +1,142 @@
+{
+  "study_id": "demo-cxr-001",
+  "input_sha256": "4f9c2b1a7e6d8c3f0a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f6071",
+  "modality": "cxr",
+  "ood_score": 0.08,
+  "quality": {
+    "passed": true,
+    "reasons": [],
+    "metrics": {"blur": 0.91, "exposure_clip_pct": 0.004, "rotation_deg": 0.6}
+  },
+  "findings": [
+    {
+      "finding_id": "f1",
+      "modality": "cxr",
+      "label": "Cardiomegaly",
+      "prob_raw": 0.86,
+      "prob_calibrated": 0.81,
+      "conformal_set": ["Cardiomegaly"],
+      "coverage_target": 0.9,
+      "tier": "high",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_1",
+          "kind": "heatmap",
+          "bbox_xyxy": [178.0, 210.0, 346.0, 402.0],
+          "heatmap_ref": "demo/cases/cxr-001/heatmap_f1.png",
+          "source_model": "xrv-densenet121-all@a1b2c3d4",
+          "method": "gradcam++",
+          "region_name": "cardiac region",
+          "faithfulness_drop": 0.34,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_1",
+          "note_id": "n1",
+          "span": [14, 38],
+          "quote": "progressive dyspnea on exertion",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        }
+      ],
+      "second_read": {
+        "model": "medgemma-1.5-4b-it",
+        "label": "Cardiomegaly",
+        "agrees": true,
+        "box_iou": 0.62,
+        "raw_ref": "ml/artifacts/medgemma_reads/demo-cxr-001.json"
+      },
+      "stability": {"tests": 8, "flip_rate": 0.0, "worst_perturbation": null},
+      "precedents": [
+        {
+          "case_id": "rsna-00123",
+          "dataset": "rsna_pneumonia",
+          "label": "Cardiomegaly",
+          "similarity": 0.89,
+          "thumb_ref": "demo/precedents/rsna-00123_thumb.png"
+        }
+      ],
+      "flags": []
+    },
+    {
+      "finding_id": "f2",
+      "modality": "cxr",
+      "label": "Pneumonia",
+      "prob_raw": 0.58,
+      "prob_calibrated": 0.52,
+      "conformal_set": ["Pneumonia", "Lung Opacity", "Consolidation"],
+      "coverage_target": 0.9,
+      "tier": "moderate",
+      "status": "uncertain",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_2",
+          "kind": "heatmap",
+          "bbox_xyxy": [40.0, 180.0, 160.0, 300.0],
+          "heatmap_ref": "demo/cases/cxr-001/heatmap_f2.png",
+          "source_model": "xrv-densenet121-all@a1b2c3d4",
+          "method": "gradcam++",
+          "region_name": "right lower zone",
+          "faithfulness_drop": 0.12,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [],
+      "second_read": null,
+      "stability": {"tests": 8, "flip_rate": 0.125, "worst_perturbation": "jpeg_q30"},
+      "precedents": [],
+      "flags": ["uncalibrated"]
+    },
+    {
+      "finding_id": "f3",
+      "modality": "cxr",
+      "label": "Fracture",
+      "prob_raw": 0.63,
+      "prob_calibrated": 0.55,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "moderate",
+      "status": "rejected",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_3",
+          "kind": "heatmap",
+          "heatmap_ref": "demo/cases/cxr-001/heatmap_f3.png",
+          "source_model": "xrv-densenet121-all@a1b2c3d4",
+          "method": "gradcam++",
+          "region_name": "left upper zone",
+          "faithfulness_drop": 0.02,
+          "faithful": false
+        }
+      ],
+      "text_evidence": [],
+      "second_read": null,
+      "stability": null,
+      "precedents": [],
+      "flags": ["uncalibrated"]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "template": "Doctor, consider {f1.label} in the {f1.region} ({f1.tier} confidence).",
+      "evidence_ids": ["ie_1", "te_1"],
+      "rendered": "Doctor, consider Cardiomegaly in the cardiac region (high confidence).",
+      "entailed": true,
+      "blocked_reason": null
+    },
+    {
+      "claim_id": "c2",
+      "template": "Doctor, consider {f2.label} in the {f2.region} ({f2.tier} confidence); second read disagrees in part.",
+      "evidence_ids": ["ie_2"],
+      "rendered": "Doctor, consider Pneumonia in the right lower zone (moderate confidence); second read disagrees in part.",
+      "entailed": true,
+      "blocked_reason": null
+    }
+  ],
+  "ledger_head": "sha256:7c9e2a1f6b0d4e3a8f1c5d9b2e7a4f60718293a4b5c6d7e8f90a1b2c3d4e5f6",
+  "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+}
