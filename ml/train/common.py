@@ -14,7 +14,7 @@ import platform
 import subprocess
 import sys
 import time
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -123,8 +123,8 @@ def load_prepared(paths: list[Path], spec, workers: int = 4) -> torch.Tensor:
     if workers <= 1 or len(jobs) < 32:
         arrs = [_prep_one(j) for j in jobs]
     else:
-        with ProcessPoolExecutor(workers) as ex:
-            arrs = list(ex.map(_prep_one, jobs, chunksize=32))
+        with ThreadPoolExecutor(workers) as ex:  # threads, not processes: decode and resize release the GIL, and spawn-based platforms would re-run a notebook's top-level code
+            arrs = list(ex.map(_prep_one, jobs))
     return torch.from_numpy(np.stack(arrs))
 
 
