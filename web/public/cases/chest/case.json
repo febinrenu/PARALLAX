@@ -1,0 +1,294 @@
+{
+  "id": "chest",
+  "title": "Chest radiograph, posteroanterior",
+  "modality": "cxr",
+  "image": {
+    "src": "/cases/chest/image.webp",
+    "width": 1010,
+    "height": 1010
+  },
+  "credit": "chest",
+  "notes": {
+    "n1": "62-year-old with fever and productive cough for four days. Crackles over the right upper chest on auscultation. No prior chest surgery. No devices."
+  },
+  "annotations": [],
+  "anatomy": "/media/chest-anatomy.png",
+  "study": {
+    "study_id": "sample-chest",
+    "input_sha256": "a0bc4e925b6a4836e0124de7211c8c43a4f2510ad3945397b7e48b6153e1df4f",
+    "modality": "cxr",
+    "ood_score": 0.0,
+    "quality": {
+      "passed": true,
+      "flags": [],
+      "metrics": {
+        "min_side": 1010.0,
+        "blur": 0.52278,
+        "p1": 0.19285,
+        "p99": 0.97327,
+        "range": 0.78041,
+        "clip": 0.00773,
+        "noise_rel": 0.01494,
+        "aspect": 1.0,
+        "margin": 0.0,
+        "tilt_deg": -1.0,
+        "tilt_gain": 0.00261
+      },
+      "reasons": []
+    },
+    "findings": [
+      {
+        "finding_id": "f1",
+        "modality": "cxr",
+        "label": "Lung Opacity",
+        "prob_raw": 0.88514244556427,
+        "prob_calibrated": 0.88514244556427,
+        "conformal_set": [],
+        "coverage_target": 0.9,
+        "tier": "high",
+        "status": "verified",
+        "image_evidence": [
+          {
+            "evidence_id": "ie_1",
+            "kind": "heatmap",
+            "bbox_xyxy": [
+              138.0,
+              0.0,
+              483.0,
+              453.0
+            ],
+            "mask_ref": null,
+            "heatmap_ref": "/cases/chest/heatmap_f1.png",
+            "source_model": "xrv-densenet121-all@56524913",
+            "method": "gradcam++",
+            "region_name": "right upper zone",
+            "faithfulness_drop": 0.3846,
+            "faithful": true
+          }
+        ],
+        "text_evidence": [
+          {
+            "evidence_id": "te_1",
+            "note_id": "n1",
+            "span": [
+              59,
+              94
+            ],
+            "quote": "Crackles over the right upper chest",
+            "fact_type": "laterality",
+            "polarity": "supports"
+          }
+        ],
+        "second_read": null,
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "precedents": [],
+        "flags": [
+          "uncalibrated"
+        ]
+      },
+      {
+        "finding_id": "f2",
+        "modality": "cxr",
+        "label": "Pneumonia",
+        "prob_raw": 0.7327666282653809,
+        "prob_calibrated": 0.7327666282653809,
+        "conformal_set": [],
+        "coverage_target": 0.9,
+        "tier": "moderate",
+        "status": "verified",
+        "image_evidence": [
+          {
+            "evidence_id": "ie_2",
+            "kind": "heatmap",
+            "bbox_xyxy": [
+              148.0,
+              0.0,
+              465.0,
+              427.0
+            ],
+            "mask_ref": null,
+            "heatmap_ref": "/cases/chest/heatmap_f2.png",
+            "source_model": "xrv-densenet121-all@56524913",
+            "method": "gradcam++",
+            "region_name": "right upper zone",
+            "faithfulness_drop": 0.552,
+            "faithful": true
+          }
+        ],
+        "text_evidence": [
+          {
+            "evidence_id": "te_2",
+            "note_id": "n1",
+            "span": [
+              17,
+              43
+            ],
+            "quote": "fever and productive cough",
+            "fact_type": "symptom",
+            "polarity": "supports"
+          }
+        ],
+        "second_read": null,
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.125,
+          "worst_perturbation": "blur"
+        },
+        "precedents": [],
+        "flags": [
+          "uncalibrated"
+        ]
+      },
+      {
+        "finding_id": "f3",
+        "modality": "cxr",
+        "label": "Consolidation",
+        "prob_raw": 0.6959412693977356,
+        "prob_calibrated": 0.6959412693977356,
+        "conformal_set": [],
+        "coverage_target": 0.9,
+        "tier": "moderate",
+        "status": "verified",
+        "image_evidence": [
+          {
+            "evidence_id": "ie_3",
+            "kind": "heatmap",
+            "bbox_xyxy": [
+              131.0,
+              0.0,
+              705.0,
+              731.0
+            ],
+            "mask_ref": null,
+            "heatmap_ref": "/cases/chest/heatmap_f3.png",
+            "source_model": "xrv-densenet121-all@56524913",
+            "method": "gradcam++",
+            "region_name": "right upper zone",
+            "faithfulness_drop": 0.1735,
+            "faithful": true
+          }
+        ],
+        "text_evidence": [
+          {
+            "evidence_id": "te_3",
+            "note_id": "n1",
+            "span": [
+              59,
+              94
+            ],
+            "quote": "Crackles over the right upper chest",
+            "fact_type": "laterality",
+            "polarity": "supports"
+          }
+        ],
+        "second_read": null,
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "precedents": [],
+        "flags": [
+          "uncalibrated"
+        ]
+      },
+      {
+        "finding_id": "f4",
+        "modality": "cxr",
+        "label": "Infiltration",
+        "prob_raw": 0.5961540937423706,
+        "prob_calibrated": 0.5961540937423706,
+        "conformal_set": [],
+        "coverage_target": 0.9,
+        "tier": "low",
+        "status": "uncertain",
+        "image_evidence": [
+          {
+            "evidence_id": "ie_4",
+            "kind": "heatmap",
+            "bbox_xyxy": [
+              122.0,
+              0.0,
+              530.0,
+              524.0
+            ],
+            "mask_ref": null,
+            "heatmap_ref": "/cases/chest/heatmap_f4.png",
+            "source_model": "xrv-densenet121-all@56524913",
+            "method": "gradcam++",
+            "region_name": "right upper zone",
+            "faithfulness_drop": 0.397,
+            "faithful": true
+          }
+        ],
+        "text_evidence": [],
+        "second_read": null,
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "precedents": [],
+        "flags": [
+          "uncalibrated"
+        ]
+      },
+      {
+        "finding_id": "f5",
+        "modality": "cxr",
+        "label": "Mass",
+        "prob_raw": 0.5685105323791504,
+        "prob_calibrated": 0.5685105323791504,
+        "conformal_set": [],
+        "coverage_target": 0.9,
+        "tier": "low",
+        "status": "uncertain",
+        "image_evidence": [
+          {
+            "evidence_id": "ie_5",
+            "kind": "heatmap",
+            "bbox_xyxy": [
+              117.0,
+              74.0,
+              684.0,
+              738.0
+            ],
+            "mask_ref": null,
+            "heatmap_ref": "/cases/chest/heatmap_f5.png",
+            "source_model": "xrv-densenet121-all@56524913",
+            "method": "gradcam++",
+            "region_name": "right upper zone",
+            "faithfulness_drop": 0.0137,
+            "faithful": true
+          }
+        ],
+        "text_evidence": [],
+        "second_read": null,
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "crop"
+        },
+        "precedents": [],
+        "flags": [
+          "uncalibrated"
+        ]
+      }
+    ],
+    "claims": [],
+    "ledger_head": "d1655b0814916cf29ad8fe3f9ff78a570e6196a2ab6738feddc10b0482a87b7b",
+    "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+  },
+  "provenance": {
+    "findings": "Real output: TorchXRayVision DenseNet121 with Grad-CAM++ and PSPNet anatomy zones.",
+    "faithfulness": "Real: deletion test per plan.md D1, computed by scripts/bake_web_assets.py until P1.9 ships.",
+    "stability": "Real: P1's eight perturbations at severity 3.",
+    "text_evidence": "Illustrative: the note is synthetic and spans are placed by hand until the context engine (P3.5) ships.",
+    "calibration": "Not yet calibrated (P2.8): prob_calibrated equals prob_raw."
+  },
+  "warnings": []
+}

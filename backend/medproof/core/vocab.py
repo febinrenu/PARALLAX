@@ -11,10 +11,9 @@ from __future__ import annotations
 
 from medproof.core.schemas import Modality
 
-# [VERIFY] Mirrors torchxrayvision's `datasets.default_pathologies` (18 labels). P1's
-# `CxrReader.labels` reads this dynamically from the installed model at runtime and is
-# authoritative; confirm this list against `python -c "import torchxrayvision as xrv;
-# print(list(xrv.datasets.default_pathologies))"` once the package is on this machine.
+# Mirrors torchxrayvision 1.5.5's `datasets.default_pathologies` (18 labels, checked against the
+# installed package 2026-10-07). P1's `CxrReader.labels` reads the list from the model at
+# runtime and stays authoritative if a future release changes it.
 CXR_LABELS: tuple[str, ...] = (
     "Atelectasis",
     "Consolidation",

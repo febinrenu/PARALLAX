@@ -1,0 +1,45 @@
+{
+  "id": "brain",
+  "title": "Brain MRI, axial, contrast-enhanced",
+  "modality": "brain_mri",
+  "image": {
+    "src": "/cases/brain/image.webp",
+    "width": 497,
+    "height": 512
+  },
+  "credit": "brain",
+  "notes": {},
+  "annotations": [],
+  "anatomy": null,
+  "study": {
+    "study_id": "sample-brain",
+    "input_sha256": "83b0400bbefff6cc7d4489e936f89770dc6ac5ca4917b507c413bd8bef29457b",
+    "modality": "brain_mri",
+    "ood_score": 0.0,
+    "quality": {
+      "passed": true,
+      "flags": [],
+      "metrics": {
+        "min_side": 497.0,
+        "blur": 0.72372,
+        "p1": 0.01961,
+        "p99": 0.95294,
+        "range": 0.93333,
+        "clip": 0.00064,
+        "noise_rel": 0.01001,
+        "aspect": 0.9707,
+        "margin": 0.0
+      },
+      "reasons": []
+    },
+    "findings": [],
+    "claims": [],
+    "ledger_head": "d5afa69bfcd161eedc5790d224cd332761726cc8b37db9fdeda1284e1e3a4276",
+    "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+  },
+  "provenance": {
+    "findings": "No specialist reader for this modality yet, so the pipeline reports none.",
+    "annotations": "No mask yet: the tumour segmenter arrives with P2.4 weights."
+  },
+  "warnings": []
+}
