@@ -232,3 +232,34 @@ def test_label_with_likely_prefix_keeps_distinct_findings():
     res = read_image(FakeBackend([json.dumps(rep)]), Image.new("L", (8, 8)), "cxr")
     assert [x.name for x in res.labels] == ["nodule", "pleural effusion"]
     assert res.labels[0].confidence_text == "likely"
+
+
+def test_eval_items_follow_p2_index_and_resume_by_image_id(tmp_path, monkeypatch):
+    pytest.importorskip("pandas")
+    import csv
+
+    raw = tmp_path / "raw" / "fracatlas" / "FracAtlas" / "images"
+    raw.mkdir(parents=True)
+    splits = tmp_path / "splits"
+    splits.mkdir()
+    cols = ["dataset", "source_dir", "relpath", "image_id", "label", "group", "split", "eval_batch"]
+    with (splits / "fracatlas.csv").open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(cols)
+        for i, (split, batch) in enumerate([("test", True), ("test", True), ("test", False), ("train", True)]):
+            name = f"IMG{i}.png"
+            (raw / name).write_bytes(png_bytes())
+            w.writerow(["fracatlas", "fracatlas/FracAtlas", f"images/{name}", f"IMG{i}", "fracture", f"g{i}", split, batch])
+    from services.medgemma.batch import eval_items, run_items
+
+    items = eval_items("fracatlas", splits_dir=splits, data_root=tmp_path / "raw")
+    assert sorted(i[0] for i in items) == ["IMG0", "IMG1"]  # test split and eval_batch only
+    assert items[0][2]["label"] == "fracture"
+    again = eval_items("fracatlas", splits_dir=splits, data_root=tmp_path / "raw")
+    assert [i[0] for i in again] == [i[0] for i in items]  # the shuffle is deterministic
+    out = tmp_path / "reads.jsonl"
+    be = FakeBackend([json.dumps(GOOD)] * 2)
+    assert run_items(be, items, out, modality="bone_xray", limit=1) == 1
+    assert run_items(be, items, out, modality="bone_xray") == 1
+    rows = [json.loads(line) for line in out.read_text().splitlines()]
+    assert [r["image"] for r in rows] == [i[0] for i in items] and rows[0]["label"] == "fracture"
