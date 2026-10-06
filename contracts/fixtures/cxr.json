@@ -36,7 +36,7 @@
         {
           "evidence_id": "te_1",
           "note_id": "n1",
-          "span": [14, 38],
+          "span": [14, 45],
           "quote": "progressive dyspnea on exertion",
           "fact_type": "symptom",
           "polarity": "supports"

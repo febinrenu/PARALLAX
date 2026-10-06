@@ -31,7 +31,7 @@
         {
           "evidence_id": "te_1",
           "note_id": "n1",
-          "span": [0, 20],
+          "span": [0, 27],
           "quote": "fall onto outstretched hand",
           "fact_type": "history",
           "polarity": "supports"

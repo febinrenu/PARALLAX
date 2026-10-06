@@ -46,6 +46,14 @@ def test_fixture_finding_status_matches_the_status_rule(path: Path):
         )
 
 
+@pytest.mark.parametrize("path", FIXTURE_FILES, ids=lambda p: p.stem)
+def test_fixture_text_evidence_span_length_matches_quote(path: Path):
+    study = StudyResult.model_validate(json.loads(path.read_text(encoding="utf-8")))
+    for finding in study.findings:
+        for te in finding.text_evidence:
+            assert te.span[1] - te.span[0] == len(te.quote), f"{path.stem}/{te.evidence_id}"
+
+
 def _strip_titles(node):
     """Mirrors scripts/export_contract.py::strip_titles. Keep the two in sync."""
     if isinstance(node, dict):
