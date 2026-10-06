@@ -192,3 +192,11 @@ Verified: `cd backend && python -m pytest -q` gives 121 passed. Includes a pydic
 Next: CXR reader and anatomy zones (P1.6) so P2.7 can calibrate; then router.
 Decisions: see Decisions, entries dated 2026-10-06 for P1.
 Contract change requests: none.
+
+### 2026-10-07 · P2 · Sonnet 5.5 · WP P2.1, P2.2, P2.3 to P2.6 (notebooks)
+Did: resumable checksummed downloader with a pinned lock file; pHash leakage audit and group-aware splits; split files, `reports/leakage.json` and `eval_index.json` for fracatlas and ham10000; cluster-bootstrap CIs and metrics; shared training code; four Kaggle notebooks (brain classifier, brain segmenter, skin classifier, bone detector) plus a builder and a model registry script.
+State: P2.1 doing (credential-free sets done; brain, LGG, RSNA wait for the Kaggle token). P2.2 doing (brain, LGG, RSNA splits wait for data). P2.3 to P2.6 blocked: notebooks written and tested, launch needs the Kaggle token and a pushed `p2/data` branch.
+Verified: `python -m pytest ml/tests -q` gives 86 passed (brain and segmenter notebooks run end to end on synthetic data; bone notebook smoke-run for one epoch on CPU). Short real skin run on the laptop GPU (3 epochs, 32 s/epoch, same notebook source, throwaway sanity check, not a Kaggle job): official ISIC 2018 test balanced accuracy 0.697 [0.650, 0.745], melanoma recall 0.667. The full 15-epoch run will be higher.
+Next: Kaggle token, push `p2/data`, launch the four jobs, build brain/LGG/RSNA splits, then P2.7 (CXR calibration) and the eval harness.
+Decisions: see Decisions, entries dated 2026-10-06 for P2.
+Contract change requests: none. `.gitignore` carve-out and `ml/Makefile.inc` need a P4 ack (see Decisions).
