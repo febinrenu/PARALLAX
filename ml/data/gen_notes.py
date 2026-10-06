@@ -161,10 +161,10 @@ NEGATIONS = ["chest pain", "hemoptysis", "fever", "night sweats", "syncope", "le
 HISTORIES = ["TB 2015", "COPD", "asthma", "CHF", "hypertension", "smoker 20 pack-years", "diabetes"]
 DEVICES = ["pacemaker", "central line", "chest drain", "ICD", "tracheostomy"]
 LABS = ["CRP 120", "WBC 14.2", "troponin normal", "D-dimer raised", "BNP 900"]
-MEDS = ["on salbutamol", "on furosemide", "on amoxicillin", "on warfarin", "on metformin"]
-SKIN_SYMPTOMS = ["lesion changing in size", "itching", "bleeding on touch", "new pigmented spot", "colour change"]
-BONE_SYMPTOMS = ["pain after a fall", "swelling", "unable to bear weight", "visible deformity", "bruising"]
-BRAIN_SYMPTOMS = ["headache", "seizure", "focal weakness", "blurred vision", "nausea and vomiting"]
+MEDS = ["salbutamol", "furosemide", "amoxicillin", "warfarin", "metformin"]
+SKIN_SYMPTOMS = ["itching", "bleeding", "growth", "colour change", "tenderness"]
+BONE_SYMPTOMS = ["pain", "swelling", "bruising", "deformity", "stiffness"]
+BRAIN_SYMPTOMS = ["headache", "seizure", "weakness", "blurred vision", "vomiting"]
 SIDE_WORDS = {
     "right": ["right", "Right-sided", "Rt", "right-sided", "R"],
     "left": ["left", "Left-sided", "Lt", "left-sided", "L"],
@@ -249,7 +249,7 @@ def fragments(rng: random.Random, c: Case, *, lat_side: str | None = None, hard_
     if rng.random() < 0.4:
         frag["lab"] = [P("labs: "), F(l := rng.choice(LABS), "lab", l)]
     if rng.random() < 0.3:
-        frag["med"] = [F(m := rng.choice(MEDS), "medication", m.replace("on ", ""))]
+        frag["med"] = [P("on "), F(m := rng.choice(MEDS), "medication", m)]
     if extra_demo:
         frag["extra_demo"] = [F(extra_demo, "demographic", extra_demo)]
     return frag
@@ -418,16 +418,21 @@ def generate(seed: int = 1, seeds: Seeds | None = None) -> list[SyntheticNote]:
     for i in range(6):
         c = make_case(rng, mods[i % 4], seeds)
         add(c, build_clean(rng, c))
+    # (intro, age unit, "with", fever, "and", cough, negation phrase incl. its negator)
     foreign = {
-        "es": ("Paciente de {a} años con ", "fiebre", " y ", "tos", ". Sin ", "dolor torácico", "."),
-        "fr": ("Patient de {a} ans avec ", "fièvre", " et ", "toux", ". Pas de ", "douleur thoracique", "."),
+        "es": ("Paciente de ", " años", " con ", "fiebre", " y ", "tos", "Sin dolor torácico"),
+        "fr": ("Patient de ", " ans", " avec ", "fièvre", " et ", "toux", "Pas de douleur thoracique"),
     }
     for i in range(6):
         lang = "es" if i % 2 == 0 else "fr"
         c = make_case(rng, "cxr", seeds)
         t = foreign[lang]
-        sents = [[P(t[0].format(a=c.age)), F(t[1], "symptom", "fever"), P(t[2]), F(t[3], "symptom", "cough"), P(t[4]),
-                  F(t[5], "negation", "chest pain", "absent"), P(t[6])]]
+        age = f"{c.age}{t[1]}"
+        sents = [
+            [P(t[0]), F(age, "demographic", f"{c.age}"), P(t[2]), F(t[3], "symptom", "fever"), P(t[4]),
+             F(t[5], "symptom", "cough"), P(".")],
+            [F(t[6], "negation", "chest pain", "absent"), P(".")],
+        ]
         add(c, sents, lang=lang)
     for _ in range(2):
         c = make_case(rng, "cxr", seeds)
