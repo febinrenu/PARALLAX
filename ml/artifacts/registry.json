@@ -120,6 +120,86 @@
    "weights_bytes": 97906323,
    "weights_file": "weights.pt",
    "weights_sha256": "90eba65ab2b7c2b629dd9569ad7c1596cb948994edc2d5dec3149f41f98b8e91"
+  },
+  "skin_cls@a217517b": {
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "conformal": null,
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "git_commit": "a217517bdb3083aaf6380ccd31598627dbd5361d",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8469,
+     "lo": 0.8052,
+     "point": 0.8261
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7284,
+     "lo": 0.6321,
+     "point": 0.68
+    },
+    "headline.macro_f1": {
+     "hi": 0.7625,
+     "lo": 0.6759,
+     "point": 0.722
+    },
+    "official_test.accuracy": {
+     "hi": 0.8469,
+     "lo": 0.8052,
+     "point": 0.8261
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7284,
+     "lo": 0.6321,
+     "point": 0.68
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7625,
+     "lo": 0.6759,
+     "point": 0.722
+    },
+    "test.accuracy": {
+     "hi": 0.8983,
+     "lo": 0.8528,
+     "point": 0.8767
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8337,
+     "lo": 0.6949,
+     "point": 0.7677
+    },
+    "test.macro_f1": {
+     "hi": 0.838,
+     "lo": 0.7123,
+     "point": 0.7838
+    }
+   },
+   "kaggle_kernel": "parallax-skin-cls",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "metrics_file": "ml/artifacts/skin_cls/metrics.json",
+   "model_id": "skin_cls@a217517b",
+   "note": "Kaggle account johannshonigeorge, rerun; the identical notebook on rishijayanath scored official-test BMA 0.689 (GPU nondeterminism, about 0.01)",
+   "preproc_spec": "skin_cls",
+   "registered_utc": "2026-10-06T20:57:18Z",
+   "seed": 20261006,
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "split_name": "ham10000",
+   "task": "classification",
+   "temperature": null,
+   "training_data": [
+    "isic2018_t3_train (HAM10000)"
+   ],
+   "weights_bytes": 111357395,
+   "weights_file": "weights.pt",
+   "weights_sha256": "1fb2ea5ab200743bb6b5ec45640e3fe6a63b003c3e35bd94ab7002322998bddb"
   }
  },
  "schema": 1

@@ -64,7 +64,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P2.2 | Leakage audit + group splits | done | main | 2026-10-07 | all six datasets audited; reports/leakage.json |
 | P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
-| P2.5 | Skin classifier (Kaggle) | doing | main | 2026-10-07 | Kaggle run complete (BMA 0.689 on official test); pull and register pending |
+| P2.5 | Skin classifier (Kaggle) | done | main | 2026-10-07 | official-test BMA 0.680 [0.632, 0.728]; registered |
 | P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | v2 running on Kaggle after a fix |
 | P2.7 | CXR calibration + external validation | todo | | | |
 | P2.8 | Temperature scaling + conformal | todo | | | |
@@ -143,8 +143,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
 - brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
-- rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738], melanoma recall 0.649 (val 0.756). Output pull pending (Kaggle rate limit)
+- rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738]; output not pulled (Kaggle rate limit), superseded by the rerun below
 - rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs (val mAP50 0.453 on 380 images) then failed at prediction export on truncated JPEGs; fixed in commit 8539baf; v2 relaunched 2026-10-07 02:10
+- johannshonigeorge/parallax-p2-5-skin-lesion-classifier: rerun COMPLETE 2026-10-07 02:26, pulled, registered as skin_cls@a217517b. Official ISIC 2018 test balanced accuracy 0.680 [0.632, 0.728], melanoma recall 0.637, melanoma AUROC 0.924; the two runs differ by about 0.01 (GPU nondeterminism)
 - johannshonigeorge/parallax-p2-3-brain-mri-classifier: COMPLETE 2026-10-07, pulled, registered as brain_cls@d351f062. Leakage-free test accuracy 0.940 [0.921, 0.958]
 - johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
