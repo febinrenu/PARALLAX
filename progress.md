@@ -89,9 +89,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P3.8 | Retrieval / precedents | todo | | | |
 | P3.9 | Slot-filled report | done | p3/medgemma-groq | 2026-10-07 | slot renderer, frames, model-chooses-frame drafts with offline template fallback; live gpt-oss-120b call verified |
 | P3.10 | Hallucination firewall | done | p3/medgemma-groq | 2026-10-07 | R1-R12; 100% of 100+ planted bad claims blocked, 0 of 10 good claims blocked; R5 treats faithful=None as unverified until P1.9 |
-| P3.11 | Entailment judge | todo | | | |
-| P3.12 | Voice (Whisper) | todo | | | |
-| P3.13 | FHIR export | todo | | | |
+| P3.11 | Entailment judge | done | main | 2026-10-07 | 60 labelled sentences: first pass 0.917; after fixing what the judge is shown, 59/60 on a fresh variant (kept 29/30 true, caught 30/30 defective) and 60/60 on the tuned one; judge outage leaves claims explicitly unchecked |
+| P3.12 | Voice (Whisper) | done | main | 2026-10-07 | real round trip: synthesized dictation -> Whisper on Groq -> guard -> facts; spoken injection flagged and kept out of the facts |
+| P3.13 | FHIR export | done | main | 2026-10-07 | collection Bundle (DiagnosticReport + Observations) validated with fhir.resources R4B; quotes redacted unless requested |
 
 ### P4 — Experience & Platform
 
@@ -150,12 +150,13 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
 ### P3 — Clinical Reasoning & Trust
-**Now:** MedGemma eval batch reads are running on the local RTX 4060 (`python -m services.medgemma.batch --dataset fracatlas|ham10000`, resumable, fixed random order so any prefix is a random sample); afterwards `python -m ml.eval_p3.eval_second_reader` writes `reports/concordance.json`.
-**Next:** P3.8 retrieval (needs P1's MedSigLIP embedding fn and the train split); P3.11 entailment judge; P3.12 voice; P3.13 FHIR; end-to-end context stage (guard -> extract -> contradictions) measured on extracted instead of gold facts; wire stages into P4's pipeline once `StudyContext` exists.
+**Now:** MedGemma eval batch reads are running on the local RTX 4060 (two processes, one per dataset) (`python -m services.medgemma.batch --dataset fracatlas|ham10000`, resumable, fixed random order so any prefix is a random sample); afterwards `python -m ml.eval_p3.eval_second_reader` writes `reports/concordance.json`.
+**Next:** P3.8 retrieval (needs P1's MedSigLIP embedding fn and the train split); end-to-end context stage (guard -> extract -> contradictions) measured on extracted instead of gold facts; skin specialist-vs-MedGemma result and trust-signal check once the HAM10000 reads finish; wire stages into P4's pipeline once `StudyContext` exists.
 **Blockers:** none. `StudyContext` is not defined yet, so my stages take plain arguments (`StudyView`, facts, `Demographics`); P4 can adapt them.
 **MedGemma endpoint:** local only. `uvicorn services.medgemma.server:app --port 8001` on the RTX 4060 (nf4 weights, bf16 compute, 3.2 GiB VRAM, about 5.5 s per read after a 23 s load). Kaggle/Colab notebooks written but not run.
 **For P1:** `report/firewall.py::is_supported` treats `faithful=None` as unverified; set `faithful` (P1.9) and R5 tightens automatically. `readers/generalist.py` reads `DecodedImage.display` and `.sha256`; `verify/concordance.apply(findings, read)` fills `Finding.second_read` and adds flags only, never `status`.
-**For P2 / P4 (important):** the second reader is weak on bone: on a random 275-image prefix of the FracAtlas batch MedGemma 4B (4-bit, zero-shot) found about 19% of fractures (sensitivity 0.19, 95% CI 0.09-0.32) at 99.5% specificity; the missed reads literally say "No obvious fractures are visible". A `discordant` status driven by `second_reader_disagrees` would downgrade most true bone positives. Per plan 9.4, validate the flag (D13) per modality before letting it downgrade anything; until then treat it as an audit flag for bone. Numbers will be in `reports/concordance.json`.
+**For P2 / P4 (important):** the second reader is weak on bone: on a random 403-image prefix of the FracAtlas batch MedGemma 4B (4-bit, zero-shot) found about 19% of fractures (sensitivity 0.19, 95% CI 0.11-0.29) at 99.4% specificity (kappa 0.27, 0.15-0.38); the missed reads literally say "No obvious fractures are visible". A `discordant` status driven by `second_reader_disagrees` would downgrade most true bone positives. Per plan 9.4, validate the flag (D13) per modality before letting it downgrade anything; until then treat it as an audit flag for bone. Numbers will be in `reports/concordance.json`.
+**For P4 (stages ready to wire, in this order):** `context.voice.process_dictation` (optional audio) -> `context.injection_guard.InjectionGuard.check` -> `context.extract.extract` -> `context.contradictions.check` -> `report.drafts.draft_claims` (includes the firewall) -> `report.entailment.judge` -> `report.fhir.build_bundle`. A report consumer must show only claims with `blocked_reason is None`; a claim removed by the judge keeps its `rendered` text so the audit view can strike it through. `build_bundle` writes only reportable claims and redacts note quotes unless `include_quotes=True`.
 **For P4:** `report.drafts.draft_claims(view, pool)` returns claims + a `StageResult(stage="report")`; with `pool=None` or Groq down it returns the template-only report and says so in `warnings`. `context.contradictions.check(...)` returns findings with `TextEvidence` attached (one `te_n` id per finding/fact pair) plus `missing_context` prompts. The status rule can count `polarity == "supports"` text evidence.
 
 ### P4 — Experience & Platform
@@ -212,6 +213,11 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P3 · TextEvidence ids are unique per (finding, fact) pair so each id has one owner, as the firewall's evidence-owner rule (R4) assumes · context/contradictions.py
 - 2026-10-07 · P3 · Report claims are drafted as frames chosen by the model (ids only, no labels or quotes in its input), expanded by code into slot templates; offline fallback picks frames deterministically · report/drafts.py
 
+- 2026-10-07 · P3 · FHIR is validated against `fhir.resources.R4B` (the library ships R4B, R5 and STU3, no plain R4); the resources used are the same in R4 and R4B. The library checks structure and data types but not value-set codes, so status codes are kept as constants in report/fhir.py · backend/tests/report/test_fhir.py
+- 2026-10-07 · P3 · Entailment judge input shows the second reader as an explicit word ("agrees", "disagrees", "inconclusive", "unavailable"), a summary of what the notes contain (to verify "the notes do not mention history"), and readable flag phrases. These came from the first-pass errors on variant 0; variant 1 was written afterwards and is the fair measurement · reports/p3_entailment_*.json
+- 2026-10-07 · P3 · Voice: Whisper gets a static clinical-vocabulary prompt (no patient data) and the transcript is treated as an untrusted note: same guard and extraction as typed text · context/voice.py
+- 2026-10-07 · P3 · MedGemma service reads its prompt files once at start. A git rebase during a long batch removed a prompt file for a moment and killed the run; resumable by image id, so nothing was lost but time · services/medgemma/reader.py
+
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -238,6 +244,9 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 - 2026-10-07 · P3 · MedGemma CXR box prompt/format · still NOT verified (the report-style prompt does not request boxes)
 - 2026-10-07 · P3 · Llama Prompt Guard 2 on Groq answers with a bare probability and scores a whole clinical note low (3 of 15 attacks at 0.5); per-sentence it fires on 4 of 28 fresh attacks at 0.9 · confirmed · reports/p3_guard_blind.json
 - 2026-10-07 · P3 · Groq free tier real limits observed: 8,000 tokens per minute is the binding limit for gpt-oss-20b extraction (about 4-6 calls a minute with a 1.5K-token prompt) · confirmed · response headers
+
+- 2026-10-07 · P3 · Whisper (`whisper-large-v3-turbo`) on Groq with `GROQ_KEY_AUDIO` accepts multipart audio with `response_format=verbose_json` and returns text, language and duration; a 20 s synthesized dictation was transcribed correctly including numbers · confirmed · ml/eval_p3/voice_roundtrip.py
+- 2026-10-07 · P3 · fhir.resources 8.3.0 does not enforce value-set bindings (an invalid `status` string validates); required fields and date formats are enforced · confirmed · test_fhir.py
 
 ## Shared log (append-only, newest at the bottom)
 
@@ -279,4 +288,12 @@ Verified: `.venv/Scripts/python -m pytest backend ml/tests/test_notes_schema.py 
 Numbers (62 held-out test-split notes, live Groq, cached): extraction exact-span F1 0.919 (P 0.922, R 0.917), lenient 0.973, 0 failures; weakest types laterality 0.79, history 0.80, device 0.82. Guard on the corpus 15/15 attacks, 0/47 false positives (regex is in-sample). Guard on 28 fresh attacks / 15 fresh benign: regex 4/28, Prompt Guard@0.9 4/28, classifier 25/28 (1 FP), all three 27/28 (1 FP). Differential: 0 facts overlap the injected text; F1 0.954 on injected notes vs 0.936 on their clean twins. Contradiction rules P/R 1.00/1.00 on gold facts (templated notes: rules fire as designed, not a generalisation claim). Firewall: 104 planted bad claims all blocked, 10 good claims none blocked. Second reader on bone (275-read prefix, reports/concordance.json): sensitivity 0.19 (0.09-0.32), specificity 0.995, kappa 0.27 (0.12-0.43).
 Next: finish the batch reads and write reports/concordance.json; retrieval (needs P1's embeddings); entailment judge; end-to-end context stage on extracted facts; wire into P4's pipeline.
 Decisions: see Decisions (7 entries dated 2026-10-07).
+Contract change requests: none.
+
+### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.11, P3.12, P3.13
+Did: entailment judge (second wall behind the firewall); Whisper transcription in the Groq pool plus voice dictation through the guard and extraction; FHIR bundle export. Pulled P2's skin-classifier push and wrote the specialist-vs-MedGemma comparison from its saved official-test predictions (agreement, kappa, and whether agreement predicts that the specialist is right); it runs when the HAM10000 reads are in. Found and fixed a crash in the long MedGemma batch (see Decisions).
+State: P3.11, P3.12, P3.13 done and pushed. HAM10000 reads have only just started, so the skin comparison has no numbers yet; FracAtlas reads about 70% done.
+Verified: pytest backend + ml/tests (mine) + services: 560+ passed, 5 skipped (the gpu-marked smoke and P2 tests that need torch/sklearn). Entailment: first pass 55/60; fixed judge 59/60 on the fresh variant (29/30 true sentences kept, 30/30 defective caught), 60/60 on the tuned variant; false rejections are the judge's main error (about 2-3%). Voice: real round trip OK. FHIR: bundle validates; 11 tests.
+Next: run `python -m ml.eval_p3.eval_second_reader` when the reads finish, then report whether specialist agreement predicts specialist correctness (D13 input for P2); retrieval needs P1's embedding function; wire stages into P4's pipeline.
+Decisions: see Decisions (4 entries dated 2026-10-07 added).
 Contract change requests: none.
