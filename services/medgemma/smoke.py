@@ -1,19 +1,33 @@
 """Real-model smoke test: one CXR through the loaded model. Needs HF_TOKEN and a GPU.
 
-    python -m services.medgemma.smoke --image path/to/cc_licensed_cxr.png
+    python -m services.medgemma.smoke --image services/medgemma/fixtures/smoke_cxr.png
 """
 
 import argparse
 import sys
 import time
 
+from pathlib import Path
+
 from PIL import Image
+
+
+def load_dotenv(path: Path = Path(".env")) -> None:
+    """Minimal .env reader so the smoke test works without extra packages."""
+    import os
+
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            key, sep, value = line.partition("=")
+            if sep and value.strip() and not key.startswith("#"):
+                os.environ.setdefault(key.strip(), value.strip())
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--image", required=True)
     args = ap.parse_args()
+    load_dotenv()
 
     import torch
 

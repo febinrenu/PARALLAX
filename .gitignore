@@ -57,3 +57,4 @@ ml/artifacts/_logs/
 # Local caches and cached model reads (hashes go in ml/artifacts/registry.json)
 .cache/
 ml/artifacts/medgemma_reads/
+.venv-gpu/
