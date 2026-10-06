@@ -61,11 +61,11 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
 | P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
-| P2.2 | Leakage audit + group splits | doing | main | 2026-10-07 | fracatlas, ham10000, brain_mri, lgg_seg done; rsna waits for data |
-| P2.3 | Brain classifier (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
-| P2.4 | Brain segmenter (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
-| P2.5 | Skin classifier (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
-| P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
+| P2.2 | Leakage audit + group splits | done | main | 2026-10-07 | all six datasets audited; reports/leakage.json |
+| P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
+| P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
+| P2.5 | Skin classifier (Kaggle) | doing | main | 2026-10-07 | Kaggle run complete (BMA 0.689 on official test); pull and register pending |
+| P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | v2 running on Kaggle after a fix |
 | P2.7 | CXR calibration + external validation | todo | | | |
 | P2.8 | Temperature scaling + conformal | todo | | | |
 | P2.9 | Selective prediction | todo | | | |
@@ -143,9 +143,10 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
 - brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
-- rishijayanath/parallax-p2-5-skin-lesion-classifier: started 2026-10-07 01:00, running (15 epochs, ConvNeXt-Tiny)
-- rishijayanath/parallax-p2-6-bone-fracture-detector: started 2026-10-07 01:00, running (yolo26n, 80 epochs)
-- rishijayanath/parallax-p2-3-brain-mri-classifier and parallax-p2-4-brain-tumour-segmenter: queued; Kaggle allows 2 GPU sessions at once, a background loop pushes them when a slot frees
+- rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738], melanoma recall 0.649 (val 0.756). Output pull pending (Kaggle rate limit)
+- rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs (val mAP50 0.453 on 380 images) then failed at prediction export on truncated JPEGs; fixed in commit 8539baf; v2 relaunched 2026-10-07 02:10
+- johannshonigeorge/parallax-p2-3-brain-mri-classifier: COMPLETE 2026-10-07, pulled, registered as brain_cls@d351f062. Leakage-free test accuracy 0.940 [0.921, 0.958]
+- johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
 ### P3 — Clinical Reasoning & Trust
 **Now:**
@@ -189,6 +190,8 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P2 · `gen_notes.py` (synthetic notes) is left to P3; P2 supplies seed columns (age, sex, site, body part, label) in `ml/data/splits/*.csv` · P3.4 owns note content and injection cases.
 - 2026-10-06 · P2 · Flag for P1/P4: the LGG segmenter is trained on 3-channel TCGA data; the brain classifier data is single-channel T1-CE. Masks on classifier-style uploads are out of domain, and the model card will say so. Channel-replication augmentation reduces the gap but does not remove it.
 - 2026-10-07 · P2 · BDNeuro-MRI is not an independent external test: 4,238 of its 5,941 images (71%) are near-duplicates (pHash Hamming <= 4, pixel correlation median 0.93 to 1.0 against 0.47 for random same-class pairs) of images in the Kaggle brain dataset. The external test uses only the 1,644 images with no match (`ml/data/splits/bdneuro.csv`, `split == external_test`) · its README claims hospital provenance and exact/near-duplicate removal only within itself.
+- 2026-10-07 · P2 · Brain classifier headline: the Kaggle benchmark inflation is measured inside one model. Model A scores 0.942 on the original Testing folder, 0.903 once the 727 images with a duplicate in Training are removed, and 0.865 once the 1,051 images with a same-scan neighbour are removed (n=549). The across-model difference A minus B (0.002, CI -0.020 to 0.026) shows no inflation and is confounded by different models and test sets, so it must not be quoted · B (leakage-free group split, test n=563) scores 0.940 [0.921, 0.958].
+- 2026-10-07 · P2 · Two Kaggle accounts: the first account's concurrent GPU limit of 2 stalled the brain jobs, so they ran on a second existing account (johannshonigeorge, owner agreed) · plan.md section 14 lists several accounts as the fallback; its token is kept in the gitignored `.env.kaggle2`.
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.

@@ -1,0 +1,40 @@
+{
+ "model_id": "brain_cls@d351f062",
+ "task": "classification",
+ "arch": "efficientnet_b0.ra_in1k",
+ "classes": [
+  "glioma",
+  "meningioma",
+  "notumor",
+  "pituitary"
+ ],
+ "preproc_spec": "brain_effnet",
+ "weights_file": "weights.pt",
+ "weights_sha256": "184810f022787f8ec3c865cb9d8c2d6ae8d5986830affcd10b2d58046b85a180",
+ "split_name": "brain_mri",
+ "split_hash": "ae05442fab4727999faa50e380096340763c8ffc03c44705a6a31f589c8d9311",
+ "training_data": [
+  "brain_mri (Kaggle masoudnickparvar), leakage-free split"
+ ],
+ "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+ "seed": 20261006,
+ "python": "3.13.15",
+ "torch": "2.11.0+cu128",
+ "wall_sec": 558.4069480895996,
+ "data": {
+  "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "cuda": true,
+  "gpu": "Tesla T4",
+  "datasets": {
+   "brain_mri": {
+    "name": "brain_mri",
+    "file_count": 7200,
+    "total_bytes": 167848957,
+    "tree_sha256": "d715d6a614b62d54429d424776dcd55b592196fd726235df0a9f87fb53700939"
+   }
+  }
+ },
+ "comparison_model_A_state": "not saved (diagnostic only)"
+}
