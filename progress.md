@@ -8,7 +8,7 @@
 | Role | Person | Machine / GPU | Groq key variable |
 |---|---|---|---|
 | P1 Imaging Core | | | GROQ_KEY_AUDIO |
-| P2 Data, Training & Validation | | | GROQ_KEY_JUDGE |
+| P2 Data, Training & Validation | | laptop, RTX 4050 6 GB | GROQ_KEY_JUDGE |
 | P3 Clinical Reasoning & Trust | | | GROQ_KEY_REPORT |
 | P4 Experience & Platform | | | GROQ_KEY_EXTRACT |
 
@@ -60,12 +60,12 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P2.1 | Dataset downloads + manifests | todo | | | |
-| P2.2 | Leakage audit + group splits | todo | | | |
-| P2.3 | Brain classifier (Kaggle) | todo | | | |
-| P2.4 | Brain segmenter (Kaggle) | todo | | | |
-| P2.5 | Skin classifier (Kaggle) | todo | | | |
-| P2.6 | Bone detector (Kaggle) | todo | | | |
+| P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
+| P2.2 | Leakage audit + group splits | doing | p2/data | 2026-10-06 | fracatlas + ham10000 done; brain, lgg, rsna wait for data |
+| P2.3 | Brain classifier (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
+| P2.4 | Brain segmenter (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
+| P2.5 | Skin classifier (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
+| P2.6 | Bone detector (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
 | P2.7 | CXR calibration + external validation | todo | | | |
 | P2.8 | Temperature scaling + conformal | todo | | | |
 | P2.9 | Selective prediction | todo | | | |
@@ -124,10 +124,19 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
 
 ### P2 — Data, Training & Validation
-**Now:**
-**Next:**
-**Blockers:**
+**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Branch `p2/data`. Building the four training notebooks (P2.3 to P2.6).
+**Next:** four notebooks under `ml/train/notebooks/`, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
+**Blockers:** (1) Kaggle token in `.env` (brain MRI, LGG, RSNA need it; no `.env` exists on this machine). (2) RSNA competition rules not accepted yet. (3) BDNeuro-MRI manual download. (4) This machine's C: drive is full (27 MB free): pip and pytest temp must go to D:.
+**Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
+**For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**
+- Run `python ml/data/download.py core` once on your machine, or point `PARALLAX_DATA_ROOT` at a folder that has `<dataset>/...` as laid out in `ml/data/splits/*.csv` (`source_dir` + `relpath`). On Kaggle, symlink attached inputs into that layout.
+- `from ml.data.common import load_split, image_path, load_eval_index`. `load_split("ham10000")` gives one row per image with `label`, `split` (`train/val/cal/test`, `official_test` for the ISIC test set, `dropped` = removed by the audit), `age`, `sex`, `site_general` (note seeds), `group`, `eval_batch`.
+- `ml/data/eval_index.json` lists, per dataset, the test split and a bounded batch subset (`eval_batch == True`, at most 1,000 images, label-stratified, seeded). Use it for the MedGemma batch reads (P3.1/3.2): fracatlas 569 test images, ham10000 official test 1,000 of 1,512.
+- Retrieval index (P3.8): build it from `split == "train"` only, so a precedent can never be a test image.
+- Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
+- brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
+- none launched yet
 
 ### P3 — Clinical Reasoning & Trust
 **Now:**
@@ -152,6 +161,17 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P1 · Quality thresholds are provisional values tuned on a synthetic phantom: the clean phantom passes with zero reasons across 8 seeds, and 100% of noise, blur and contrast degradations at severity 4 and 5 fail the gate · must be refit on real validation images.
 - 2026-10-06 · P1 · Python 3.12 venv with pip instead of 3.11 with uv (uv not installed here); `backend/pyproject.toml` is minimal for the platform owner to absorb · no `make smoke` exists yet, so verification is `python -m pytest` in `backend/`.
 - 2026-10-06 · P1 · `core/schemas.py` is a verbatim copy of the section 4 sketch because the contract was not yet committed · platform owner replaces it; P1 code only uses `StageResult`.
+- 2026-10-06 · P2 · FracAtlas source corrected: figshare file 65518038 (v7, CC BY 4.0, md5 fe9da2c7...; dataset.csv lists 4,083 images, 719 fractured, the figshare text says 4,073), resolved at run time through the figshare API · plan.md's file id 43283628 returns HTTP 202 with no body.
+- 2026-10-06 · P2 · HAM10000 metadata is fetched from Harvard Dataverse (doi:10.7910/DVN/DBW86T, no login); Kaggle is the fallback only · removes the Kaggle-token dependency for metadata.
+- 2026-10-06 · P2 · Official ISIC 2018 Task 3 test metadata (age, sex, site, lesion_id) is fetched from the ISIC API · lets the official test set carry lesion-grouped CIs and a subgroup audit.
+- 2026-10-06 · P2 · Splits get a separate conformal calibration set: train 70 / val 10 / cal 10 / internal test 10 (HAM10000, brain), 65/10/10/15 (FracAtlas), LGG fold 0 of a 5-fold patient CV · temperature scaling uses val, conformal uses cal, so neither sees test.
+- 2026-10-06 · P2 · Own 64-bit DCT pHash in `ml/data/phash.py` instead of `imagehash`; duplicate groups = native id (lesion, patient) plus Hamming <= 4 edges; official test sets are never modified · avoids a PyWavelets build on new Pythons and guarantees a duplicate cannot straddle splits.
+- 2026-10-06 · P2 · Brain classifier is trained twice (original Kaggle split vs leakage-free split) · measures the inflation gap instead of estimating it.
+- 2026-10-06 · P2 · Bootstrap: percentile cluster bootstrap, B=2000, class-stratified for balanced accuracy, BCa for per-patient Dice; bone sensitivity at 90% specificity uses a threshold fixed on val · plan said B=1000.
+- 2026-10-06 · P2 · YOLO26n (released 2026-01-14) for the bone detector, yolo11n as fallback, via config · closes the [VERIFY] on the latest nano model.
+- 2026-10-06 · P2 · `.gitignore` carve-out `!ml/data/` plus `ml/data/raw/` ignored (the `data/` rule hid `ml/data/`); `ml/Makefile.inc` supplied for P4 to include · P4 owns both files, so P4 please ack.
+- 2026-10-06 · P2 · `gen_notes.py` (synthetic notes) is left to P3; P2 supplies seed columns (age, sex, site, body part, label) in `ml/data/splits/*.csv` · P3.4 owns note content and injection cases.
+- 2026-10-06 · P2 · Flag for P1/P4: the LGG segmenter is trained on 3-channel TCGA data; the brain classifier data is single-channel T1-CE. Masks on classifier-style uploads are out of domain, and the model card will say so. Channel-replication augmentation reduces the gap but does not remove it.
 
 ## Contract change requests
 
