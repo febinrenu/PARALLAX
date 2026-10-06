@@ -22,6 +22,7 @@ from medproof.core.schemas import StageResult
 from medproof.intake.decode import DecodedImage
 from medproof.intake.embedder import Embedder, EmbeddingCache
 from medproof.intake.router_config import CLASSES, RouterConfig
+from medproof.intake.ood import OODModel
 from medproof.intake.router_train import Probe
 
 LAST_LOAD_ERROR = ""
@@ -36,6 +37,7 @@ class RouterOutput:
     method: str  # "probe" | "zero_shot"
     flags: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    ood: dict | None = None  # {distance, threshold, score, is_ood}; score above 1 means out of distribution
 
     def to_dict(self) -> dict:
         return {
@@ -45,6 +47,7 @@ class RouterOutput:
             "probs": {k: round(float(v), 5) for k, v in self.probs.items()},
             "method": self.method,
             "flags": list(self.flags),
+            "ood": None if self.ood is None else {k: (round(float(v), 5) if not isinstance(v, bool) else v) for k, v in self.ood.items()},
         }
 
 
@@ -62,12 +65,14 @@ class Router:
         config: RouterConfig | None = None,
         cache: EmbeddingCache | None = None,
         probe: Probe | None = None,
+        ood: OODModel | None = None,
     ):
         self.embedder = embedder
         self.cfg = config or RouterConfig()
         self.cache = cache
         self._load_warnings: list[str] = []
         self.probe = probe if probe is not None else self._load_probe()
+        self.ood = ood if ood is not None else self._load_ood()
         self._prototypes: np.ndarray | None = None
 
     # -- setup ------------------------------------------------------------------------------
@@ -92,6 +97,20 @@ class Router:
             return None
         return probe
 
+    def _load_ood(self) -> OODModel | None:
+        path = Path(self.cfg.ood_path)
+        if not path.is_file():
+            return None
+        try:
+            model = OODModel.load(path)
+        except (OSError, ValueError, KeyError) as exc:
+            self._load_warnings.append(f"OOD model unreadable ({type(exc).__name__}): out-of-distribution check off")
+            return None
+        if model.embedder_id != self.embedder.model_id or model.dim != self.embedder.dim:
+            self._load_warnings.append("OOD model belongs to another embedder: out-of-distribution check off")
+            return None
+        return model
+
     def _protos(self) -> np.ndarray:
         if self._prototypes is None:
             rows = []
@@ -115,8 +134,17 @@ class Router:
         return self.embedder.embed_images([np.asarray(img, np.float32)])[0]
 
     def predict(self, img: DecodedImage | np.ndarray) -> RouterOutput:
-        warnings = list(self._load_warnings)
         emb = self._embed(img)
+        out = self._route(emb)
+        if self.ood is not None:
+            out.ood = self.ood.score(emb, out.modality)
+            if out.ood is not None and out.ood["is_ood"]:
+                out.flags.append("ood")
+                out.warnings.append(f"image is unusual for a {out.modality} (score {out.ood['score']:.2f}): treat results with extra caution")
+        return out
+
+    def _route(self, emb: np.ndarray) -> RouterOutput:
+        warnings = list(self._load_warnings)
         if self.probe is not None:
             p = self.probe.predict_proba(emb)[0]
             probs = dict(zip(self.probe.classes, map(float, p)))

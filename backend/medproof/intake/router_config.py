@@ -49,6 +49,7 @@ def _env(name: str, default: str) -> str:
 class RouterConfig:
     model_id: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_MODEL", "google/medsiglip-448"))
     probe_path: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_PROBE", "artifacts/router_probe.npz"))
+    ood_path: str = field(default_factory=lambda: _env("MEDPROOF_OOD_MODEL", "artifacts/ood.npz"))
     cache_dir: str = field(default_factory=lambda: _env("MEDPROOF_EMBED_CACHE", "artifacts/embeddings"))
     device: str = field(default_factory=lambda: _env("MEDPROOF_DEVICE", "cpu"))
     spec: str = "router_medsiglip"  # preprocessing spec in intake.preprocess

@@ -216,3 +216,41 @@ def test_model_id_and_probe_path_can_be_overridden_by_environment(monkeypatch):
     monkeypatch.setenv("MEDPROOF_ROUTER_PROBE", "somewhere/probe.npz")
     cfg = RouterConfig()
     assert cfg.model_id == "org/other-model" and cfg.probe_path == "somewhere/probe.npz"
+
+
+def test_ood_score_is_reported_and_flags_unusual_images():
+    from medproof.intake.ood import fit_ood
+
+    rng = np.random.default_rng(0)
+
+    def around(axis, n, noise=0.05):
+        c = np.zeros(16, np.float32)
+        c[axis] = 1.0
+        x = c + rng.normal(0, noise, (n, 16)).astype(np.float32)
+        return x / np.linalg.norm(x, axis=1, keepdims=True)
+
+    X = around(0, 90)
+    ood = fit_ood(X, np.array(["cxr"] * 90), np.array([f"g{i % 9}" for i in range(90)]), embedder_id="test-double-embedder", seed=0)[0]
+
+    class Fixed(TestDoubleEmbedder):
+        def __init__(self, vec):
+            super().__init__(prototype_vectors(CFG))
+            self.vec = vec / np.linalg.norm(vec)
+
+        def embed_images(self, images):
+            return np.tile(self.vec, (len(images), 1)).astype(np.float32)
+
+    cfg = RouterConfig(probe_path="missing.npz", ood_path="missing.npz")
+    typical = Router(Fixed(around(0, 1)[0]), config=cfg, ood=ood).predict(_img(make_phantom(64)))
+    assert typical.modality == "cxr" and typical.ood is not None and typical.ood["is_ood"] is False and "ood" not in typical.flags
+    odd_vec = around(0, 1)[0] + 0.6 * np.eye(16, dtype=np.float32)[9]  # still closest to cxr, but off its usual region
+    odd = Router(Fixed(odd_vec), config=cfg, ood=ood).predict(_img(make_phantom(64)))
+    assert odd.modality == "cxr" and odd.ood["is_ood"] is True and "ood" in odd.flags
+    assert odd.ood["score"] > typical.ood["score"] > 0
+    d = odd.to_dict()
+    assert d["ood"]["is_ood"] is True and "ood" in d["flags"]
+
+
+def test_no_ood_model_means_no_ood_field():
+    out = Router(TestDoubleEmbedder(prototype_vectors(CFG)), config=RouterConfig(probe_path="missing.npz", ood_path="missing.npz")).predict(_img(make_phantom(64)))
+    assert out.ood is None and out.to_dict()["ood"] is None
