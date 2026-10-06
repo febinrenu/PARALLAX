@@ -41,6 +41,41 @@ def auroc(in_scores: np.ndarray, out_scores: np.ndarray) -> float:
     return float(gt / (len(a) * len(b)))
 
 
+class EnergyThreshold:
+    """Energy-score cut-off for one specialist, from the 95th percentile on in-distribution images."""
+
+    def __init__(self, threshold: float, temperature: float = 1.0, labels: list[str] | None = None, meta: dict | None = None):
+        self.threshold, self.temperature, self.labels, self.meta = float(threshold), float(temperature), labels, meta or {}
+
+    def score(self, logits: np.ndarray) -> dict:
+        e = float(energy_score(self._select(logits), self.temperature)[0])
+        return {"energy": e, "threshold": self.threshold, "is_ood": bool(e > self.threshold)}
+
+    def _select(self, logits):
+        return np.atleast_2d(np.asarray(logits, np.float32))
+
+    def save(self, path: str | Path) -> None:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        Path(path).write_text(json.dumps({"threshold": self.threshold, "temperature": self.temperature, "labels": self.labels, "meta": self.meta}, indent=1), encoding="utf-8")
+
+    @classmethod
+    def load(cls, path: str | Path) -> EnergyThreshold:
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls(d["threshold"], d.get("temperature", 1.0), d.get("labels"), d.get("meta"))
+
+
+def fit_energy(in_logits: np.ndarray, temperature: float = 1.0, percentile: float = PERCENTILE, labels: list[str] | None = None) -> EnergyThreshold:
+    """Threshold = percentile of in-distribution energies, so about 5% of normal images are flagged."""
+    e = energy_score(np.asarray(in_logits, np.float32), temperature)
+    return EnergyThreshold(float(np.percentile(e, percentile)), temperature, labels, {"n": int(len(e)), "percentile": percentile})
+
+
+def energy_report(in_logits: np.ndarray, out_logits: np.ndarray, model: EnergyThreshold) -> dict:
+    ei, eo = energy_score(in_logits, model.temperature), energy_score(out_logits, model.temperature)
+    return {"n_in": int(len(ei)), "n_out": int(len(eo)), "auroc": auroc(ei, eo), "threshold": model.threshold,
+            "in_flagged": float((ei > model.threshold).mean()), "out_flagged": float((eo > model.threshold).mean())}
+
+
 class OODModel:
     def __init__(self, embedder_id: str, stats: dict[str, dict], meta: dict | None = None):
         self.embedder_id = embedder_id

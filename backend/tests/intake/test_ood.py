@@ -156,3 +156,19 @@ def test_score_folder_returns_one_row_per_image_for_fitted_classes(tmp_path, wor
     assert len(rows) == 24 and {r["class"] for r in rows} == {"cxr", "brain_mri"}  # "other" has no model, so it is skipped
     for r in rows:
         assert r["score"] == pytest.approx(r["distance"] / r["threshold"]) and isinstance(r["is_ood"], bool)
+
+
+def test_energy_threshold_flags_low_confidence_logits_and_round_trips(tmp_path):
+    from medproof.intake.ood import EnergyThreshold, energy_report, fit_energy
+
+    rng = np.random.default_rng(0)
+    confident = rng.normal(0, 1, (200, 6)).astype(np.float32)
+    confident[np.arange(200), rng.integers(0, 6, 200)] += 6.0  # one strong class: low energy
+    flat = rng.normal(0, 0.3, (100, 6)).astype(np.float32)  # nothing stands out: high energy
+    thr = fit_energy(confident, labels=list("abcdef"))
+    rep = energy_report(confident, flat, thr)
+    assert rep["auroc"] > 0.95 and rep["out_flagged"] > 0.9 and rep["in_flagged"] == pytest.approx(0.05, abs=0.02)
+    assert thr.score(flat[0])["is_ood"] is True and thr.score(confident[0])["is_ood"] is False
+    thr.save(tmp_path / "e.json")
+    again = EnergyThreshold.load(tmp_path / "e.json")
+    assert again.threshold == thr.threshold and again.labels == thr.labels
