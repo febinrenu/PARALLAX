@@ -1,5 +1,59 @@
 {
  "datasets": {
+  "bdneuro": {
+   "duplicate_clusters": 256,
+   "duplicate_pairs": 287,
+   "flat_images_excluded_from_matching": 0,
+   "images_removed": 4297,
+   "images_with_duplicate_in_another_original_split": {
+    "test": 61,
+    "train": 113,
+    "val": 71
+   },
+   "label_conflict_clusters": 3,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 4,
+   "max_hamming": 4,
+   "n_images": 5941,
+   "note": "external test only; images that duplicate a brain_mri image are excluded; labels follow the folder names (no_tumor -> notumor)",
+   "overlap_with_brain_mri_images": 4238,
+   "pairs_across_original_splits": 129,
+   "pairs_by_distance": {
+    "0": 4,
+    "1": 0,
+    "2": 25,
+    "3": 0,
+    "4": 258
+   },
+   "pairs_within_original_split": 158,
+   "removed_by_reason": {
+    "duplicate": 263,
+    "duplicate_of_brain_mri": 4028,
+    "duplicate_of_immutable_test_image": 0,
+    "label_conflict": 6
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "dropped": {
+     "glioma": 1368,
+     "meningioma": 1179,
+     "notumor": 558,
+     "pituitary": 1192
+    },
+    "external_test": {
+     "glioma": 823,
+     "meningioma": 299,
+     "notumor": 229,
+     "pituitary": 293
+    }
+   },
+   "split_counts": {
+    "dropped": 4297,
+    "external_test": 1644
+   },
+   "split_hash": "e0f50328340790505a97606bbe1236d61fb3d256d8eab23d276ce53d91ea2d8d",
+   "truncated_source_files": 0
+  },
   "brain_mri": {
    "duplicate_clusters": 1092,
    "duplicate_pairs": 5856,
@@ -279,7 +333,7 @@
    "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
   }
  },
- "generated_utc": "2026-10-06T19:32:32Z",
+ "generated_utc": "2026-10-06T19:44:04Z",
  "method": {
   "duplicate_max_hamming": 4,
   "hash": "64-bit DCT pHash",

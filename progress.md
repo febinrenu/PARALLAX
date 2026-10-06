@@ -133,7 +133,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 ### P2 — Data, Training & Validation
 **Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Merged to `main`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
 **Next:** push `p2/data` (the notebooks clone it), launch the four jobs once the Kaggle token exists, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
-**Blockers:** (1) RSNA: the Kaggle token's account has not entered the competition (API returns 403 and `competitions list --group entered` is empty); the rules must be accepted on rishijayanath's account at kaggle.com/competitions/rsna-pneumonia-detection-challenge/rules. (2) BDNeuro-MRI manual download (needed later for the brain external test).
+**Blockers:** (1) none for RSNA any more: rules accepted, download running. (2) BDNeuro-MRI licence: its README still says `[FILL IN]`; check the Mendeley page and record it before we show results on it.
 **Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
 **For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**
 - Run `python ml/data/download.py core` once on your machine, or point `PARALLAX_DATA_ROOT` at a folder that has `<dataset>/...` as laid out in `ml/data/splits/*.csv` (`source_dir` + `relpath`). On Kaggle, symlink attached inputs into that layout.
@@ -188,7 +188,7 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P2 · `.gitignore` carve-out `!ml/data/` plus `ml/data/raw/` ignored (the `data/` rule hid `ml/data/`); `ml/Makefile.inc` supplied for P4 to include · P4 owns both files, so P4 please ack.
 - 2026-10-06 · P2 · `gen_notes.py` (synthetic notes) is left to P3; P2 supplies seed columns (age, sex, site, body part, label) in `ml/data/splits/*.csv` · P3.4 owns note content and injection cases.
 - 2026-10-06 · P2 · Flag for P1/P4: the LGG segmenter is trained on 3-channel TCGA data; the brain classifier data is single-channel T1-CE. Masks on classifier-style uploads are out of domain, and the model card will say so. Channel-replication augmentation reduces the gap but does not remove it.
-
+- 2026-10-07 · P2 · BDNeuro-MRI is not an independent external test: 4,238 of its 5,941 images (71%) are near-duplicates (pHash Hamming <= 4, pixel correlation median 0.93 to 1.0 against 0.47 for random same-class pairs) of images in the Kaggle brain dataset. The external test uses only the 1,644 images with no match (`ml/data/splits/bdneuro.csv`, `split == external_test`) · its README claims hospital provenance and exact/near-duplicate removal only within itself.
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.

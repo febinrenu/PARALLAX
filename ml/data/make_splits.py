@@ -82,6 +82,11 @@ def _finish(name: str, df: pd.DataFrame, hashes: np.ndarray, fractions: dict[str
     if "loose_cluster" not in df:
         df["loose_cluster"] = -1
     df["phash"] = [f"{int(h):016x}" for h in hashes]
+    if "overlaps_brain_mri" in df:
+        newly = (df.dropped_reason == "") & df.overlaps_brain_mri
+        df.loc[newly, "dropped_reason"] = "duplicate_of_brain_mri"
+        rep["removed_by_reason"]["duplicate_of_brain_mri"] = int(newly.sum())
+        rep["images_removed"] = int((df.dropped_reason != "").sum())
     kept = df.dropped_reason == ""
     fixed = df["split"].notna() if "split" in df else pd.Series(False, index=df.index)  # rows pre-assigned (official tests)
     movable = kept & ~fixed
@@ -270,15 +275,39 @@ def build_rsna(root: Path) -> tuple[pd.DataFrame, np.ndarray, dict]:
     return df, hashes, {"note": "TorchXRayVision 'all' weights were trained on RSNA; use chex / mimic_ch weights for external numbers"}
 
 
+def build_bdneuro(root: Path) -> tuple[pd.DataFrame, np.ndarray, dict]:
+    """BDNeuro-MRI is an external test set: nothing is trained on it. Images that duplicate a brain_mri image are excluded."""
+    base = root / "bdneuro"
+    top = _find_in(base, "Brain_Tumor_MRI_Dataset_Final")
+    rows = []
+    for part in ("train", "val", "test"):
+        if not (top / part).is_dir():
+            continue
+        for cdir in sorted(p for p in (top / part).iterdir() if p.is_dir()):
+            for f in sorted(cdir.iterdir()):
+                if f.suffix.lower() in (".jpg", ".jpeg", ".png"):
+                    rows.append(("bdneuro", "bdneuro", f.relative_to(base).as_posix(), f.stem, cdir.name.replace("_", ""), part))
+    df = pd.DataFrame(rows, columns=["dataset", "source_dir", "relpath", "image_id", "label", "orig_split"])
+    df["native_group"] = df.image_id
+    hashes = hash_dataset("bdneuro", df.source_dir, df.relpath, root)
+    ours = pd.read_csv(SPLITS_DIR / "brain_mri.csv", keep_default_na=False)
+    oh = np.array([int(x, 16) for x in ours.phash], dtype=np.uint64)
+    hit = {i for i, _, _ in ph.near_pairs(hashes, ph.DUP_MAX_DIST, other=oh)}
+    df["overlaps_brain_mri"] = [i in hit for i in range(len(df))]
+    extra = {"overlap_with_brain_mri_images": len(hit), "note": "external test only; images that duplicate a brain_mri image are excluded; labels follow the folder names (no_tumor -> notumor)"}
+    return df, hashes, extra
+
+
 # name -> (builder, fractions, strat column, test splits, extra finish kwargs)
 SPECS = {
     "fracatlas": (build_fracatlas, {"train": 0.65, "val": 0.10, "cal": 0.10, "test": 0.15}, "strat", ["test"], {}),
     "ham10000": (build_ham10000, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["official_test"], {}),
     "brain_mri": (build_brain_mri, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["test"], {"loose_dist": 6, "use_loose_as_group": True}),
     "lgg_seg": (build_lgg_seg, {"train": 0.80, "val": 0.10, "test": 0.10}, "label", ["test"], {}),
+    "bdneuro": (build_bdneuro, {"external_test": 1.0}, "label", ["external_test"], {}),
     "rsna": (build_rsna, {"cal": 0.30, "test": 0.70}, "label", ["test"], {}),
 }
-SOURCE_DIRS = {"fracatlas": "fracatlas", "ham10000": "isic2018_t3_train", "brain_mri": "brain_mri", "lgg_seg": "lgg_seg", "rsna": "rsna_pneumonia"}
+SOURCE_DIRS = {"fracatlas": "fracatlas", "ham10000": "isic2018_t3_train", "brain_mri": "brain_mri", "lgg_seg": "lgg_seg", "rsna": "rsna_pneumonia", "bdneuro": "bdneuro"}
 
 
 def run(name: str, root: Path) -> None:

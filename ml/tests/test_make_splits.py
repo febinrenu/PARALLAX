@@ -164,3 +164,25 @@ def test_flat_images_do_not_merge_unrelated_groups(env):
     rep = json.loads((tmp / "reports" / "leakage.json").read_text())["datasets"]["brain_mri"]
     assert rep["flat_images_excluded_from_matching"] == 20
     assert rep["images_removed"] == 0, "blank images are not duplicates of one another"
+
+
+def test_bdneuro_external_set_excludes_images_that_duplicate_the_training_dataset(env):
+    root, tmp = env
+    _manifest(root, "brain_mri")
+    for part in ("Training", "Testing"):
+        for cls in ("glioma", "notumor"):
+            for i in range(10):
+                _save(_scene(7000 + (part == "Testing") * 500 + (cls == "notumor") * 100 + i), root / "brain_mri" / part / cls / f"{cls}{i}.jpg")
+    ms.run("brain_mri", root)
+    _manifest(root, "bdneuro")
+    top = root / "bdneuro" / "Some Title" / "Brain_Tumor_MRI_Dataset_Final"
+    for i in range(6):
+        _save(_scene(900 + i), top / "test" / "no_tumor" / f"no_tumor_test_{i}.jpg")
+    copy = _jpeg(np.asarray(Image.open(root / "brain_mri" / "Training" / "glioma" / "glioma0.jpg")), 60)
+    _save(copy, top / "train" / "glioma" / "glioma_train_0.jpg")
+    ms.run("bdneuro", root)
+    df = common.load_split("bdneuro", tmp / "splits")
+    rep = json.loads((tmp / "reports" / "leakage.json").read_text())["datasets"]["bdneuro"]
+    assert rep["overlap_with_brain_mri_images"] == 1
+    assert set(df[df.split == "external_test"].label) == {"notumor"} and (df.split == "external_test").sum() == 6
+    assert df[df.image_id == "glioma_train_0"].iloc[0].dropped_reason == "duplicate_of_brain_mri"

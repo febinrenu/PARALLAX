@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-06T19:32:32Z",
+ "generated_utc": "2026-10-06T19:44:04Z",
  "batch_cap": 1000,
  "datasets": {
   "fracatlas": {
@@ -99,6 +99,31 @@
    "train_split_for_retrieval": "train",
    "source_dirs": [
     "lgg_seg"
+   ]
+  },
+  "bdneuro": {
+   "split_file": "ml/data/splits/bdneuro.csv",
+   "test_splits": [
+    "external_test"
+   ],
+   "n_test": 1644,
+   "n_batch": 1000,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "glioma": 823,
+    "meningioma": 299,
+    "pituitary": 293,
+    "notumor": 229
+   },
+   "batch_label_counts": {
+    "glioma": 501,
+    "meningioma": 182,
+    "pituitary": 178,
+    "notumor": 139
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "bdneuro"
    ]
   }
  }
