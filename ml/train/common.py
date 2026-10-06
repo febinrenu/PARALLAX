@@ -208,7 +208,7 @@ def train_classifier(
     scaler = torch.amp.GradScaler(enabled=dev.type == "cuda")
     rng = np.random.RandomState(seed)
     g = torch.Generator(device=dev).manual_seed(seed)
-    y_t = torch.from_numpy(y_tr).long()
+    y_t = torch.from_numpy(np.array(y_tr)).long()
     hist, best, best_state = [], (-1.0, 1e9, -1), None
     for ep in range(epochs):
         model.train()

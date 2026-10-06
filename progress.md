@@ -62,10 +62,10 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 |---|---|---|---|---|---|
 | P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
 | P2.2 | Leakage audit + group splits | doing | p2/data | 2026-10-06 | fracatlas + ham10000 done; brain, lgg, rsna wait for data |
-| P2.3 | Brain classifier (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
-| P2.4 | Brain segmenter (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
-| P2.5 | Skin classifier (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
-| P2.6 | Bone detector (Kaggle) | doing | p2/data | 2026-10-06 | notebook being written |
+| P2.3 | Brain classifier (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
+| P2.4 | Brain segmenter (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
+| P2.5 | Skin classifier (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
+| P2.6 | Bone detector (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
 | P2.7 | CXR calibration + external validation | todo | | | |
 | P2.8 | Temperature scaling + conformal | todo | | | |
 | P2.9 | Selective prediction | todo | | | |
@@ -124,8 +124,8 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
 
 ### P2 — Data, Training & Validation
-**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Branch `p2/data`. Building the four training notebooks (P2.3 to P2.6).
-**Next:** four notebooks under `ml/train/notebooks/`, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
+**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Branch `p2/data`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
+**Next:** push `p2/data` (the notebooks clone it), launch the four jobs once the Kaggle token exists, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
 **Blockers:** (1) Kaggle token in `.env` (brain MRI, LGG, RSNA need it; no `.env` exists on this machine). (2) RSNA competition rules not accepted yet. (3) BDNeuro-MRI manual download. (4) This machine's C: drive is full (27 MB free): pip and pytest temp must go to D:.
 **Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
 **For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**

@@ -98,3 +98,9 @@ def test_brain_segmenter_notebook_runs_on_a_synthetic_dataset(env):  # noqa: F81
     assert meta["task"] == "segmentation" and meta["preproc_spec"]["name"] == "brain_seg" and meta["input_size"] == 256
     z = np.load(out / "predictions" / "test.npz")
     assert z["probs_u8"].shape[1:] == (256, 256) and len(z["patients"]) == len(z["probs_u8"])
+
+
+def test_committed_notebooks_are_up_to_date_with_their_sources(tmp_path):
+    bn.build("x", nb_dir=tmp_path / "nb", kg_dir=tmp_path / "kg")
+    for name in bn.JOBS:
+        assert (tmp_path / "nb" / f"{name}.ipynb").read_text() == (REPO / "ml" / "train" / "notebooks" / f"{name}.ipynb").read_text(), f"run `make notebooks`: {name} is stale"
