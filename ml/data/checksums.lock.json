@@ -1,0 +1,18 @@
+{
+ "fracatlas/FracAtlas.zip": {
+  "bytes": 338436460,
+  "sha256": "b67ec2d290a022b3dcf47f78e9a37f7edcc80592c0571f439355bf00bd9f0e23"
+ },
+ "ham10000_meta/HAM10000_metadata.csv": {
+  "bytes": 690218,
+  "sha256": "de17ec44cb25ea9c3f6378ba18d69224c740afd62e86ec2edc6a894d6aa663d3"
+ },
+ "isic2018_t3_test/ISIC2018_Task3_Test_GroundTruth.zip": {
+  "bytes": 12202,
+  "sha256": "461561de4d490b9f44bd6f2efd87046cd91ac7ee430ef8e97443c7c33b2912ce"
+ },
+ "isic2018_t3_test/ISIC2018_Task3_Test_Input.zip": {
+  "bytes": 420586171,
+  "sha256": "aa90bd5308259bf5fdcc6048b09dd70416d527d1200e5148aef8ae94f8678b60"
+ }
+}
