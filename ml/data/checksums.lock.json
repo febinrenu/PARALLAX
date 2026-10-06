@@ -34,5 +34,9 @@
  "lgg_seg/lgg-mri-segmentation.zip": {
   "bytes": 748584920,
   "sha256": "cac105de01272f0ca28dc56178f8d164a7df85d118a5b4baca388d6bcb4e854e"
+ },
+ "rsna_pneumonia/rsna-pneumonia-detection-challenge.zip": {
+  "bytes": 3932287530,
+  "sha256": "133acacf95aa68c4d219124b17937f31cec073052096b9f9b122180df9d9af18"
  }
 }
