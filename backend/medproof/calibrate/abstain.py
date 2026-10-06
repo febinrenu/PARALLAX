@@ -46,6 +46,10 @@ def fit_tiers(conf: np.ndarray, correct: np.ndarray, acc_high: float = 0.95, acc
     t_mod = _threshold_for_accuracy(conf, correct, acc_moderate, min_count)
     if t_high is not None and t_mod is not None and t_mod > t_high:
         t_mod = t_high
+    if t_mod is not None and t_mod < t_low:  # below t_low the reader abstains, so a lower "moderate" threshold would never apply
+        t_mod = t_low
+    if t_high is not None and t_high < t_low:
+        t_high = t_low
     return TierRule(t_high=t_high, t_moderate=t_mod, t_low=t_low, max_set_size=max_set_size)
 
 

@@ -2645,7 +2645,7 @@
     },
     "tier_rule": {
      "t_high": 0.8977406564656913,
-     "t_moderate": 0.48042281680697846,
+     "t_moderate": 0.5,
      "t_low": 0.5,
      "max_set_size": 2
     },
@@ -5337,7 +5337,7 @@
     },
     "tier_rule": {
      "t_high": 0.6333719592353397,
-     "t_moderate": 0.3719441868501912,
+     "t_moderate": 0.5,
      "t_low": 0.5,
      "max_set_size": 2
     },

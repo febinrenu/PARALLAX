@@ -60,20 +60,20 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
+| P2.1 | Dataset downloads + manifests | done | main | 2026-10-07 | all Claude-fetchable sets present with manifests and a pinned lock file; BDNeuro registered from the manual download |
 | P2.2 | Leakage audit + group splits | done | main | 2026-10-07 | all six datasets audited; reports/leakage.json |
 | P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.5 | Skin classifier (Kaggle) | done | main | 2026-10-07 | official-test BMA 0.680 [0.632, 0.728]; registered |
 | P2.6 | Bone detector (Kaggle) | done | main | 2026-10-07 | mAP50 0.453, image AUROC 0.923; registered |
-| P2.7 | CXR calibration + external validation | doing | main | 2026-10-07 | scores cached for chex, mimic_ch, all; metrics in progress |
-| P2.8 | Temperature scaling + conformal | doing | main | 2026-10-07 | library + skin and brain calibration done; chest and bone next |
-| P2.9 | Selective prediction | todo | | | |
-| P2.10 | Trust-signal validation (D13) | todo | | | |
-| P2.11 | Subgroup audit | todo | | | |
-| P2.12 | Corruption benchmark | doing | main | 2026-10-07 | corruption runs in progress |
-| P2.13 | Model cards + datasheets | todo | | | |
-| P2.14 | make eval | todo | | | |
+| P2.7 | CXR calibration + external validation | done | main | 2026-10-07 | RSNA: chex AUROC 0.785, mimic_ch 0.749, contaminated all 0.875; pointing game and IoU in reports/cxr.json |
+| P2.8 | Temperature scaling + conformal | done | main | 2026-10-07 | backend/medproof/calibrate; skin official-test coverage 0.898 at the 0.90 target; chest and bone FNR within 3 points; brain over-covers (0.94) |
+| P2.9 | Selective prediction | done | main | 2026-10-07 | AURC and risk-coverage for skin, brain, chest, bone; reports/figures/risk_coverage.png |
+| P2.10 | Trust-signal validation (D13) | done | main | 2026-10-07 | unstable, abstain, OOD-energy predict errors; quality gate does not; discordant and unfaithful pending P3 and P1.9 (harness ready) |
+| P2.11 | Subgroup audit | done | main | 2026-10-07 | age, sex, site, body part, view; worst subgroups named in reports/subgroups.json |
+| P2.12 | Corruption benchmark | done | main | 2026-10-07 | 8 perturbations x 5 severities on 5 models; reports/corruption.json and figure |
+| P2.13 | Model cards + datasheets | done | main | 2026-10-07 | docs/model_cards (8) and docs/datasheets (7), generated from metrics.json |
+| P2.14 | make eval | done | main | 2026-10-07 | python ml/eval/run_all.py: about 100 s, byte-reproducible; reports/metrics.json is the single source |
 
 ### P3 — Clinical Reasoning & Trust
 
@@ -131,17 +131,20 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
 
 ### P2 — Data, Training & Validation
-**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Merged to `main`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
-**Next:** push `p2/data` (the notebooks clone it), launch the four jobs once the Kaggle token exists, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
-**Blockers:** (1) none for RSNA any more: rules accepted, download running. (2) BDNeuro-MRI licence: its README still says `[FILL IN]`; check the Mendeley page and record it before we show results on it.
-**Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
-**For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**
-- Run `python ml/data/download.py core` once on your machine, or point `PARALLAX_DATA_ROOT` at a folder that has `<dataset>/...` as laid out in `ml/data/splits/*.csv` (`source_dir` + `relpath`). On Kaggle, symlink attached inputs into that layout.
-- `from ml.data.common import load_split, image_path, load_eval_index`. `load_split("ham10000")` gives one row per image with `label`, `split` (`train/val/cal/test`, `official_test` for the ISIC test set, `dropped` = removed by the audit), `age`, `sex`, `site_general` (note seeds), `group`, `eval_batch`.
-- `ml/data/eval_index.json` lists, per dataset, the test split and a bounded batch subset (`eval_batch == True`, at most 1,000 images, label-stratified, seeded). Use it for the MedGemma batch reads (P3.1/3.2): fracatlas 569 test images, ham10000 official test 1,000 of 1,512.
-- Retrieval index (P3.8): build it from `split == "train"` only, so a precedent can never be a test image.
-- Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
-- brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
+**Now:** every P2 work package is done and pushed to `main` (P2.1 to P2.14). `python ml/eval/run_all.py --check` reproduces `reports/metrics.json` exactly in about 100 s from committed files only; `docs/validation_report.md`, 8 model cards, 7 datasheets and 6 figures are generated from it. Tests: `python -m pytest ml/tests -q` and `cd backend && python -m pytest -q` (555 passed).
+**Next:** nothing blocking. Open items that need other roles are listed below. Optional P2 latitude if time remains: MILK10k external skin test (M4), a higher-resolution skin model or ensemble (official-test balanced accuracy is 0.68), the discordant and unfaithful signals once their inputs exist.
+**Blockers:** none. BDNeuro-MRI licence is unconfirmed (README placeholder); the datasheet says so.
+**Machine:** laptop, NVIDIA RTX 4050 6 GB.
+**For P1 (everything below is on `main`):**
+- Weights are not in git. They are in `ml/artifacts/<model>/weights.pt` on the P2 laptop and in the private Kaggle outputs (`rishijayanath/parallax-p2-6-bone-fracture-detector`; `johannshonigeorge/parallax-p2-3-brain-mri-classifier`, `parallax-p2-4-brain-tumour-segmenter`, `parallax-p2-5-skin-lesion-classifier`). Ask P2 to send them, or pull with the Kaggle CLI. `ml/artifacts/registry.json` has the class order, preprocessing spec name, sha256 and licence for each.
+- Rebuild a classifier with `timm.create_model(arch, pretrained=False, num_classes=len(classes))` and `load_state_dict(torch.load(weights.pt))`; the segmenter is `smp.Unet("resnet34", encoder_weights=None, in_channels=3, classes=1)`; the bone model loads with `ultralytics.YOLO(weights.pt)` and `predict(imgsz=640, conf=0.001)` (the library letterboxes itself). The segmenter uses a new spec `brain_seg` (256 px, 3 channels, ImageNet mean and std, stretch): please add it to `intake/preprocess.py` (its definition is `SEG_SPEC` in `ml/train/seg.py`).
+- Calibration to apply at serving time, no torch needed: `from medproof.calibrate.calibrator import Calibrator; Calibrator.load("ml/artifacts/skin_cls/calibration.json").calibrate(logits)` returns calibrated probabilities, a conformal set of class names (target coverage 90%) and a tier (`high`/`moderate`/`low`/`abstain`) per input; same for `brain_cls`. Binary readers: `BinaryCalibrator.load("ml/artifacts/bone_det/calibration.json")` and `ml/artifacts/cxr_chex/calibration_lung.json` (`.prob(score)`, `.decide(score)` with the FNR-controlled report flag and abstention band). The product demo reads the chest model `all`, which saw RSNA, so the calibrator fitted for it on RSNA is optimistic: either switch the product to the `chex` weights, or accept uncalibrated-looking confidence and say so.
+- **Quality gate needs refitting.** On real clean images it flags 43% (skin), 88% (brain), 45% (chest) and 91% (bone) of images, and flagged images are not wrong more often (reports/signals.json). Dominant reasons: `clipped` (black borders in MRI and chest films count as clipped pixels), `low_contrast` and `overexposed` for dermoscopy, `low_resolution` for small FracAtlas images. Percentile tables per metric are in the same file.
+- **Truncated JPEGs.** 59 FracAtlas negatives lose their last few bytes; `load_image` raises `DecodeError` on them although OpenCV and tolerant PIL decode them fine. A tolerant fallback in `intake/decode.py` would keep such uploads working.
+- fp16 inference on the brain classifier produced non-finite logits for one unusual image; serving on CPU float32 is unaffected, but guard against non-finite outputs.
+- Faithfulness (P1.9) and stability (P1.11): `ml/eval/signals.py::compare(df, flag)` validates any per-image boolean column against errors. The corruption benchmark already shows flip rate at severity 2 above 0.25 predicts errors strongly (skin 0.61 vs 0.13 error; brain 0.87 vs 0.03).
+**For P3:** specialist predictions on the same images as your MedGemma batches are cached: `ml/artifacts/skin_cls/predictions/official_test.npz` (ids, logits, y, group) and `ml/artifacts/bone_det/predictions/test.npz` (ids, packed boxes). Once the reads are complete, build a per-image `discordant` column and call `signals.compare`; a bone `discordant` flag must not downgrade findings until it passes. The chest reader is validated in `reports/cxr.json`.
+**For P4:** `reports/metrics.json` is the only file the validation page needs (headline rows with CIs and contamination status, calibration, selective prediction, trust signals, subgroups, corruption, OOD, leakage, registry); `docs/model_cards/index.json` and `docs/datasheets/index.json` list the cards and sheets for the `/models` page; `reports/figures/*.png` are static fallbacks. `ml/Makefile.inc` defines `data`, `eval`, `eval-check`, `figures`, `ml-test`: please include it and ack the `.gitignore` carve-out for `ml/data/` (Decisions, 2026-10-06).
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
 - rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738]; output not pulled (Kaggle rate limit), superseded by the rerun below
 - rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs then failed at prediction export on truncated JPEGs (fixed in 8539baf); v2 COMPLETE 2026-10-07 02:56, pulled, registered as bone_det@8539baf9. Test (569 images, 103 fractured): mAP50 0.453 [0.367, 0.547], image AUROC 0.923 [0.886, 0.957], sensitivity 0.835 [0.757, 0.903] at the validation-fixed 90%-specificity threshold (test specificity 0.880)
@@ -217,6 +220,12 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P3 · Entailment judge input shows the second reader as an explicit word ("agrees", "disagrees", "inconclusive", "unavailable"), a summary of what the notes contain (to verify "the notes do not mention history"), and readable flag phrases. These came from the first-pass errors on variant 0; variant 1 was written afterwards and is the fair measurement · reports/p3_entailment_*.json
 - 2026-10-07 · P3 · Voice: Whisper gets a static clinical-vocabulary prompt (no patient data) and the transcript is treated as an untrusted note: same guard and extraction as typed text · context/voice.py
 - 2026-10-07 · P3 · MedGemma service reads its prompt files once at start. A git rebase during a long batch removed a prompt file for a moment and killed the run; resumable by image id, so nothing was lost but time · services/medgemma/reader.py
+- 2026-10-07 · P2 · Conformal sets use the randomised APS with a zero conformity score for a true top class, and the set always contains the top class · the deterministic APS over-covered badly (coverage 0.985 at a 0.90 target on the brain set, 0.953 on skin), because wrong cases sit near score 1 and the quantile jumps the gap; forcing the top class into a randomised rule overshot too (0.958), so the score for a true top class is zero, which is valid split conformal and gives 0.898 on the official skin test. The per-input random draw is a hash of the logits, so a study always gets the same set.
+- 2026-10-07 · P2 · Binary readers (chest label, bone image score) use Platt scaling on logit(score) plus a conformal false-negative-rate threshold and an abstention band at calibrated probability 0.4 to 0.6, fitted on separate halves of the calibration data · temperature alone cannot fix the base rate of operating-point-scaled chest scores (ECE 0.220 to 0.018 with Platt); only Lung Opacity and Pneumonia can be calibrated on RSNA, the other 16 labels stay uncalibrated.
+- 2026-10-07 · P2 · `make eval` uses B=1000 bootstrap resamples (notebooks used 2000), B=500 for subgroup cells, B=300 for corruption cells and for the validation and calibration splits, and AUPRC and temperature-only ECE as point estimates · keeps the run near 100 s; intervals agree with the notebook ones to the third decimal on the headline metrics.
+- 2026-10-07 · P2 · Quality-gate flags and RSNA header demographics are committed (`ml/artifacts/<model>/predictions/quality.csv`, `ml/data/splits/rsna_meta.csv`) · both need the raw images, and `make eval` must run from a fresh clone.
+- 2026-10-07 · P2 · Brain similarity grouping uses Hamming radius 6, not 10, and LGG patients merge only on near-duplicate tumour slices · radius 10 chained 5,619 of 7,200 images into one group and dark top and bottom slices matched across LGG patients; both made the splits useless.
+- 2026-10-07 · P2 · The energy-score OOD baseline reaches AUROC 0.83 to 0.98 against other modalities and CIFAR-10, below the 0.95 target · P1.5 (MedSigLIP Mahalanobis) is still needed; the product decoder also rejects 59 truncated FracAtlas JPEGs (see For P1).
 
 ## Contract change requests
 
@@ -296,4 +305,13 @@ State: P3.11, P3.12, P3.13 done and pushed. HAM10000 reads have only just starte
 Verified: pytest backend + ml/tests (mine) + services: 560+ passed, 5 skipped (the gpu-marked smoke and P2 tests that need torch/sklearn). Entailment: first pass 55/60; fixed judge 59/60 on the fresh variant (29/30 true sentences kept, 30/30 defective caught), 60/60 on the tuned variant; false rejections are the judge's main error (about 2-3%). Voice: real round trip OK. FHIR: bundle validates; 11 tests.
 Next: run `python -m ml.eval_p3.eval_second_reader` when the reads finish, then report whether specialist agreement predicts specialist correctness (D13 input for P2); retrieval needs P1's embedding function; wire stages into P4's pipeline.
 Decisions: see Decisions (4 entries dated 2026-10-07 added).
+Contract change requests: none.
+
+### 2026-10-07 · P2 · Sonnet 5.5 · WP P2.1 to P2.14 complete
+Did: downloaded and audited all datasets (Kaggle brain, LGG and RSNA included); launched and registered the four Kaggle jobs (skin, brain classifier, segmenter, bone; two accounts because of the 2-GPU-session limit); calibration library and per-model calibration; chest-reader validation on RSNA with external and contaminated weights and Grad-CAM localisation scoring; external brain test on BDNeuro; corruption benchmark; trust-signal and subgroup audits; model cards, datasheets, figures, validation report; `make eval`.
+State: P2.1 to P2.14 done. P2.10 is partial by design: discordant needs P3's complete second-reader batch and unfaithful needs P1.9; the harness is ready.
+Verified: `cd backend && python -m pytest -q` gives 555 passed; `python -m pytest ml/tests -q` gives 129 passed; `python ml/eval/run_all.py --check` reproduces reports/metrics.json exactly in about 100 s.
+Headline: skin official-test balanced accuracy 0.680 [0.634, 0.726]; brain leakage-free accuracy 0.940 [0.921, 0.958], external BDNeuro 0.755 [0.735, 0.775]; segmenter mean per-patient Dice 0.831 [0.716, 0.890]; bone image AUROC 0.923 [0.885, 0.957]; chest AUROC on RSNA 0.785 (chex) and 0.749 (mimic_ch) against 0.875 for the contaminated all-data weights.
+Next: P1 to refit the quality gate and add the `brain_seg` spec; P3 to finish the second-reader batch; P4 to render `reports/metrics.json` and the cards.
+Decisions: see Decisions, entries dated 2026-10-07 for P2.
 Contract change requests: none.
