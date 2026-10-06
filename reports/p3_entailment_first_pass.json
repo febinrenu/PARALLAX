@@ -1,0 +1,59 @@
+{
+  "cases": 60,
+  "judged": 60,
+  "unchecked": 0,
+  "accuracy": 0.9167,
+  "entailed_sentences_kept": "25/30",
+  "defective_sentences_caught": "30/30",
+  "by_kind": {
+    "abstain": "1/1",
+    "consider": "6/6",
+    "context_missing": "3/6",
+    "discordant": "1/2",
+    "extra_claim": "3/3",
+    "flag_clause": "3/3",
+    "inflated_status": "3/3",
+    "invented_quote": "4/4",
+    "invented_second_read": "5/5",
+    "label_set": "1/1",
+    "second_read_clause": "5/6",
+    "supported_by_note": "5/5",
+    "wrong_label": "5/5",
+    "wrong_region": "5/5",
+    "wrong_tier": "5/5"
+  },
+  "errors": [
+    {
+      "truth": true,
+      "kind": "second_read_clause",
+      "sentence": "Doctor, consider mel (high confidence); second read unavailable.",
+      "judge_reason": "E1_not_entailed: second read statement unsupported"
+    },
+    {
+      "truth": true,
+      "kind": "context_missing",
+      "sentence": "Doctor, the notes do not mention history relevant to Pneumothorax; please add context.",
+      "judge_reason": "E1_not_entailed: note claim unsupported"
+    },
+    {
+      "truth": true,
+      "kind": "context_missing",
+      "sentence": "Doctor, the notes do not mention history relevant to Effusion; please add context.",
+      "judge_reason": "E1_not_entailed: unsupported note claim"
+    },
+    {
+      "truth": true,
+      "kind": "discordant",
+      "sentence": "Doctor, the two readers disagree on Effusion; please review the image directly.",
+      "judge_reason": "E1_not_entailed: second reader disagreement mismatch"
+    },
+    {
+      "truth": true,
+      "kind": "context_missing",
+      "sentence": "Doctor, the notes do not mention history relevant to mel; please add context.",
+      "judge_reason": "E1_not_entailed: notes claim unsupported"
+    }
+  ],
+  "judge_model": "openai/gpt-oss-20b",
+  "stage_warnings": []
+}
