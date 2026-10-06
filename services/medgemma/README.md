@@ -39,3 +39,12 @@ The model loads on the first `/read`. `GET /health` shows whether it is loaded.
 
 - The box convention (x/y order and 0..1000 grid) is requested in the prompt but has not been checked against real model output. Check on the first smoke run and fix the prompt or the parser.
 - Do not use RSNA images for smoke tests or demos; use a CC-0/CC-BY radiograph.
+
+## Who needs a GPU
+
+Only whoever runs this service, and only when a new image needs a second read.
+
+- The pipeline treats MedGemma as optional. If `MEDGEMMA_URL` is unset or the service is down, a study still completes and reports `second read unavailable`.
+- Frontend, API, ledger, Docker and the specialist models (DenseNet, EfficientNet, YOLO nano) run on a CPU.
+- 4-bit MedGemma needs an NVIDIA GPU of roughly 6 GB or more (an RTX 4060 laptop uses 3.2 GiB). Without one, use the Kaggle or Colab notebook with a cloudflared tunnel, or do not run it at all.
+- For the offline demo, ship the reads: run `python -m medproof.readers.export_seed --images demo/cases/cxr --modality cxr --out demo/medgemma_reads` once on a machine with the service, commit the small JSON files, and set `MEDGEMMA_SEED_DIR=demo/medgemma_reads`. Those images are then answered with no GPU, no tunnel and no cache. Files are matched by the image SHA-256 and the prompt version, so they only apply to the same image and prompt.

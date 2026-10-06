@@ -58,3 +58,4 @@ ml/artifacts/_logs/
 .cache/
 ml/artifacts/medgemma_reads/
 .venv-gpu/
+ml/artifacts/retrieval/

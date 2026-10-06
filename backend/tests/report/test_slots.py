@@ -31,3 +31,11 @@ def test_digit_in_literal_text_is_rejected():
 def test_slot_digits_are_part_of_the_ref_only():
     p = parse_template("Doctor, consider {f12.label}.")
     assert p.slots == [Slot("f12", "label")]
+
+
+def test_report_vocabulary_matches_the_calibration_tiers():
+    # P2's calibrator emits these tiers; the renderer and the confidence lexicon must know every one.
+    from medproof.calibrate.abstain import TIERS
+    from medproof.report import lexicon
+
+    assert set(TIERS) == set(lexicon.TIER_PHRASE)
