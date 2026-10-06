@@ -331,9 +331,61 @@
     "val": 266
    },
    "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
+  },
+  "rsna": {
+   "duplicate_clusters": 692,
+   "duplicate_pairs": 1851,
+   "flat_images_excluded_from_matching": 0,
+   "images_removed": 1278,
+   "images_with_duplicate_in_another_original_split": {},
+   "label_conflict_clusters": 1,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 503,
+   "max_hamming": 4,
+   "n_images": 26684,
+   "note": "TorchXRayVision 'all' weights were trained on RSNA; use chex / mimic_ch weights for external numbers",
+   "pairs_across_original_splits": 0,
+   "pairs_by_distance": {
+    "0": 3,
+    "1": 0,
+    "2": 77,
+    "3": 0,
+    "4": 1771
+   },
+   "pairs_within_original_split": 1851,
+   "removed_by_reason": {
+    "duplicate": 1276,
+    "duplicate_of_immutable_test_image": 0,
+    "label_conflict": 2
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "cal": {
+     "Lung_Opacity": 1769,
+     "No_Lung_Opacity_Not_Normal": 3407,
+     "Normal": 2445
+    },
+    "dropped": {
+     "Lung_Opacity": 114,
+     "No_Lung_Opacity_Not_Normal": 475,
+     "Normal": 689
+    },
+    "test": {
+     "Lung_Opacity": 4129,
+     "No_Lung_Opacity_Not_Normal": 7939,
+     "Normal": 5717
+    }
+   },
+   "split_counts": {
+    "cal": 7621,
+    "dropped": 1278,
+    "test": 17785
+   },
+   "split_hash": "8f312ba53ea1256af1fb47c65d111db65c0cd09c3aad5d8a22ab5c9a10812621",
+   "truncated_source_files": 0
   }
  },
- "generated_utc": "2026-10-06T19:44:04Z",
+ "generated_utc": "2026-10-06T20:30:56Z",
  "method": {
   "duplicate_max_hamming": 4,
   "hash": "64-bit DCT pHash",

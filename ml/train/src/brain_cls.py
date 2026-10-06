@@ -17,10 +17,10 @@ SMOKE = os.environ.get("SMOKE") == "1"
 SLUG = "brain_cls"
 ON_KAGGLE = Path("/kaggle/working").is_dir()
 if ON_KAGGLE:
-    REPO = Path("/kaggle/working/PARALLAX")
+    SCRATCH = Path("/kaggle/temp") if Path("/kaggle/temp").is_dir() else Path("/tmp")  # anything under /kaggle/working is saved as notebook output
+    REPO = SCRATCH / "PARALLAX"
     if not REPO.exists():
         subprocess.run(["git", "clone", "--depth", "1", "--branch", BRANCH, REPO_URL, str(REPO)], check=True)
-    SCRATCH = Path("/kaggle/temp") if Path("/kaggle/temp").is_dir() else Path("/kaggle/working")  # not part of the saved output
     ROOT, OUT = Path(os.environ.get("PARALLAX_DATA_ROOT", SCRATCH / "raw")), Path(f"/kaggle/working/{SLUG}")
 else:
     REPO = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "CLAUDE.md").exists())

@@ -1,0 +1,39 @@
+{
+ "model_id": "bone_det@8539baf9",
+ "task": "detection",
+ "arch": "yolo26n",
+ "classes": [
+  "fracture"
+ ],
+ "preproc_spec": "ultralytics_letterbox_640",
+ "weights_file": "weights.pt",
+ "weights_sha256": "6e81f1775688d5a7287f06fe4b7e3da0e9837fa9b6f39c52c3dade25bcaa69a9",
+ "split_name": "fracatlas",
+ "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5",
+ "training_data": [
+  "fracatlas (figshare, CC BY 4.0)"
+ ],
+ "git_commit": "8539baf96ad8204cf7104cd61621d6bd3841ab17",
+ "seed": 20261006,
+ "python": "3.13.15",
+ "torch": "2.11.0+cu128",
+ "wall_sec": 2876.4968886375427,
+ "data": {
+  "git_commit": "8539baf96ad8204cf7104cd61621d6bd3841ab17",
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "cuda": true,
+  "gpu": "Tesla T4",
+  "datasets": {
+   "fracatlas": {
+    "file_count": 12260,
+    "total_bytes": 342755033,
+    "license": "CC BY 4.0",
+    "files_sha256_digest": "b4fea1dee6fe139e19c19064e795157c322abbc3a467d24a0cfc7efdbf626b3e",
+    "retrieved_utc": "2026-10-06T20:34:17Z"
+   }
+  }
+ },
+ "imgsz": 640,
+ "inference": "load weights.pt with ultralytics.YOLO and call predict(imgsz=640, conf=0.001); the library applies its own letterbox"
+}

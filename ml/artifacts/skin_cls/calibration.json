@@ -1,0 +1,40 @@
+{
+ "classes": [
+  "akiec",
+  "bcc",
+  "bkl",
+  "df",
+  "mel",
+  "nv",
+  "vasc"
+ ],
+ "temperature": 0.9227102065363618,
+ "alpha": 0.1,
+ "qhat": 0.8420463579608382,
+ "method": "aps_randomized",
+ "coverage_target": 0.9,
+ "tier_rule": {
+  "t_high": 0.8977406564656913,
+  "t_moderate": 0.48042281680697846,
+  "t_low": 0.5,
+  "max_set_size": 2
+ },
+ "mondrian_qhat": [
+  0.980516055222716,
+  0.9278411355657469,
+  0.9344628553599985,
+  0.9232149199801322,
+  0.9383985865270962,
+  0.0,
+  0.3530069042773589
+ ],
+ "meta": {
+  "n_val": 972,
+  "n_cal": 971,
+  "model_id": "skin_cls@a217517b",
+  "fit_splits": {
+   "temperature": "val",
+   "conformal_and_tiers": "cal"
+  }
+ }
+}

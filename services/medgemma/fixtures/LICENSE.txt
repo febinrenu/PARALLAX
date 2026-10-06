@@ -1,0 +1,4 @@
+smoke_cxr.png
+Source: https://commons.wikimedia.org/wiki/File:Chest_Xray_PA_3-8-2010.png
+Author: Stillwaterising (Wikimedia Commons)
+License: CC0 1.0 (public domain dedication), checked 2026-10-06 via the Commons API

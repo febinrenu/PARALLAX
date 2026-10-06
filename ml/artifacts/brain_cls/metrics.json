@@ -1,0 +1,1339 @@
+{
+ "config": {
+  "arch": "efficientnet_b0.ra_in1k",
+  "epochs": 10,
+  "lr": 0.0003,
+  "weight_decay": 0.01,
+  "batch_size": 64,
+  "label_smoothing": 0.1,
+  "aug": {
+   "rot_deg": 10.0,
+   "scale": [
+    0.9,
+    1.1
+   ],
+   "shift": 0.05,
+   "flip_h": true,
+   "flip_v": false,
+   "brightness": 0.1,
+   "contrast": 0.1
+  },
+  "bootstrap_B": 2000,
+  "smoke_per_split": 40
+ },
+ "A_original_testing": {
+  "n": 1600,
+  "n_groups": 1101,
+  "accuracy": {
+   "point": 0.941875,
+   "lo": 0.9284259406705161,
+   "hi": 0.9541244799346956,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.941875,
+   "lo": 0.9286305225598137,
+   "hi": 0.9545643013489077,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.9407001465752193,
+   "lo": 0.9268904483885707,
+   "hi": 0.9530646199753872,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9851098958333333,
+   "lo": 0.9793727965948352,
+   "hi": 0.9901497035301504,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.255113649231744,
+   "lo": 0.21967717131955258,
+   "hi": 0.29489468171116207,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.061043697870830214,
+   "lo": 0.052608837925898135,
+   "hi": 0.07344096704005798,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1101,
+   "n": 1600,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.8225,
+    "lo": 0.7756204420826502,
+    "hi": 0.8679255492934739,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1101,
+    "n": 1600,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.945,
+    "lo": 0.920858553541782,
+    "hi": 0.9650894529844543,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1101,
+    "n": 1600,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1101,
+    "n": 1600,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1101,
+    "n": 1600,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    329,
+    38,
+    33,
+    0
+   ],
+   [
+    7,
+    378,
+    5,
+    10
+   ],
+   [
+    0,
+    0,
+    400,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    400
+   ]
+  ]
+ },
+ "A_testing_without_duplicates": {
+  "n": 873,
+  "n_groups": 696,
+  "accuracy": {
+   "point": 0.9026345933562429,
+   "lo": 0.8776452416206758,
+   "hi": 0.9253186794389326,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.9272086400889012,
+   "lo": 0.9108771944640307,
+   "hi": 0.94235266166494,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.8574102993651629,
+   "lo": 0.8264294149840362,
+   "hi": 0.8876968753254679,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9789090543948173,
+   "lo": 0.9706786097063687,
+   "hi": 0.985830174018568,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.36536860204209703,
+   "lo": 0.2991747565660665,
+   "hi": 0.4388651460695424,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.049726702769953106,
+   "lo": 0.03851727156927405,
+   "hi": 0.07104839340107078,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 696,
+   "n": 873,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.7827476038338658,
+    "lo": 0.7283883101851852,
+    "hi": 0.8323288184726109,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 696,
+    "n": 873,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.9260869565217391,
+    "lo": 0.8898669080863137,
+    "hi": 0.9570861303693922,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 696,
+    "n": 873,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 696,
+    "n": 873,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 696,
+    "n": 873,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    245,
+    35,
+    33,
+    0
+   ],
+   [
+    7,
+    213,
+    2,
+    8
+   ],
+   [
+    0,
+    0,
+    38,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    292
+   ]
+  ]
+ },
+ "A_testing_without_scan_neighbours": {
+  "n": 549,
+  "n_groups": 498,
+  "accuracy": {
+   "point": 0.8652094717668488,
+   "lo": 0.834807473901761,
+   "hi": 0.8940797340643455,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.9111969111969112,
+   "lo": 0.8915871209649391,
+   "hi": 0.9304561962284671,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.8261005491121846,
+   "lo": 0.7892506989627897,
+   "hi": 0.8627441101236943,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9723240641004631,
+   "lo": 0.9621347955263935,
+   "hi": 0.9812283421341378,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.4719072992143295,
+   "lo": 0.38958772531973224,
+   "hi": 0.558162909894731,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.05144179281881816,
+   "lo": 0.040919567923452,
+   "hi": 0.0810691442358261,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 498,
+   "n": 549,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.7162162162162162,
+    "lo": 0.6532995594713656,
+    "hi": 0.780373831775701,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 498,
+    "n": 549,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.9285714285714286,
+    "lo": 0.8831168831168831,
+    "hi": 0.9673202614379085,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 498,
+    "n": 549,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 498,
+    "n": 549,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 498,
+    "n": 549,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    159,
+    31,
+    32,
+    0
+   ],
+   [
+    5,
+    143,
+    2,
+    4
+   ],
+   [
+    0,
+    0,
+    28,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    145
+   ]
+  ]
+ },
+ "leakage_free_test": {
+  "n": 563,
+  "n_groups": 338,
+  "accuracy": {
+   "point": 0.9396092362344582,
+   "lo": 0.9212960892466706,
+   "hi": 0.9583333333333334,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.9363272854083554,
+   "lo": 0.9114188157054776,
+   "hi": 0.9579279936357011,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.9363665766576176,
+   "lo": 0.9138668868299198,
+   "hi": 0.9569773976852645,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9891854076292288,
+   "lo": 0.9792591388769746,
+   "hi": 0.9969996414139896,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.23487108743421106,
+   "lo": 0.20121663328275438,
+   "hi": 0.27888859107015257,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.07885857939984364,
+   "lo": 0.06761310245219096,
+   "hi": 0.10510473603893437,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.9489795918367347,
+    "lo": 0.9237282362721101,
+    "hi": 0.9831967787114845,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.9053254437869822,
+    "lo": 0.8613128138053247,
+    "hi": 0.944108005521049,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 0.9122807017543859,
+    "lo": 0.8281115301724138,
+    "hi": 0.9811320754716981,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 0.9787234042553191,
+    "lo": 0.9504117578102105,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    186,
+    7,
+    3,
+    0
+   ],
+   [
+    11,
+    153,
+    1,
+    4
+   ],
+   [
+    3,
+    0,
+    52,
+    2
+   ],
+   [
+    2,
+    0,
+    1,
+    138
+   ]
+  ]
+ },
+ "val": {
+  "n": 456,
+  "n_groups": 339,
+  "accuracy": {
+   "point": 0.9035087719298246,
+   "lo": 0.874686786305729,
+   "hi": 0.9285854893138358,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.8948918344605351,
+   "lo": 0.8629571108714437,
+   "hi": 0.923974533927611,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.8977106833654551,
+   "lo": 0.8670971513338976,
+   "hi": 0.9245289200147419,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9867809906580501,
+   "lo": 0.9780870597501726,
+   "hi": 0.9933002251945042,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.30638655203719767,
+   "lo": 0.2547310323956183,
+   "hi": 0.36954366018222684,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.07438147335503249,
+   "lo": 0.06790602990584686,
+   "hi": 0.1029560869844473,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 339,
+   "n": 456,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.9538461538461539,
+    "lo": 0.9117528462998102,
+    "hi": 0.991869918699187,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 339,
+    "n": 456,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.8088235294117647,
+    "lo": 0.7401574803149606,
+    "hi": 0.8702358723708056,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 339,
+    "n": 456,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 0.8392857142857143,
+    "lo": 0.7368172790466733,
+    "hi": 0.9310344827586207,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 339,
+    "n": 456,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 0.9776119402985075,
+    "lo": 0.942846865364851,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 339,
+    "n": 456,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    124,
+    5,
+    1,
+    0
+   ],
+   [
+    10,
+    110,
+    4,
+    12
+   ],
+   [
+    2,
+    5,
+    47,
+    2
+   ],
+   [
+    2,
+    1,
+    0,
+    131
+   ]
+  ]
+ },
+ "cal": {
+  "n": 457,
+  "n_groups": 345,
+  "accuracy": {
+   "point": 0.9146608315098468,
+   "lo": 0.8818728357703433,
+   "hi": 0.9429235562479137,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.9167621774334553,
+   "lo": 0.8858470727568956,
+   "hi": 0.9444712087137094,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.9110820262830575,
+   "lo": 0.8770096502946568,
+   "hi": 0.942095359156598,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9873452289289646,
+   "lo": 0.9763901954541061,
+   "hi": 0.9950742068130922,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.293528566027226,
+   "lo": 0.23510170280792325,
+   "hi": 0.3686421923134855,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.08337040674380912,
+   "lo": 0.06398489960777361,
+   "hi": 0.10945307238761061,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 345,
+   "n": 457,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.9291338582677166,
+    "lo": 0.8780487804878049,
+    "hi": 0.9694656488549618,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 345,
+    "n": 457,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.8686131386861314,
+    "lo": 0.8014680701047543,
+    "hi": 0.9296875,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 345,
+    "n": 457,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 0.9272727272727272,
+    "lo": 0.8510372340425532,
+    "hi": 0.9838709677419355,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 345,
+    "n": 457,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 0.9420289855072463,
+    "lo": 0.8819430774278215,
+    "hi": 0.9924242424242424,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 345,
+    "n": 457,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    118,
+    4,
+    2,
+    3
+   ],
+   [
+    4,
+    119,
+    6,
+    8
+   ],
+   [
+    1,
+    0,
+    51,
+    3
+   ],
+   [
+    0,
+    7,
+    1,
+    130
+   ]
+  ]
+ },
+ "inflation": {
+  "accuracy_original_minus_leakage_free": {
+   "point": 0.002265763765541773,
+   "lo": -0.020278653313356522,
+   "hi": 0.025585535693203706,
+   "level": 0.95,
+   "method": "independent percentile difference"
+  },
+  "n_testing_with_duplicate_in_training": 727,
+  "n_testing_with_scan_neighbour_in_training": 1051,
+  "note": "A and B are different models on different test sets, so the difference mixes model and test-set effects; the within-model rows above isolate the leak"
+ },
+ "headline": {
+  "n": 563,
+  "n_groups": 338,
+  "accuracy": {
+   "point": 0.9396092362344582,
+   "lo": 0.9212960892466706,
+   "hi": 0.9583333333333334,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.9363272854083554,
+   "lo": 0.9114188157054776,
+   "hi": 0.9579279936357011,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.9363665766576176,
+   "lo": 0.9138668868299198,
+   "hi": 0.9569773976852645,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9891854076292288,
+   "lo": 0.9792591388769746,
+   "hi": 0.9969996414139896,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.23487108743421106,
+   "lo": 0.20121663328275438,
+   "hi": 0.27888859107015257,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.07885857939984364,
+   "lo": 0.06761310245219096,
+   "hi": 0.10510473603893437,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 338,
+   "n": 563,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "glioma": {
+    "point": 0.9489795918367347,
+    "lo": 0.9237282362721101,
+    "hi": 0.9831967787114845,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "meningioma": {
+    "point": 0.9053254437869822,
+    "lo": 0.8613128138053247,
+    "hi": 0.944108005521049,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "notumor": {
+    "point": 0.9122807017543859,
+    "lo": 0.8281115301724138,
+    "hi": 0.9811320754716981,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "pituitary": {
+    "point": 0.9787234042553191,
+    "lo": 0.9504117578102105,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 338,
+    "n": 563,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "confusion": [
+   [
+    186,
+    7,
+    3,
+    0
+   ],
+   [
+    11,
+    153,
+    1,
+    4
+   ],
+   [
+    3,
+    0,
+    52,
+    2
+   ],
+   [
+    2,
+    0,
+    1,
+    138
+   ]
+  ]
+ },
+ "notes": {
+  "ci": "95% percentile cluster bootstrap, groups = pHash similarity clusters (no patient ids exist), class-stratified, B=2000",
+  "limitation": "brain_mri merges Br35H, SARTAJ and Figshare; patient grouping is approximated by image similarity",
+  "contamination": "BDNeuro-MRI external set never used for training"
+ },
+ "history_A": [
+  {
+   "epoch": 1,
+   "train_loss": 1.9943180188793916,
+   "val_loss": 0.5591403222632683,
+   "val_bal_acc": 0.8140447522318716,
+   "val_acc": 0.8181818181818182,
+   "sec": 132.1
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.7741962531346795,
+   "val_loss": 0.2851046694598531,
+   "val_bal_acc": 0.9075824326715725,
+   "val_acc": 0.9090909090909091,
+   "sec": 12.3
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.5594480675372558,
+   "val_loss": 0.21517335354049624,
+   "val_bal_acc": 0.9355702609676759,
+   "val_acc": 0.9393939393939394,
+   "sec": 12.8
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.47392261054312856,
+   "val_loss": 0.1769959044096437,
+   "val_bal_acc": 0.9580305731509118,
+   "val_acc": 0.9607843137254902,
+   "sec": 12.9
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.4368904866699568,
+   "val_loss": 0.15643648265572546,
+   "val_bal_acc": 0.9774651232736956,
+   "val_acc": 0.9786096256684492,
+   "sec": 12.4
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.41463282509771787,
+   "val_loss": 0.13387053600024348,
+   "val_bal_acc": 0.9849429621287444,
+   "val_acc": 0.9857397504456328,
+   "sec": 12.2
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.4056753352311046,
+   "val_loss": 0.15066705585706291,
+   "val_bal_acc": 0.9814021311477114,
+   "val_acc": 0.982174688057041,
+   "sec": 12.2
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.40047185083636455,
+   "val_loss": 0.1499285431641648,
+   "val_bal_acc": 0.9790374503177208,
+   "val_acc": 0.9803921568627451,
+   "sec": 12.2
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.3983913383436099,
+   "val_loss": 0.13854007264471987,
+   "val_bal_acc": 0.9831947103804926,
+   "val_acc": 0.983957219251337,
+   "sec": 12.4
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.39878856266365803,
+   "val_loss": 0.14313127131321404,
+   "val_bal_acc": 0.9829744581917366,
+   "val_acc": 0.983957219251337,
+   "sec": 12.5
+  }
+ ],
+ "history_B": [
+  {
+   "epoch": 1,
+   "train_loss": 2.40963820163155,
+   "val_loss": 0.7842029452838997,
+   "val_bal_acc": 0.7849639166803345,
+   "val_acc": 0.7785087719298246,
+   "sec": 60.8
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.9033052057392671,
+   "val_loss": 0.6541468901662243,
+   "val_bal_acc": 0.7882649615529335,
+   "val_acc": 0.7828947368421053,
+   "sec": 8.6
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.6753185179276977,
+   "val_loss": 0.4905074296322951,
+   "val_bal_acc": 0.8438641472662544,
+   "val_acc": 0.8333333333333334,
+   "sec": 8.8
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.5404818807120962,
+   "val_loss": 0.3619515042636864,
+   "val_bal_acc": 0.880888925604685,
+   "val_acc": 0.8837719298245614,
+   "sec": 8.6
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.4862535485725824,
+   "val_loss": 0.35168654251335985,
+   "val_bal_acc": 0.8796688221786994,
+   "val_acc": 0.8793859649122807,
+   "sec": 8.3
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.45476672260680817,
+   "val_loss": 0.330887828750506,
+   "val_bal_acc": 0.8900801020752733,
+   "val_acc": 0.8947368421052632,
+   "sec": 8.2
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.44203503445462705,
+   "val_loss": 0.29777856755644655,
+   "val_bal_acc": 0.8908759973564627,
+   "val_acc": 0.8991228070175439,
+   "sec": 8.1
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.4295922852107111,
+   "val_loss": 0.3157506354883742,
+   "val_bal_acc": 0.8912153638722998,
+   "val_acc": 0.8991228070175439,
+   "sec": 8.1
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.42170654623926346,
+   "val_loss": 0.3169690526563361,
+   "val_bal_acc": 0.8829897659408196,
+   "val_acc": 0.8925438596491229,
+   "sec": 8.1
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.4243977428123324,
+   "val_loss": 0.30638655203719767,
+   "val_bal_acc": 0.8948918344605351,
+   "val_acc": 0.9035087719298246,
+   "sec": 8.2
+  }
+ ]
+}

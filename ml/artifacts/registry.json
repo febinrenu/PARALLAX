@@ -1,0 +1,255 @@
+{
+ "models": {
+  "bone_det@8539baf9": {
+   "arch": "yolo26n",
+   "classes": [
+    "fracture"
+   ],
+   "conformal": null,
+   "contamination": "Trained and tested on FracAtlas; no external test set",
+   "git_commit": "8539baf96ad8204cf7104cd61621d6bd3841ab17",
+   "headline": {
+    "headline.auroc_image": {
+     "hi": 0.9566,
+     "lo": 0.8863,
+     "point": 0.9232
+    },
+    "headline.map50": {
+     "hi": 0.5468,
+     "lo": 0.3669,
+     "point": 0.4534
+    },
+    "test.auroc_image": {
+     "hi": 0.9566,
+     "lo": 0.8863,
+     "point": 0.9232
+    },
+    "test.map50": {
+     "hi": 0.5468,
+     "lo": 0.3669,
+     "point": 0.4534
+    }
+   },
+   "kaggle_kernel": null,
+   "license": "Ultralytics YOLO (AGPL-3.0) fine-tuned on FracAtlas (CC BY 4.0): weights inherit AGPL-3.0",
+   "metrics_file": "ml/artifacts/bone_det/metrics.json",
+   "model_id": "bone_det@8539baf9",
+   "note": "Kaggle account rishijayanath, v2 after the truncated-JPEG fix",
+   "preproc_spec": "ultralytics_letterbox_640",
+   "registered_utc": "2026-10-06T21:27:24Z",
+   "seed": 20261006,
+   "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5",
+   "split_name": "fracatlas",
+   "task": "detection",
+   "temperature": null,
+   "training_data": [
+    "fracatlas (figshare, CC BY 4.0)"
+   ],
+   "weights_bytes": 5381125,
+   "weights_file": "weights.pt",
+   "weights_sha256": "6e81f1775688d5a7287f06fe4b7e3da0e9837fa9b6f39c52c3dade25bcaa69a9"
+  },
+  "brain_cls@d351f062": {
+   "arch": "efficientnet_b0.ra_in1k",
+   "classes": [
+    "glioma",
+    "meningioma",
+    "notumor",
+    "pituitary"
+   ],
+   "conformal": null,
+   "contamination": "Trained on the leakage-free split; BDNeuro-MRI never seen",
+   "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.9583,
+     "lo": 0.9213,
+     "point": 0.9396
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.9579,
+     "lo": 0.9114,
+     "point": 0.9363
+    },
+    "headline.macro_f1": {
+     "hi": 0.957,
+     "lo": 0.9139,
+     "point": 0.9364
+    },
+    "leakage_free_test.accuracy": {
+     "hi": 0.9583,
+     "lo": 0.9213,
+     "point": 0.9396
+    },
+    "leakage_free_test.balanced_accuracy": {
+     "hi": 0.9579,
+     "lo": 0.9114,
+     "point": 0.9363
+    },
+    "leakage_free_test.macro_f1": {
+     "hi": 0.957,
+     "lo": 0.9139,
+     "point": 0.9364
+    }
+   },
+   "kaggle_kernel": null,
+   "license": "timm EfficientNet-B0 (Apache-2.0) fine-tuned on Brain Tumor MRI Dataset (CC0)",
+   "metrics_file": "ml/artifacts/brain_cls/metrics.json",
+   "model_id": "brain_cls@d351f062",
+   "note": "Kaggle account johannshonigeorge; Kaggle GPU run of notebooks/brain_cls.ipynb at commit d351f062",
+   "preproc_spec": "brain_effnet",
+   "registered_utc": "2026-10-06T20:34:26Z",
+   "seed": 20261006,
+   "split_hash": "ae05442fab4727999faa50e380096340763c8ffc03c44705a6a31f589c8d9311",
+   "split_name": "brain_mri",
+   "task": "classification",
+   "temperature": null,
+   "training_data": [
+    "brain_mri (Kaggle masoudnickparvar), leakage-free split"
+   ],
+   "weights_bytes": 16325871,
+   "weights_file": "weights.pt",
+   "weights_sha256": "184810f022787f8ec3c865cb9d8c2d6ae8d5986830affcd10b2d58046b85a180"
+  },
+  "brain_seg@d351f062": {
+   "arch": "smp.Unet(resnet34)",
+   "classes": [
+    "background",
+    "tumour"
+   ],
+   "conformal": null,
+   "contamination": "Patient-level split; trained on TCGA-LGG only",
+   "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+   "headline": {
+    "headline.mean_patient_dice": {
+     "hi": 0.8908,
+     "lo": 0.705,
+     "point": 0.8314
+    },
+    "test.mean_patient_dice": {
+     "hi": 0.8908,
+     "lo": 0.705,
+     "point": 0.8314
+    }
+   },
+   "kaggle_kernel": null,
+   "license": "smp U-Net resnet34 (MIT) fine-tuned on LGG MRI Segmentation (CC BY-NC-SA 4.0): non-commercial, share-alike",
+   "metrics_file": "ml/artifacts/brain_seg/metrics.json",
+   "model_id": "brain_seg@d351f062",
+   "note": "Kaggle account johannshonigeorge; fold 0",
+   "preproc_spec": {
+    "channels": 3,
+    "mean": [
+     0.485,
+     0.456,
+     0.406
+    ],
+    "name": "brain_seg",
+    "resize": "stretch",
+    "size": 256,
+    "std": [
+     0.229,
+     0.224,
+     0.225
+    ],
+    "value_range": [
+     0.0,
+     1.0
+    ]
+   },
+   "registered_utc": "2026-10-06T20:35:12Z",
+   "seed": 20261006,
+   "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357",
+   "split_name": "lgg_seg",
+   "task": "segmentation",
+   "temperature": null,
+   "training_data": [
+    "lgg_seg (Kaggle mateuszbuda, TCGA-LGG)"
+   ],
+   "weights_bytes": 97906323,
+   "weights_file": "weights.pt",
+   "weights_sha256": "90eba65ab2b7c2b629dd9569ad7c1596cb948994edc2d5dec3149f41f98b8e91"
+  },
+  "skin_cls@a217517b": {
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "conformal": null,
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "git_commit": "a217517bdb3083aaf6380ccd31598627dbd5361d",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8469,
+     "lo": 0.8052,
+     "point": 0.8261
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7284,
+     "lo": 0.6321,
+     "point": 0.68
+    },
+    "headline.macro_f1": {
+     "hi": 0.7625,
+     "lo": 0.6759,
+     "point": 0.722
+    },
+    "official_test.accuracy": {
+     "hi": 0.8469,
+     "lo": 0.8052,
+     "point": 0.8261
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7284,
+     "lo": 0.6321,
+     "point": 0.68
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7625,
+     "lo": 0.6759,
+     "point": 0.722
+    },
+    "test.accuracy": {
+     "hi": 0.8983,
+     "lo": 0.8528,
+     "point": 0.8767
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8337,
+     "lo": 0.6949,
+     "point": 0.7677
+    },
+    "test.macro_f1": {
+     "hi": 0.838,
+     "lo": 0.7123,
+     "point": 0.7838
+    }
+   },
+   "kaggle_kernel": "parallax-skin-cls",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "metrics_file": "ml/artifacts/skin_cls/metrics.json",
+   "model_id": "skin_cls@a217517b",
+   "note": "Kaggle account johannshonigeorge, rerun; the identical notebook on rishijayanath scored official-test BMA 0.689 (GPU nondeterminism, about 0.01)",
+   "preproc_spec": "skin_cls",
+   "registered_utc": "2026-10-06T20:57:18Z",
+   "seed": 20261006,
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "split_name": "ham10000",
+   "task": "classification",
+   "temperature": null,
+   "training_data": [
+    "isic2018_t3_train (HAM10000)"
+   ],
+   "weights_bytes": 111357395,
+   "weights_file": "weights.pt",
+   "weights_sha256": "1fb2ea5ab200743bb6b5ec45640e3fe6a63b003c3e35bd94ab7002322998bddb"
+  }
+ },
+ "schema": 1
+}

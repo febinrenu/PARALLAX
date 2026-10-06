@@ -1,0 +1,1418 @@
+{
+ "config": {
+  "arch": "convnext_tiny.fb_in22k_ft_in1k",
+  "epochs": 15,
+  "lr": 0.0002,
+  "weight_decay": 0.05,
+  "batch_size": 48,
+  "label_smoothing": 0.1,
+  "balance_power": 0.5,
+  "aug": {
+   "rot_deg": 180.0,
+   "scale": [
+    0.85,
+    1.15
+   ],
+   "shift": 0.08,
+   "flip_h": true,
+   "flip_v": true,
+   "brightness": 0.15,
+   "contrast": 0.15
+  },
+  "bootstrap_B": 2000,
+  "smoke_per_split": 60
+ },
+ "history": [
+  {
+   "epoch": 1,
+   "train_loss": 1.3754031468573238,
+   "val_loss": 0.7985990713126877,
+   "val_bal_acc": 0.5957045069080672,
+   "val_acc": 0.7242798353909465,
+   "sec": 105.2
+  },
+  {
+   "epoch": 2,
+   "train_loss": 0.9619486583044963,
+   "val_loss": 0.5369651162752577,
+   "val_bal_acc": 0.6658688068324291,
+   "val_acc": 0.8076131687242798,
+   "sec": 33.7
+  },
+  {
+   "epoch": 3,
+   "train_loss": 0.8282214111656577,
+   "val_loss": 0.5255300686422567,
+   "val_bal_acc": 0.7379433854472554,
+   "val_acc": 0.8189300411522634,
+   "sec": 35.4
+  },
+  {
+   "epoch": 4,
+   "train_loss": 0.7376156210391185,
+   "val_loss": 0.6103595353128005,
+   "val_bal_acc": 0.7003178903140203,
+   "val_acc": 0.7829218106995884,
+   "sec": 34.2
+  },
+  {
+   "epoch": 5,
+   "train_loss": 0.6827032122036543,
+   "val_loss": 0.5321114982604973,
+   "val_bal_acc": 0.7270916125211792,
+   "val_acc": 0.831275720164609,
+   "sec": 34.5
+  },
+  {
+   "epoch": 6,
+   "train_loss": 0.6487401426670815,
+   "val_loss": 0.5167051239946583,
+   "val_bal_acc": 0.7072538422190124,
+   "val_acc": 0.8251028806584362,
+   "sec": 34.6
+  },
+  {
+   "epoch": 7,
+   "train_loss": 0.5893260136730756,
+   "val_loss": 0.600103825967828,
+   "val_bal_acc": 0.6832766011365082,
+   "val_acc": 0.8004115226337448,
+   "sec": 34.3
+  },
+  {
+   "epoch": 8,
+   "train_loss": 0.5681599699608039,
+   "val_loss": 0.5357332799521046,
+   "val_bal_acc": 0.7241119826452644,
+   "val_acc": 0.8343621399176955,
+   "sec": 34.5
+  },
+  {
+   "epoch": 9,
+   "train_loss": 0.5416385028470216,
+   "val_loss": 0.5324591840408442,
+   "val_bal_acc": 0.7329156481633261,
+   "val_acc": 0.8302469135802469,
+   "sec": 34.5
+  },
+  {
+   "epoch": 10,
+   "train_loss": 0.5204096909359975,
+   "val_loss": 0.535091962286483,
+   "val_bal_acc": 0.7220959903815941,
+   "val_acc": 0.8374485596707819,
+   "sec": 34.5
+  },
+  {
+   "epoch": 11,
+   "train_loss": 0.5116090366599596,
+   "val_loss": 0.5223892253492503,
+   "val_bal_acc": 0.6997341051907615,
+   "val_acc": 0.838477366255144,
+   "sec": 34.4
+  },
+  {
+   "epoch": 12,
+   "train_loss": 0.4980769062960444,
+   "val_loss": 0.5400460428078255,
+   "val_bal_acc": 0.6894991704202231,
+   "val_acc": 0.8353909465020576,
+   "sec": 34.4
+  },
+  {
+   "epoch": 13,
+   "train_loss": 0.48802671676240705,
+   "val_loss": 0.531902919645913,
+   "val_bal_acc": 0.7471197819495032,
+   "val_acc": 0.8446502057613169,
+   "sec": 34.4
+  },
+  {
+   "epoch": 14,
+   "train_loss": 0.4899143361132337,
+   "val_loss": 0.5271085341258523,
+   "val_bal_acc": 0.7425879647241876,
+   "val_acc": 0.838477366255144,
+   "sec": 34.4
+  },
+  {
+   "epoch": 15,
+   "train_loss": 0.4858566711233869,
+   "val_loss": 0.5275801115833871,
+   "val_bal_acc": 0.7502137582632938,
+   "val_acc": 0.8415637860082305,
+   "sec": 34.5
+  }
+ ],
+ "best_epoch": 15,
+ "val": {
+  "n": 972,
+  "n_groups": 755,
+  "accuracy": {
+   "point": 0.8415637860082305,
+   "lo": 0.8136619644173071,
+   "hi": 0.8675436580276683,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.7502137582632938,
+   "lo": 0.6843872013113124,
+   "hi": 0.8098477163997192,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.7748250073213814,
+   "lo": 0.7135551382400719,
+   "hi": 0.8216707219577651,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9539440142328581,
+   "lo": 0.923199686401104,
+   "hi": 0.9752264714463781,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.5275801115833871,
+   "lo": 0.46010199765552634,
+   "hi": 0.5990889711547421,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.06644161759528014,
+   "lo": 0.05354326285358411,
+   "hi": 0.09189475740385433,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "akiec": {
+    "point": 0.5,
+    "lo": 0.3333333333333333,
+    "hi": 0.6786071428571427,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bcc": {
+    "point": 0.803921568627451,
+    "lo": 0.6481209150326798,
+    "hi": 0.9302721987315008,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bkl": {
+    "point": 0.8272727272727273,
+    "lo": 0.7454545454545455,
+    "hi": 0.9047619047619048,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "df": {
+    "point": 0.6666666666666666,
+    "lo": 0.3333333333333333,
+    "hi": 0.9285714285714286,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "mel": {
+    "point": 0.6296296296296297,
+    "lo": 0.5137614678899083,
+    "hi": 0.7387387387387387,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "nv": {
+    "point": 0.9009287925696594,
+    "lo": 0.8715574760576342,
+    "hi": 0.927814223168005,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "vasc": {
+    "point": 0.9230769230769231,
+    "lo": 0.75,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 755,
+    "n": 972,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "auroc_mel_vs_rest": {
+   "point": 0.9245327503429355,
+   "lo": 0.8914551797836716,
+   "hi": 0.9540519670697828,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 755,
+   "n": 972,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "confusion": [
+   [
+    16,
+    3,
+    7,
+    0,
+    3,
+    3,
+    0
+   ],
+   [
+    3,
+    41,
+    5,
+    0,
+    0,
+    2,
+    0
+   ],
+   [
+    3,
+    1,
+    91,
+    0,
+    6,
+    9,
+    0
+   ],
+   [
+    0,
+    2,
+    0,
+    8,
+    1,
+    1,
+    0
+   ],
+   [
+    0,
+    0,
+    13,
+    0,
+    68,
+    27,
+    0
+   ],
+   [
+    0,
+    2,
+    23,
+    0,
+    39,
+    582,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    12
+   ]
+  ]
+ },
+ "cal": {
+  "n": 971,
+  "n_groups": 728,
+  "accuracy": {
+   "point": 0.835221421215242,
+   "lo": 0.8066167138921142,
+   "hi": 0.8623966145403353,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.7133428729398493,
+   "lo": 0.6482656196445056,
+   "hi": 0.7851370604029301,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.7302620985096535,
+   "lo": 0.6643522627602332,
+   "hi": 0.7875995563788651,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9622350522811323,
+   "lo": 0.941804460499958,
+   "hi": 0.9770447301141864,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.5239096238753476,
+   "lo": 0.4547956623713669,
+   "hi": 0.5970988170491115,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.053463832171044265,
+   "lo": 0.04190899134066279,
+   "hi": 0.08035398755621771,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "akiec": {
+    "point": 0.4,
+    "lo": 0.21208133971291868,
+    "hi": 0.6251157407407401,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bcc": {
+    "point": 0.803921568627451,
+    "lo": 0.6530390417036379,
+    "hi": 0.9259259259259259,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bkl": {
+    "point": 0.7909090909090909,
+    "lo": 0.6964285714285714,
+    "hi": 0.8900227272727271,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "df": {
+    "point": 0.5454545454545454,
+    "lo": 0.2,
+    "hi": 0.9,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "mel": {
+    "point": 0.6203703703703703,
+    "lo": 0.5,
+    "hi": 0.735062893081761,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "nv": {
+    "point": 0.9041731066460588,
+    "lo": 0.8757668711656442,
+    "hi": 0.9305993690851735,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "vasc": {
+    "point": 0.9285714285714286,
+    "lo": 0.7857142857142857,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 728,
+    "n": 971,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "auroc_mel_vs_rest": {
+   "point": 0.9365370584953436,
+   "lo": 0.911909133396752,
+   "hi": 0.9569048318817793,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 728,
+   "n": 971,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "confusion": [
+   [
+    12,
+    2,
+    16,
+    0,
+    0,
+    0,
+    0
+   ],
+   [
+    1,
+    41,
+    5,
+    1,
+    0,
+    3,
+    0
+   ],
+   [
+    4,
+    0,
+    87,
+    0,
+    9,
+    10,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    6,
+    1,
+    4,
+    0
+   ],
+   [
+    0,
+    1,
+    18,
+    0,
+    67,
+    22,
+    0
+   ],
+   [
+    2,
+    0,
+    16,
+    1,
+    42,
+    585,
+    1
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    13
+   ]
+  ]
+ },
+ "test": {
+  "n": 973,
+  "n_groups": 708,
+  "accuracy": {
+   "point": 0.8766700924974307,
+   "lo": 0.8528489566995143,
+   "hi": 0.8983218422561211,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.767700198822191,
+   "lo": 0.6948636738309689,
+   "hi": 0.8336633760860525,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.783759305228172,
+   "lo": 0.7123396676008483,
+   "hi": 0.8379907530851656,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9737070337063756,
+   "lo": 0.9647326741031819,
+   "hi": 0.9814173855036997,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.44499484072785245,
+   "lo": 0.3833316356529945,
+   "hi": 0.5113684894681766,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.05735227735573027,
+   "lo": 0.0506977165565866,
+   "hi": 0.08242273971017047,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "akiec": {
+    "point": 0.6060606060606061,
+    "lo": 0.4073784722222222,
+    "hi": 0.7838320463320461,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bcc": {
+    "point": 0.7647058823529411,
+    "lo": 0.6363636363636364,
+    "hi": 0.8823529411764706,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bkl": {
+    "point": 0.8990825688073395,
+    "lo": 0.8290540540540541,
+    "hi": 0.957983193277311,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "df": {
+    "point": 0.5454545454545454,
+    "lo": 0.18181818181818182,
+    "hi": 0.9094405594405575,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "mel": {
+    "point": 0.6936936936936937,
+    "lo": 0.5769230769230769,
+    "hi": 0.7934135320923765,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "nv": {
+    "point": 0.9315707620528771,
+    "lo": 0.9065403751764943,
+    "hi": 0.9542622710949744,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "vasc": {
+    "point": 0.9333333333333333,
+    "lo": 0.75,
+    "hi": 1.0,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 708,
+    "n": 973,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "auroc_mel_vs_rest": {
+   "point": 0.9218243765807571,
+   "lo": 0.8807941710266778,
+   "hi": 0.953356153333893,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 708,
+   "n": 973,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "confusion": [
+   [
+    20,
+    3,
+    8,
+    0,
+    2,
+    0,
+    0
+   ],
+   [
+    1,
+    39,
+    5,
+    2,
+    2,
+    2,
+    0
+   ],
+   [
+    1,
+    0,
+    98,
+    0,
+    4,
+    6,
+    0
+   ],
+   [
+    0,
+    1,
+    3,
+    6,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    2,
+    13,
+    0,
+    77,
+    19,
+    0
+   ],
+   [
+    1,
+    3,
+    14,
+    1,
+    25,
+    599,
+    0
+   ],
+   [
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    14
+   ]
+  ]
+ },
+ "official_test": {
+  "n": 1512,
+  "n_groups": 1208,
+  "accuracy": {
+   "point": 0.826058201058201,
+   "lo": 0.8052309423058904,
+   "hi": 0.8469134770319194,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.6800004792082587,
+   "lo": 0.6320733302241813,
+   "hi": 0.7284084834470516,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.7219793394732716,
+   "lo": 0.6759336099283302,
+   "hi": 0.7624629177684822,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9531673427974408,
+   "lo": 0.9358670419399822,
+   "hi": 0.9676753882127181,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.5517985379713659,
+   "lo": 0.4946099256841404,
+   "hi": 0.6094014084875101,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.07524627492758919,
+   "lo": 0.062037810973297546,
+   "hi": 0.09135424197879662,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "akiec": {
+    "point": 0.4186046511627907,
+    "lo": 0.23809523809523808,
+    "hi": 0.6097560975609756,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bcc": {
+    "point": 0.6451612903225806,
+    "lo": 0.5368421052631579,
+    "hi": 0.7525773195876289,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bkl": {
+    "point": 0.7880184331797235,
+    "lo": 0.7281003223642932,
+    "hi": 0.8454117259552042,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "df": {
+    "point": 0.75,
+    "lo": 0.6190476190476191,
+    "hi": 0.8695652173913043,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "mel": {
+    "point": 0.6374269005847953,
+    "lo": 0.5470588235294118,
+    "hi": 0.729889464776814,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "nv": {
+    "point": 0.9207920792079208,
+    "lo": 0.9003331529735512,
+    "hi": 0.9398702557239764,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "vasc": {
+    "point": 0.6,
+    "lo": 0.41855620155038764,
+    "hi": 0.7894736842105263,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "auroc_mel_vs_rest": {
+   "point": 0.924395253607546,
+   "lo": 0.8981986990996587,
+   "hi": 0.9488196988294199,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "confusion": [
+   [
+    18,
+    2,
+    14,
+    0,
+    9,
+    0,
+    0
+   ],
+   [
+    3,
+    60,
+    16,
+    1,
+    8,
+    5,
+    0
+   ],
+   [
+    6,
+    2,
+    171,
+    0,
+    17,
+    21,
+    0
+   ],
+   [
+    1,
+    2,
+    2,
+    33,
+    1,
+    5,
+    0
+   ],
+   [
+    2,
+    2,
+    19,
+    0,
+    109,
+    39,
+    0
+   ],
+   [
+    3,
+    3,
+    23,
+    0,
+    43,
+    837,
+    0
+   ],
+   [
+    0,
+    3,
+    0,
+    0,
+    0,
+    11,
+    21
+   ]
+  ]
+ },
+ "headline": {
+  "n": 1512,
+  "n_groups": 1208,
+  "accuracy": {
+   "point": 0.826058201058201,
+   "lo": 0.8052309423058904,
+   "hi": 0.8469134770319194,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "balanced_accuracy": {
+   "point": 0.6800004792082587,
+   "lo": 0.6320733302241813,
+   "hi": 0.7284084834470516,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "macro_f1": {
+   "point": 0.7219793394732716,
+   "lo": 0.6759336099283302,
+   "hi": 0.7624629177684822,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "auroc_macro_ovr": {
+   "point": 0.9531673427974408,
+   "lo": 0.9358670419399822,
+   "hi": 0.9676753882127181,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "nll": {
+   "point": 0.5517985379713659,
+   "lo": 0.4946099256841404,
+   "hi": 0.6094014084875101,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "ece_15": {
+   "point": 0.07524627492758919,
+   "lo": 0.062037810973297546,
+   "hi": 0.09135424197879662,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "per_class_recall": {
+   "akiec": {
+    "point": 0.4186046511627907,
+    "lo": 0.23809523809523808,
+    "hi": 0.6097560975609756,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bcc": {
+    "point": 0.6451612903225806,
+    "lo": 0.5368421052631579,
+    "hi": 0.7525773195876289,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "bkl": {
+    "point": 0.7880184331797235,
+    "lo": 0.7281003223642932,
+    "hi": 0.8454117259552042,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "df": {
+    "point": 0.75,
+    "lo": 0.6190476190476191,
+    "hi": 0.8695652173913043,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "mel": {
+    "point": 0.6374269005847953,
+    "lo": 0.5470588235294118,
+    "hi": 0.729889464776814,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "nv": {
+    "point": 0.9207920792079208,
+    "lo": 0.9003331529735512,
+    "hi": 0.9398702557239764,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   },
+   "vasc": {
+    "point": 0.6,
+    "lo": 0.41855620155038764,
+    "hi": 0.7894736842105263,
+    "level": 0.95,
+    "B": 2000,
+    "method": "percentile",
+    "n_groups": 1208,
+    "n": 1512,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 2000
+   }
+  },
+  "auroc_mel_vs_rest": {
+   "point": 0.924395253607546,
+   "lo": 0.8981986990996587,
+   "hi": 0.9488196988294199,
+   "level": 0.95,
+   "B": 2000,
+   "method": "percentile",
+   "n_groups": 1208,
+   "n": 1512,
+   "stratified": true,
+   "seed": 20261006,
+   "n_valid": 2000
+  },
+  "confusion": [
+   [
+    18,
+    2,
+    14,
+    0,
+    9,
+    0,
+    0
+   ],
+   [
+    3,
+    60,
+    16,
+    1,
+    8,
+    5,
+    0
+   ],
+   [
+    6,
+    2,
+    171,
+    0,
+    17,
+    21,
+    0
+   ],
+   [
+    1,
+    2,
+    2,
+    33,
+    1,
+    5,
+    0
+   ],
+   [
+    2,
+    2,
+    19,
+    0,
+    109,
+    39,
+    0
+   ],
+   [
+    3,
+    3,
+    23,
+    0,
+    43,
+    837,
+    0
+   ],
+   [
+    0,
+    3,
+    0,
+    0,
+    0,
+    11,
+    21
+   ]
+  ]
+ },
+ "notes": {
+  "primary_metric": "balanced multiclass accuracy (mean per-class recall) on the official ISIC 2018 Task 3 test set",
+  "ci": "95% percentile cluster bootstrap, groups = lesion_id from the ISIC API, resampled within class, B=2000",
+  "contamination": "official test images never used for training, validation or calibration; train copies of test images were removed by the leakage audit"
+ }
+}

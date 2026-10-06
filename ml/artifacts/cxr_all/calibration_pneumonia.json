@@ -1,0 +1,16 @@
+{
+ "label": "Pneumonia",
+ "a": 0.7281255216618482,
+ "b": -0.6702772947873621,
+ "alpha": 0.1,
+ "thr_fnr": 0.10370942475348424,
+ "abstain_low": 0.4,
+ "abstain_high": 0.6,
+ "input_kind": "probability",
+ "meta": {
+  "n_a": 3811,
+  "n_b": 3810,
+  "prevalence_b": 0.2325459317585302,
+  "positives_b": 886
+ }
+}
