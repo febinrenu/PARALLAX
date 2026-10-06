@@ -39,6 +39,14 @@ SOURCES = {
 }
 
 
+LOCAL_DIR: Path | None = None  # folder holding fracatlas.zip, brain1.zip, cifar.tar.gz (from a resumable download)
+
+
+def _local(name: str) -> Path | None:
+    p = LOCAL_DIR / name if LOCAL_DIR else None
+    return p if p is not None and p.is_file() else None
+
+
 class HTTPRangeFile(io.RawIOBase):
     """Seekable read-only file over HTTP range requests, with a block cache."""
 
@@ -104,6 +112,7 @@ class HTTPRangeFile(io.RawIOBase):
 
 
 def _save(img: Image.Image, path: Path, manifest: list, source: str, max_side: int = 1024) -> None:
+    img.load()  # raises on a truncated source image, which the caller skips
     img.thumbnail((max_side, max_side))
     path.parent.mkdir(parents=True, exist_ok=True)
     img.save(path)
@@ -121,14 +130,17 @@ def stage_isic(out: Path, n: int, manifest: list) -> None:
     z = zipfile.ZipFile(HTTPRangeFile(SOURCES["isic"]))
     names = sorted(m for m in z.namelist() if m.lower().endswith(".jpg"))
     for name in _spread(names, n):
-        with z.open(name) as f:
-            _save(Image.open(io.BytesIO(f.read())).convert("RGB"), out / "skin_dermoscopy" / Path(name).name, manifest, "ISIC2018 Task3 test (CC-BY-NC 4.0)")
+        try:
+            with z.open(name) as f:
+                _save(Image.open(io.BytesIO(f.read())).convert("RGB"), out / "skin_dermoscopy" / Path(name).name, manifest, "ISIC2018 Task3 test (CC-BY-NC 4.0)")
+        except (OSError, ValueError):
+            continue
 
 
 def stage_fracatlas(out: Path, n: int, manifest: list) -> None:
     import csv
 
-    z = zipfile.ZipFile(HTTPRangeFile(SOURCES["fracatlas"]))
+    z = zipfile.ZipFile(_local("fracatlas.zip") or HTTPRangeFile(SOURCES["fracatlas"]))
     csv_name = next(m for m in z.namelist() if m.endswith("dataset.csv"))
     rows = list(csv.DictReader(io.StringIO(z.read(csv_name).decode("utf-8", "ignore"))))
     parts = ("hand", "leg", "hip", "shoulder")
@@ -141,14 +153,17 @@ def stage_fracatlas(out: Path, n: int, manifest: list) -> None:
     for part, ids in by_part.items():
         for image_id in _spread(sorted(ids), max(1, n // 4)):
             if image_id in index:
-                with z.open(index[image_id]) as f:
-                    _save(Image.open(io.BytesIO(f.read())).convert("L"), out / "bone_xray" / part / image_id, manifest, "FracAtlas (CC BY 4.0)")
+                try:
+                    with z.open(index[image_id]) as f:
+                        _save(Image.open(io.BytesIO(f.read())).convert("L"), out / "bone_xray" / part / image_id, manifest, "FracAtlas (CC BY 4.0)")
+                except (OSError, ValueError):
+                    continue  # a truncated source image is skipped
 
 
 def stage_brain(out: Path, n: int, manifest: list) -> None:
     import h5py
 
-    z = zipfile.ZipFile(HTTPRangeFile(SOURCES["brain"]))
+    z = zipfile.ZipFile(_local("brain1.zip") or HTTPRangeFile(SOURCES["brain"]))
     names = sorted((m for m in z.namelist() if m.endswith(".mat")), key=lambda s: int(re.findall(r"\d+", Path(s).stem)[-1]))
     for name in _spread(names, n):
         with h5py.File(io.BytesIO(z.read(name)), "r") as f:
@@ -184,7 +199,7 @@ def _download(url: str) -> bytes:
 def stage_cifar(out: Path, n: int, manifest: list) -> None:
     import pickle
 
-    raw = _download(SOURCES["cifar"])
+    raw = _local("cifar.tar.gz").read_bytes() if _local("cifar.tar.gz") else _download(SOURCES["cifar"])
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as t:
         batch = pickle.load(t.extractfile("cifar-10-batches-py/test_batch"), encoding="bytes")  # noqa: S301 (public file, local use)
     data = batch[b"data"].reshape(-1, 3, 32, 32).transpose(0, 2, 3, 1)
@@ -217,7 +232,10 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default="data/router")
     ap.add_argument("--n", type=int, default=120, help="images per source")
     ap.add_argument("--only", default=",".join(STAGERS))
+    ap.add_argument("--local", default=None, help="folder with fracatlas.zip, brain1.zip, cifar.tar.gz already downloaded")
     a = ap.parse_args(argv)
+    global LOCAL_DIR
+    LOCAL_DIR = Path(a.local) if a.local else None
     out = Path(a.out)
     manifest: list = []
     status = {}
