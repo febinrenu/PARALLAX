@@ -97,6 +97,7 @@ class SyntheticNote(BaseModel):
     injection: Injection | None = None
     lang: str = "en"
     split: Literal["dev", "test"] = "dev"
+    twin_of: str | None = None  # injected notes point at their clean twin (differential test)
 
     @model_validator(mode="after")
     def _check_spans(self) -> "SyntheticNote":
