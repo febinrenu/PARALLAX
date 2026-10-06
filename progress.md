@@ -79,16 +79,16 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P3.1 | MedGemma service + batch reads | todo | | | |
+| P3.1 | MedGemma service + batch reads | doing | p3/medgemma-groq | 2026-10-06 | service, batch, notebooks, CPU tests done; real-GPU smoke not yet run |
 | P3.2 | Generalist reader + concordance | todo | | | |
-| P3.3 | Groq pool | todo | | | |
-| P3.4 | Synthetic note generator | todo | | | |
+| P3.3 | Groq pool | done | p3/medgemma-groq | 2026-10-06 | 22 tests with mocked Groq; not yet tried against live Groq (no key) |
+| P3.4 | Synthetic note generator | doing | p3/medgemma-groq | 2026-10-06 | schema + validators done; generator not started |
 | P3.5 | Fact extraction with spans | todo | | | |
 | P3.6 | Injection guard | todo | | | |
 | P3.7 | Contradiction rules | todo | | | |
 | P3.8 | Retrieval / precedents | todo | | | |
-| P3.9 | Slot-filled report | todo | | | |
-| P3.10 | Hallucination firewall | todo | | | |
+| P3.9 | Slot-filled report | todo | | 2026-10-06 | grammar specified in docs/report_slots.md |
+| P3.10 | Hallucination firewall | todo | | 2026-10-06 | rules R1-R12 specified in docs/report_slots.md |
 | P3.11 | Entailment judge | todo | | | |
 | P3.12 | Voice (Whisper) | todo | | | |
 | P3.13 | FHIR export | todo | | | |
@@ -149,10 +149,10 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
 ### P3 — Clinical Reasoning & Trust
-**Now:**
-**Next:**
-**Blockers:**
-**MedGemma endpoint:** (where it runs, current URL, last health check)
+**Now:** P3.1 real-model smoke test (needs HF_TOKEN + a CC-licensed CXR); P3.4 note generator.
+**Next:** P3.2 generalist reader + concordance; P3.5 fact extraction; P3.9/P3.10 implementation from docs/report_slots.md.
+**Blockers:** no HF_TOKEN / Groq keys in this environment yet; `core/schemas.py` (P4, G0) not present, so report/ code that imports contract types waits for it.
+**MedGemma endpoint:** none running yet. Local machine has an RTX 4060 Laptop GPU (8 GB), so a local 4-bit run should fit.
 
 ### P4 — Experience & Platform
 **Now:**
@@ -192,6 +192,14 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P2 · BDNeuro-MRI is not an independent external test: 4,238 of its 5,941 images (71%) are near-duplicates (pHash Hamming <= 4, pixel correlation median 0.93 to 1.0 against 0.47 for random same-class pairs) of images in the Kaggle brain dataset. The external test uses only the 1,644 images with no match (`ml/data/splits/bdneuro.csv`, `split == external_test`) · its README claims hospital provenance and exact/near-duplicate removal only within itself.
 - 2026-10-07 · P2 · Brain classifier headline: the Kaggle benchmark inflation is measured inside one model. Model A scores 0.942 on the original Testing folder, 0.903 once the 727 images with a duplicate in Training are removed, and 0.865 once the 1,051 images with a same-scan neighbour are removed (n=549). The across-model difference A minus B (0.002, CI -0.020 to 0.026) shows no inflation and is confounded by different models and test sets, so it must not be quoted · B (leakage-free group split, test n=563) scores 0.940 [0.921, 0.958].
 - 2026-10-07 · P2 · Two Kaggle accounts: the first account's concurrent GPU limit of 2 stalled the brain jobs, so they ran on a second existing account (johannshonigeorge, owner agreed) · plan.md section 14 lists several accounts as the fallback; its token is kept in the gitignored `.env.kaggle2`.
+- 2026-10-06 · P3 · Slot `frame` enum on top of free templates, so the "Doctor, consider..." framing is structural · docs/report_slots.md
+- 2026-10-06 · P3 · Firewall rule R4 binds cited evidence to the finding named in a slot; adds a mandatory false-block test on good claims · docs/report_slots.md
+- 2026-10-06 · P3 · MedGemma service returns boxes on a normalized 0..1000 grid; pixel conversion happens in the reader (P3.2) · services/medgemma/README.md
+- 2026-10-06 · P3 · Groq pool adds RPM and daily counters, a total deadline, and `PoolResult.source` (live/cache/fallback) so degradation shows up in StageResult warnings · backend/tests/llm/test_groq_pool.py
+- 2026-10-06 · P3 · Pool defaults to `json_object` plus schema text in the system prompt, not strict `json_schema`; unsupported params (`reasoning_effort`, `response_format`) are dropped once on a 400 · untested against live Groq
+- 2026-10-06 · P3 · Real-GPU smoke is a separate script (`python -m services.medgemma.smoke`); CI tests use a fake backend · services/medgemma/
+- 2026-10-06 · P3 · Added `.cache/` and `ml/artifacts/medgemma_reads/` to .gitignore (LLM cache can hold note text; cached reads are large) · plan.md 11.3
+
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -206,6 +214,10 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 - 2026-10-07 · P1 · Input convention · single channel, range [-1024, 1024], square. The library's transform is `XRayCenterCrop` then `XRayResizer(224)`; the PSPNet raises on non-square input · installed `datasets.py` and `utils.py`. Our `prepare(..., "cxr_xrv")` matches it to within a mean of 25 grey levels on a +-1024 scale and 0.08 in probability on a non-square phantom (resampling filter differs: cv2 INTER_AREA vs skimage).
 - 2026-10-07 · P1 · Anatomy model `chestx_det.PSPNet` · input square [-1024,1024] resized to 512, output raw logits (14, 512, 512), target order verified. "Left Lung" is the patient's left lung: on a real NIH chest film (public sample from the torchxrayvision repo, not stored) the "Right Lung" mask centroid was at x=151 and "Left Lung" at x=351 of 512, heart at x=290, matching the standard display with the patient's right on the image left and the film's own L marker on the image right. Lung masks include retrocardiac lung and overlap the heart mask (handled in `zones.name_region`) · one-off real-image run.
 - 2026-10-07 · P1 · Download environment · Windows curl failed TLS revocation checks here and the library downloader stalled at 0 bytes, so the two public weight files were fetched with `curl --ssl-no-revoke` (TLS chain still verified, only the revocation lookup skipped) from the official `mlmed/torchxrayvision` v1 release URLs. No checksum is published for them; the weights' sha8 appears in `model_id`.
+- 2026-10-06 · P3 · `google/medgemma-1.5-4b-it` id, gating, `transformers>=4.50`, `AutoModelForImageTextToText`, BF16 weights · confirmed · huggingface.co/google/medgemma-1.5-4b-it
+- 2026-10-06 · P3 · Groq free tier gpt-oss-120b/20b: 30 RPM, 8K TPM, 1K RPD; cached tokens not counted; 429 carries retry-after · confirmed · console.groq.com/docs/rate-limits
+- 2026-10-06 · P3 · Prompt Guard on Groq is listed as `llama-prompt-guard-2-86m` (30 RPM, 15K TPM, 14.4K RPD), not `meta-llama/...` as in plan.md · documented, availability still unverified until `GET /models` with a key
+- 2026-10-06 · P3 · MedGemma CXR box prompt/format · NOT verified (model card gave no format); check on first smoke run
 
 ## Shared log (append-only, newest at the bottom)
 
@@ -217,6 +229,12 @@ State: P1.1 to P1.3 done. Perturbation library done early (P1.11 logic still tod
 Verified: `cd backend && python -m pytest -q` gives 121 passed. Includes a pydicom-built MONOCHROME1 fixture, a PHI sentinel test on the serialized bytes, and six degraded images each giving the right reason.
 Next: CXR reader and anatomy zones (P1.6) so P2.7 can calibrate; then router.
 Decisions: see Decisions, entries dated 2026-10-06 for P1.
+### 2026-10-06 · P3 · Sonnet 5.5 · WP P3.1, P3.3, P3.4 (schema), P3.9/P3.10 (design)
+Did: Groq pool (cache, RPM/TPM budgeter, retry-after backoff, repair retry, fallback); MedGemma read service (loader, API, batch, Kaggle/Colab notebooks); note schema with injection taxonomy; slot grammar and firewall spec.
+State: P3.3 done. P3.1 code done, real-model smoke NOT run (no HF_TOKEN here). P3.4 schema done, generator todo.
+Verified: `.venv/Scripts/python -m pytest ml backend services -q` -> 48 passed, 1 skipped (the gpu-marked smoke); `mypy --strict backend/medproof/llm` clean. `make smoke` does not exist yet (P4.1).
+Next: run smoke on the local RTX 4060 once HF_TOKEN is set; check CXR box format; gen_notes.py; P3.2.
+Decisions: see Decisions section (7 entries).
 Contract change requests: none.
 
 ### 2026-10-07 · P1 · WP P1.6
