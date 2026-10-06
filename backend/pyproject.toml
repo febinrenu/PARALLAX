@@ -1,0 +1,19 @@
+[project]
+name = "medproof"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "pillow",
+    "opencv-python-headless",
+    "pydicom>=2.4",
+    "scipy",
+    "pydantic>=2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "hypothesis"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
