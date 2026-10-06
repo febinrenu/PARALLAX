@@ -9,6 +9,7 @@ dependencies = [
     "pydicom>=2.4",
     "scipy",
     "pydantic>=2",
+    "diskcache",
 ]
 
 [project.optional-dependencies]
