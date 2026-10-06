@@ -1,5 +1,54 @@
 {
  "models": {
+  "bone_det@8539baf9": {
+   "arch": "yolo26n",
+   "classes": [
+    "fracture"
+   ],
+   "conformal": null,
+   "contamination": "Trained and tested on FracAtlas; no external test set",
+   "git_commit": "8539baf96ad8204cf7104cd61621d6bd3841ab17",
+   "headline": {
+    "headline.auroc_image": {
+     "hi": 0.9566,
+     "lo": 0.8863,
+     "point": 0.9232
+    },
+    "headline.map50": {
+     "hi": 0.5468,
+     "lo": 0.3669,
+     "point": 0.4534
+    },
+    "test.auroc_image": {
+     "hi": 0.9566,
+     "lo": 0.8863,
+     "point": 0.9232
+    },
+    "test.map50": {
+     "hi": 0.5468,
+     "lo": 0.3669,
+     "point": 0.4534
+    }
+   },
+   "kaggle_kernel": null,
+   "license": "Ultralytics YOLO (AGPL-3.0) fine-tuned on FracAtlas (CC BY 4.0): weights inherit AGPL-3.0",
+   "metrics_file": "ml/artifacts/bone_det/metrics.json",
+   "model_id": "bone_det@8539baf9",
+   "note": "Kaggle account rishijayanath, v2 after the truncated-JPEG fix",
+   "preproc_spec": "ultralytics_letterbox_640",
+   "registered_utc": "2026-10-06T21:27:24Z",
+   "seed": 20261006,
+   "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5",
+   "split_name": "fracatlas",
+   "task": "detection",
+   "temperature": null,
+   "training_data": [
+    "fracatlas (figshare, CC BY 4.0)"
+   ],
+   "weights_bytes": 5381125,
+   "weights_file": "weights.pt",
+   "weights_sha256": "6e81f1775688d5a7287f06fe4b7e3da0e9837fa9b6f39c52c3dade25bcaa69a9"
+  },
   "brain_cls@d351f062": {
    "arch": "efficientnet_b0.ra_in1k",
    "classes": [

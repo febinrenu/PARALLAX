@@ -65,13 +65,13 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.5 | Skin classifier (Kaggle) | done | main | 2026-10-07 | official-test BMA 0.680 [0.632, 0.728]; registered |
-| P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | v2 running on Kaggle after a fix |
-| P2.7 | CXR calibration + external validation | todo | | | |
-| P2.8 | Temperature scaling + conformal | todo | | | |
+| P2.6 | Bone detector (Kaggle) | done | main | 2026-10-07 | mAP50 0.453, image AUROC 0.923; registered |
+| P2.7 | CXR calibration + external validation | doing | main | 2026-10-07 | scores cached for chex, mimic_ch, all; metrics in progress |
+| P2.8 | Temperature scaling + conformal | doing | main | 2026-10-07 | library + skin and brain calibration done; chest and bone next |
 | P2.9 | Selective prediction | todo | | | |
 | P2.10 | Trust-signal validation (D13) | todo | | | |
 | P2.11 | Subgroup audit | todo | | | |
-| P2.12 | Corruption benchmark | todo | | | |
+| P2.12 | Corruption benchmark | doing | main | 2026-10-07 | corruption runs in progress |
 | P2.13 | Model cards + datasheets | todo | | | |
 | P2.14 | make eval | todo | | | |
 
@@ -144,7 +144,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
 - rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738]; output not pulled (Kaggle rate limit), superseded by the rerun below
-- rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs (val mAP50 0.453 on 380 images) then failed at prediction export on truncated JPEGs; fixed in commit 8539baf; v2 relaunched 2026-10-07 02:10
+- rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs then failed at prediction export on truncated JPEGs (fixed in 8539baf); v2 COMPLETE 2026-10-07 02:56, pulled, registered as bone_det@8539baf9. Test (569 images, 103 fractured): mAP50 0.453 [0.367, 0.547], image AUROC 0.923 [0.886, 0.957], sensitivity 0.835 [0.757, 0.903] at the validation-fixed 90%-specificity threshold (test specificity 0.880)
 - johannshonigeorge/parallax-p2-5-skin-lesion-classifier: rerun COMPLETE 2026-10-07 02:26, pulled, registered as skin_cls@a217517b. Official ISIC 2018 test balanced accuracy 0.680 [0.632, 0.728], melanoma recall 0.637, melanoma AUROC 0.924; the two runs differ by about 0.01 (GPU nondeterminism)
 - johannshonigeorge/parallax-p2-3-brain-mri-classifier: COMPLETE 2026-10-07, pulled, registered as brain_cls@d351f062. Leakage-free test accuracy 0.940 [0.921, 0.958]
 - johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
