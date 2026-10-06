@@ -79,3 +79,14 @@ def test_write_run_records_hashes_and_predictions(tmp_path):
     assert meta["weights_sha256"] == tc.sha256_file(out / "weights.pt") and meta["split_hash"] == "abc"
     assert json.loads((out / "metrics.json").read_text()) == {"x": 1.5}
     assert np.load(out / "predictions" / "test.npz")["ids"][0] == "i1"
+
+
+def test_link_attached_finds_dataset_by_marker(tmp_path):
+    inp = tmp_path / "input" / "brain-tumor-mri-dataset"
+    (inp / "Training" / "glioma").mkdir(parents=True)
+    (inp / "Training" / "glioma" / "a.jpg").write_bytes(b"x")
+    dst = tc.link_attached(tmp_path / "raw", "brain_mri", "Training", search=tmp_path / "input")
+    assert (dst / "Training" / "glioma" / "a.jpg").exists()
+    assert tc.link_attached(tmp_path / "raw", "brain_mri", "Training", search=tmp_path / "input") == dst
+    with pytest.raises(FileNotFoundError):
+        tc.link_attached(tmp_path / "raw", "other", "Nope", search=tmp_path / "input")

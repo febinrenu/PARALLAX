@@ -53,6 +53,29 @@ def device() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+def link_attached(root: Path, name: str, marker: str, search: Path = Path("/kaggle/input"), depth: int = 4) -> Path:
+    """Make <root>/<name> point at an attached Kaggle input: the shallowest directory under `search` that contains `marker`."""
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    dst = root / name
+    if dst.exists():
+        return dst
+    best = None
+    for p in sorted(search.rglob(marker), key=lambda q: len(q.parts)):
+        if len(p.relative_to(search).parts) <= depth:
+            best = p.parent
+            break
+    if best is None:
+        raise FileNotFoundError(f"no dataset containing {marker!r} under {search}; attach it in the notebook's Input panel")
+    try:
+        dst.symlink_to(best, target_is_directory=True)
+    except OSError:  # Windows without symlink rights: a directory junction needs none
+        if os.name != "nt":
+            raise
+        subprocess.run(["cmd", "/c", "mklink", "/J", str(dst), str(best)], check=True, capture_output=True)
+    return dst
+
+
 def tree_manifest(name: str, root: Path) -> dict:
     """Manifest for a dataset that was attached to the notebook rather than downloaded: file count, bytes and a content digest."""
     h, n, total = hashlib.sha256(), 0, 0

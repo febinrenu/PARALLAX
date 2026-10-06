@@ -6,7 +6,7 @@
     path = image_path(test.iloc[0])               # absolute path of the image on this machine
 
 Set PARALLAX_DATA_ROOT to relocate the raw data (Kaggle notebooks point it at a folder that links the
-attached inputs). Default is ml/data/raw.
+attached inputs). Default is ml/data/raw. PARALLAX_SPLITS_DIR relocates the split files (used by tests).
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SPLITS_DIR = REPO_ROOT / "ml" / "data" / "splits"
+SPLITS_DIR = Path(os.environ.get("PARALLAX_SPLITS_DIR") or REPO_ROOT / "ml" / "data" / "splits")
 CACHE_DIR = REPO_ROOT / "ml" / "data" / "cache"
 REPORTS_DIR = REPO_ROOT / "reports"
 SEED = 20261006

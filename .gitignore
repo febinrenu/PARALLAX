@@ -28,6 +28,8 @@ data/
 !ml/data/
 ml/data/raw/
 ml/data/cache/
+ml/train/kaggle/
+ml/artifacts/_local/
 datasets/
 checkpoints/
 runs/
