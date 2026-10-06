@@ -63,12 +63,12 @@ def _anatomy(flip=False):
     return Anatomy(right_lung=rl, left_lung=ll, heart=ht)
 
 
-def make_reader(anatomy_fn="default", **cfg_kw):
+def make_reader(anatomy_fn="default", sharpness=30.0, **cfg_kw):
     from medproof.intake.preprocess import prepare
 
     probe = StubXrv([0.0, 0.0, 0.0])
     stat = float(probe.stat(torch.from_numpy(prepare(_image(), "cxr_xrv"))[None]))
-    gain = 30.0 / stat  # an empty image scores far below every threshold
+    gain = sharpness / stat  # an empty image scores far below every threshold
     model = StubXrv([stat - 3 / gain, stat - 0.6 / gain, stat + 4 / gain], gain)  # probs ~0.95, ~0.65, ~0.02
     fn = (lambda img: _anatomy()) if anatomy_fn == "default" else anatomy_fn
     return CxrReader(model, anatomy_fn=fn, cfg=CxrConfig(**cfg_kw), model_id="xrv-densenet121-all@abcd1234")
@@ -207,3 +207,10 @@ def test_square_image_has_no_partial_view_flag():
     sq[60:120, 150:250] = 1.0
     out = make_reader(anatomy_fn=None).predict(sq)
     assert "partial_view" not in out.flags
+
+
+def test_reader_sets_the_torch_thread_count_from_config():
+    import torch
+
+    make_reader(threads=1)
+    assert torch.get_num_threads() == 1

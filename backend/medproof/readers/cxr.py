@@ -62,6 +62,9 @@ class CxrReader:
         output_kind: str = "probability",
     ):
         self.cfg = cfg or CxrConfig()
+        import torch
+
+        torch.set_num_threads(max(1, self.cfg.threads))
         self.model = model.eval()
         self.anatomy_fn = anatomy_fn
         self.model_id = model_id or f"{self.cfg.model_name}@unknown"

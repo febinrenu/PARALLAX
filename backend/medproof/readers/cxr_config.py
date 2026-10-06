@@ -18,6 +18,8 @@ class CxrConfig:
     cam_method: str = field(default_factory=lambda: _env("MEDPROOF_CXR_CAM", "gradcam++"))
     device: str = field(default_factory=lambda: _env("MEDPROOF_DEVICE", "cpu"))
     spec: str = "cxr_xrv"  # preprocessing spec in intake.preprocess
+    # Measured on the dev machine: 0.33 s per image with 1 thread, 4.3 s with 8 (oversubscription).
+    threads: int = field(default_factory=lambda: int(_env("MEDPROOF_THREADS", "1")))
 
     positive_threshold: float = 0.5  # labels below this are not reported as findings
     tier_high: float = 0.8
