@@ -15,10 +15,23 @@ from tests.conftest import make_phantom  # noqa: E402
 _loaded = None
 
 
+def _locally_available(cfg: RouterConfig) -> bool:
+    """Real-model tests run only when the weights are already on disk, never starting a 3.5 GB download."""
+    if cfg.model_path:
+        return os.path.isdir(cfg.model_path)
+    try:
+        from huggingface_hub import try_to_load_from_cache
+
+        return isinstance(try_to_load_from_cache(cfg.model_id, "model.safetensors"), str)
+    except Exception:
+        return False
+
+
 def _embedder():
     global _loaded
     if _loaded is None:
-        _loaded = load_default(RouterConfig())
+        cfg = RouterConfig()
+        _loaded = load_default(cfg) if _locally_available(cfg) else (None, "weights not on disk (set MEDPROOF_ROUTER_MODEL to a local copy)")
     return _loaded
 
 
@@ -64,7 +77,7 @@ def test_probe_accuracy_on_staged_held_out_images():
 
     emb = _need_model()
     report = evaluate_folder(emb, os.environ["MEDPROOF_ROUTER_DATA"])
-    assert report["accuracy"] >= 0.97, report
+    assert report["n"] >= 30 and report["accuracy"] >= 0.97, report
 
 
 # --- API-compatibility check with a public random-weight SigLIP (NOT MedSigLIP, no accuracy meaning) ---
@@ -75,7 +88,7 @@ TINY = "hf-internal-testing/tiny-random-SiglipModel"
 def tiny_embedder():
     import dataclasses
 
-    emb, reason = load_default(dataclasses.replace(RouterConfig(), model_id=TINY))
+    emb, reason = load_default(dataclasses.replace(RouterConfig(), model_id=TINY, model_path=""))
     if emb is None:
         pytest.skip(f"tiny SigLIP test model not available: {reason}")
     return emb

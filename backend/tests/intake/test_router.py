@@ -211,11 +211,21 @@ def test_prompts_and_thresholds_come_from_config():
     assert cfg.model_id == "google/medsiglip-448"
 
 
-def test_model_id_and_probe_path_can_be_overridden_by_environment(monkeypatch):
-    monkeypatch.setenv("MEDPROOF_ROUTER_MODEL", "org/other-model")
+def test_model_id_path_and_probe_can_be_overridden_by_environment(monkeypatch):
+    monkeypatch.setenv("MEDPROOF_ROUTER_MODEL_ID", "org/other-model")
+    monkeypatch.setenv("MEDPROOF_ROUTER_MODEL", "D:/weights/local-copy")
     monkeypatch.setenv("MEDPROOF_ROUTER_PROBE", "somewhere/probe.npz")
     cfg = RouterConfig()
-    assert cfg.model_id == "org/other-model" and cfg.probe_path == "somewhere/probe.npz"
+    assert cfg.model_id == "org/other-model" and cfg.model_path == "D:/weights/local-copy" and cfg.probe_path == "somewhere/probe.npz"
+    assert RouterConfig().model_path == "D:/weights/local-copy"
+
+
+def test_cache_paths_stay_short_for_long_model_ids(tmp_path):
+    c = EmbeddingCache(tmp_path)
+    long_id = "C:/Users/someone/AppData/Local/Temp/" + "very-long-folder-name/" * 8 + "medsiglip"
+    c.put(long_id, "ab" * 32, np.arange(3, dtype=np.float32))
+    np.testing.assert_array_equal(c.get(long_id, "ab" * 32), np.arange(3, dtype=np.float32))
+    assert len(str(next(tmp_path.rglob("*.npy")).relative_to(tmp_path))) < 130
 
 
 def test_ood_score_is_reported_and_flags_unusual_images():

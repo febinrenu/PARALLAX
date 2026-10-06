@@ -204,7 +204,7 @@ def stage_cifar(out: Path, n: int, manifest: list) -> None:
         batch = pickle.load(t.extractfile("cifar-10-batches-py/test_batch"), encoding="bytes")  # noqa: S301 (public file, local use)
     data = batch[b"data"].reshape(-1, 3, 32, 32).transpose(0, 2, 3, 1)
     for i in _spread(list(range(len(data))), n):
-        _save(Image.fromarray(data[i]), out / "other" / "cifar" / f"cifar_{i:05d}.png", manifest, "CIFAR-10 test")
+        _save(Image.fromarray(data[i]), out / "other" / f"cifar_{i:05d}.png", manifest, "CIFAR-10 test")
 
 
 def stage_montgomery(out: Path, n: int, manifest: list) -> None:

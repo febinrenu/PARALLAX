@@ -163,6 +163,7 @@ def test_collect_folder_layout_groups_and_body_parts(tmp_path):
     rows = {p.name: (cls, group, part) for p, cls, group, part in collect_folder(tmp_path)}
     assert set(rows) == {"a.png", "b.png", "s1.png", "s2.png", "h1.jpg", "p1.jpg", "misc.jpg"}
     assert rows["a.png"][1] != rows["b.png"][1]  # flat files are their own groups
+    assert rows["h1.jpg"][1] != rows["p1.jpg"][1]  # a body-part folder is a label, not a group
     assert rows["s1.png"][1] == rows["s2.png"][1]  # same patient folder is one group
     assert rows["h1.jpg"][2] == "hand" and rows["p1.jpg"][2] == "hip" and rows["misc.jpg"][2] is None
     assert rows["h1.jpg"][0] == "bone_xray"

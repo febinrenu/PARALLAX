@@ -7,7 +7,7 @@ plain .npz (no pickle) and records which embedder it belongs to.
 
 CLI:  python -m medproof.intake.router_train --data DIR [--out PATH] [--report PATH]
 DIR layout: DIR/<class>/**/image files; for bone, DIR/bone_xray/<body_part>/... also gives a body part.
-Images in the same immediate sub-folder of a class are treated as one group.
+Brain MRI images in the same patient sub-folder form one group; every other image is its own group.
 """
 
 from __future__ import annotations
@@ -228,9 +228,10 @@ def collect_folder(root: str | Path):
             if p.suffix.lower() not in IMAGE_SUFFIXES or not p.is_file():
                 continue
             rel = p.relative_to(base).parts
-            sub = rel[0] if len(rel) > 1 else p.stem
-            part = sub if (cls == "bone_xray" and len(rel) > 1 and sub in BODY_PARTS) else None
-            group = "/".join(rel[:2]) if len(rel) > 2 else sub
+            part = rel[0] if (cls == "bone_xray" and len(rel) > 1 and rel[0] in BODY_PARTS) else None
+            # A sub-folder is a group (one patient) for brain MRI; elsewhere it is only a label folder, so
+            # every image is its own group unless a patient id is available.
+            group = rel[0] if (cls == "brain_mri" and len(rel) > 1) else p.stem
             yield p, cls, f"{cls}/{group}", part
 
 
@@ -255,16 +256,22 @@ def embed_folder(embedder, root: str | Path, cfg: RouterConfig | None = None):
     return np.stack(X), np.asarray(y), np.asarray(g), parts, skipped
 
 
-def evaluate_folder(embedder, root: str | Path, probe_path: str | None = None) -> dict:
-    """Accuracy of the saved probe on every image in a labelled folder (use a held-out folder)."""
+def evaluate_folder(embedder, root: str | Path, probe_path: str | None = None, seed: int = 0) -> dict:
+    """Accuracy of the saved probe on the held-out (test) groups of a labelled folder.
+
+    Uses the same group split as training with the same seed, so images the probe was fitted or tuned on
+    are never counted.
+    """
     cfg = RouterConfig()
     probe = Probe.load(probe_path or cfg.probe_path)
-    X, y, _, _, skipped = embed_folder(embedder, root, cfg)
-    pred = np.array(probe.classes)[probe.predict_proba(X).argmax(1)]
-    ok = int((pred == y).sum())
-    lo, hi = wilson_interval(ok, len(y))
-    return {"n": int(len(y)), "skipped": skipped, "accuracy": ok / max(1, len(y)), "accuracy_ci95": [lo, hi],
-            "per_class_recall": {c: float((pred[y == c] == c).mean()) for c in sorted(set(y))}}
+    X, y, g, _, skipped = embed_folder(embedder, root, cfg)
+    _, _, te = group_split(y, g, seed)
+    pred = np.array(probe.classes)[probe.predict_proba(X[te]).argmax(1)]
+    yt = y[te]
+    ok = int((pred == yt).sum())
+    lo, hi = wilson_interval(ok, len(yt))
+    return {"n": int(len(yt)), "skipped": skipped, "accuracy": ok / max(1, len(yt)), "accuracy_ci95": [lo, hi],
+            "per_class_recall": {c: float((pred[yt == c] == c).mean()) for c in sorted(set(yt))}}
 
 
 def main(argv=None) -> int:

@@ -6,6 +6,7 @@ model access. Embeddings are L2-normalised float32, and cached on disk by (model
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 from dataclasses import replace
@@ -48,8 +49,9 @@ class EmbeddingCache:
         self.root = Path(root)
 
     def _path(self, model_id: str, key: str) -> Path:
-        safe = re.sub(r"[^A-Za-z0-9._-]+", "_", model_id)
-        return self.root / safe / f"{key}.npy"
+        safe = re.sub(r"[^A-Za-z0-9._-]+", "_", model_id)[-40:]
+        tag = hashlib.sha1(model_id.encode()).hexdigest()[:8]  # keeps paths short and distinct
+        return self.root / f"{safe}-{tag}" / f"{key}.npy"
 
     def get(self, model_id: str, key: str) -> np.ndarray | None:
         p = self._path(model_id, key)
@@ -85,6 +87,7 @@ class MedSigLIPEmbedder:
     def __init__(self, model, processor, cfg: RouterConfig):
         import torch
 
+        torch.set_num_threads(max(1, cfg.threads))
         self.model = model.eval()
         self.processor = processor
         self.cfg = cfg
@@ -131,8 +134,9 @@ def load_default(cfg: RouterConfig | None = None) -> tuple[MedSigLIPEmbedder | N
     token = _hf_token()
     try:
         kwargs = {"token": token} if token else {}
-        model = AutoModel.from_pretrained(cfg.model_id, **kwargs)
-        processor = AutoProcessor.from_pretrained(cfg.model_id, **kwargs)
+        source = cfg.model_path or cfg.model_id
+        model = AutoModel.from_pretrained(source, **kwargs)
+        processor = AutoProcessor.from_pretrained(source, **kwargs)
         model.to(cfg.device)
         return MedSigLIPEmbedder(model, processor, cfg), ""
     except Exception as exc:  # gated repo, no token, offline, or an unexpected model layout

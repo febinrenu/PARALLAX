@@ -47,11 +47,15 @@ def _env(name: str, default: str) -> str:
 
 @dataclass(frozen=True)
 class RouterConfig:
-    model_id: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_MODEL", "google/medsiglip-448"))
+    # model_id is the canonical name stored in probes and caches; model_path optionally points at a local copy
+    model_id: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_MODEL_ID", "google/medsiglip-448"))
+    model_path: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_MODEL", ""))
     probe_path: str = field(default_factory=lambda: _env("MEDPROOF_ROUTER_PROBE", "artifacts/router_probe.npz"))
     ood_path: str = field(default_factory=lambda: _env("MEDPROOF_OOD_MODEL", "artifacts/ood.npz"))
     cache_dir: str = field(default_factory=lambda: _env("MEDPROOF_EMBED_CACHE", "artifacts/embeddings"))
     device: str = field(default_factory=lambda: _env("MEDPROOF_DEVICE", "cpu"))
+    # The image tower is large: 15 s/img with 1 thread, 9 s with 6 on the dev machine.
+    threads: int = field(default_factory=lambda: int(_env("MEDPROOF_ROUTER_THREADS", "6")))
     spec: str = "router_medsiglip"  # preprocessing spec in intake.preprocess
 
     min_confidence: float = 0.80  # probe below this falls back to zero-shot
