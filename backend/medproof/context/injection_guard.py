@@ -32,6 +32,7 @@ _HOMOGLYPHS = str.maketrans(
 _LEET = str.maketrans({"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "@": "a", "$": "s"})
 _SPACED = re.compile(r"(?<![A-Za-z])(?:[A-Za-z] ){5,}[A-Za-z](?![A-Za-z])")
 _B64 = re.compile(r"(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{24,}={0,2}(?![A-Za-z0-9+/=])")
+PG_THRESHOLD = 0.9  # 0.5 flagged a legitimate sentence in the corpus (0.58); recall on fresh attacks is 4 vs 7 of 28, see reports/p3_guard_blind.json
 _TERMINATORS = ".!?\n"
 _SENTENCE = re.compile(r"[^.!?\n]+[.!?\n]?")
 
@@ -202,22 +203,21 @@ class InjectionGuard:
         pool: _Pool | None = None,
         *,
         pg_model: str = PROMPT_GUARD_MODEL,
-        pg_threshold: float = 0.5,
+        pg_threshold: float = PG_THRESHOLD,
+        use_regex: bool = True,
+        use_pg: bool = True,
         use_llm: bool = True,
         service: str = "judge",
     ) -> None:
         self.pool, self.pg_model, self.pg_threshold = pool, pg_model, pg_threshold
-        self.use_llm, self.service = use_llm, service
+        self.use_regex, self.use_pg, self.use_llm, self.service = use_regex, use_pg, use_llm, service
 
     def check(self, text: str) -> GuardResult:
-        res = GuardResult(text=text, flags=list(scan_regex(text)))
+        res = GuardResult(text=text, flags=list(scan_regex(text)) if self.use_regex else [])
         if self.pool is None or not text.strip():
             return res
-        try:
-            if self.pool.score(self.service, self.pg_model, text).score >= self.pg_threshold:
-                res.flags.extend(self._localize(text))
-        except LLMError as exc:
-            res.warnings.append(f"prompt guard unavailable: {exc}")
+        if self.use_pg and not res.flagged:
+            self._prompt_guard(text, res)
         if res.flagged or not self.use_llm:
             return res
         try:
@@ -231,23 +231,18 @@ class InjectionGuard:
             res.flags.append(Flag(span, "llm_classifier", "llm"))
         return res
 
-    def _localize(self, text: str) -> list[Flag]:
-        """Prompt Guard scores a whole note; find which sentences fire, else flag the whole note."""
+    def _prompt_guard(self, text: str, res: GuardResult) -> None:
+        """Score each sentence on its own: a whole note dilutes the payload among ordinary clinical text."""
         assert self.pool is not None
-        hits: list[Flag] = []
-        scored = 0
         for m in _SENTENCE.finditer(text):
             sent = m.group(0).strip()
             if len(sent) < 8:
                 continue
-            scored += 1
             try:
-                fired = self.pool.score(self.service, self.pg_model, sent).score >= self.pg_threshold
-            except LLMError:
-                break
-            if fired:
-                s = m.start() + (len(m.group(0)) - len(m.group(0).lstrip()))
-                hits.append(Flag((s, m.end()), "prompt_guard", "prompt_guard"))
-        if not hits or (scored > 1 and len(hits) == scored):
-            return [Flag((0, len(text)), "prompt_guard", "prompt_guard")]
-        return hits
+                score = self.pool.score(self.service, self.pg_model, sent).score
+            except LLMError as exc:
+                res.warnings.append(f"prompt guard unavailable: {exc}")
+                return
+            if score >= self.pg_threshold:
+                start = m.start() + (len(m.group(0)) - len(m.group(0).lstrip()))
+                res.flags.append(Flag((start, m.end()), "prompt_guard", "prompt_guard"))
