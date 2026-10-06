@@ -155,13 +155,20 @@ def run_study(
     *,
     study_id: str | None = None,
     modality_hint: Modality | None = None,
+    notes: str | None = None,
     stages: list[StageSpec] | None = None,
     cache: StageCache | None = None,
     config: PipelineConfig | None = None,
+    on_stage_result: Callable[[StageResult], None] | None = None,
 ) -> tuple[StudyResult, list[StageResult]]:
     """Run every stage in order. Never raises: any failure degrades to a `StageResult(ok=False)`
-    and the study still completes. Returns `(StudyResult, [StageResult, ...])` — the API (P4.4)
-    streams the latter over SSE as each stage finishes."""
+    and the study still completes. Returns `(StudyResult, [StageResult, ...])`.
+
+    `on_stage_result`, if given, is called synchronously right after every stage (cache hit or
+    miss, so a cached run still produces a full event sequence) — the API (P4.4) uses this to
+    push each result onto an SSE queue and to append it to the evidence ledger (P4.5). Nothing
+    here imports `core.ledger`: that wiring belongs to the caller, so this function stays usable
+    (and testable) with no ledger at all."""
     config = config or PipelineConfig()
     if cache is None:
         cache = StageCache(config.cache_dir)
@@ -171,6 +178,7 @@ def run_study(
         study_id=study_id or str(uuid.uuid4()),
         raw_bytes=raw_bytes,
         modality_hint=modality_hint,
+        notes=notes,
         input_sha256=sha256_hex(raw_bytes),
         artifact_dir=config.artifact_root / (study_id or "pending"),
     )
@@ -179,6 +187,8 @@ def run_study(
     for spec in stages:
         result = _run_stage(spec, ctx, cache, config)
         stage_results.append(result)
+        if on_stage_result is not None:
+            on_stage_result(result)
         if spec.required and not result.ok:
             break
 

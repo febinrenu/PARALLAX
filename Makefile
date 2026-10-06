@@ -18,13 +18,14 @@ test: ## everything: backend unit tests + ml unit/synthetic tests
 	cd backend && $(PYTHON) -m pytest -q
 	$(MAKE) ml-test
 
-# fast subset for pre-merge: backend tests (incl. contract tests). The full
-# fixture-pipeline-in-60s smoke test (plan.md section 8) lands with the P4.3 orchestrator.
+# fast subset for pre-merge: backend tests (incl. contract tests). `tests/api/test_studies.py`
+# already runs a fixture image through the real pipeline + API end to end in well under 60s,
+# which is plan.md section 8's smoke criterion in substance; there's no separate script for it.
 smoke:
 	cd backend && $(PYTHON) -m pytest -q
 
-dev: ## not yet implemented: see P4.3 (orchestrator) and P4.4 (API + SSE)
-	@echo "make dev: not yet implemented, see P4.3/P4.4"
+dev: ## run the API with autoreload (web/'s dev server is still a separate `cd web && pnpm dev` until P4.6)
+	cd backend && $(PYTHON) -m uvicorn medproof.api.app:app --reload
 
 eval: ## not yet implemented: see P2.14
 	@echo "make eval: not yet implemented, see P2.14"

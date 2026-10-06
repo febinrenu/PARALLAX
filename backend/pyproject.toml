@@ -10,10 +10,14 @@ dependencies = [
     "scipy",
     "pydantic>=2",
     "diskcache",
+    "fastapi",
+    "uvicorn",
+    "sse-starlette",
+    "python-multipart",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "hypothesis", "ruff", "mypy"]
+dev = ["pytest", "hypothesis", "ruff", "mypy", "httpx"]
 # CPU torch comes from https://download.pytorch.org/whl/cpu
 ml = ["torch", "torchvision", "torchxrayvision"]
 

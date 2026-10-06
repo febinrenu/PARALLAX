@@ -27,3 +27,8 @@ class PipelineConfig:
         )
     )
     default_timeout_s: float = field(default_factory=lambda: float(_env("MEDPROOF_STAGE_TIMEOUT_S", "20.0")))
+    ledger_path: Path = field(
+        default_factory=lambda: Path(
+            _env("MEDPROOF_LEDGER_PATH", str(Path(tempfile.gettempdir()) / "medproof_ledger.jsonl"))
+        )
+    )

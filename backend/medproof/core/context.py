@@ -22,6 +22,7 @@ class StudyContext:
     raw_bytes: bytes | None = None
     path: str | None = None
     modality_hint: Modality | None = None
+    notes: str | None = None  # raw uploaded note text; no context stage reads it yet (P3)
     decoded: DecodedImage | None = None
     artifact_dir: Path | None = None
     finding_start: int = 1
