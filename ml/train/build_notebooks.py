@@ -21,12 +21,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SRC, NB, KG = HERE / "src", HERE / "notebooks", HERE / "kaggle"
 
-# name -> (kernel slug, title, Kaggle datasets to attach, needs a GPU)
+# name -> (kernel slug, title, Kaggle datasets to attach). Kaggle derives the slug from the title, so they must agree.
 JOBS = {
-    "brain_cls": ("parallax-brain-cls", "PARALLAX P2.3 brain MRI classifier", ["masoudnickparvar/brain-tumor-mri-dataset"]),
-    "brain_seg": ("parallax-brain-seg", "PARALLAX P2.4 brain tumour segmenter", ["mateuszbuda/lgg-mri-segmentation"]),
-    "skin_cls": ("parallax-skin-cls", "PARALLAX P2.5 skin lesion classifier", []),
-    "bone_det": ("parallax-bone-det", "PARALLAX P2.6 bone fracture detector", []),
+    "brain_cls": ("parallax-p2-3-brain-mri-classifier", "PARALLAX P2.3 brain MRI classifier", ["masoudnickparvar/brain-tumor-mri-dataset"]),
+    "brain_seg": ("parallax-p2-4-brain-tumour-segmenter", "PARALLAX P2.4 brain tumour segmenter", ["mateuszbuda/lgg-mri-segmentation"]),
+    "skin_cls": ("parallax-p2-5-skin-lesion-classifier", "PARALLAX P2.5 skin lesion classifier", []),
+    "bone_det": ("parallax-p2-6-bone-fracture-detector", "PARALLAX P2.6 bone fracture detector", []),
 }
 
 

@@ -30,5 +30,9 @@
  "isic2018_t3_train/ISIC2018_Task3_Training_LesionGroupings.csv": {
   "bytes": 492996,
   "sha256": "b0352393dc54843e39a7c108781c54cc8a0ef282240330ac239a88c46ea0cc0f"
+ },
+ "lgg_seg/lgg-mri-segmentation.zip": {
+  "bytes": 748584920,
+  "sha256": "cac105de01272f0ca28dc56178f8d164a7df85d118a5b4baca388d6bcb4e854e"
  }
 }

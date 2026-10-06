@@ -1,4 +1,15 @@
 {
+ "brain_mri": {
+  "counts": {
+   "cal": 457,
+   "dropped": 2375,
+   "test": 563,
+   "train": 3349,
+   "val": 456
+  },
+  "rows": 7200,
+  "split_hash": "ae05442fab4727999faa50e380096340763c8ffc03c44705a6a31f589c8d9311"
+ },
  "fracatlas": {
   "counts": {
    "cal": 380,
@@ -21,5 +32,14 @@
   },
   "rows": 11527,
   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb"
+ },
+ "lgg_seg": {
+  "counts": {
+   "test": 372,
+   "train": 3291,
+   "val": 266
+  },
+  "rows": 3929,
+  "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
  }
 }

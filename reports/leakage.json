@@ -1,5 +1,83 @@
 {
  "datasets": {
+  "brain_mri": {
+   "duplicate_clusters": 1092,
+   "duplicate_pairs": 5856,
+   "flat_images_excluded_from_matching": 0,
+   "images_removed": 2375,
+   "images_with_duplicate_in_another_original_split": {
+    "testing": 715,
+    "training": 1149
+   },
+   "label_conflict_clusters": 1,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 28,
+   "loose_grouping": {
+    "clusters": 3403,
+    "largest": 176,
+    "max_hamming": 6,
+    "singletons": 2174
+   },
+   "max_hamming": 4,
+   "n_images": 7200,
+   "note": "merged from Br35H, SARTAJ and Figshare; no patient ids, so grouping is by pHash similarity (approximation)",
+   "pairs_across_original_splits": 2019,
+   "pairs_by_distance": {
+    "0": 1890,
+    "1": 0,
+    "2": 1945,
+    "3": 0,
+    "4": 2021
+   },
+   "pairs_within_original_split": 3837,
+   "removed_by_reason": {
+    "duplicate": 2368,
+    "duplicate_of_immutable_test_image": 0,
+    "label_conflict": 7
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "cal": {
+     "glioma": 127,
+     "meningioma": 137,
+     "notumor": 55,
+     "pituitary": 138
+    },
+    "dropped": {
+     "glioma": 309,
+     "meningioma": 394,
+     "notumor": 1230,
+     "pituitary": 442
+    },
+    "test": {
+     "glioma": 196,
+     "meningioma": 169,
+     "notumor": 57,
+     "pituitary": 141
+    },
+    "train": {
+     "glioma": 1038,
+     "meningioma": 964,
+     "notumor": 402,
+     "pituitary": 945
+    },
+    "val": {
+     "glioma": 130,
+     "meningioma": 136,
+     "notumor": 56,
+     "pituitary": 134
+    }
+   },
+   "split_counts": {
+    "cal": 457,
+    "dropped": 2375,
+    "test": 563,
+    "train": 3349,
+    "val": 456
+   },
+   "split_hash": "ae05442fab4727999faa50e380096340763c8ffc03c44705a6a31f589c8d9311",
+   "truncated_source_files": 0
+  },
   "fracatlas": {
    "duplicate_clusters": 198,
    "duplicate_pairs": 341,
@@ -164,9 +242,44 @@
    },
    "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
    "truncated_source_files": 0
+  },
+  "lgg_seg": {
+   "cross_patient_duplicate_pairs": 947,
+   "cross_patient_pairs_both_tumour": 61,
+   "duplicate_clusters": 479,
+   "duplicate_pairs": 3079,
+   "images_removed": 0,
+   "images_with_duplicate_in_another_original_split": {},
+   "largest_cluster": 351,
+   "max_hamming": 4,
+   "n_images": 3929,
+   "n_patients": 110,
+   "note": "slices of one patient are never separated; splits are by TCGA patient",
+   "pairs_across_original_splits": 0,
+   "pairs_by_distance": {
+    "0": 157,
+    "1": 0,
+    "2": 761,
+    "3": 0,
+    "4": 2161
+   },
+   "pairs_within_original_split": 3079,
+   "patients_merged_into_groups": 28,
+   "patients_per_split": {
+    "test": 9,
+    "train": 65,
+    "val": 8
+   },
+   "seed": 20261006,
+   "split_counts": {
+    "test": 372,
+    "train": 3291,
+    "val": 266
+   },
+   "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
   }
  },
- "generated_utc": "2026-10-06T18:16:17Z",
+ "generated_utc": "2026-10-06T19:32:32Z",
  "method": {
   "duplicate_max_hamming": 4,
   "hash": "64-bit DCT pHash",

@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-06T18:16:17Z",
+ "generated_utc": "2026-10-06T19:32:32Z",
  "batch_cap": 1000,
  "datasets": {
   "fracatlas": {
@@ -53,6 +53,52 @@
    "source_dirs": [
     "isic2018_t3_test",
     "isic2018_t3_train"
+   ]
+  },
+  "brain_mri": {
+   "split_file": "ml/data/splits/brain_mri.csv",
+   "test_splits": [
+    "test"
+   ],
+   "n_test": 563,
+   "n_batch": 563,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "glioma": 196,
+    "meningioma": 169,
+    "pituitary": 141,
+    "notumor": 57
+   },
+   "batch_label_counts": {
+    "glioma": 196,
+    "meningioma": 169,
+    "pituitary": 141,
+    "notumor": 57
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "brain_mri"
+   ]
+  },
+  "lgg_seg": {
+   "split_file": "ml/data/splits/lgg_seg.csv",
+   "test_splits": [
+    "test"
+   ],
+   "n_test": 372,
+   "n_batch": 372,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "empty": 242,
+    "tumor": 130
+   },
+   "batch_label_counts": {
+    "empty": 242,
+    "tumor": 130
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "lgg_seg"
    ]
   }
  }

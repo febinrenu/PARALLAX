@@ -55,7 +55,7 @@ if SMOKE:
 cls_idx = {c: i for i, c in enumerate(CLASSES)}
 full["y"] = full.label.map(cls_idx)
 
-# Which original-Testing images have a near-duplicate (Hamming <= 4) or a same-scan neighbour (<= 10) in original Training?
+# Which original-Testing images have a near-duplicate (Hamming <= 4) or a same-scan neighbour (<= 6) in original Training?
 tr_dup = set(full[full.orig_split == "training"].dup_cluster)
 tr_loose = set(full[full.orig_split == "training"].loose_cluster)
 full["leaked_dup"] = (full.orig_split == "testing") & full.dup_cluster.isin(tr_dup)

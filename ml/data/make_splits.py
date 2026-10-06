@@ -274,7 +274,7 @@ def build_rsna(root: Path) -> tuple[pd.DataFrame, np.ndarray, dict]:
 SPECS = {
     "fracatlas": (build_fracatlas, {"train": 0.65, "val": 0.10, "cal": 0.10, "test": 0.15}, "strat", ["test"], {}),
     "ham10000": (build_ham10000, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["official_test"], {}),
-    "brain_mri": (build_brain_mri, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["test"], {"loose_dist": 10, "use_loose_as_group": True}),
+    "brain_mri": (build_brain_mri, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["test"], {"loose_dist": 6, "use_loose_as_group": True}),
     "lgg_seg": (build_lgg_seg, {"train": 0.80, "val": 0.10, "test": 0.10}, "label", ["test"], {}),
     "rsna": (build_rsna, {"cal": 0.30, "test": 0.70}, "label", ["test"], {}),
 }
@@ -297,7 +297,20 @@ def _finish_lgg(df: pd.DataFrame, hashes: np.ndarray, extra: dict) -> tuple[pd.D
     df, rep = au.audit(df.assign(orig_split="none"), hashes)
     df["loose_cluster"] = -1
     df["phash"] = [f"{int(h):016x}" for h in hashes]
-    df["group"] = au.merge_groups(df["native_group"], df["dup_cluster"])  # patients that share a duplicate image merge into one group
+    # Slices are never removed. Two patients are merged into one group only when a pair of *tumour-bearing* slices from
+    # different patients is a near-duplicate; dark, near-empty top and bottom slices look alike across patients and say nothing.
+    pid = pd.factorize(df["native_group"])[0]
+    tumour = (df["mask_pixels"] > 0).to_numpy()
+    pairs = ph.near_pairs(hashes, ph.DUP_MAX_DIST)
+    cross = [(i, j) for i, j, _ in pairs if pid[i] != pid[j]]
+    both = [(i, j) for i, j in cross if tumour[i] and tumour[j]]
+    lab = ph.components(int(pid.max()) + 1, [(int(pid[i]), int(pid[j])) for i, j in both])
+    df["group"] = ["p" + str(lab[p]) for p in pid]
+    rep["cross_patient_duplicate_pairs"] = len(cross)
+    rep["cross_patient_pairs_both_tumour"] = len(both)
+    rep["patients_merged_into_groups"] = int(len(set(pid)) - len(set(lab)))
+    for k in ("removed_by_reason", "label_conflict_clusters", "label_noise_max_hamming"):
+        rep.pop(k, None)
     pat = df.groupby("group").agg(burden=("mask_pixels", "sum"), n=("image_id", "size")).sort_index()
     pat["quartile"] = pd.qcut(pat.burden.rank(method="first"), 4, labels=False)
     rng = np.random.RandomState(SEED)
