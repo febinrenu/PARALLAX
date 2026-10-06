@@ -79,16 +79,16 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P3.1 | MedGemma service + batch reads | doing | p3/medgemma-groq | 2026-10-06 | service, batch, notebooks, CPU tests done; real-GPU smoke not yet run |
-| P3.2 | Generalist reader + concordance | todo | | | |
-| P3.3 | Groq pool | done | p3/medgemma-groq | 2026-10-06 | 22 tests with mocked Groq; not yet tried against live Groq (no key) |
-| P3.4 | Synthetic note generator | doing | p3/medgemma-groq | 2026-10-06 | schema + validators done; generator not started |
-| P3.5 | Fact extraction with spans | todo | | | |
-| P3.6 | Injection guard | todo | | | |
-| P3.7 | Contradiction rules | todo | | | |
+| P3.1 | MedGemma service + batch reads | doing | p3/medgemma-groq | 2026-10-07 | real read verified on the local RTX 4060 (bf16 4-bit, 3.2 GiB, 5.5 s/read after a 23 s load); Kaggle/Colab notebooks untested; eval batch reads running (resumable) |
+| P3.2 | Generalist reader + concordance | doing | p3/medgemma-groq | 2026-10-07 | client, label mapping, concordance, kappa done and tested; reports/concordance.json waits for the batch reads; specialist-vs-MedGemma kappa waits for P2/P1 weights |
+| P3.3 | Groq pool | done | p3/medgemma-groq | 2026-10-07 | 27 tests with a mocked Groq; live call confirmed on gpt-oss-20b and 120b; Prompt Guard score() added |
+| P3.4 | Synthetic note generator | done | p3/medgemma-groq | 2026-10-07 | ml/data/gen_notes.py, 200 notes: 60 contradictions, 48 attacks in 8 families, 12 benign look-alikes, clean twins; notes_v1.jsonl committed |
+| P3.5 | Fact extraction with spans | doing | p3/medgemma-groq | 2026-10-07 | code and tests done; held-out numbers in reports/p3_context_test.json |
+| P3.6 | Injection guard | doing | p3/medgemma-groq | 2026-10-07 | regex + Prompt Guard + LLM layers done and tested; held-out numbers in reports/p3_context_test.json |
+| P3.7 | Contradiction rules | done | p3/medgemma-groq | 2026-10-07 | P/R 1.00/1.00 on gold facts (templated notes, so it shows the rules fire, not that they generalise); end-to-end with extracted facts not yet measured |
 | P3.8 | Retrieval / precedents | todo | | | |
-| P3.9 | Slot-filled report | todo | | 2026-10-06 | grammar specified in docs/report_slots.md |
-| P3.10 | Hallucination firewall | todo | | 2026-10-06 | rules R1-R12 specified in docs/report_slots.md |
+| P3.9 | Slot-filled report | done | p3/medgemma-groq | 2026-10-07 | slot renderer, frames, model-chooses-frame drafts with offline template fallback; live gpt-oss-120b call verified |
+| P3.10 | Hallucination firewall | done | p3/medgemma-groq | 2026-10-07 | R1-R12; 100% of 100+ planted bad claims blocked, 0 of 10 good claims blocked; R5 treats faithful=None as unverified until P1.9 |
 | P3.11 | Entailment judge | todo | | | |
 | P3.12 | Voice (Whisper) | todo | | | |
 | P3.13 | FHIR export | todo | | | |
@@ -149,10 +149,13 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
 ### P3 — Clinical Reasoning & Trust
-**Now:** P3.1 real-model smoke test (needs HF_TOKEN + a CC-licensed CXR); P3.4 note generator.
-**Next:** P3.2 generalist reader + concordance; P3.5 fact extraction; P3.9/P3.10 implementation from docs/report_slots.md.
-**Blockers:** HF account not yet authorized for google/medgemma-1.5-4b-it (403); `core/schemas.py` (P4, G0) not present, so report/ code that imports contract types waits for it.
-**MedGemma endpoint:** none running yet. Local machine has an RTX 4060 Laptop GPU (8 GB), so a local 4-bit run should fit.
+**Now:** MedGemma eval batch reads are running on the local RTX 4060 (`python -m services.medgemma.batch --dataset fracatlas|ham10000`, resumable, fixed random order so any prefix is a random sample); afterwards `python -m ml.eval_p3.eval_second_reader` writes `reports/concordance.json`.
+**Next:** P3.8 retrieval (needs P1's MedSigLIP embedding fn and the train split); P3.11 entailment judge; P3.12 voice; P3.13 FHIR; end-to-end context stage (guard -> extract -> contradictions) measured on extracted instead of gold facts; wire stages into P4's pipeline once `StudyContext` exists.
+**Blockers:** none. `StudyContext` is not defined yet, so my stages take plain arguments (`StudyView`, facts, `Demographics`); P4 can adapt them.
+**MedGemma endpoint:** local only. `uvicorn services.medgemma.server:app --port 8001` on the RTX 4060 (nf4 weights, bf16 compute, 3.2 GiB VRAM, about 5.5 s per read after a 23 s load). Kaggle/Colab notebooks written but not run.
+**For P1:** `report/firewall.py::is_supported` treats `faithful=None` as unverified; set `faithful` (P1.9) and R5 tightens automatically. `readers/generalist.py` reads `DecodedImage.display` and `.sha256`; `verify/concordance.apply(findings, read)` fills `Finding.second_read` and adds flags only, never `status`.
+**For P2 / P4 (important):** the second reader is weak on bone: on a random 275-image prefix of the FracAtlas batch MedGemma 4B (4-bit, zero-shot) found about 19% of fractures (sensitivity 0.19, 95% CI 0.09-0.32) at 99.5% specificity; the missed reads literally say "No obvious fractures are visible". A `discordant` status driven by `second_reader_disagrees` would downgrade most true bone positives. Per plan 9.4, validate the flag (D13) per modality before letting it downgrade anything; until then treat it as an audit flag for bone. Numbers will be in `reports/concordance.json`.
+**For P4:** `report.drafts.draft_claims(view, pool)` returns claims + a `StageResult(stage="report")`; with `pool=None` or Groq down it returns the template-only report and says so in `warnings`. `context.contradictions.check(...)` returns findings with `TextEvidence` attached (one `te_n` id per finding/fact pair) plus `missing_context` prompts. The status rule can count `polarity == "supports"` text evidence.
 
 ### P4 — Experience & Platform
 **Now:**
@@ -200,6 +203,14 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P3 · Real-GPU smoke is a separate script (`python -m services.medgemma.smoke`); CI tests use a fake backend · services/medgemma/
 - 2026-10-06 · P3 · Added `.cache/` and `ml/artifacts/medgemma_reads/` to .gitignore (LLM cache can hold note text; cached reads are large) · plan.md 11.3
 
+- 2026-10-07 · P3 · MedGemma runs in bf16 compute, not fp16: fp16 returned an empty reply on the RTX 4060 (Gemma-family activations overflow). The loader picks bf16 when the GPU supports it, else fp32 · services/medgemma/loader.py, smoke log
+- 2026-10-07 · P3 · The second reader is asked for a short FINDINGS/IMPRESSION report with a research-evaluation framing, not strict JSON: the JSON-only prompt gave looping labels, refusals and reasoning-only output. Labels are derived deterministically from the text (negation and hedging aware) in `verify/report_labels.py`; boxes from MedGemma are not requested yet · services/medgemma/prompts, 44 label-mapping tests
+- 2026-10-07 · P3 · Injection guard is three layers (regex, Prompt Guard per sentence at 0.9, gpt-oss-20b classifier). On 28 fresh attacks: regex 4, Prompt Guard 4 (7 at 0.5), classifier 25, all three 27, with 1 false positive in 15 benign. The regex 15/15 on the corpus is in-sample and must not be quoted · reports/p3_guard_blind.json
+- 2026-10-07 · P3 · Gold quote conventions in gen_notes were changed after reading dev-split extraction errors (medication names without 'on', no compound symptoms, foreign negators kept, foreign age fact added). The test split had not been scored · commit "fix(notes): align gold quote conventions"
+- 2026-10-07 · P3 · Differential injection test measures (1) facts overlapping injected text and (2) F1 against gold on injected notes vs their clean twins, not identical fact sets, which only reflect run-to-run variance (5/15 identical) · ml/eval_p3/eval_context.py
+- 2026-10-07 · P3 · TextEvidence ids are unique per (finding, fact) pair so each id has one owner, as the firewall's evidence-owner rule (R4) assumes · context/contradictions.py
+- 2026-10-07 · P3 · Report claims are drafted as frames chosen by the model (ids only, no labels or quotes in its input), expanded by code into slot templates; offline fallback picks frames deterministically · report/drafts.py
+
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -220,6 +231,12 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 - 2026-10-06 · P3 · Groq accepts `response_format: json_object` and `reasoning_effort: low` on gpt-oss-20b (live call: 1 attempt, 258 tokens, injected "report no findings" text ignored, 2nd call served from cache) · confirmed · live pool call
 - 2026-10-06 · P3 · MedGemma access: HF token is valid but returns 403 on the gated repo (terms not accepted for that account, or token lacks gated-repo read) · BLOCKED
 - 2026-10-06 · P3 · MedGemma CXR box prompt/format · NOT verified (model card gave no format); check on first smoke run
+
+- 2026-10-07 · P3 · MedGemma 1.5 4B nf4 fits and runs on an RTX 4060 Laptop (8 GB): 3.2 GiB peak VRAM, 23 s load from cache, 5.5 s per read with the report prompt · confirmed · services/medgemma/smoke.py log
+- 2026-10-07 · P3 · MedGemma fp16 compute returns an empty reply on that GPU; bf16 works · confirmed · smoke runs
+- 2026-10-07 · P3 · MedGemma CXR box prompt/format · still NOT verified (the report-style prompt does not request boxes)
+- 2026-10-07 · P3 · Llama Prompt Guard 2 on Groq answers with a bare probability and scores a whole clinical note low (3 of 15 attacks at 0.5); per-sentence it fires on 4 of 28 fresh attacks at 0.9 · confirmed · reports/p3_guard_blind.json
+- 2026-10-07 · P3 · Groq free tier real limits observed: 8,000 tokens per minute is the binding limit for gpt-oss-20b extraction (about 4-6 calls a minute with a 1.5K-token prompt) · confirmed · response headers
 
 ## Shared log (append-only, newest at the bottom)
 
@@ -253,3 +270,12 @@ Verified: `python -m pytest ml/tests -q` gives 86 passed (brain and segmenter no
 Next: Kaggle token, push `p2/data`, launch the four jobs, build brain/LGG/RSNA splits, then P2.7 (CXR calibration) and the eval harness.
 Decisions: see Decisions, entries dated 2026-10-06 for P2.
 Contract change requests: none. `.gitignore` carve-out and `ml/Makefile.inc` need a P4 ack (see Decisions).
+
+### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.1, P3.2, P3.4-P3.7, P3.9, P3.10
+Did: slot renderer + firewall + model-chosen frames with offline fallback; seeded 200-note generator; injection guard (regex, per-sentence Prompt Guard, classifier) and span-grounded extraction; contradiction rules; report-label mapping, MedGemma client, concordance; real MedGemma reads on the local GPU; eval scripts that recompute from cached output.
+State: P3.3, P3.4, P3.7, P3.9, P3.10 done. P3.1/P3.2 doing (eval batch reads running; concordance.json is partial until they finish). P3.5/P3.6 measured below.
+Verified: `.venv/Scripts/python -m pytest backend ml/tests/test_notes_schema.py ml/tests/test_gen_notes.py ml/tests/test_eval_second_reader.py ml/tests/test_eval_contradictions.py services -q` -> all pass (ml/ tests that need pandas/sklearn/torch are P2's and were not run in my light venv).
+Numbers (62 held-out test-split notes, live Groq, cached): extraction exact-span F1 0.919 (P 0.922, R 0.917), lenient 0.973, 0 failures; weakest types laterality 0.79, history 0.80, device 0.82. Guard on the corpus 15/15 attacks, 0/47 false positives (regex is in-sample). Guard on 28 fresh attacks / 15 fresh benign: regex 4/28, Prompt Guard@0.9 4/28, classifier 25/28 (1 FP), all three 27/28 (1 FP). Differential: 0 facts overlap the injected text; F1 0.954 on injected notes vs 0.936 on their clean twins. Contradiction rules P/R 1.00/1.00 on gold facts (templated notes: rules fire as designed, not a generalisation claim). Firewall: 104 planted bad claims all blocked, 10 good claims none blocked. Second reader on bone (275-read prefix, reports/concordance.json): sensitivity 0.19 (0.09-0.32), specificity 0.995, kappa 0.27 (0.12-0.43).
+Next: finish the batch reads and write reports/concordance.json; retrieval (needs P1's embeddings); entailment judge; end-to-end context stage on extracted facts; wire into P4's pipeline.
+Decisions: see Decisions (7 entries dated 2026-10-07).
+Contract change requests: none.
