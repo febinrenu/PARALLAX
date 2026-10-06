@@ -128,3 +128,31 @@ def test_auroc_known_values():
     assert auroc(np.array([0.1, 0.2]), np.array([0.9, 0.8])) == 1.0
     assert auroc(np.array([0.9, 0.8]), np.array([0.1, 0.2])) == 0.0
     assert auroc(np.array([0.5, 0.5]), np.array([0.5, 0.5])) == pytest.approx(0.5)
+
+
+def test_score_folder_returns_one_row_per_image_for_fitted_classes(tmp_path, world):
+    from medproof.intake.decode import load_image  # noqa: F401
+    from medproof.intake.ood import score_folder
+    from medproof.intake.router_config import RouterConfig
+    from tests.conftest import make_phantom, png_bytes, to_u8
+    from tests.intake.router_helpers import TestDoubleEmbedder
+
+    emb = TestDoubleEmbedder()
+    rng = np.random.default_rng(0)
+    for cls, n in (("cxr", 12), ("brain_mri", 12), ("other", 3)):
+        d = tmp_path / "data" / cls
+        d.mkdir(parents=True)
+        for i in range(n):
+            arr = make_phantom(64, seed=i) if cls == "cxr" else rng.random((64, 64)).astype(np.float32)
+            (d / f"{i}.png").write_bytes(png_bytes(to_u8(arr)))
+    from medproof.intake.decode import load_image as li
+
+    X = np.vstack([emb.embed_images([li(p).analysis]) for p in sorted((tmp_path / "data" / "cxr").glob("*.png"))])
+    Xb = np.vstack([emb.embed_images([li(p).analysis]) for p in sorted((tmp_path / "data" / "brain_mri").glob("*.png"))])
+    y = np.array(["cxr"] * len(X) + ["brain_mri"] * len(Xb))
+    g = np.array([f"g{i}" for i in range(len(y))])
+    model, _ = fit_ood(np.vstack([X, Xb]), y, g, embedder_id=emb.model_id, seed=0)
+    rows = score_folder(emb, tmp_path / "data", model, RouterConfig(cache_dir=str(tmp_path / "cache")))
+    assert len(rows) == 24 and {r["class"] for r in rows} == {"cxr", "brain_mri"}  # "other" has no model, so it is skipped
+    for r in rows:
+        assert r["score"] == pytest.approx(r["distance"] / r["threshold"]) and isinstance(r["is_ood"], bool)

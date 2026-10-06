@@ -153,6 +153,36 @@ def evaluate(model: OODModel, X: np.ndarray, y: np.ndarray, groups: np.ndarray, 
     return out
 
 
+def score_folder(embedder, root: str | Path, model: OODModel, cfg=None) -> list[dict]:
+    """One row per image of a DIR/<class>/... folder: path, class, distance to its own class model, threshold, score, is_ood.
+
+    This is the table the data owner needs for AUROC: score the held-out images of a class as in-distribution and
+    every other class (or natural images) as out-of-distribution. Classes without a fitted model are skipped.
+    """
+    from medproof.intake.decode import DecodeError, load_image
+    from medproof.intake.embedder import EmbeddingCache
+    from medproof.intake.router_config import RouterConfig
+    from medproof.intake.router_train import collect_folder
+
+    cfg = cfg or RouterConfig()
+    cache = EmbeddingCache(cfg.cache_dir)
+    rows = []
+    for path, cls, _group, _part in collect_folder(root):
+        if cls not in model.modalities:
+            continue
+        try:
+            img = load_image(path)
+        except DecodeError:
+            continue
+        v = cache.get(embedder.model_id, img.sha256)
+        if v is None:
+            v = embedder.embed_images([img.analysis])[0]
+            cache.put(embedder.model_id, img.sha256, v)
+        r = model.score(v, cls)
+        rows.append({"path": str(path), "class": cls, **r})
+    return rows
+
+
 def main(argv=None) -> int:
     import argparse
 
