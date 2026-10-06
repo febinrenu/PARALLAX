@@ -30,6 +30,8 @@ from ml.eval.bootstrap import ci  # noqa: E402
 READS = ROOT / "ml" / "artifacts" / "medgemma_reads"
 SKIN_PRIORITY = ["mel", "bcc", "akiec", "bkl", "df", "vasc", "nv"]  # clinical risk order, used to break ties
 SKIN_CLASSES = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
+MIN_READS_BONE = 20  # below these, intervals are too wide to mean anything and are not reported
+MIN_READS_SKIN = 50
 
 
 def read_rows(path: Path) -> list[dict]:
@@ -72,7 +74,7 @@ def eval_bone(rows: list[dict]) -> dict:
     y = np.array([int(r["label"] == "fracture") for r in good])
     out: dict = {"n_reads": len(rows), "n_ok": len(good), "ok_rate": round(len(good) / len(rows), 4) if rows else None,
                  "n_fracture": int(y.sum()), "n_no_fracture": int((1 - y).sum())}
-    if len(good) < 4 or y.sum() == 0 or y.sum() == len(y):
+    if len(good) < MIN_READS_BONE or y.sum() == 0 or y.sum() == len(y):
         out["note"] = "too few reads of both classes for statistics yet"
         return out
     groups = np.array([r.get("group") or r["image"] for r in good], dtype=object)
@@ -93,7 +95,7 @@ def eval_skin(rows: list[dict]) -> dict:
     pred = np.array([skin_prediction(r) for r in good], dtype=object)
     out: dict = {"n_reads": len(rows), "n_ok": len(good), "ok_rate": round(len(good) / len(rows), 4) if rows else None,
                  "class_counts": dict(Counter(truth)), "prediction_counts": dict(Counter(pred))}
-    if len(good) < 7:
+    if len(good) < MIN_READS_SKIN:
         out["note"] = "too few reads for statistics yet"
         return out
     groups = np.array([r.get("group") or r["image"] for r in good], dtype=object)
@@ -147,6 +149,11 @@ def main(argv: list[str] | None = None) -> int:
         if (args.dataset in (None, name)) and path.is_file():
             rows = read_rows(path)
             report["datasets"][name] = fn(rows)
+            planned = json.loads((ROOT / "ml" / "data" / "eval_index.json").read_text(encoding="utf-8"))["datasets"][name]["n_batch"]
+            report["datasets"][name]["progress"] = {
+                "reads": len(rows), "planned": planned,
+                "status": "complete" if len(rows) >= planned else "partial: a random prefix of the planned batch (fixed shuffle)",
+            }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=1))

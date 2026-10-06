@@ -65,16 +65,16 @@ def test_too_few_reads_gives_a_note_not_a_crash():
 
 def test_skin_metrics_count_unmapped_as_wrong():
     rows = []
-    for i in range(35):
+    for i in range(70):
         c = ["mel", "nv", "bkl", "bcc", "akiec", "df", "vasc"][i % 7]
         text = {"mel": "Melanoma.", "nv": "Benign nevus.", "bkl": "Seborrheic keratosis.", "bcc": "Basal cell carcinoma.",
                 "akiec": "Actinic keratosis.", "df": "Dermatofibroma.", "vasc": "Cherry hemangioma."}[c]
         rows.append(row(f"s{i}", c, text if i % 7 != 2 else "Nothing notable."))  # every bkl is unmapped
     out = eval_skin(rows)
-    assert out["coverage"] == pytest.approx(30 / 35, abs=1e-4)
+    assert out["coverage"] == pytest.approx(60 / 70, abs=1e-4)
     assert out["balanced_accuracy"]["point"] == pytest.approx(6 / 7, abs=1e-4)
     assert out["melanoma_sensitivity"]["point"] == 1.0
-    assert out["prediction_counts"]["none"] == 5
+    assert out["prediction_counts"]["none"] == 10
 
 
 def test_specialist_concordance_reports_kappa():

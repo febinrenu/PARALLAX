@@ -1,0 +1,83 @@
+{
+  "what": "MedGemma 1.5 4B (4-bit) as second reader, scored against ground truth on P2's eval batches",
+  "specialist_vs_medgemma": "pending: needs P2's trained skin/bone weights (see specialist_concordance)",
+  "datasets": {
+    "fracatlas": {
+      "n_reads": 275,
+      "n_ok": 271,
+      "ok_rate": 0.9855,
+      "n_fracture": 47,
+      "n_no_fracture": 224,
+      "hedged_counts_as_positive": {
+        "sensitivity": {
+          "point": 0.1915,
+          "lo": 0.0851,
+          "hi": 0.3191
+        },
+        "specificity": {
+          "point": 0.9955,
+          "lo": 0.9866,
+          "hi": 1.0
+        },
+        "accuracy": {
+          "point": 0.8561,
+          "lo": 0.8376,
+          "hi": 0.8782
+        },
+        "kappa": {
+          "point": 0.2715,
+          "lo": 0.1247,
+          "hi": 0.4256
+        }
+      },
+      "definite_only": {
+        "sensitivity": {
+          "point": 0.1915,
+          "lo": 0.0851,
+          "hi": 0.3191
+        },
+        "specificity": {
+          "point": 0.9955,
+          "lo": 0.9866,
+          "hi": 1.0
+        },
+        "accuracy": {
+          "point": 0.8561,
+          "lo": 0.8376,
+          "hi": 0.8782
+        },
+        "kappa": {
+          "point": 0.2715,
+          "lo": 0.1247,
+          "hi": 0.4256
+        }
+      },
+      "progress": {
+        "reads": 275,
+        "planned": 569,
+        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+      }
+    },
+    "ham10000": {
+      "n_reads": 12,
+      "n_ok": 12,
+      "ok_rate": 1.0,
+      "class_counts": {
+        "nv": 8,
+        "bkl": 3,
+        "mel": 1
+      },
+      "prediction_counts": {
+        "none": 8,
+        "mel": 2,
+        "nv": 2
+      },
+      "note": "too few reads for statistics yet",
+      "progress": {
+        "reads": 12,
+        "planned": 1000,
+        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+      }
+    }
+  }
+}

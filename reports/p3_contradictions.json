@@ -1,0 +1,33 @@
+{
+  "contradiction_notes": 60,
+  "clean_notes": 80,
+  "precision": 1.0,
+  "recall": 1.0,
+  "clean_notes_flagged": 0,
+  "unexpected_flags": {},
+  "per_kind": {
+    "demographic": {
+      "recall": 1.0,
+      "tp": 15,
+      "fn": 0
+    },
+    "history": {
+      "recall": 1.0,
+      "tp": 15,
+      "fn": 0
+    },
+    "laterality": {
+      "recall": 1.0,
+      "tp": 20,
+      "fn": 0
+    },
+    "symptom": {
+      "recall": 1.0,
+      "tp": 10,
+      "fn": 0
+    }
+  },
+  "misses": [],
+  "false_alarms": [],
+  "facts_used": "gold (extraction scored separately)"
+}
