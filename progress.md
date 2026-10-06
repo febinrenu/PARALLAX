@@ -61,11 +61,11 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
 | P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
-| P2.2 | Leakage audit + group splits | doing | p2/data | 2026-10-06 | fracatlas + ham10000 done; brain, lgg, rsna wait for data |
-| P2.3 | Brain classifier (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
-| P2.4 | Brain segmenter (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
-| P2.5 | Skin classifier (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
-| P2.6 | Bone detector (Kaggle) | blocked | p2/data | 2026-10-07 | notebook written and tested; launch needs Kaggle token |
+| P2.2 | Leakage audit + group splits | doing | main | 2026-10-07 | fracatlas, ham10000, brain_mri, lgg_seg done; rsna waits for data |
+| P2.3 | Brain classifier (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
+| P2.4 | Brain segmenter (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
+| P2.5 | Skin classifier (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
+| P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
 | P2.7 | CXR calibration + external validation | todo | | | |
 | P2.8 | Temperature scaling + conformal | todo | | | |
 | P2.9 | Selective prediction | todo | | | |
@@ -131,9 +131,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
 
 ### P2 — Data, Training & Validation
-**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Branch `p2/data`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
+**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Merged to `main`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
 **Next:** push `p2/data` (the notebooks clone it), launch the four jobs once the Kaggle token exists, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
-**Blockers:** (1) Kaggle token in `.env` (brain MRI, LGG, RSNA need it; no `.env` exists on this machine). (2) RSNA competition rules not accepted yet. (3) BDNeuro-MRI manual download. (4) This machine's C: drive is full (27 MB free): pip and pytest temp must go to D:.
+**Blockers:** (1) RSNA: the Kaggle token's account has not entered the competition (API returns 403 and `competitions list --group entered` is empty); the rules must be accepted on rishijayanath's account at kaggle.com/competitions/rsna-pneumonia-detection-challenge/rules. (2) BDNeuro-MRI manual download (needed later for the brain external test).
 **Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
 **For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**
 - Run `python ml/data/download.py core` once on your machine, or point `PARALLAX_DATA_ROOT` at a folder that has `<dataset>/...` as laid out in `ml/data/splits/*.csv` (`source_dir` + `relpath`). On Kaggle, symlink attached inputs into that layout.
@@ -143,7 +143,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
 - brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
-- none launched yet
+- rishijayanath/parallax-p2-5-skin-lesion-classifier: started 2026-10-07 01:00, running (15 epochs, ConvNeXt-Tiny)
+- rishijayanath/parallax-p2-6-bone-fracture-detector: started 2026-10-07 01:00, running (yolo26n, 80 epochs)
+- rishijayanath/parallax-p2-3-brain-mri-classifier and parallax-p2-4-brain-tumour-segmenter: queued; Kaggle allows 2 GPU sessions at once, a background loop pushes them when a slot frees
 
 ### P3 — Clinical Reasoning & Trust
 **Now:**
