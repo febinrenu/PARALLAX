@@ -1,0 +1,13 @@
+{
+ "n": 30,
+ "mean_jaccard": 0.8782122255559507,
+ "mean_dice": 0.9338028577686358,
+ "failure_rate": 0.0,
+ "failure_line_jaccard": 0.65,
+ "seconds": 864.4,
+ "threads": 2,
+ "source": "ISIC 2018 Task 1 validation images (CC-0), 30 evenly spaced; box prompt = bounding box of the reference mask",
+ "model": "flaviagiammarino/medsam-vit-base (Apache-2.0)",
+ "mode": "zero-shot",
+ "note": "Boxes come from the reference masks, which is the upper bound; boxes derived from a classifier's CAM will be looser."
+}

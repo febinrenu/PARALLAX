@@ -1,0 +1,205 @@
+{
+ "model_pass_rate": 0.0,
+ "random_pass_rate": 0.0,
+ "n_model": 18,
+ "n_random": 18,
+ "model_ci95": [
+  0.0,
+  0.1758845505823749
+ ],
+ "random_ci95": [
+  0.0,
+  0.1758845505823749
+ ],
+ "modality": "cxr",
+ "weights": "densenet121-res224-all",
+ "baseline": "blur",
+ "n_random_per_test": 16,
+ "alpha": 0.1,
+ "images": 12,
+ "seconds": 888,
+ "source": "Montgomery County CXR set (NLM), thumbnails of 12 films; top-2 findings each; weights were not trained for these labels on this set",
+ "note": "Pass rate of real heatmaps vs the same test applied to same-shaped random regions. Findings here are mostly near their operating threshold; thresholds are provisional.",
+ "rows": [
+  {
+   "image": "MCUCXR_0001_0.png",
+   "label": "Atelectasis",
+   "prob": 0.576,
+   "model_faithful": false,
+   "model_drop10": 0.0535,
+   "model_p": 0.176,
+   "random_faithful": false,
+   "random_drop10": 0.0027
+  },
+  {
+   "image": "MCUCXR_0001_0.png",
+   "label": "Infiltration",
+   "prob": 0.539,
+   "model_faithful": false,
+   "model_drop10": 0.0258,
+   "model_p": 0.294,
+   "random_faithful": false,
+   "random_drop10": 0.0076
+  },
+  {
+   "image": "MCUCXR_0005_0.png",
+   "label": "Infiltration",
+   "prob": 0.541,
+   "model_faithful": false,
+   "model_drop10": 0.0056,
+   "model_p": 0.647,
+   "random_faithful": false,
+   "random_drop10": -0.0026
+  },
+  {
+   "image": "MCUCXR_0005_0.png",
+   "label": "Fibrosis",
+   "prob": 0.505,
+   "model_faithful": false,
+   "model_drop10": 0.0305,
+   "model_p": 0.118,
+   "random_faithful": false,
+   "random_drop10": -0.0005
+  },
+  {
+   "image": "MCUCXR_0011_0.png",
+   "label": "Infiltration",
+   "prob": 0.53,
+   "model_faithful": false,
+   "model_drop10": 0.0112,
+   "model_p": 0.294,
+   "random_faithful": false,
+   "random_drop10": -0.0009
+  },
+  {
+   "image": "MCUCXR_0017_0.png",
+   "label": "Infiltration",
+   "prob": 0.508,
+   "model_faithful": false,
+   "model_drop10": 0.0048,
+   "model_p": 0.353,
+   "random_faithful": false,
+   "random_drop10": 0.0001
+  },
+  {
+   "image": "MCUCXR_0021_0.png",
+   "label": "Infiltration",
+   "prob": 0.515,
+   "model_faithful": false,
+   "model_drop10": 0.0146,
+   "model_p": 0.235,
+   "random_faithful": false,
+   "random_drop10": -0.0042
+  },
+  {
+   "image": "MCUCXR_0026_0.png",
+   "label": "Infiltration",
+   "prob": 0.515,
+   "model_faithful": false,
+   "model_drop10": 0.0259,
+   "model_p": 0.059,
+   "random_faithful": false,
+   "random_drop10": 0.0001
+  },
+  {
+   "image": "MCUCXR_0026_0.png",
+   "label": "Pleural_Thickening",
+   "prob": 0.508,
+   "model_faithful": false,
+   "model_drop10": 0.0075,
+   "model_p": 0.176,
+   "random_faithful": false,
+   "random_drop10": 0.0007
+  },
+  {
+   "image": "MCUCXR_0029_0.png",
+   "label": "Infiltration",
+   "prob": 0.525,
+   "model_faithful": false,
+   "model_drop10": 0.0157,
+   "model_p": 0.294,
+   "random_faithful": false,
+   "random_drop10": -0.0002
+  },
+  {
+   "image": "MCUCXR_0038_0.png",
+   "label": "Infiltration",
+   "prob": 0.539,
+   "model_faithful": false,
+   "model_drop10": -0.0127,
+   "model_p": 0.941,
+   "random_faithful": false,
+   "random_drop10": -0.0034
+  },
+  {
+   "image": "MCUCXR_0038_0.png",
+   "label": "Fibrosis",
+   "prob": 0.501,
+   "model_faithful": false,
+   "model_drop10": 0.0002,
+   "model_p": 0.235,
+   "random_faithful": false,
+   "random_drop10": -0.0004
+  },
+  {
+   "image": "MCUCXR_0042_0.png",
+   "label": "Infiltration",
+   "prob": 0.53,
+   "model_faithful": false,
+   "model_drop10": 0.0189,
+   "model_p": 0.059,
+   "random_faithful": false,
+   "random_drop10": 0.002
+  },
+  {
+   "image": "MCUCXR_0042_0.png",
+   "label": "Emphysema",
+   "prob": 0.501,
+   "model_faithful": false,
+   "model_drop10": -0.0036,
+   "model_p": 0.882,
+   "random_faithful": false,
+   "random_drop10": -0.0001
+  },
+  {
+   "image": "MCUCXR_0046_0.png",
+   "label": "Infiltration",
+   "prob": 0.536,
+   "model_faithful": false,
+   "model_drop10": 0.012,
+   "model_p": 0.353,
+   "random_faithful": false,
+   "random_drop10": 0.0038
+  },
+  {
+   "image": "MCUCXR_0046_0.png",
+   "label": "Fibrosis",
+   "prob": 0.504,
+   "model_faithful": false,
+   "model_drop10": -0.0016,
+   "model_p": 0.529,
+   "random_faithful": false,
+   "random_drop10": 0.0001
+  },
+  {
+   "image": "MCUCXR_0049_0.png",
+   "label": "Infiltration",
+   "prob": 0.509,
+   "model_faithful": false,
+   "model_drop10": 0.0033,
+   "model_p": 0.412,
+   "random_faithful": false,
+   "random_drop10": -0.0013
+  },
+  {
+   "image": "MCUCXR_0054_0.png",
+   "label": "Infiltration",
+   "prob": 0.506,
+   "model_faithful": false,
+   "model_drop10": 0.1157,
+   "model_p": 0.176,
+   "random_faithful": false,
+   "random_drop10": -0.0013
+  }
+ ]
+}
