@@ -1,0 +1,51 @@
+[
+ {
+  "id": "ham10000_isic2018",
+  "title": "HAM10000 / ISIC 2018 Task 3 (dermoscopy)",
+  "path": "docs/datasheets/ham10000_isic2018.md",
+  "type": "dataset",
+  "license": "CC BY-NC 4.0"
+ },
+ {
+  "id": "brain_mri_kaggle",
+  "title": "Brain Tumor MRI Dataset (Kaggle)",
+  "path": "docs/datasheets/brain_mri_kaggle.md",
+  "type": "dataset",
+  "license": "CC0 (sources vary)"
+ },
+ {
+  "id": "lgg_mri",
+  "title": "LGG MRI Segmentation (TCGA)",
+  "path": "docs/datasheets/lgg_mri.md",
+  "type": "dataset",
+  "license": "CC BY-NC-SA 4.0"
+ },
+ {
+  "id": "bdneuro_mri",
+  "title": "BDNeuro-MRI (Bangladesh, T1-CE)",
+  "path": "docs/datasheets/bdneuro_mri.md",
+  "type": "dataset",
+  "license": "unconfirmed"
+ },
+ {
+  "id": "fracatlas",
+  "title": "FracAtlas (musculoskeletal radiographs)",
+  "path": "docs/datasheets/fracatlas.md",
+  "type": "dataset",
+  "license": "CC BY 4.0"
+ },
+ {
+  "id": "rsna_pneumonia",
+  "title": "RSNA Pneumonia Detection Challenge (chest DICOM)",
+  "path": "docs/datasheets/rsna_pneumonia.md",
+  "type": "dataset",
+  "license": "Kaggle competition rules"
+ },
+ {
+  "id": "cifar10_test",
+  "title": "CIFAR-10 test set (natural images)",
+  "path": "docs/datasheets/cifar10_test.md",
+  "type": "dataset",
+  "license": "MIT-style"
+ }
+]

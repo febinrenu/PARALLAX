@@ -25,6 +25,12 @@ The notebooks clone this repository (`PARALLAX_BRANCH`, default `main`), so the 
 `SMOKE=1 python ml/train/src/skin_cls.py` runs the whole job on a few dozen images. `EPOCHS=3` without `SMOKE` is a short real run.
 Set `PARALLAX_SKIP_PIP=1` when you do not want the script to touch your Python environment.
 
+## Validation (`make eval`)
+
+`python ml/eval/run_all.py` recomputes every metric from the committed cached predictions in about 100 s (CPU, no raw data) and writes `reports/metrics.json`, the only file the web app reads. `--check` fails if the result is not byte-identical. Then `python ml/eval/figures.py`, `build_cards.py` and `build_report.py` regenerate `reports/figures/`, `docs/model_cards/`, `docs/datasheets/` and `docs/validation_report.md`.
+
+The heavier steps that produce the caches need the raw data and a GPU: `ml/eval/cxr_cache.py` then `cxr.py score|localize` (chest reader on RSNA), `corruption.py run`, `signals.py quality|ood`, `external.py score`.
+
 ## Tests
 
 `python -m pytest ml/tests -q` (about 6 minutes: it includes two notebooks run end to end on synthetic data).

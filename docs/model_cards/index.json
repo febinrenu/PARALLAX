@@ -1,0 +1,193 @@
+[
+ {
+  "id": "skin_cls",
+  "title": "Skin lesion classifier (ConvNeXt-Tiny)",
+  "path": "docs/model_cards/skin_cls.md",
+  "type": "model",
+  "registry_id": "skin_cls@a217517b",
+  "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+  "contamination": "clean on the official test set",
+  "headline": {
+   "headline.accuracy": {
+    "hi": 0.8469,
+    "lo": 0.8052,
+    "point": 0.8261
+   },
+   "headline.balanced_accuracy": {
+    "hi": 0.7284,
+    "lo": 0.6321,
+    "point": 0.68
+   },
+   "headline.macro_f1": {
+    "hi": 0.7625,
+    "lo": 0.6759,
+    "point": 0.722
+   },
+   "official_test.accuracy": {
+    "hi": 0.8469,
+    "lo": 0.8052,
+    "point": 0.8261
+   },
+   "official_test.balanced_accuracy": {
+    "hi": 0.7284,
+    "lo": 0.6321,
+    "point": 0.68
+   },
+   "official_test.macro_f1": {
+    "hi": 0.7625,
+    "lo": 0.6759,
+    "point": 0.722
+   },
+   "test.accuracy": {
+    "hi": 0.8983,
+    "lo": 0.8528,
+    "point": 0.8767
+   },
+   "test.balanced_accuracy": {
+    "hi": 0.8337,
+    "lo": 0.6949,
+    "point": 0.7677
+   },
+   "test.macro_f1": {
+    "hi": 0.838,
+    "lo": 0.7123,
+    "point": 0.7838
+   }
+  }
+ },
+ {
+  "id": "brain_cls",
+  "title": "Brain MRI classifier (EfficientNet-B0)",
+  "path": "docs/model_cards/brain_cls.md",
+  "type": "model",
+  "registry_id": "brain_cls@d351f062",
+  "license": "timm EfficientNet-B0 (Apache-2.0) fine-tuned on Brain Tumor MRI Dataset (CC0)",
+  "contamination": "clean on the leakage-free test split; original Kaggle test contaminated",
+  "headline": {
+   "headline.accuracy": {
+    "hi": 0.9583,
+    "lo": 0.9213,
+    "point": 0.9396
+   },
+   "headline.balanced_accuracy": {
+    "hi": 0.9579,
+    "lo": 0.9114,
+    "point": 0.9363
+   },
+   "headline.macro_f1": {
+    "hi": 0.957,
+    "lo": 0.9139,
+    "point": 0.9364
+   },
+   "leakage_free_test.accuracy": {
+    "hi": 0.9583,
+    "lo": 0.9213,
+    "point": 0.9396
+   },
+   "leakage_free_test.balanced_accuracy": {
+    "hi": 0.9579,
+    "lo": 0.9114,
+    "point": 0.9363
+   },
+   "leakage_free_test.macro_f1": {
+    "hi": 0.957,
+    "lo": 0.9139,
+    "point": 0.9364
+   }
+  }
+ },
+ {
+  "id": "brain_seg",
+  "title": "Brain tumour segmenter (U-Net)",
+  "path": "docs/model_cards/brain_seg.md",
+  "type": "model",
+  "registry_id": "brain_seg@d351f062",
+  "license": "smp U-Net resnet34 (MIT) fine-tuned on LGG MRI Segmentation (CC BY-NC-SA 4.0): non-commercial, share-alike",
+  "contamination": "clean (patient-level split)",
+  "headline": {
+   "headline.mean_patient_dice": {
+    "hi": 0.8908,
+    "lo": 0.705,
+    "point": 0.8314
+   },
+   "test.mean_patient_dice": {
+    "hi": 0.8908,
+    "lo": 0.705,
+    "point": 0.8314
+   }
+  }
+ },
+ {
+  "id": "bone_det",
+  "title": "Bone fracture detector (YOLO26-nano)",
+  "path": "docs/model_cards/bone_det.md",
+  "type": "model",
+  "registry_id": "bone_det@8539baf9",
+  "license": "Ultralytics YOLO (AGPL-3.0) fine-tuned on FracAtlas (CC BY 4.0): weights inherit AGPL-3.0",
+  "contamination": "single-dataset; no patient ids",
+  "headline": {
+   "headline.auroc_image": {
+    "hi": 0.9566,
+    "lo": 0.8863,
+    "point": 0.9232
+   },
+   "headline.map50": {
+    "hi": 0.5468,
+    "lo": 0.3669,
+    "point": 0.4534
+   },
+   "test.auroc_image": {
+    "hi": 0.9566,
+    "lo": 0.8863,
+    "point": 0.9232
+   },
+   "test.map50": {
+    "hi": 0.5468,
+    "lo": 0.3669,
+    "point": 0.4534
+   }
+  }
+ },
+ {
+  "id": "chest_reader",
+  "title": "Chest X-ray reader (TorchXRayVision DenseNet121)",
+  "path": "docs/model_cards/chest_reader.md",
+  "type": "model",
+  "registry_id": "xrv-densenet121-{chex,mimic_ch,all}",
+  "license": "Apache-2.0",
+  "contamination": "external weights clean; all-data weights contaminated on RSNA",
+  "headline": {
+   "auroc_lung_opacity_chex": 0.7849619434911282
+  }
+ },
+ {
+  "id": "medgemma",
+  "title": "MedGemma 1.5 4B (second reader)",
+  "path": "docs/model_cards/medgemma.md",
+  "type": "third_party_model",
+  "registry_id": "medgemma",
+  "license": "see text",
+  "contamination": "unverified",
+  "headline": {}
+ },
+ {
+  "id": "medsiglip",
+  "title": "MedSigLIP (router, retrieval, OOD embeddings)",
+  "path": "docs/model_cards/medsiglip.md",
+  "type": "third_party_model",
+  "registry_id": "medsiglip",
+  "license": "see text",
+  "contamination": "unverified",
+  "headline": {}
+ },
+ {
+  "id": "medsam",
+  "title": "MedSAM (box-prompted segmentation)",
+  "path": "docs/model_cards/medsam.md",
+  "type": "third_party_model",
+  "registry_id": "medsam",
+  "license": "see text",
+  "contamination": "unverified",
+  "headline": {}
+ }
+]
