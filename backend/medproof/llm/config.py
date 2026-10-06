@@ -34,6 +34,8 @@ class LLMConfig(BaseModel):
     rpd_warn_fraction: float = 0.8
     max_request_tokens: int = 3000
     max_output_tokens: int = 800
+    max_audio_bytes: int = 25 * 1024 * 1024  # Groq's free-tier upload limit
+    audio_model: str = "whisper-large-v3-turbo"
 
     max_attempts: int = 4
     deadline_s: float = 20.0

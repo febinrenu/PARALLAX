@@ -53,6 +53,16 @@ class ScoreResult:
     attempts: int = 0
 
 
+@dataclass
+class TranscribeResult:
+    text: str
+    source: str  # "live" | "cache"
+    model: str
+    language: str = ""
+    duration_s: float | None = None
+    attempts: int = 0
+
+
 def quote_data(text: str) -> str:
     """Wrap untrusted text as inert data; it cannot close or reopen the fence."""
     safe = _TAG.sub(lambda m: m.group(0).replace("<", "&lt;").replace(">", "&gt;"), text)
@@ -182,6 +192,58 @@ class GroqPool:
                     raise SchemaError(f"classifier replied with a non-number: {content[:40]!r}") from exc
                 self._cache.set(cache_key, value)
                 return ScoreResult(value, "live", model, attempts)
+            slot[1] = 0
+            if resp.status_code == 429 or resp.status_code >= 500:
+                last_error = f"http {resp.status_code}"
+                self._backoff(attempts, resp.headers.get("retry-after"), start)
+                continue
+            raise LLMUnavailable(f"http {resp.status_code} from Groq")
+        raise LLMUnavailable(f"gave up after {attempts} attempts: {last_error}")
+
+    def transcribe(
+        self, service: str, model: str, filename: str, data: bytes, *, language: str | None = None, prompt: str | None = None
+    ) -> TranscribeResult:
+        """Speech to text with Whisper on Groq. Cached by audio content, so a replay never re-sends audio."""
+        if len(data) > self.config.max_audio_bytes:
+            raise BudgetExceeded(f"audio is {len(data)} bytes, over the {self.config.max_audio_bytes} byte limit")
+        cache_key = hashlib.sha256(
+            json.dumps(["transcribe", model, hashlib.sha256(data).hexdigest(), language, prompt]).encode()
+        ).hexdigest()
+        hit = self._cache.get(cache_key)
+        if hit is not None:
+            return TranscribeResult(hit["text"], "cache", model, hit.get("language", ""), hit.get("duration_s"))
+        key = self._env.get(self.config.key_env.get(service, ""), "")
+        if not key:
+            raise LLMUnavailable(f"no API key set for service '{service}'")
+        label = f"{service}:{hashlib.sha256(key.encode()).hexdigest()[:6]}"
+        form: dict[str, str] = {"model": model, "response_format": "verbose_json", "temperature": "0"}
+        if language:
+            form["language"] = language
+        if prompt:
+            form["prompt"] = prompt
+        start, attempts, last_error = self._clock(), 0, "no attempt made"
+        while attempts < self.config.max_attempts:
+            self._check_daily(label, model)
+            slot = self._reserve(label, model, 1, start)
+            attempts += 1
+            try:
+                resp = self._client.post(
+                    "/audio/transcriptions", data=form, files={"file": (filename, data)},
+                    headers={"Authorization": f"Bearer {key}"},
+                )
+            except httpx.TransportError as exc:
+                slot[1] = 0
+                last_error = f"transport error: {type(exc).__name__}"
+                self._backoff(attempts, None, start)
+                continue
+            self._count_daily(label, model)
+            if resp.status_code == 200:
+                body = resp.json()
+                if not isinstance(body, dict) or not isinstance(body.get("text"), str):
+                    raise SchemaError("transcription reply has no text field")
+                value = {"text": body["text"], "language": str(body.get("language", "")), "duration_s": body.get("duration")}
+                self._cache.set(cache_key, value)
+                return TranscribeResult(value["text"], "live", model, value["language"], value["duration_s"], attempts)
             slot[1] = 0
             if resp.status_code == 429 or resp.status_code >= 500:
                 last_error = f"http {resp.status_code}"

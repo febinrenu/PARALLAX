@@ -322,3 +322,61 @@ def test_score_without_key_raises_unavailable(tmp_path, prompts):
 def test_score_clamps_scores_outside_unit_interval(tmp_path, prompts):
     pool, _, _ = make_pool(tmp_path, prompts, [score_body("1.7")], env={"GROQ_KEY_JUDGE": KEY})
     assert pool.score("judge", "m", "text").score == 1.0
+
+
+# ---- transcribe(): Whisper on Groq
+
+AUDIO_KEY = "gsk_audio_secret_456"
+
+
+def whisper_body(text="fever and cough", language="english", duration=4.2):
+    return (200, {"text": text, "language": language, "duration": duration}, {})
+
+
+def audio_pool(tmp_path, prompts, script, **cfg):
+    return make_pool(tmp_path, prompts, script, env={"GROQ_KEY_AUDIO": AUDIO_KEY}, **cfg)
+
+
+def test_transcribe_posts_multipart_and_parses_verbose_json(tmp_path, prompts):
+    pool, server, _ = audio_pool(tmp_path, prompts, [whisper_body()])
+    r = pool.transcribe("audio", "whisper-large-v3-turbo", "note.wav", b"RIFFfakewavbytes", prompt="Clinical dictation.")
+    assert r.text == "fever and cough" and r.language == "english" and r.duration_s == pytest.approx(4.2) and r.source == "live"
+    req = server.requests[0]
+    assert req.url.path.endswith("/audio/transcriptions")
+    assert req.headers["authorization"] == f"Bearer {AUDIO_KEY}"
+    body = req.content
+    assert b'name="model"' in body and b"whisper-large-v3-turbo" in body and b'filename="note.wav"' in body
+    assert b"RIFFfakewavbytes" in body and b"Clinical dictation." in body and b"verbose_json" in body
+
+
+def test_transcribe_is_cached_by_audio_content(tmp_path, prompts):
+    pool, server, _ = audio_pool(tmp_path, prompts, [whisper_body(), whisper_body("other")])
+    a = pool.transcribe("audio", "m", "a.wav", b"same-bytes")
+    b = pool.transcribe("audio", "m", "renamed.wav", b"same-bytes")
+    assert b.source == "cache" and b.text == a.text and len(server.requests) == 1
+    assert pool.transcribe("audio", "m", "a.wav", b"different").source == "live"
+
+
+def test_transcribe_retries_429_and_rejects_oversize_before_the_network(tmp_path, prompts):
+    pool, server, clock = audio_pool(tmp_path, prompts, [(429, {}, {"retry-after": "2"}), whisper_body()])
+    assert pool.transcribe("audio", "m", "a.wav", b"abc").text == "fever and cough" and 2.0 in clock.sleeps
+    small, server2, _ = audio_pool(tmp_path / "x", prompts, [whisper_body()], max_audio_bytes=10)
+    with pytest.raises(BudgetExceeded):
+        small.transcribe("audio", "m", "a.wav", b"x" * 11)
+    assert server2.requests == []
+
+
+def test_transcribe_without_a_key_or_with_a_bad_reply_raises(tmp_path, prompts):
+    pool, _, _ = make_pool(tmp_path, prompts, [], env={})
+    with pytest.raises(LLMUnavailable):
+        pool.transcribe("audio", "m", "a.wav", b"abc")
+    bad, _, _ = audio_pool(tmp_path / "y", prompts, [(200, {"nope": 1}, {})])
+    with pytest.raises(SchemaError):
+        bad.transcribe("audio", "m", "a.wav", b"abc")
+
+
+def test_transcribe_never_logs_the_key(tmp_path, prompts, caplog):
+    caplog.set_level(logging.DEBUG)
+    pool, _, _ = audio_pool(tmp_path, prompts, [(503, {}, {}), whisper_body()], deadline_s=60)
+    pool.transcribe("audio", "m", "a.wav", b"abc")
+    assert AUDIO_KEY not in caplog.text
