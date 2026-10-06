@@ -164,7 +164,7 @@ def cxr(tag: str = "chex") -> dict:
     labels = list(z["labels"])
     s = z["probs"][:, labels.index("Lung Opacity")]
     y = z["y"]
-    meta = pd.read_csv(REPO / "ml" / "data" / "cache" / "rsna_meta.csv", dtype={"image_id": str}).set_index("image_id")
+    meta = pd.read_csv(REPO / "ml" / "data" / "splits" / "rsna_meta.csv", dtype={"image_id": str}).set_index("image_id")
     ids = z["ids"].astype(str)
     bc = BinaryCalibrator.load(ART / name / "calibration_lung.json")
     miss = ~(bc.prob(s) >= bc.thr_fnr)

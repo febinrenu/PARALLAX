@@ -24,7 +24,7 @@ for p in (REPO, REPO / "backend"):
 from ml.data.common import CACHE_DIR, data_root, image_path, load_split  # noqa: E402
 
 NPY = CACHE_DIR / "rsna_cxr224.npy"
-META = CACHE_DIR / "rsna_meta.csv"
+META = REPO / "ml" / "data" / "splits" / "rsna_meta.csv"  # committed: demographics for the subgroup audit
 
 
 def kept_rows() -> pd.DataFrame:

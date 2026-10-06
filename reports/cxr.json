@@ -26,16 +26,7 @@
      },
      "auprc": {
       "point": 0.4723555929671281,
-      "lo": 0.46053453748454737,
-      "hi": 0.48647999972613876,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -56,17 +47,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.01781459275927197,
-       "lo": 0.01302400374464681,
-       "hi": 0.024872458400686245,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.01781459275927197
       },
       "ece_platt": {
        "point": 0.017841288798985007,
@@ -287,16 +268,7 @@
      },
      "auprc": {
       "point": 0.43255959151234924,
-      "lo": 0.4212009459834051,
-      "hi": 0.44554854308511266,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -317,17 +289,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.0719279834101801,
-       "lo": 0.06680779012920005,
-       "hi": 0.0775393842270014,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.0719279834101801
       },
       "ece_platt": {
        "point": 0.0207520942339273,
@@ -548,16 +510,7 @@
      },
      "auprc": {
       "point": 0.47234922498059784,
-      "lo": 0.46052669944365854,
-      "hi": 0.48647368375873623,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -578,17 +531,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.018335394594722613,
-       "lo": 0.01368349704457707,
-       "hi": 0.025354010288593368,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.018335394594722613
       },
       "ece_platt": {
        "point": 0.017795223251567304,
@@ -895,16 +838,7 @@
      },
      "auprc": {
       "point": 0.4137062277637892,
-      "lo": 0.4018141847763038,
-      "hi": 0.4261500997358242,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -925,17 +859,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.1684034546914471,
-       "lo": 0.16270634243177956,
-       "hi": 0.1736323587148695,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.1684034546914471
       },
       "ece_platt": {
        "point": 0.02491109377535278,
@@ -1156,16 +1080,7 @@
      },
      "auprc": {
       "point": 0.3642779295019584,
-      "lo": 0.3539947012463467,
-      "hi": 0.3757218452858997,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -1186,17 +1101,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.13647116120081867,
-       "lo": 0.1319047649336747,
-       "hi": 0.14132020660757685,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.13647116120081867
       },
       "ece_platt": {
        "point": 0.01074646109906117,
@@ -1417,16 +1322,7 @@
      },
      "auprc": {
       "point": 0.413703571502825,
-      "lo": 0.40179741708865635,
-      "hi": 0.42612432394483457,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -1447,17 +1343,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.1671939805951413,
-       "lo": 0.16124315518945143,
-       "hi": 0.17250248097701187,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.1671939805951413
       },
       "ece_platt": {
        "point": 0.02599036613431225,
@@ -1764,16 +1650,7 @@
      },
      "auprc": {
       "point": 0.6888588287748179,
-      "lo": 0.6750455060438351,
-      "hi": 0.7023659712285845,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -1794,17 +1671,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.09571864397387199,
-       "lo": 0.09057790089882366,
-       "hi": 0.10168320853146212,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.09571864397387199
       },
       "ece_platt": {
        "point": 0.011839127871043678,
@@ -2025,16 +1892,7 @@
      },
      "auprc": {
       "point": 0.635012449788094,
-      "lo": 0.6213575853504718,
-      "hi": 0.6483315385912993,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -2055,17 +1913,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.03699629164836725,
-       "lo": 0.03314129943151,
-       "hi": 0.0426405694813569,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.03699629164836725
       },
       "ece_platt": {
        "point": 0.01867161803091512,
@@ -2286,16 +2134,7 @@
      },
      "auprc": {
       "point": 0.6886379794176019,
-      "lo": 0.6749245391262952,
-      "hi": 0.7025364853719608,
-      "level": 0.95,
-      "B": 1000,
-      "method": "percentile",
-      "n_groups": 17492,
-      "n": 17785,
-      "stratified": true,
-      "seed": 20261006,
-      "n_valid": 1000
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
      },
      "calibration": {
       "method": "Platt on logit(score)",
@@ -2316,17 +2155,7 @@
        "n_valid": 1000
       },
       "ece_temperature_only": {
-       "point": 0.10302747479101736,
-       "lo": 0.09772543647560981,
-       "hi": 0.10918005289897045,
-       "level": 0.95,
-       "B": 1000,
-       "method": "percentile",
-       "n_groups": 17492,
-       "n": 17785,
-       "stratified": true,
-       "seed": 20261006,
-       "n_valid": 1000
+       "point": 0.10302747479101736
       },
       "ece_platt": {
        "point": 0.011658812033751614,

@@ -1,4 +1,5 @@
 {
+ "seed": 20261006,
  "models": {
   "skin_cls": {
    "model_id": "skin_cls@a217517b",
@@ -4460,7 +4461,5 @@
     "coverage_at_10pct_error": 1.0
    }
   }
- },
- "generated_by": "ml/eval/calibration.py",
- "seed": 20261006
+ }
 }

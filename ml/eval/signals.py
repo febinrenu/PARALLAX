@@ -34,7 +34,7 @@ from medproof.calibrate.calibrator import Calibrator  # noqa: E402
 from medproof.intake.decode import load_image  # noqa: E402
 from medproof.intake.quality import assess  # noqa: E402
 
-from ml.data.common import CACHE_DIR, data_root, image_path, load_split  # noqa: E402
+from ml.data.common import data_root, image_path, load_split  # noqa: E402
 from ml.eval import bootstrap as bs  # noqa: E402
 from ml.eval import metrics as mt  # noqa: E402
 
@@ -49,7 +49,7 @@ SPLIT_OF = {"skin_cls": "ham10000", "brain_cls": "brain_mri", "cxr_chex": "rsna"
 
 def quality_frame(name: str) -> pd.DataFrame:
     """P1's quality gate on every image of the model's corruption subset. Cached, since it decodes each file."""
-    cache = CACHE_DIR / f"quality_{name}.csv"
+    cache = ART / name / "predictions" / "quality.csv"  # committed: the flags need the images, which a fresh clone does not have
     z = np.load(ART / name / "predictions" / "corruption.npz", allow_pickle=False)
     ids = z["ids"].astype(str)
     if cache.is_file():

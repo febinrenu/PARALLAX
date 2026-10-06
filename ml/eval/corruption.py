@@ -171,21 +171,22 @@ def evaluate(name: str) -> dict:
     if name == "brain_seg":
         gt = y.astype(bool)
 
-        def dice_of(pred_masks, idx=None):
-            sl = slice(None) if idx is None else idx
-            p, g = pred_masks[sl], gt[sl]
-            tp, fp, fn = float((p & g).sum()), float((p & ~g).sum()), float((~p & g).sum())
-            return mt.dice(tp, fp, fn)
+        def counts(pred):  # per-slice TP, FP, FN so each bootstrap replicate is three sums, not a pass over the masks
+            return np.stack([(pred & gt).sum((-2, -1)), (pred & ~gt).sum((-2, -1)), (~pred & gt).sum((-2, -1))], -1).astype(float)
+
+        def dice_of(c):
+            return mt.dice(c[:, 0].sum(), c[:, 1].sum(), c[:, 2].sum())
 
         out["metric"] = "pooled Dice"
-        out["clean"] = {"point": dice_of(clean)}
+        c0 = counts(clean.astype(bool))
+        ci0 = bs.ci({"c": c0}, lambda c: dice_of(c), B=B_CORRUPTION)
+        out["clean"] = {"point": ci0["point"], "lo": ci0["lo"], "hi": ci0["hi"]}
         for pi, pname in enumerate(names):
             for si, sev in enumerate(sevs):
                 if pname in skipped:
                     out["cells"][f"{pname}/{sev}"] = None
                     continue
-                cell = cells[pi, si]
-                ci = bs.ci({"i": np.arange(n)}, lambda i: dice_of(cell[i], None) if False else _dice_idx(cell, gt, i), B=B_CORRUPTION)
+                ci = bs.ci({"c": counts(cells[pi, si].astype(bool))}, lambda c: dice_of(c), B=B_CORRUPTION)
                 out["cells"][f"{pname}/{sev}"] = {"point": ci["point"], "lo": ci["lo"], "hi": ci["hi"]}
         return out
     k = int(y.max() + 1) if name in ("skin_cls", "brain_cls") else 2
@@ -204,11 +205,6 @@ def evaluate(name: str) -> dict:
         flips = np.stack([cells[pi, 1].argmax(1) != base for pi in range(len(names))], 1)
         out["flip_rate_severity2"] = {"mean_per_image": float(flips.mean()), "share_images_flip_rate_above_0.25": float((flips.mean(1) > 0.25).mean())}
     return out
-
-
-def _dice_idx(cell, gt, i):
-    p, g = cell[i], gt[i]
-    return mt.dice(float((p & g).sum()), float((p & ~g).sum()), float((~p & g).sum()))
 
 
 def main(argv=None) -> int:
