@@ -36,8 +36,22 @@ def _fit(world, seed=0):
 def test_in_distribution_scores_stay_under_the_threshold_about_95_percent_of_the_time(world):
     model, report = _fit(world)
     for m, r in report["per_modality"].items():
-        assert 0.90 <= r["val_below_threshold"] <= 1.0
-        assert r["n_train"] > 0 and r["n_val"] > 0 and r["threshold"] > 0
+        assert 0.93 <= r["oof_below_threshold"] <= 1.0
+        assert r["n_fit"] > 0 and r["n_groups"] >= 3 and r["threshold"] > 0
+
+
+def test_held_out_in_distribution_images_are_rarely_flagged(world):
+    """The test split is untouched by the fit, so its flag rate is an honest false-alarm estimate."""
+    from medproof.intake.ood import evaluate
+
+    data, groups, _ = world
+    X = np.vstack(list(data.values()))
+    y = np.concatenate([[m] * len(x) for m, x in data.items()])
+    g = np.concatenate(list(groups.values()))
+    model, _ = fit_ood(X, y, g, embedder_id="e", seed=0)
+    ev = evaluate(model, X, y, g, seed=0)
+    for m, r in ev.items():
+        assert r["in_flagged"] <= 0.25 and r["auroc"] >= 0.98
 
 
 def test_other_modalities_are_flagged_and_separated(world):

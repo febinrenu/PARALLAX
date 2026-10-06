@@ -52,3 +52,6 @@ runs/
 .DS_Store
 Thumbs.db
 *.log
+
+# Locally trained router artifacts and embedding caches (hashes are recorded in progress.md)
+backend/artifacts/

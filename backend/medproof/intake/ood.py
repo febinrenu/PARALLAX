@@ -101,26 +101,40 @@ def _gaussian(x: np.ndarray):
     return lw.location_.astype(np.float64), lw.precision_.astype(np.float64), float(lw.shrinkage_)
 
 
+def _oof_distances(X: np.ndarray, groups: np.ndarray, folds: int = 5) -> np.ndarray:
+    """Distance of every sample to a Gaussian fitted WITHOUT its own group (cross-fitting)."""
+    from sklearn.model_selection import GroupKFold
+
+    d = np.full(len(X), np.nan)
+    for tr, te in GroupKFold(n_splits=min(folds, len(set(groups)))).split(X, groups=groups):
+        mu, prec, _ = _gaussian(X[tr])
+        d[te] = OODModel("", {"m": {"mu": mu, "prec": prec, "thr": 0.0}}).distance(X[te], "m")
+    return d
+
+
 def fit_ood(X: np.ndarray, y: np.ndarray, groups: np.ndarray, *, embedder_id: str, seed: int = 0) -> tuple[OODModel, dict]:
-    """Fit one Gaussian per supported modality on its training groups; threshold from validation groups."""
+    """Fit one Gaussian per supported modality; the test split never touches the fit or the threshold.
+
+    The threshold is the 95th percentile of cross-fitted distances over all non-test groups, which is much
+    steadier than a percentile of a handful of validation points.
+    """
     X, y, groups = np.asarray(X, np.float32), np.asarray(y), np.asarray(groups)
     tr, va, _ = group_split(y, groups, seed)
+    fit_idx = np.concatenate([tr, va])
     stats, per = {}, {}
     for m in SUPPORTED:
-        t, v = tr[y[tr] == m], va[y[va] == m]
-        if len(t) < 5 or len(v) < 3:
+        idx = fit_idx[y[fit_idx] == m]
+        if len(idx) < 8 or len(set(groups[idx])) < 3:
             continue
-        mu, prec, shrink = _gaussian(X[t])
-        model = {"mu": mu, "prec": prec, "thr": 0.0}
-        d_val = OODModel(embedder_id, {m: model}).distance(X[v], m)
-        thr = float(np.percentile(d_val, PERCENTILE))
-        model["thr"] = thr
-        stats[m] = model
-        per[m] = {"n_train": int(len(t)), "n_val": int(len(v)), "shrinkage": round(shrink, 4), "threshold": thr,
-                  "val_below_threshold": float((d_val <= thr).mean())}
+        mu, prec, shrink = _gaussian(X[idx])
+        oof = _oof_distances(X[idx], groups[idx])
+        thr = float(np.percentile(oof, PERCENTILE))
+        stats[m] = {"mu": mu, "prec": prec, "thr": thr}
+        per[m] = {"n_fit": int(len(idx)), "n_groups": int(len(set(groups[idx]))), "shrinkage": round(shrink, 4), "threshold": thr,
+                  "oof_below_threshold": float((oof <= thr).mean())}
     if not stats:
-        raise ValueError("no modality had enough training and validation samples")
-    meta = {"seed": seed, "percentile": PERCENTILE, "modalities": list(stats)}
+        raise ValueError("no modality had enough samples and groups")
+    meta = {"seed": seed, "percentile": PERCENTILE, "modalities": list(stats), "threshold_method": "cross-fitted by group"}
     return OODModel(embedder_id, stats, meta), {"per_modality": per, **meta}
 
 
@@ -162,7 +176,7 @@ def main(argv=None) -> int:
     report["test"] = evaluate(model, X, y, g, a.seed)
     report["skipped_unreadable"] = skipped
     report["note"] = ("Each class comes from its own source dataset, so distances partly measure the dataset; "
-                      "thresholds are provisional until fitted on the full in-distribution validation sets.")
+                      "thresholds are provisional and rest on a few dozen images per modality.")
     model.save(a.out)
     text = json.dumps(report, indent=2)
     if a.report:
