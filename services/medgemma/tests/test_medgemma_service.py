@@ -278,3 +278,13 @@ def test_unreadable_image_is_recorded_as_a_failed_read_and_the_batch_continues(t
     assert n == 2 and rows["bad"]["ok"] is False and "unreadable" in rows["bad"]["error"] and rows["bad"]["label"] == "x"
     assert rows["good"]["ok"] is True
     assert run_items(be, [("bad", bad, {}), ("good", good, {})], out, modality="cxr") == 0  # failures are not retried forever
+
+
+def test_prompts_are_read_once_so_a_running_batch_survives_working_tree_changes(tmp_path, monkeypatch):
+    from services.medgemma import reader
+
+    reader.load_prompt.cache_clear()
+    first = reader.load_prompt("read_generic")
+    monkeypatch.setattr(reader, "PROMPTS", tmp_path / "gone")  # the files vanish, as during a rebase
+    assert reader.load_prompt("read_generic") == first
+    reader.load_prompt.cache_clear()

@@ -11,13 +11,14 @@ from typing import Annotated
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 
-from services.medgemma.reader import Backend, read_image
+from services.medgemma.reader import Backend, preload_prompts, read_image
 from services.medgemma.schema import Modality, ReadResult
 
 MAX_BYTES = 25 * 1024 * 1024
 
 
 def create_app(backend: Backend | None = None) -> FastAPI:
+    preload_prompts()
     app = FastAPI(title="medgemma-read", version="1")
     state: dict[str, Backend | None] = {"backend": backend}
 

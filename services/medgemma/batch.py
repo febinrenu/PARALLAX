@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from services.medgemma.reader import Backend, read_image
+from services.medgemma.reader import Backend, preload_prompts, read_image
 from services.medgemma.schema import ReadResult
 
 EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
@@ -96,6 +96,7 @@ def main() -> None:
         items, modality, out = folder_items(args.images), args.modality, args.out
     from services.medgemma.loader import TransformersBackend
 
+    preload_prompts()
     n = run_items(TransformersBackend.from_env(), items, out, modality=modality, limit=args.limit)
     print(f"read {n} images -> {out}")
 

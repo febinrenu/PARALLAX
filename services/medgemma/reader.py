@@ -2,6 +2,7 @@
 
 import re
 import time
+from functools import lru_cache
 from pathlib import Path
 from typing import Protocol
 
@@ -19,11 +20,19 @@ class Backend(Protocol):
     def generate(self, image: Image.Image, prompt: str, max_new_tokens: int = 300) -> str: ...
 
 
+@lru_cache(maxsize=None)
 def load_prompt(name: str) -> str:
+    # Read once: a long batch must not depend on the working tree staying unchanged (a git rebase broke one).
     raw = (PROMPTS / f"{name}.md").read_text(encoding="utf-8")
     if raw.startswith("---\n"):
         raw = raw.split("\n---\n", 1)[1]
     return raw.strip()
+
+
+def preload_prompts() -> None:
+    """Read every prompt now, so later reads never touch the disk."""
+    for path in PROMPTS.glob("*.md"):
+        load_prompt(path.stem)
 
 
 def build_prompt(modality: str, extra: str | None) -> str:
