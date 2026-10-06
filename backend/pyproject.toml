@@ -14,7 +14,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "hypothesis"]
 # CPU torch comes from https://download.pytorch.org/whl/cpu
-ml = ["torch", "torchvision", "torchxrayvision"]
+ml = ["torch", "torchvision", "torchxrayvision", "transformers", "scikit-learn", "timm", "segmentation-models-pytorch", "h5py", "ultralytics"]
+# needed by the context, report and second-reader modules and their tests
+services = ["diskcache", "fhir.resources", "requests"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
