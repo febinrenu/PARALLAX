@@ -43,9 +43,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P1.1 | Decode PNG/JPG/DICOM + hashing | todo | | | |
-| P1.2 | DICOM PHI scrub | todo | | | |
-| P1.3 | Quality gate | todo | | | |
+| P1.1 | Decode PNG/JPG/DICOM + hashing | done | p1/intake | 2026-10-06 | `intake/decode.py`, `intake/preprocess.py` |
+| P1.2 | DICOM PHI scrub | done | p1/intake | 2026-10-06 | `intake/phi.py` |
+| P1.3 | Quality gate | done | p1/intake | 2026-10-06 | thresholds provisional, refit on real data |
 | P1.4 | Router (MedSigLIP probe) | todo | | | |
 | P1.5 | OOD score | todo | | | |
 | P1.6 | CXR reader + anatomy zones | todo | | | |
@@ -53,7 +53,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P1.8 | Brain + skin inference wrappers | todo | | | |
 | P1.9 | Faithfulness test (D1) | todo | | | |
 | P1.10 | Saliency sanity check (D2) | todo | | | |
-| P1.11 | Stability score (D5) | todo | | | |
+| P1.11 | Stability score (D5) | doing | p1/intake | 2026-10-06 | perturbation library done; flip-rate logic todo |
 | P1.12 | MedSAM service | todo | | | |
 
 ### P2 — Data, Training & Validation
@@ -112,9 +112,16 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 ## Role sections
 
 ### P1 — Imaging Core
-**Now:**
-**Next:**
-**Blockers:**
+**Now:** P1.1 to P1.3 done and tested (121 tests passing). Perturbation library pulled forward from P1.11.
+**Next:** P1.6 CXR reader (unblocks P2.7), then P1.4 router, P1.9 faithfulness, P1.11 flip-rate logic.
+**Blockers:** none.
+**For P2 (available now on branch `p1/intake`):**
+- Decode any upload: `from medproof.intake.decode import load_image` returns `DecodedImage` (`.display` uint8, `.analysis` float32 in [0,1], `.sha256`). DICOM handles rescale slope/intercept, window tags and MONOCHROME1 (RSNA). Raises `DecodeError` on bad input. Use this for pHash and for every eval loader so you see the pixels the product sees.
+- Training and serving preprocessing: `from medproof.intake.preprocess import prepare, get_spec`; specs `cxr_xrv`, `brain_effnet`, `skin_cls`, `bone_yolo`. Call `prepare(decoded_or_float_array, "brain_effnet")` to get a float32 CHW tensor. Change a spec only via a Decisions entry so train and serve stay equal.
+- Corruption benchmark: `from medproof.verify.perturbations import apply, NAMES, SEVERITIES`; `apply(name, img_float01, severity 1..5, seed)`. Eight perturbations, deterministic for a given seed.
+- Quality gate: `from medproof.intake.quality import assess, QualityConfig`; `assess(decoded, "cxr")` gives `.passed`, `.reasons` (code, level, fix), `.metrics`. Thresholds are in `QualityConfig` and were set on a synthetic phantom; refit them on real validation images (target: at most 5% of clean images flagged).
+- Reader output shape: `medproof.readers.base.ReaderOutput` (stub, final with P1.6).
+- Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
 
 ### P2 — Data, Training & Validation
 **Now:**
@@ -137,6 +144,15 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 Deviations from plan.md, newest last. Format: `date · role · decision · evidence`.
 
+- 2026-10-06 · P1 · Pulled `verify/perturbations.py` forward from P1.11 · shared by the quality-gate fixtures, the stability score and P2.12, so it is defined once.
+- 2026-10-06 · P1 · Added `intake/preprocess.py` (not in plan) · one preprocessing path for training notebooks and inference prevents train/serve skew.
+- 2026-10-06 · P1 · Blur metric is Laplacian variance divided by intensity variance, computed on a 512 px copy · raw Laplacian variance changes with contrast and resolution; test shows scores within 35% across a 512 to 1024 px resize.
+- 2026-10-06 · P1 · CXR tilt is estimated from the rotation that maximises left-right mirror symmetry (with an off-centre shift allowed), not the lung-mask axis · the anatomy segmenter arrives with P1.6; replace then. Only a tilt with symmetry gain of at least 0.03 is reported.
+- 2026-10-06 · P1 · PHI scrub keeps PatientAge and PatientSex, blanks names and identifiers, removes free-text descriptions, shifts dates by one random per-study offset that is not recorded, remaps UIDs, drops private tags, and warns on burned-in annotation · the context checks need age and sex; this is a PS3.15 subset, not a certified de-identifier.
+- 2026-10-06 · P1 · Quality thresholds are provisional values tuned on a synthetic phantom: the clean phantom passes with zero reasons across 8 seeds, and 100% of noise, blur and contrast degradations at severity 4 and 5 fail the gate · must be refit on real validation images.
+- 2026-10-06 · P1 · Python 3.12 venv with pip instead of 3.11 with uv (uv not installed here); `backend/pyproject.toml` is minimal for the platform owner to absorb · no `make smoke` exists yet, so verification is `python -m pytest` in `backend/`.
+- 2026-10-06 · P1 · `core/schemas.py` is a verbatim copy of the section 4 sketch because the contract was not yet committed · platform owner replaces it; P1 code only uses `StageResult`.
+
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -148,3 +164,11 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 ## Shared log (append-only, newest at the bottom)
 
 <!-- Add entries below this line using the format in plan.md §12.3. Never edit earlier entries. -->
+
+### 2026-10-06 · P1 · WP P1.1, P1.2, P1.3
+Did: DICOM/PNG/JPG decode with rescale, windowing and MONOCHROME1 inversion; shared preprocessing specs; eight seeded perturbations; PHI scrub with receipt; quality gate with fix text per failure; intake stage adapter returning StageResult.
+State: P1.1 to P1.3 done. Perturbation library done early (P1.11 logic still todo).
+Verified: `cd backend && python -m pytest -q` gives 121 passed. Includes a pydicom-built MONOCHROME1 fixture, a PHI sentinel test on the serialized bytes, and six degraded images each giving the right reason.
+Next: CXR reader and anatomy zones (P1.6) so P2.7 can calibrate; then router.
+Decisions: see Decisions, entries dated 2026-10-06 for P1.
+Contract change requests: none.
