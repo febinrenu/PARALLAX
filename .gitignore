@@ -25,6 +25,9 @@ build/
 
 # Data, weights, and artifacts (never commit datasets or model files)
 data/
+!ml/data/
+ml/data/raw/
+ml/data/cache/
 datasets/
 checkpoints/
 runs/
