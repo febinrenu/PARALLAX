@@ -17,7 +17,7 @@ Everything here is owned by P2. Decision support only; nothing in this folder is
 2. `kaggle kernels push -p ml/train/kaggle/skin_cls` (brain jobs attach their Kaggle dataset through the metadata file).
 3. When it finishes: `kaggle kernels output <user>/parallax-skin-cls -p ml/artifacts/skin_cls`, then `python ml/artifacts/register.py ml/artifacts/skin_cls`.
 
-The notebooks clone this repository (`PARALLAX_BRANCH`, default `p2/data`), so the branch must be pushed first. Each job writes
+The notebooks clone this repository (`PARALLAX_BRANCH`, default `main`), so the branch must be pushed first. Each job writes
 `weights.pt`, `model_meta.json`, `metrics.json` and `predictions/<split>.npz`; `make eval` recomputes everything from the cached predictions.
 
 ## Local dry run

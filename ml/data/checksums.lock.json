@@ -1,4 +1,8 @@
 {
+ "brain_mri/brain-tumor-mri-dataset.zip": {
+  "bytes": 164670110,
+  "sha256": "882817250048c78ef7a759cf23e540d7b581f2327b16663c9d3db12f5d2ffdb4"
+ },
  "fracatlas/FracAtlas.zip": {
   "bytes": 338436460,
   "sha256": "b67ec2d290a022b3dcf47f78e9a37f7edcc80592c0571f439355bf00bd9f0e23"

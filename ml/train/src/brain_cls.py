@@ -12,7 +12,7 @@ import json, os, subprocess, sys, time
 from pathlib import Path
 
 REPO_URL = os.environ.get("PARALLAX_REPO_URL", "https://github.com/febinrenu/PARALLAX.git")
-BRANCH = os.environ.get("PARALLAX_BRANCH", "p2/data")  # switch to main once merged
+BRANCH = os.environ.get("PARALLAX_BRANCH", "main")
 SMOKE = os.environ.get("SMOKE") == "1"
 SLUG = "brain_cls"
 ON_KAGGLE = Path("/kaggle/working").is_dir()
