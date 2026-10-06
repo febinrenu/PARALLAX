@@ -42,7 +42,7 @@ def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFKC", text)).strip().lower()
 
 
-def _supported(f: Finding) -> bool:
+def is_supported(f: Finding) -> bool:
     """Same evidence requirement as the status rule: faithful image evidence or supporting text."""
     return any(e.faithful is True for e in f.image_evidence) or any(
         t.polarity == "supports" for t in f.text_evidence
@@ -103,7 +103,7 @@ def check(claim: Claim, view: StudyView) -> Verdict:
     if r4:
         v.reasons.append("R4_evidence_owner")
 
-    if any(not _supported(view.findings[ref]) for ref in finding_refs):
+    if any(not is_supported(view.findings[ref]) for ref in finding_refs):
         v.reasons.append("R5_support")
 
     cited_text = [view.text_evidence[i] for i in ids if i in view.text_evidence]
