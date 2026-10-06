@@ -1,0 +1,59 @@
+{
+ "generated_utc": "2026-10-06T18:16:17Z",
+ "batch_cap": 1000,
+ "datasets": {
+  "fracatlas": {
+   "split_file": "ml/data/splits/fracatlas.csv",
+   "test_splits": [
+    "test"
+   ],
+   "n_test": 569,
+   "n_batch": 569,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "no_fracture": 466,
+    "fracture": 103
+   },
+   "batch_label_counts": {
+    "no_fracture": 466,
+    "fracture": 103
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "fracatlas/FracAtlas"
+   ]
+  },
+  "ham10000": {
+   "split_file": "ml/data/splits/ham10000.csv",
+   "test_splits": [
+    "official_test"
+   ],
+   "n_test": 1512,
+   "n_batch": 1000,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "nv": 909,
+    "bkl": 217,
+    "mel": 171,
+    "bcc": 93,
+    "df": 44,
+    "akiec": 43,
+    "vasc": 35
+   },
+   "batch_label_counts": {
+    "nv": 599,
+    "bkl": 144,
+    "mel": 113,
+    "bcc": 62,
+    "df": 29,
+    "akiec": 28,
+    "vasc": 25
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "isic2018_t3_test",
+    "isic2018_t3_train"
+   ]
+  }
+ }
+}

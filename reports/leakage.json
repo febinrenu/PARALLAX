@@ -1,0 +1,175 @@
+{
+ "datasets": {
+  "fracatlas": {
+   "duplicate_clusters": 198,
+   "duplicate_pairs": 341,
+   "flat_images_excluded_from_matching": 0,
+   "fractured": 719,
+   "images_listed": 4083,
+   "images_removed": 281,
+   "images_with_duplicate_in_another_original_split": {
+    "train": 16,
+    "val": 16
+   },
+   "label_conflict_clusters": 4,
+   "label_folder_mismatches": 2,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 17,
+   "max_hamming": 4,
+   "n_images": 4083,
+   "note": "no patient id exists; different views of one patient cannot be linked",
+   "pairs_across_original_splits": 16,
+   "pairs_by_distance": {
+    "0": 102,
+    "1": 0,
+    "2": 48,
+    "3": 0,
+    "4": 191
+   },
+   "pairs_within_original_split": 325,
+   "removed_by_reason": {
+    "duplicate": 272,
+    "duplicate_of_immutable_test_image": 0,
+    "label_conflict": 9
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "cal": {
+     "fracture": 68,
+     "no_fracture": 312
+    },
+    "dropped": {
+     "fracture": 35,
+     "no_fracture": 246
+    },
+    "test": {
+     "fracture": 103,
+     "no_fracture": 466
+    },
+    "train": {
+     "fracture": 443,
+     "no_fracture": 2029
+    },
+    "val": {
+     "fracture": 70,
+     "no_fracture": 311
+    }
+   },
+   "split_counts": {
+    "cal": 380,
+    "dropped": 281,
+    "test": 569,
+    "train": 2472,
+    "val": 381
+   },
+   "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5",
+   "truncated_source_files": 59
+  },
+  "ham10000": {
+   "duplicate_clusters": 142,
+   "duplicate_pairs": 520,
+   "flat_images_excluded_from_matching": 0,
+   "images_removed": 296,
+   "images_with_duplicate_in_another_original_split": {
+    "official_test": 29,
+    "train": 59
+   },
+   "label_conflict_clusters": 0,
+   "label_mismatches_vs_metadata_dx": 0,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 53,
+   "max_hamming": 4,
+   "n_images": 11527,
+   "n_lesions_train": 7470,
+   "note": "official ISIC 2018 Task 3 test rows are immutable; copies of them in the training set are removed",
+   "official_test_metadata_from_isic_api": true,
+   "pairs_across_original_splits": 79,
+   "pairs_by_distance": {
+    "0": 18,
+    "1": 0,
+    "2": 93,
+    "3": 0,
+    "4": 409
+   },
+   "pairs_within_original_split": 441,
+   "removed_by_reason": {
+    "duplicate": 153,
+    "duplicate_of_immutable_test_image": 115,
+    "label_conflict": 28
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "cal": {
+     "akiec": 30,
+     "bcc": 51,
+     "bkl": 110,
+     "df": 11,
+     "mel": 108,
+     "nv": 647,
+     "vasc": 14
+    },
+    "dropped": {
+     "akiec": 2,
+     "bcc": 2,
+     "bkl": 7,
+     "df": 2,
+     "mel": 19,
+     "nv": 262,
+     "vasc": 2
+    },
+    "official_test": {
+     "akiec": 43,
+     "bcc": 93,
+     "bkl": 217,
+     "df": 44,
+     "mel": 171,
+     "nv": 909,
+     "vasc": 35
+    },
+    "test": {
+     "akiec": 33,
+     "bcc": 51,
+     "bkl": 109,
+     "df": 11,
+     "mel": 111,
+     "nv": 643,
+     "vasc": 15
+    },
+    "train": {
+     "akiec": 230,
+     "bcc": 359,
+     "bkl": 763,
+     "df": 79,
+     "mel": 767,
+     "nv": 4507,
+     "vasc": 98
+    },
+    "val": {
+     "akiec": 32,
+     "bcc": 51,
+     "bkl": 110,
+     "df": 12,
+     "mel": 108,
+     "nv": 646,
+     "vasc": 13
+    }
+   },
+   "split_counts": {
+    "cal": 971,
+    "dropped": 296,
+    "official_test": 1512,
+    "test": 973,
+    "train": 6803,
+    "val": 972
+   },
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "truncated_source_files": 0
+  }
+ },
+ "generated_utc": "2026-10-06T18:16:17Z",
+ "method": {
+  "duplicate_max_hamming": 4,
+  "hash": "64-bit DCT pHash",
+  "seed": 20261006
+ }
+}

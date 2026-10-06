@@ -1,0 +1,25 @@
+{
+ "fracatlas": {
+  "counts": {
+   "cal": 380,
+   "dropped": 281,
+   "test": 569,
+   "train": 2472,
+   "val": 381
+  },
+  "rows": 4083,
+  "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5"
+ },
+ "ham10000": {
+  "counts": {
+   "cal": 971,
+   "dropped": 296,
+   "official_test": 1512,
+   "test": 973,
+   "train": 6803,
+   "val": 972
+  },
+  "rows": 11527,
+  "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb"
+ }
+}

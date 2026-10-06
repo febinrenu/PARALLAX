@@ -14,5 +14,17 @@
  "isic2018_t3_test/ISIC2018_Task3_Test_Input.zip": {
   "bytes": 420586171,
   "sha256": "aa90bd5308259bf5fdcc6048b09dd70416d527d1200e5148aef8ae94f8678b60"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_GroundTruth.zip": {
+  "bytes": 36681,
+  "sha256": "33e8d4f1eac869facaaf309d2c04be0faedbe0dc0402d887c12326322cf72339"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_Input.zip": {
+  "bytes": 2771732744,
+  "sha256": "4151b6de5e31eb21586732d2dc0df047737501d5f5333cb52b071ad704364cc0"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_LesionGroupings.csv": {
+  "bytes": 492996,
+  "sha256": "b0352393dc54843e39a7c108781c54cc8a0ef282240330ac239a88c46ea0cc0f"
  }
 }
