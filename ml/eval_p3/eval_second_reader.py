@@ -123,6 +123,59 @@ def eval_skin(rows: list[dict]) -> dict:
     return out
 
 
+
+SKIN_NPZ = ROOT / "ml" / "artifacts" / "skin_cls" / "predictions" / "official_test.npz"
+MIN_PAIRS = 50
+
+
+def _mean_or_nan(x: np.ndarray) -> float:
+    return float(x.mean()) if len(x) else float("nan")
+
+
+def skin_specialist_comparison(rows: list[dict], npz_path: Path = SKIN_NPZ) -> dict:
+    """Specialist (P2's saved official-test predictions) against MedGemma on the same images.
+
+    Reports agreement and kappa, and the trust-signal question from plan 9.4: is the specialist right
+    more often when the second reader agrees with it than when it disagrees?
+    """
+    if not Path(npz_path).is_file():
+        return {"note": f"specialist predictions not found at {npz_path}"}
+    z = np.load(npz_path, allow_pickle=False)
+    index = {str(i): k for k, i in enumerate(z["ids"])}
+    pairs = [(r, index[r["image"]]) for r in rows if r.get("ok") and r["image"] in index]
+    if len(pairs) < MIN_PAIRS:
+        return {"n_paired": len(pairs), "note": f"need at least {MIN_PAIRS} paired reads for statistics"}
+    spec = np.array([SKIN_CLASSES[int(np.argmax(z["logits"][k]))] for _, k in pairs], dtype=object)
+    truth = np.array([SKIN_CLASSES[int(z["y"][k])] for _, k in pairs], dtype=object)
+    mg = np.array([skin_prediction(r) for r, _ in pairs], dtype=object)
+    groups = np.array([str(z["group"][k]) for _, k in pairs], dtype=object)
+    mapped = mg != "none"
+    out: dict = {"n_paired": len(pairs), "medgemma_coverage": round(float(mapped.mean()), 4), "n_compared": int(mapped.sum())}
+    if mapped.sum() < MIN_PAIRS:
+        out["note"] = f"fewer than {MIN_PAIRS} images where MedGemma named a lesion type"
+        return out
+    s_, t_, m_, g_ = spec[mapped], truth[mapped], mg[mapped], groups[mapped]
+    out["specialist_accuracy_on_compared"] = round(float((s_ == t_).mean()), 4)
+    out["medgemma_accuracy_on_compared"] = round(float((m_ == t_).mean()), 4)
+
+    def ci_of(fn, **arrays) -> dict:
+        c = ci(arrays, fn, groups=g_, strata=None, B=1000)
+        return {k: round(c[k], 4) for k in ("point", "lo", "hi")}
+
+    out["agreement_rate"] = ci_of(lambda s, m: float((s == m).mean()), s=s_, m=m_)
+    out["kappa"] = ci_of(lambda s, m: float(cohen_kappa(list(s), list(m))), s=s_, m=m_)
+    agree = s_ == m_
+    correct = s_ == t_
+    out["n_agree"], out["n_disagree"] = int(agree.sum()), int((~agree).sum())
+    out["specialist_accuracy_when_agree"] = ci_of(lambda c, a: _mean_or_nan(c[a]), c=correct, a=agree)
+    if (~agree).sum() >= 5:
+        out["specialist_accuracy_when_disagree"] = ci_of(lambda c, a: _mean_or_nan(c[~a]), c=correct, a=agree)
+        out["accuracy_gap_agree_minus_disagree"] = ci_of(lambda c, a: _mean_or_nan(c[a]) - _mean_or_nan(c[~a]), c=correct, a=agree)
+    else:
+        out["specialist_accuracy_when_disagree"] = {"note": "fewer than 5 disagreements"}
+    return out
+
+
 def specialist_concordance(specialist: dict[str, str | int], rows: list[dict], modality: str) -> dict:
     """D3 kappa between a specialist and MedGemma on the same images; `specialist` maps image id -> label."""
     pairs = [(specialist[r["image"]], bone_prediction(r, False) if modality == "bone_xray" else skin_prediction(r))
@@ -141,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     report: dict = {
         "what": "MedGemma 1.5 4B (4-bit) as second reader, scored against ground truth on P2's eval batches",
-        "specialist_vs_medgemma": "pending: needs P2's trained skin/bone weights (see specialist_concordance)",
+        "specialist_vs_medgemma": "skin: from P2's saved official-test predictions (see datasets.ham10000); bone: pending P2's detector predictions",
         "datasets": {},
     }
     for name, fn in (("fracatlas", eval_bone), ("ham10000", eval_skin)):
@@ -149,6 +202,8 @@ def main(argv: list[str] | None = None) -> int:
         if (args.dataset in (None, name)) and path.is_file():
             rows = read_rows(path)
             report["datasets"][name] = fn(rows)
+            if name == "ham10000":
+                report["datasets"][name]["specialist_vs_medgemma"] = skin_specialist_comparison(rows)
             planned = json.loads((ROOT / "ml" / "data" / "eval_index.json").read_text(encoding="utf-8"))["datasets"][name]["n_batch"]
             report["datasets"][name]["progress"] = {
                 "reads": len(rows), "planned": planned,
