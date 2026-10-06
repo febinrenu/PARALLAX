@@ -17,7 +17,7 @@ The model loads on the first `/read`. `GET /health` shows whether it is loaded.
 |---|---|---|
 | `MEDGEMMA_MODEL_ID` | `google/medgemma-1.5-4b-it` | model id |
 | `MEDGEMMA_QUANT` | `nf4` | `nf4` (4-bit), `bf16`, `fp32` |
-| `MEDGEMMA_COMPUTE` | `fp16` | `fp16`, `fp32`, `bf16`. T4/P100 have no bf16; if output is garbage use `fp32` |
+| `MEDGEMMA_COMPUTE` | `auto` | `auto` (bf16 if the GPU supports it, else fp32), `bf16`, `fp16`, `fp32`. fp16 gave an empty reply on an RTX 4060 |
 
 ## Platforms
 

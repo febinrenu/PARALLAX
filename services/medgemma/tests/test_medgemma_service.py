@@ -142,3 +142,93 @@ def test_batch_is_resumable(tmp_path):
 @pytest.mark.gpu
 def test_real_model_smoke():
     pytest.skip("run `python -m services.medgemma.smoke --image <cxr>` on a GPU machine")
+
+
+def test_truncated_reply_is_not_mistaken_for_an_inner_object():
+    # Real failure: the reply was cut off mid-list and an inner {...} was returned as the result.
+    cut = '```json\n{"labels": [{"name": "heart", "present": true}, {"name": "lung", "pres'
+    with pytest.raises(ValueError):
+        extract_json(cut)
+    res = read_image(FakeBackend([cut, cut]), Image.new("L", (8, 8)), "cxr")
+    assert not res.ok and "unparseable" in res.error
+
+
+def test_object_without_expected_keys_is_unparseable():
+    res = read_image(FakeBackend(['{"name": "heart"}', '{"foo": 1}']), Image.new("L", (8, 8)), "cxr")
+    assert not res.ok
+
+
+def test_prompt_asks_for_a_short_report_with_framing():
+    be = FakeBackend([json.dumps(GOOD)])
+    read_image(be, Image.new("L", (8, 8)), "cxr")
+    p = be.prompts[0]
+    assert "FINDINGS" in p and "IMPRESSION" in p and "research evaluation" in p.lower()
+
+
+REPORT = (
+    "FINDINGS: The lungs appear clear. No pleural effusion or pneumothorax is seen. "
+    "The heart size is normal.\n\nIMPRESSION: No acute cardiopulmonary process identified."
+)
+
+
+def test_plain_report_is_accepted_without_json():
+    res = read_image(FakeBackend([REPORT]), Image.new("L", (8, 8)), "cxr")
+    assert res.ok and res.impression.startswith("No acute cardiopulmonary")
+    assert "no pleural effusion" in res.findings_text.lower()
+    assert res.labels == [] and res.boxes == []
+    assert any("labels" in w for w in res.warnings)
+
+
+def test_thinking_prefix_is_stripped():
+    thought = "<unused94>thought\nThe user wants a report...<unused95>" + REPORT
+    res = read_image(FakeBackend([thought]), Image.new("L", (8, 8)), "cxr")
+    assert res.ok and "thought" not in res.findings_text and "user wants" not in res.findings_text
+
+
+def test_unfinished_thinking_is_not_an_answer():
+    unfinished = ["<unused94>thought\nThe user wants me to analyze", "<unused94>thought\nstill thinking"]
+    res = read_image(FakeBackend(unfinished), Image.new("L", (8, 8)), "cxr")
+    assert not res.ok
+
+
+def test_refusal_is_retried_then_reported_not_ok():
+    refusal = "I am unable to provide a medical diagnosis based on an image. I am an AI."
+    be = FakeBackend([refusal, REPORT])
+    res = read_image(be, Image.new("L", (8, 8)), "cxr")
+    assert res.ok and len(be.prompts) == 2
+    res2 = read_image(FakeBackend([refusal, refusal]), Image.new("L", (8, 8)), "cxr")
+    assert not res2.ok and "refus" in res2.error
+
+
+def test_compute_default_prefers_bf16_when_supported():
+    from services.medgemma.loader import pick_compute
+
+    assert pick_compute("auto", bf16_ok=True) == "bf16"
+    assert pick_compute("auto", bf16_ok=False) == "fp32"
+    assert pick_compute("fp16", bf16_ok=True) == "fp16"
+
+
+def test_repeated_labels_and_boxes_are_collapsed_and_hedges_moved_out_of_names():
+    # Real output: the same label five times, "possible" inside the name, near-identical boxes.
+    rep = {
+        "labels": [{"name": "possible pneumonia", "present": True, "confidence_text": "possible"}] * 5,
+        "boxes": [
+            {"label": "possible pneumonia", "box": [400, 300, 550, 700]},
+            {"label": "possible pneumonia", "box": [450, 300, 550, 700]},
+            {"label": "possible pneumonia", "box": [900, 10, 990, 80]},
+        ],
+        "impression": "Possible pneumonia.",
+    }
+    res = read_image(FakeBackend([json.dumps(rep)]), Image.new("L", (8, 8)), "cxr")
+    assert [x.name for x in res.labels] == ["pneumonia"]
+    assert res.labels[0].confidence_text == "possible"
+    assert [b.label for b in res.boxes] == ["pneumonia", "pneumonia"]  # near-duplicate box merged
+    assert res.boxes[0].xyxy_norm == (400, 300, 550, 700) and res.boxes[1].xyxy_norm == (900, 10, 990, 80)
+    assert any("repeated" in w for w in res.warnings)
+
+
+def test_label_with_likely_prefix_keeps_distinct_findings():
+    rep = {"labels": [{"name": "likely nodule", "present": True}, {"name": "pleural effusion", "present": True}]}
+    res = read_image(FakeBackend([json.dumps(rep)]), Image.new("L", (8, 8)), "cxr")
+    assert [x.name for x in res.labels] == ["nodule", "pleural effusion"]
+    assert res.labels[0].confidence_text == "likely"

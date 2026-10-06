@@ -1,6 +1,6 @@
 ---
 model: google/medgemma-1.5-4b-it
-purpose: second turn when the first reply was not valid JSON
-version: v1
+purpose: second turn when the first reply was unusable (refusal, reasoning only, or no sections)
+version: v2
 ---
-Your previous reply could not be parsed. Reply again with ONLY the JSON object described above, nothing else.
+Reply again with only the report: a FINDINGS: section and an IMPRESSION: section, nothing else.

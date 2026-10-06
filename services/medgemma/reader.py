@@ -1,5 +1,6 @@
 """One image in, one validated ReadResult out. Never raises."""
 
+import re
 import time
 from pathlib import Path
 from typing import Protocol
@@ -15,7 +16,7 @@ class Backend(Protocol):
     name: str
     quant: str
 
-    def generate(self, image: Image.Image, prompt: str, max_new_tokens: int = 700) -> str: ...
+    def generate(self, image: Image.Image, prompt: str, max_new_tokens: int = 300) -> str: ...
 
 
 def load_prompt(name: str) -> str:
@@ -33,25 +34,98 @@ def build_prompt(modality: str, extra: str | None) -> str:
     return f"{prompt}\n\nAdditional instruction from the system: {extra}" if extra else prompt
 
 
+_HEDGE_PREFIX = re.compile(r"^(possible|probable|likely|suspected|questionable)\s+", re.IGNORECASE)
+
+
+def _iou(a: tuple[int, int, int, int], b: tuple[int, int, int, int]) -> float:
+    iw = min(a[2], b[2]) - max(a[0], b[0])
+    ih = min(a[3], b[3]) - max(a[1], b[1])
+    if iw <= 0 or ih <= 0:
+        return 0.0
+    inter = iw * ih
+    union = (a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - inter
+    return inter / union
+
+
+def _clean_name(name: str) -> tuple[str, str | None]:
+    """Move a leading hedge word out of a label name: 'possible nodule' -> ('nodule', 'possible')."""
+    m = _HEDGE_PREFIX.match(name.strip())
+    return (name.strip()[m.end():], m.group(1).lower()) if m else (name.strip(), None)
+
+
 def _valid_box(box: list[int]) -> bool:
     if len(box) != 4 or not all(isinstance(v, int) and 0 <= v <= 1000 for v in box):
         return False
     return box[2] > box[0] and box[3] > box[1]
 
 
-def _parse(text: str, modality: str) -> tuple[list[Label], list[Box], str, list[str]]:
+_REFUSAL = re.compile(
+    r"unable to provide|cannot provide|can't provide|not able to provide|"
+    r"i am an ai|as an ai|cannot give medical advice|not a substitute for",
+    re.IGNORECASE,
+)
+_SECTIONS = re.compile(r"findings\s*:?\s*(?P<f>.*?)\s*impression\s*:?\s*(?P<i>.*)\Z", re.IGNORECASE | re.DOTALL)
+_ANSWER_START = "<unused95>"  # Gemma thinking mode closes its reasoning with this token
+
+
+class Refusal(ValueError):
+    """The model declined to read the image."""
+
+
+def _strip_thinking(text: str) -> str:
+    """Drop a leading reasoning block; an unfinished one means there is no answer yet."""
+    if "<unused94>" in text:
+        if _ANSWER_START not in text:
+            raise ValueError("model was still reasoning when output ended")
+        text = text.split(_ANSWER_START, 1)[1]
+    return text.strip()
+
+
+def _parse_report(text: str) -> tuple[str, str]:
+    """(findings_text, impression) from a plain FINDINGS / IMPRESSION report."""
+    m = _SECTIONS.search(text)
+    if m:
+        return m.group("f").strip(), m.group("i").strip()
+    if re.search(r"findings|impression", text, re.IGNORECASE) is None:
+        raise ValueError("reply is neither JSON nor a FINDINGS/IMPRESSION report")
+    tail = re.split(r"impression\s*:?", text, flags=re.IGNORECASE)
+    return (text.strip(), tail[-1].strip()) if len(tail) > 1 else (text.strip(), "")
+
+
+def _parse(text: str, modality: str) -> tuple[list[Label], list[Box], str, str, list[str]]:
+    text = _strip_thinking(text)
+    if _REFUSAL.search(text):
+        raise Refusal("model refused to read the image")
+    if "{" not in text:
+        findings, impression = _parse_report(text)
+        return [], [], impression, findings, ["labels not provided; derive them from the report text"]
     obj = extract_json(text)
-    labels = [Label.model_validate(x) for x in obj.get("labels", [])]
+    if not any(k in obj for k in ("labels", "impression", "boxes")):
+        raise ValueError("reply has none of labels, boxes or impression")
     warnings: list[str] = []
+    labels: list[Label] = []
+    seen: set[str] = set()
+    for raw_label in obj.get("labels", []):
+        lab = Label.model_validate(raw_label)
+        name, hedge = _clean_name(lab.name)
+        if name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        labels.append(lab.model_copy(update={"name": name, "confidence_text": lab.confidence_text or hedge}))
+    if len(labels) < len(obj.get("labels", [])):
+        warnings.append("collapsed repeated labels")
     boxes: list[Box] = []
     for item in obj.get("boxes", []) if modality == "cxr" else []:
         raw_box = [round(v) if isinstance(v, float) else v for v in item.get("box", [])]
         if _valid_box(raw_box):
             a, b, c, d = raw_box
-            boxes.append(Box(label=str(item.get("label", "")), xyxy_norm=(a, b, c, d)))
+            name, _ = _clean_name(str(item.get("label", "")))
+            if any(x.label == name and _iou(x.xyxy_norm, (a, b, c, d)) > 0.5 for x in boxes):
+                continue
+            boxes.append(Box(label=name, xyxy_norm=(a, b, c, d)))
         else:
             warnings.append(f"dropped invalid box for '{item.get('label', '?')}'")
-    return labels, boxes, str(obj.get("impression", "")).strip(), warnings
+    return labels, boxes, str(obj.get("impression", "")).strip(), "", warnings
 
 
 def read_image(
@@ -67,7 +141,10 @@ def read_image(
                 image, prompt if attempt == 0 else f"{prompt}\n\n{load_prompt('repair')}"
             )
             try:
-                labels, boxes, impression, warnings = _parse(text, modality)
+                labels, boxes, impression, findings_text, warnings = _parse(text, modality)
+            except Refusal as exc:
+                base.error = f"refusal: {exc}"
+                continue
             except (ValueError, TypeError, KeyError, AttributeError) as exc:
                 base.error = f"unparseable output: {exc}"
                 continue
@@ -77,6 +154,7 @@ def read_image(
                     "labels": labels,
                     "boxes": boxes,
                     "impression": impression,
+                    "findings_text": findings_text,
                     "raw": text,
                     "error": None,
                     "warnings": warnings,

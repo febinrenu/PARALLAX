@@ -1,7 +1,6 @@
-"""Loads MedGemma with 4-bit NF4 weights (fp16 compute) so it fits small GPUs.
+"""Loads MedGemma with 4-bit NF4 weights so it fits small GPUs (3.2 GiB VRAM on an RTX 4060).
 
-T4/P100 lack native bfloat16, hence fp16 compute. If outputs are garbage, set
-MEDGEMMA_COMPUTE=fp32. Model id comes from MEDGEMMA_MODEL_ID.
+Compute dtype: bf16 where supported, else fp32 (see pick_compute). Model id: MEDGEMMA_MODEL_ID.
 """
 
 import os
@@ -9,6 +8,17 @@ import os
 from PIL import Image
 
 DEFAULT_MODEL_ID = "google/medgemma-1.5-4b-it"
+
+
+def pick_compute(setting: str, bf16_ok: bool) -> str:
+    """"auto" uses bf16 (the model's own precision) when the GPU has it, else fp32.
+
+    fp16 returned an empty reply on an RTX 4060 (Gemma-family activations overflow), so it is
+    never chosen automatically; set MEDGEMMA_COMPUTE=fp16 to force it.
+    """
+    if setting == "auto":
+        return "bf16" if bf16_ok else "fp32"
+    return setting
 
 
 class TransformersBackend:
@@ -34,13 +44,16 @@ class TransformersBackend:
 
     @classmethod
     def from_env(cls) -> "TransformersBackend":
+        import torch
+
+        bf16_ok = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
         return cls(
             os.environ.get("MEDGEMMA_MODEL_ID", DEFAULT_MODEL_ID),
             os.environ.get("MEDGEMMA_QUANT", "nf4"),
-            os.environ.get("MEDGEMMA_COMPUTE", "fp16"),
+            pick_compute(os.environ.get("MEDGEMMA_COMPUTE", "auto"), bf16_ok),
         )
 
-    def generate(self, image: Image.Image, prompt: str, max_new_tokens: int = 700) -> str:
+    def generate(self, image: Image.Image, prompt: str, max_new_tokens: int = 300) -> str:
         messages = [
             {
                 "role": "user",
@@ -52,5 +65,7 @@ class TransformersBackend:
         ).to(self.model.device)
         n_in = inputs["input_ids"].shape[-1]
         with self._torch.inference_mode():
-            out = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
+            out = self.model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False,
+                repetition_penalty=float(os.environ.get("MEDGEMMA_REPETITION_PENALTY", "1.0")),
+            )
         return self.processor.decode(out[0][n_in:], skip_special_tokens=True)
