@@ -13,6 +13,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "hypothesis"]
+# CPU torch comes from https://download.pytorch.org/whl/cpu
+ml = ["torch", "torchvision", "torchxrayvision"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
