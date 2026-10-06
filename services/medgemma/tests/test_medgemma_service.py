@@ -263,3 +263,18 @@ def test_eval_items_follow_p2_index_and_resume_by_image_id(tmp_path, monkeypatch
     assert run_items(be, items, out, modality="bone_xray") == 1
     rows = [json.loads(line) for line in out.read_text().splitlines()]
     assert [r["image"] for r in rows] == [i[0] for i in items] and rows[0]["label"] == "fracture"
+
+
+def test_unreadable_image_is_recorded_as_a_failed_read_and_the_batch_continues(tmp_path):
+    from services.medgemma.batch import run_items
+
+    good, bad = tmp_path / "good.png", tmp_path / "bad.png"
+    good.write_bytes(png_bytes())
+    bad.write_bytes(png_bytes()[:30])  # truncated file, as in the real FracAtlas download
+    out = tmp_path / "reads.jsonl"
+    be = FakeBackend([json.dumps(GOOD)])
+    n = run_items(be, [("bad", bad, {"label": "x"}), ("good", good, {"label": "y"})], out, modality="cxr")
+    rows = {r["image"]: r for r in map(json.loads, out.read_text().splitlines())}
+    assert n == 2 and rows["bad"]["ok"] is False and "unreadable" in rows["bad"]["error"] and rows["bad"]["label"] == "x"
+    assert rows["good"]["ok"] is True
+    assert run_items(be, [("bad", bad, {}), ("good", good, {})], out, modality="cxr") == 0  # failures are not retried forever

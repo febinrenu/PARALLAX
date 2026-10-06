@@ -17,6 +17,7 @@ from pathlib import Path
 from PIL import Image
 
 from services.medgemma.reader import Backend, read_image
+from services.medgemma.schema import ReadResult
 
 EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
 DATASET_MODALITY = {"ham10000": "skin_dermoscopy", "fracatlas": "bone_xray"}
@@ -57,8 +58,13 @@ def run_items(
         todo = todo[:limit]
     with out.open("a", encoding="utf-8") as fh:
         for image_id, path, extra in todo:
-            sha = hashlib.sha256(path.read_bytes()).hexdigest()
-            res = read_image(backend, Image.open(path).convert("RGB"), modality)
+            sha = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else ""
+            try:
+                image = Image.open(path).convert("RGB")
+            except (OSError, ValueError) as exc:  # truncated or corrupt file: record it, keep going
+                res = ReadResult(ok=False, error=f"unreadable image: {type(exc).__name__}: {exc}")
+            else:
+                res = read_image(backend, image, modality)
             row = {"image": image_id, "sha256": sha, "modality": modality, **extra, **res.model_dump()}
             fh.write(json.dumps(row) + "\n")
             fh.flush()
