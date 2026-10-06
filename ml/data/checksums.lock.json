@@ -1,0 +1,38 @@
+{
+ "brain_mri/brain-tumor-mri-dataset.zip": {
+  "bytes": 164670110,
+  "sha256": "882817250048c78ef7a759cf23e540d7b581f2327b16663c9d3db12f5d2ffdb4"
+ },
+ "fracatlas/FracAtlas.zip": {
+  "bytes": 338436460,
+  "sha256": "b67ec2d290a022b3dcf47f78e9a37f7edcc80592c0571f439355bf00bd9f0e23"
+ },
+ "ham10000_meta/HAM10000_metadata.csv": {
+  "bytes": 690218,
+  "sha256": "de17ec44cb25ea9c3f6378ba18d69224c740afd62e86ec2edc6a894d6aa663d3"
+ },
+ "isic2018_t3_test/ISIC2018_Task3_Test_GroundTruth.zip": {
+  "bytes": 12202,
+  "sha256": "461561de4d490b9f44bd6f2efd87046cd91ac7ee430ef8e97443c7c33b2912ce"
+ },
+ "isic2018_t3_test/ISIC2018_Task3_Test_Input.zip": {
+  "bytes": 420586171,
+  "sha256": "aa90bd5308259bf5fdcc6048b09dd70416d527d1200e5148aef8ae94f8678b60"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_GroundTruth.zip": {
+  "bytes": 36681,
+  "sha256": "33e8d4f1eac869facaaf309d2c04be0faedbe0dc0402d887c12326322cf72339"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_Input.zip": {
+  "bytes": 2771732744,
+  "sha256": "4151b6de5e31eb21586732d2dc0df047737501d5f5333cb52b071ad704364cc0"
+ },
+ "isic2018_t3_train/ISIC2018_Task3_Training_LesionGroupings.csv": {
+  "bytes": 492996,
+  "sha256": "b0352393dc54843e39a7c108781c54cc8a0ef282240330ac239a88c46ea0cc0f"
+ },
+ "lgg_seg/lgg-mri-segmentation.zip": {
+  "bytes": 748584920,
+  "sha256": "cac105de01272f0ca28dc56178f8d164a7df85d118a5b4baca388d6bcb4e854e"
+ }
+}

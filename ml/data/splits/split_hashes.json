@@ -1,0 +1,53 @@
+{
+ "bdneuro": {
+  "counts": {
+   "dropped": 4297,
+   "external_test": 1644
+  },
+  "rows": 5941,
+  "split_hash": "e0f50328340790505a97606bbe1236d61fb3d256d8eab23d276ce53d91ea2d8d"
+ },
+ "brain_mri": {
+  "counts": {
+   "cal": 457,
+   "dropped": 2375,
+   "test": 563,
+   "train": 3349,
+   "val": 456
+  },
+  "rows": 7200,
+  "split_hash": "ae05442fab4727999faa50e380096340763c8ffc03c44705a6a31f589c8d9311"
+ },
+ "fracatlas": {
+  "counts": {
+   "cal": 380,
+   "dropped": 281,
+   "test": 569,
+   "train": 2472,
+   "val": 381
+  },
+  "rows": 4083,
+  "split_hash": "b3736582c1ec118a562736b51a3c6908e7075109e8121488191e06c7287175a5"
+ },
+ "ham10000": {
+  "counts": {
+   "cal": 971,
+   "dropped": 296,
+   "official_test": 1512,
+   "test": 973,
+   "train": 6803,
+   "val": 972
+  },
+  "rows": 11527,
+  "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb"
+ },
+ "lgg_seg": {
+  "counts": {
+   "test": 372,
+   "train": 3291,
+   "val": 266
+  },
+  "rows": 3929,
+  "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
+ }
+}
