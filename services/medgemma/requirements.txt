@@ -1,0 +1,9 @@
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart
+pillow
+pydantic>=2
+torch
+transformers>=4.50
+accelerate
+bitsandbytes>=0.43
