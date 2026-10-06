@@ -45,6 +45,14 @@ class PoolResult(Generic[T]):
     warning: str | None = None
 
 
+@dataclass
+class ScoreResult:
+    score: float  # 0..1 from a classifier endpoint such as Prompt Guard
+    source: str  # "live" | "cache"
+    model: str
+    attempts: int = 0
+
+
 def quote_data(text: str) -> str:
     """Wrap untrusted text as inert data; it cannot close or reopen the fence."""
     safe = _TAG.sub(lambda m: m.group(0).replace("<", "&lt;").replace(">", "&gt;"), text)
@@ -130,6 +138,57 @@ class GroqPool:
             return PoolResult(
                 ok=False, data=fallback(), source="fallback", model=model, warning=str(exc)
             )
+
+    def score(self, service: str, model: str, text: str) -> ScoreResult:
+        """Classifier call: the model answers with a bare number (Prompt Guard returns P(malicious))."""
+        if estimate_tokens(text) > self.config.max_request_tokens:
+            raise BudgetExceeded("text exceeds the per-request token cap")
+        cache_key = hashlib.sha256(json.dumps(["score", model, text]).encode()).hexdigest()
+        hit = self._cache.get(cache_key)
+        if hit is not None:
+            return ScoreResult(float(hit), "cache", model)
+        key = self._env.get(self.config.key_env.get(service, ""), "")
+        if not key:
+            raise LLMUnavailable(f"no API key set for service '{service}'")
+        label = f"{service}:{hashlib.sha256(key.encode()).hexdigest()[:6]}"
+        payload: dict[str, Any] = {
+            "model": model,
+            "messages": [{"role": "user", "content": text}],
+            "temperature": 0,
+            "max_tokens": 10,
+        }
+        start, attempts, last_error = self._clock(), 0, "no attempt made"
+        while attempts < self.config.max_attempts:
+            self._check_daily(label, model)
+            slot = self._reserve(label, model, estimate_tokens(text) + 10, start)
+            attempts += 1
+            try:
+                resp = self._client.post(
+                    "/chat/completions", json=payload, headers={"Authorization": f"Bearer {key}"}
+                )
+            except httpx.TransportError as exc:
+                slot[1] = 0
+                last_error = f"transport error: {type(exc).__name__}"
+                self._backoff(attempts, None, start)
+                continue
+            self._count_daily(label, model)
+            if resp.status_code == 200:
+                body = resp.json()
+                slot[1] = int(body.get("usage", {}).get("total_tokens") or slot[1])
+                content = (body["choices"][0]["message"].get("content") or "").strip()
+                try:
+                    value = min(1.0, max(0.0, float(content)))
+                except ValueError as exc:
+                    raise SchemaError(f"classifier replied with a non-number: {content[:40]!r}") from exc
+                self._cache.set(cache_key, value)
+                return ScoreResult(value, "live", model, attempts)
+            slot[1] = 0
+            if resp.status_code == 429 or resp.status_code >= 500:
+                last_error = f"http {resp.status_code}"
+                self._backoff(attempts, resp.headers.get("retry-after"), start)
+                continue
+            raise LLMUnavailable(f"http {resp.status_code} from Groq")
+        raise LLMUnavailable(f"gave up after {attempts} attempts: {last_error}")
 
     # ---------------------------------------------------------------- internals
 
