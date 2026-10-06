@@ -16,8 +16,8 @@ DEFAULT_MODELS = {
     "judge": "openai/gpt-oss-20b",
 }
 
-# Id as listed on Groq's rate-limit page; confirm with GET /models once a key exists.
-PROMPT_GUARD_MODEL = "llama-prompt-guard-2-86m"
+# Confirmed present in GET /models on 2026-10-06 (the rate-limit docs omit the prefix).
+PROMPT_GUARD_MODEL = "meta-llama/llama-prompt-guard-2-86m"
 
 
 class LLMConfig(BaseModel):

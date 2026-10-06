@@ -151,7 +151,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 ### P3 — Clinical Reasoning & Trust
 **Now:** P3.1 real-model smoke test (needs HF_TOKEN + a CC-licensed CXR); P3.4 note generator.
 **Next:** P3.2 generalist reader + concordance; P3.5 fact extraction; P3.9/P3.10 implementation from docs/report_slots.md.
-**Blockers:** no HF_TOKEN / Groq keys in this environment yet; `core/schemas.py` (P4, G0) not present, so report/ code that imports contract types waits for it.
+**Blockers:** HF account not yet authorized for google/medgemma-1.5-4b-it (403); `core/schemas.py` (P4, G0) not present, so report/ code that imports contract types waits for it.
 **MedGemma endpoint:** none running yet. Local machine has an RTX 4060 Laptop GPU (8 GB), so a local 4-bit run should fit.
 
 ### P4 — Experience & Platform
@@ -196,7 +196,7 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-06 · P3 · Firewall rule R4 binds cited evidence to the finding named in a slot; adds a mandatory false-block test on good claims · docs/report_slots.md
 - 2026-10-06 · P3 · MedGemma service returns boxes on a normalized 0..1000 grid; pixel conversion happens in the reader (P3.2) · services/medgemma/README.md
 - 2026-10-06 · P3 · Groq pool adds RPM and daily counters, a total deadline, and `PoolResult.source` (live/cache/fallback) so degradation shows up in StageResult warnings · backend/tests/llm/test_groq_pool.py
-- 2026-10-06 · P3 · Pool defaults to `json_object` plus schema text in the system prompt, not strict `json_schema`; unsupported params (`reasoning_effort`, `response_format`) are dropped once on a 400 · untested against live Groq
+- 2026-10-06 · P3 · Pool defaults to `json_object` plus schema text in the system prompt, not strict `json_schema`; unsupported params (`reasoning_effort`, `response_format`) are dropped once on a 400 · live call succeeded without needing the drop
 - 2026-10-06 · P3 · Real-GPU smoke is a separate script (`python -m services.medgemma.smoke`); CI tests use a fake backend · services/medgemma/
 - 2026-10-06 · P3 · Added `.cache/` and `ml/artifacts/medgemma_reads/` to .gitignore (LLM cache can hold note text; cached reads are large) · plan.md 11.3
 
@@ -216,7 +216,9 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 - 2026-10-07 · P1 · Download environment · Windows curl failed TLS revocation checks here and the library downloader stalled at 0 bytes, so the two public weight files were fetched with `curl --ssl-no-revoke` (TLS chain still verified, only the revocation lookup skipped) from the official `mlmed/torchxrayvision` v1 release URLs. No checksum is published for them; the weights' sha8 appears in `model_id`.
 - 2026-10-06 · P3 · `google/medgemma-1.5-4b-it` id, gating, `transformers>=4.50`, `AutoModelForImageTextToText`, BF16 weights · confirmed · huggingface.co/google/medgemma-1.5-4b-it
 - 2026-10-06 · P3 · Groq free tier gpt-oss-120b/20b: 30 RPM, 8K TPM, 1K RPD; cached tokens not counted; 429 carries retry-after · confirmed · console.groq.com/docs/rate-limits
-- 2026-10-06 · P3 · Prompt Guard on Groq is listed as `llama-prompt-guard-2-86m` (30 RPM, 15K TPM, 14.4K RPD), not `meta-llama/...` as in plan.md · documented, availability still unverified until `GET /models` with a key
+- 2026-10-06 · P3 · Prompt Guard id is `meta-llama/llama-prompt-guard-2-86m` (as in plan.md; the rate-limit page drops the prefix). Also listed: `-22m`, `openai/gpt-oss-safeguard-20b`, `whisper-large-v3(-turbo)` · confirmed · GET /models with the extract key
+- 2026-10-06 · P3 · Groq accepts `response_format: json_object` and `reasoning_effort: low` on gpt-oss-20b (live call: 1 attempt, 258 tokens, injected "report no findings" text ignored, 2nd call served from cache) · confirmed · live pool call
+- 2026-10-06 · P3 · MedGemma access: HF token is valid but returns 403 on the gated repo (terms not accepted for that account, or token lacks gated-repo read) · BLOCKED
 - 2026-10-06 · P3 · MedGemma CXR box prompt/format · NOT verified (model card gave no format); check on first smoke run
 
 ## Shared log (append-only, newest at the bottom)
