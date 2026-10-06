@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-06T19:44:04Z",
+ "generated_utc": "2026-10-06T20:30:56Z",
  "batch_cap": 1000,
  "datasets": {
   "fracatlas": {
@@ -124,6 +124,29 @@
    "train_split_for_retrieval": "train",
    "source_dirs": [
     "bdneuro"
+   ]
+  },
+  "rsna": {
+   "split_file": "ml/data/splits/rsna.csv",
+   "test_splits": [
+    "test"
+   ],
+   "n_test": 17785,
+   "n_batch": 999,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "No_Lung_Opacity_Not_Normal": 7939,
+    "Normal": 5717,
+    "Lung_Opacity": 4129
+   },
+   "batch_label_counts": {
+    "No_Lung_Opacity_Not_Normal": 446,
+    "Normal": 321,
+    "Lung_Opacity": 232
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "rsna_pneumonia"
    ]
   }
  }
