@@ -8,6 +8,7 @@ import time
 
 import pytest
 from fastapi.testclient import TestClient
+
 from medproof.api.app import create_app
 from medproof.core.config import PipelineConfig
 from medproof.core.ledger import Ledger
@@ -15,7 +16,6 @@ from medproof.core.schemas import StudyResult
 from medproof.core.status_rule import compute_status
 from medproof.pipeline import PIPELINE, StageSpec
 from medproof.readers import cxr as cxr_reader
-
 from tests.conftest import png_bytes, to_u8
 from tests.readers.test_cxr import _image, make_reader
 

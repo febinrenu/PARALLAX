@@ -7,6 +7,7 @@ from __future__ import annotations
 import time
 
 import pytest
+
 from medproof.core.cache import StageCache
 from medproof.core.config import PipelineConfig
 from medproof.core.context import StudyContext
@@ -14,7 +15,6 @@ from medproof.core.schemas import StageResult
 from medproof.core.status_rule import compute_status
 from medproof.pipeline import PIPELINE, StageSpec, run_study
 from medproof.readers import cxr as cxr_reader
-
 from tests.conftest import png_bytes, to_u8
 from tests.readers.test_cxr import _image, make_reader
 

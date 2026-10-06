@@ -24,6 +24,7 @@ class StudyRecord:
     result: StudyResult | None = None
     error: str | None = None
     queue: asyncio.Queue | None = None  # live subscribers; None once terminal and drained
+    raw: bytes | None = None  # the upload, kept so the viewer can fetch display and full-depth pixels
 
 
 class StudyStore:
@@ -31,9 +32,9 @@ class StudyStore:
         self._records: dict[str, StudyRecord] = {}
         self._lock = threading.Lock()
 
-    def create(self, study_id: str, queue: asyncio.Queue) -> None:
+    def create(self, study_id: str, queue: asyncio.Queue, raw: bytes | None = None) -> None:
         with self._lock:
-            self._records[study_id] = StudyRecord(study_id=study_id, queue=queue)
+            self._records[study_id] = StudyRecord(study_id=study_id, queue=queue, raw=raw)
 
     def exists(self, study_id: str) -> bool:
         with self._lock:

@@ -1,19 +1,32 @@
-"""`/studies` routes (P4.4): upload, SSE stage stream, fetch, feedback, FHIR placeholder."""
+"""`/studies` routes (P4.4, P4.6): upload, SSE stage stream, fetch, feedback, pixels for the
+viewer, per-study artifacts and ledger, FHIR placeholder."""
 
 from __future__ import annotations
 
 import asyncio
+import gzip
+import io
+import re
 import uuid
 from typing import Literal
 
+import cv2
+import numpy as np
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, Response
+from PIL import Image
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
-from medproof.core.schemas import StageResult
+from medproof.core.schemas import StageResult, StudyResult
+from medproof.intake.decode import DecodedImage, DecodeError, load_image
 from medproof.pipeline import run_study
 
 router = APIRouter()
+
+_ARTIFACT_NAME = re.compile(r"^[A-Za-z0-9_.-]+\.png$")
+MAX_PIXEL_EDGE = 2048
+_LUMA = np.array([0.299, 0.587, 0.114], np.float32)
 
 
 class CreateStudyResponse(BaseModel):
@@ -34,6 +47,54 @@ class FeedbackOut(BaseModel):
     ledger_head: str
 
 
+# -- ref rewriting: no server filesystem path ever leaves the API ---------------------------------
+def _artifact_url(ref: str | None, study_id: str) -> str | None:
+    if not ref:
+        return ref
+    name = ref.replace("\\", "/").rsplit("/", 1)[-1]
+    return f"/studies/{study_id}/artifacts/{name}"
+
+
+def _sanitize_finding_dict(finding: dict, study_id: str) -> None:
+    for ev in finding.get("image_evidence", []) or []:
+        for key in ("heatmap_ref", "mask_ref"):
+            if ev.get(key):
+                ev[key] = _artifact_url(ev[key], study_id)
+
+
+def _sanitize_stage(result: StageResult, study_id: str) -> StageResult:
+    copy = result.model_copy(deep=True)
+    for finding in copy.payload.get("findings", []) or []:
+        _sanitize_finding_dict(finding, study_id)
+    return copy
+
+
+def _sanitize_study(study: StudyResult, study_id: str) -> None:
+    # Precedent thumb_refs are left alone: the retrieval stage (P3.8) owns their URL scheme.
+    for finding in study.findings:
+        for ev in finding.image_evidence:
+            ev.heatmap_ref = _artifact_url(ev.heatmap_ref, study_id)
+            ev.mask_ref = _artifact_url(ev.mask_ref, study_id)
+
+
+def _require(request: Request, study_id: str):
+    record = request.app.state.store.get(study_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="unknown study_id")
+    return record
+
+
+async def _decoded(request: Request, study_id: str) -> DecodedImage:
+    record = _require(request, study_id)
+    if record.raw is None:
+        raise HTTPException(status_code=404, detail="no image stored for this study")
+    try:
+        return await asyncio.to_thread(load_image, record.raw)
+    except DecodeError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+# -- routes ------------------------------------------------------------------------------------------
 @router.post("/studies", status_code=202, response_model=CreateStudyResponse)
 async def create_study(
     request: Request,
@@ -50,11 +111,12 @@ async def create_study(
     ledger = request.app.state.ledger
     stages = request.app.state.stages
     config = request.app.state.config
-    store.create(study_id, queue)
+    store.create(study_id, queue, raw=raw)
 
     def on_stage_result(result: StageResult) -> None:
-        ledger.append("stage_completed", result.model_dump(mode="json"), study_id=study_id)
-        loop.call_soon_threadsafe(store.push_stage_result, study_id, result)
+        clean = _sanitize_stage(result, study_id)
+        ledger.append("stage_completed", clean.model_dump(mode="json"), study_id=study_id)
+        loop.call_soon_threadsafe(store.push_stage_result, study_id, clean)
 
     def worker() -> None:
         try:
@@ -67,6 +129,7 @@ async def create_study(
                 config=config,
                 on_stage_result=on_stage_result,
             )
+            _sanitize_study(study, study_id)
             study.ledger_head = ledger.head()
             loop.call_soon_threadsafe(store.complete, study_id, study)
         except Exception as exc:  # run_study itself shouldn't raise; belt and suspenders
@@ -89,12 +152,7 @@ async def study_events(request: Request, study_id: str) -> EventSourceResponse:
 
     async def gen():
         async for kind, data in store.stream(study_id):
-            if kind == "stage":
-                payload = data.model_dump_json()
-            elif kind == "done":
-                payload = data.model_dump_json()
-            else:
-                payload = data  # error string
+            payload = data if kind == "error" else data.model_dump_json()
             yield {"event": kind, "data": payload}
 
     return EventSourceResponse(gen())
@@ -102,10 +160,7 @@ async def study_events(request: Request, study_id: str) -> EventSourceResponse:
 
 @router.get("/studies/{study_id}")
 async def get_study(request: Request, study_id: str):
-    store = request.app.state.store
-    record = store.get(study_id)
-    if record is None:
-        raise HTTPException(status_code=404, detail="unknown study_id")
+    record = _require(request, study_id)
     if record.status == "done" and record.result is not None:
         return record.result
     if record.status == "failed":
@@ -117,11 +172,74 @@ async def get_study(request: Request, study_id: str):
     }
 
 
+@router.get("/studies/{study_id}/image")
+async def get_image(request: Request, study_id: str) -> Response:
+    """8-bit display copy at the original resolution: the viewer paints this first."""
+    img = await _decoded(request, study_id)
+
+    def encode() -> bytes:
+        buf = io.BytesIO()
+        Image.fromarray(img.display).save(buf, format="PNG")
+        return buf.getvalue()
+
+    return Response(await asyncio.to_thread(encode), media_type="image/png", headers={"Cache-Control": "private, max-age=3600"})
+
+
+@router.get("/studies/{study_id}/pixels")
+async def get_pixels(request: Request, study_id: str) -> Response:
+    """Full-depth luminance as little-endian float16 in [0, 1], long edge <= 2048 px.
+
+    The viewer works in normalised image coordinates, so overlays (which are on the original
+    grid) line up regardless of this texture's resolution. Gzip is applied here only: a global
+    gzip middleware could buffer the SSE stream.
+    """
+    img = await _decoded(request, study_id)
+
+    def encode() -> tuple[bytes, int, int, int, int]:
+        a = np.asarray(img.analysis, dtype=np.float32)
+        if a.ndim == 3:
+            a = a[..., :3] @ _LUMA
+        h, w = a.shape
+        scale = min(1.0, MAX_PIXEL_EDGE / max(h, w))
+        if scale < 1.0:
+            a = cv2.resize(a, (max(1, round(w * scale)), max(1, round(h * scale))), interpolation=cv2.INTER_AREA)
+        out = np.clip(a, 0.0, 1.0).astype("<f2")
+        return gzip.compress(out.tobytes(), compresslevel=6), out.shape[1], out.shape[0], w, h
+
+    body, tw, th, ow, oh = await asyncio.to_thread(encode)
+    headers = {
+        "Content-Encoding": "gzip",
+        "X-Width": str(tw),
+        "X-Height": str(th),
+        "X-Original-Width": str(ow),
+        "X-Original-Height": str(oh),
+        "Cache-Control": "private, max-age=3600",
+    }
+    return Response(body, media_type="application/octet-stream", headers=headers)
+
+
+@router.get("/studies/{study_id}/artifacts/{name}")
+async def get_artifact(request: Request, study_id: str, name: str) -> FileResponse:
+    _require(request, study_id)
+    if not _ARTIFACT_NAME.fullmatch(name):
+        raise HTTPException(status_code=404, detail="unknown artifact")
+    base = (request.app.state.config.artifact_root / study_id).resolve()
+    path = (base / name).resolve()
+    if not path.is_relative_to(base) or not path.is_file():
+        raise HTTPException(status_code=404, detail="unknown artifact")
+    return FileResponse(path, media_type="image/png")
+
+
+@router.get("/studies/{study_id}/ledger")
+async def get_study_ledger(request: Request, study_id: str) -> dict:
+    _require(request, study_id)
+    ledger = request.app.state.ledger
+    return {"entries": ledger.entries(study_id), "head": ledger.head()}
+
+
 @router.post("/studies/{study_id}/feedback", response_model=FeedbackOut)
 async def post_feedback(request: Request, study_id: str, body: FeedbackIn) -> FeedbackOut:
-    store = request.app.state.store
-    if not store.exists(study_id):
-        raise HTTPException(status_code=404, detail="unknown study_id")
+    _require(request, study_id)
     ledger = request.app.state.ledger
     entry = ledger.append("finding_feedback", body.model_dump(), study_id=study_id, actor=body.actor)
     return FeedbackOut(ledger_hash=entry.hash, ledger_head=ledger.head())
@@ -129,7 +247,5 @@ async def post_feedback(request: Request, study_id: str, body: FeedbackIn) -> Fe
 
 @router.get("/studies/{study_id}/fhir")
 async def get_fhir(request: Request, study_id: str) -> dict:
-    store = request.app.state.store
-    if not store.exists(study_id):
-        raise HTTPException(status_code=404, detail="unknown study_id")
+    _require(request, study_id)
     return {"available": False, "note": "FHIR export not yet implemented, see plan.md P3.13"}

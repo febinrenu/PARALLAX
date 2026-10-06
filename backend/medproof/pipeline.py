@@ -170,8 +170,26 @@ def run_study(
     here imports `core.ledger`: that wiring belongs to the caller, so this function stays usable
     (and testable) with no ledger at all."""
     config = config or PipelineConfig()
+    owns_cache = cache is None
     if cache is None:
         cache = StageCache(config.cache_dir)
+    try:
+        return _run(raw_bytes, study_id, modality_hint, notes, stages, cache, config, on_stage_result)
+    finally:
+        if owns_cache:
+            cache.close()  # otherwise every API upload leaks an open SQLite handle
+
+
+def _run(
+    raw_bytes: bytes,
+    study_id: str | None,
+    modality_hint: Modality | None,
+    notes: str | None,
+    stages: list[StageSpec] | None,
+    cache: StageCache,
+    config: PipelineConfig,
+    on_stage_result: Callable[[StageResult], None] | None,
+) -> tuple[StudyResult, list[StageResult]]:
     stages = stages if stages is not None else PIPELINE
 
     ctx = StudyContext(

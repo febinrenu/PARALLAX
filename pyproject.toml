@@ -5,7 +5,7 @@
 [tool.ruff]
 line-length = 110
 target-version = "py312"
-src = ["backend/medproof", "backend/tests", "ml", "scripts"]
+src = ["backend", "."]  # first-party roots: `medproof` and `tests` under backend/, `ml` at the top
 exclude = ["backend/tests/readers/test_cxr_real.py"]
 
 [tool.ruff.lint]

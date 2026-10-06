@@ -74,6 +74,13 @@ class Ledger:
                 f.write(json.dumps(asdict(entry), sort_keys=True, default=str) + "\n")
             return entry
 
+    def entries(self, study_id: str | None = None) -> list[dict]:
+        """Every entry in chain order, optionally only those for one study."""
+        rows = [json.loads(line) for line in self._lines()]
+        if study_id is None:
+            return rows
+        return [r for r in rows if r.get("study_id") == study_id]
+
     def verify(self) -> dict:
         prev_hash = GENESIS_HASH
         lines = self._lines()
