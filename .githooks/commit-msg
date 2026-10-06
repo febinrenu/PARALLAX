@@ -1,0 +1,17 @@
+#!/bin/sh
+# Keeps commit messages free of assistant attribution.
+# Activate once per clone:  git config core.hooksPath .githooks
+
+msg_file="$1"
+tmp_file="${msg_file}.tmp"
+
+# 1) Strip attribution trailers and footer lines if any slipped through.
+grep -viE '^[[:space:]]*co-authored-by:.*(claude|anthropic)|^[[:space:]]*claude-session:|generated with \[?claude' "$msg_file" > "$tmp_file" || true
+mv "$tmp_file" "$msg_file"
+
+# 2) Reject the commit if an assistant is still mentioned anywhere.
+if grep -qiwE 'claude|anthropic|chatgpt|copilot' "$msg_file"; then
+  echo "commit-msg: commit messages must not mention AI tools or assistants. Edit the message and retry." >&2
+  exit 1
+fi
+exit 0
