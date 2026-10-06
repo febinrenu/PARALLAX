@@ -41,3 +41,18 @@ def test_grayscale_input_to_three_channels_and_back(phantom):
 def test_unknown_spec():
     with pytest.raises(KeyError):
         get_spec("nope")
+
+
+def test_center_crop_matches_torchxrayvision_rule():
+    from medproof.intake.preprocess import center_crop_box
+
+    assert center_crop_box(300, 500) == (0, 100, 300)
+    assert center_crop_box(500, 300) == (100, 0, 300)
+    assert center_crop_box(301, 500) == (0, 100, 301)  # same integer rule as xrv.XRayCenterCrop
+
+
+def test_cxr_spec_crops_instead_of_stretching():
+    wide = np.zeros((300, 500), np.float32)
+    wide[:, 100:400] = 1.0  # exactly the central square
+    out = prepare(wide, "cxr_xrv")
+    assert out.min() > 1000  # every pixel the model sees is the bright centre

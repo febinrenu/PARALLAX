@@ -21,7 +21,8 @@ class PreprocSpec:
     channels: int  # 1 or 3
     mean: tuple[float, ...]
     std: tuple[float, ...]
-    # "stretch" resizes straight to size x size; "pad" keeps aspect with zero padding.
+    # "stretch" resizes straight to size x size; "pad" keeps aspect with zero padding;
+    # "center_crop" crops the central square first (what TorchXRayVision trained with).
     resize: str = "stretch"
     # Scale of the value range before mean/std: [0, 1] or a custom range like xrv's [-1024, 1024].
     value_range: tuple[float, float] = (0.0, 1.0)
@@ -32,7 +33,13 @@ IMAGENET_STD = (0.229, 0.224, 0.225)
 
 SPECS: dict[str, PreprocSpec] = {
     # TorchXRayVision expects a single channel scaled to [-1024, 1024] at 224 px, no mean/std.
-    "cxr_xrv": PreprocSpec("cxr_xrv", 224, 1, (0.0,), (1.0,), value_range=(-1024.0, 1024.0)),
+    "cxr_xrv": PreprocSpec(
+        "cxr_xrv", 224, 1, (0.0,), (1.0,), resize="center_crop", value_range=(-1024.0, 1024.0)
+    ),
+    # Same crop and range as cxr_xrv at the 512 px the anatomy segmenter expects.
+    "cxr_anatomy": PreprocSpec(
+        "cxr_anatomy", 512, 1, (0.0,), (1.0,), resize="center_crop", value_range=(-1024.0, 1024.0)
+    ),
     "brain_effnet": PreprocSpec("brain_effnet", 224, 3, IMAGENET_MEAN, IMAGENET_STD),
     "skin_cls": PreprocSpec("skin_cls", 224, 3, IMAGENET_MEAN, IMAGENET_STD),
     "bone_yolo": PreprocSpec("bone_yolo", 640, 3, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0), resize="pad"),
@@ -46,7 +53,17 @@ def get_spec(name: str) -> PreprocSpec:
         raise KeyError(f"unknown preprocessing spec {name!r}; choose from {sorted(SPECS)}") from None
 
 
+def center_crop_box(h: int, w: int) -> tuple[int, int, int]:
+    """(y0, x0, side) of the central square crop, using the same rule as TorchXRayVision."""
+    side = min(h, w)
+    return h // 2 - side // 2, w // 2 - side // 2, side
+
+
 def _resize(a: np.ndarray, size: int, mode: str) -> np.ndarray:
+    if mode == "center_crop":
+        y0, x0, side = center_crop_box(*a.shape[:2])
+        a = a[y0 : y0 + side, x0 : x0 + side]
+        mode = "stretch"
     h, w = a.shape[:2]
     interp = cv2.INTER_AREA if max(h, w) > size else cv2.INTER_LINEAR
     if mode == "stretch":
