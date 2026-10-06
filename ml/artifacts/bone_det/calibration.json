@@ -1,0 +1,18 @@
+{
+ "label": "fracture",
+ "a": 0.7708012949700155,
+ "b": 1.7888172116181593,
+ "alpha": 0.1,
+ "thr_fnr": 0.08177007415621343,
+ "abstain_low": 0.4,
+ "abstain_high": 0.6,
+ "input_kind": "probability",
+ "meta": {
+  "n_a": 381,
+  "n_b": 380,
+  "prevalence_b": 0.17894736842105263,
+  "positives_b": 68,
+  "model_id": "bone_det@8539baf9",
+  "fit": "Platt on val, FNR threshold on cal"
+ }
+}

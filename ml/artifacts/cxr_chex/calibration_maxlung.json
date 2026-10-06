@@ -1,0 +1,16 @@
+{
+ "label": "max(Lung Opacity, Pneumonia)",
+ "a": 0.6713310020755275,
+ "b": -1.9138306271105883,
+ "alpha": 0.1,
+ "thr_fnr": 0.1416260818349747,
+ "abstain_low": 0.4,
+ "abstain_high": 0.6,
+ "input_kind": "probability",
+ "meta": {
+  "n_a": 3811,
+  "n_b": 3810,
+  "prevalence_b": 0.2325459317585302,
+  "positives_b": 886
+ }
+}

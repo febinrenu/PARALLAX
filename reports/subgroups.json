@@ -1,0 +1,1495 @@
+{
+ "min_n": 30,
+ "min_positives": 15,
+ "bootstrap_B": 1000,
+ "datasets": {
+  "skin_cls": {
+   "n": 1512,
+   "overall": {
+    "accuracy": 0.826058201058201,
+    "balanced_accuracy": 0.6800004792082587,
+    "melanoma_sensitivity": 0.6374269005847953
+   },
+   "by": {
+    "age_band": {
+     "subgroups": {
+      "30-49": {
+       "n": 406,
+       "accuracy": {
+        "point": 0.9064039408866995,
+        "lo": 0.8740915612949511,
+        "hi": 0.9390243902439024,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 331,
+        "n": 406,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.6912090885305171,
+        "lo": 0.49533495373000885,
+        "hi": 0.8133019317271604,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 331,
+        "n": 406,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.5454545454545454,
+        "lo": 0.3076086956521739,
+        "hi": 0.7692307692307693,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 331,
+        "n": 406,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "50-69": {
+       "n": 481,
+       "accuracy": {
+        "point": 0.7858627858627859,
+        "lo": 0.7430165476707034,
+        "hi": 0.8315581450331212,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 365,
+        "n": 481,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.6470692386543658,
+        "lo": 0.5512177164445485,
+        "hi": 0.7416435096395331,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 365,
+        "n": 481,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.5342465753424658,
+        "lo": 0.3934279859484777,
+        "hi": 0.6863051470588235,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 365,
+        "n": 481,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "70+": {
+       "n": 226,
+       "accuracy": {
+        "point": 0.831858407079646,
+        "lo": 0.7763157894736842,
+        "hi": 0.8854721099108885,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 166,
+        "n": 226,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.7057262882365161,
+        "lo": 0.6437267283694874,
+        "hi": 0.8634489934597699,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 166,
+        "n": 226,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.8545454545454545,
+        "lo": 0.7301251008878127,
+        "hi": 0.9556028368794326,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 166,
+        "n": 226,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "<30": {
+       "n": 111,
+       "accuracy": {
+        "point": 0.8378378378378378,
+        "lo": 0.7544891576313595,
+        "hi": 0.9158878504672897,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 63,
+        "n": 111,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.8699999999999999,
+        "lo": 0.6261657280932982,
+        "hi": 0.9704456706281833,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 63,
+        "n": 111,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "status": "too few positives (< 15)",
+        "n_positives": 2
+       }
+      },
+      "unknown": {
+       "n": 288,
+       "accuracy": {
+        "point": 0.7708333333333334,
+        "lo": 0.7177323583665891,
+        "hi": 0.8159722222222222,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 287,
+        "n": 288,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "balanced_accuracy": {
+        "point": 0.6573941596742007,
+        "lo": 0.5371408807652948,
+        "hi": 0.7457716885272931,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 287,
+        "n": 288,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.47368421052631576,
+        "lo": 0.23809523809523808,
+        "hi": 0.7,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 287,
+        "n": 288,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "accuracy": {
+       "subgroup": "50-69",
+       "value": 0.7858627858627859,
+       "overall": 0.826058201058201,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "balanced_accuracy": {
+       "subgroup": "50-69",
+       "value": 0.6470692386543658,
+       "overall": 0.6800004792082587,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "melanoma_sensitivity": {
+       "subgroup": "50-69",
+       "value": 0.5342465753424658,
+       "overall": 0.6374269005847953,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    },
+    "sex": {
+     "subgroups": {
+      "female": {
+       "n": 562,
+       "accuracy": {
+        "point": 0.8736654804270463,
+        "lo": 0.839440898842053,
+        "hi": 0.9077804893661284,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 419,
+        "n": 562,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.7624407338693053,
+        "lo": 0.6331126624162497,
+        "hi": 0.8498646396444299,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 419,
+        "n": 562,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.5636363636363636,
+        "lo": 0.3947169059011164,
+        "hi": 0.7258431085043988,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 419,
+        "n": 562,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "male": {
+       "n": 655,
+       "accuracy": {
+        "point": 0.8106870229007633,
+        "lo": 0.7733532414497192,
+        "hi": 0.8473288387909919,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 499,
+        "n": 655,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.6417371699192322,
+        "lo": 0.5508705249839493,
+        "hi": 0.7393403345671534,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 499,
+        "n": 655,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.7052631578947368,
+        "lo": 0.5869377811094453,
+        "hi": 0.8172089761570828,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 499,
+        "n": 655,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "unknown": {
+       "n": 295,
+       "accuracy": {
+        "point": 0.7694915254237288,
+        "lo": 0.7219864638167409,
+        "hi": 0.8135691761923532,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 293,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "balanced_accuracy": {
+        "point": 0.6566687471036671,
+        "lo": 0.5454316278610394,
+        "hi": 0.7510952270922909,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 293,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.5238095238095238,
+        "lo": 0.29411764705882354,
+        "hi": 0.7334210526315789,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 293,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "accuracy": {
+       "subgroup": "male",
+       "value": 0.8106870229007633,
+       "overall": 0.826058201058201,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "balanced_accuracy": {
+       "subgroup": "male",
+       "value": 0.6417371699192322,
+       "overall": 0.6800004792082587,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "melanoma_sensitivity": {
+       "subgroup": "female",
+       "value": 0.5636363636363636,
+       "overall": 0.6374269005847953,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    },
+    "site": {
+     "subgroups": {
+      "Anogenital region": {
+       "n": 5,
+       "status": "too few images (n < 30)"
+      },
+      "Head and neck": {
+       "n": 141,
+       "accuracy": {
+        "point": 0.7375886524822695,
+        "lo": 0.6444444444444445,
+        "hi": 0.8201958433253397,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 83,
+        "n": 141,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "balanced_accuracy": {
+        "point": 0.7569208703782944,
+        "lo": 0.6349943769402964,
+        "hi": 0.8293290449308671,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 83,
+        "n": 141,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.7407407407407407,
+        "lo": 0.5483137829912023,
+        "hi": 0.9090909090909091,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 83,
+        "n": 141,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "Lower extremity": {
+       "n": 285,
+       "accuracy": {
+        "point": 0.8947368421052632,
+        "lo": 0.8482610184973739,
+        "hi": 0.9379618447246184,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 223,
+        "n": 285,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.7759078279199004,
+        "lo": 0.6719114439868645,
+        "hi": 0.8717949584569097,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 223,
+        "n": 285,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.39285714285714285,
+        "lo": 0.15779352226720647,
+        "hi": 0.6666666666666666,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 223,
+        "n": 285,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "Trunk": {
+       "n": 595,
+       "accuracy": {
+        "point": 0.8621848739495799,
+        "lo": 0.8298472863602897,
+        "hi": 0.896563180203918,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 463,
+        "n": 595,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.601481586915909,
+        "lo": 0.5292428688151891,
+        "hi": 0.7937557978661103,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 463,
+        "n": 595,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.711864406779661,
+        "lo": 0.5652173913043478,
+        "hi": 0.8654481132075471,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 463,
+        "n": 595,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "Upper extremity": {
+       "n": 151,
+       "accuracy": {
+        "point": 0.7814569536423841,
+        "lo": 0.6979711232779936,
+        "hi": 0.8571428571428571,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 108,
+        "n": 151,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "balanced_accuracy": {
+        "point": 0.6197313797313796,
+        "lo": 0.45816586191586195,
+        "hi": 0.751560026683087,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 108,
+        "n": 151,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.68,
+        "lo": 0.43329545454545454,
+        "hi": 0.9000806451612903,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 108,
+        "n": 151,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "unknown": {
+       "n": 335,
+       "accuracy": {
+        "point": 0.7582089552238805,
+        "lo": 0.7095808383233533,
+        "hi": 0.8035714285714286,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 333,
+        "n": 335,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "balanced_accuracy": {
+        "point": 0.6595813863179681,
+        "lo": 0.5482657613296757,
+        "hi": 0.7478025237951451,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 333,
+        "n": 335,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "melanoma_sensitivity": {
+        "point": 0.59375,
+        "lo": 0.42416267942583735,
+        "hi": 0.7631965944272446,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 333,
+        "n": 335,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "accuracy": {
+       "subgroup": "Head and neck",
+       "value": 0.7375886524822695,
+       "overall": 0.826058201058201,
+       "ci_entirely_worse_than_overall": true,
+       "direction": "lower is worse"
+      },
+      "balanced_accuracy": {
+       "subgroup": "Trunk",
+       "value": 0.601481586915909,
+       "overall": 0.6800004792082587,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "melanoma_sensitivity": {
+       "subgroup": "Lower extremity",
+       "value": 0.39285714285714285,
+       "overall": 0.6374269005847953,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    }
+   },
+   "dataset": "ISIC 2018 Task 3 official test",
+   "metadata_source": "ISIC API (age is rounded to 5 years; ~19% of age, sex and site values are missing and shown as 'unknown')",
+   "model": "skin_cls@a217517b"
+  },
+  "brain_cls": {
+   "n": 563,
+   "overall": {
+    "recall": 0.9396092362344582
+   },
+   "by": {
+    "class": {
+     "subgroups": {
+      "glioma": {
+       "n": 196,
+       "recall": {
+        "point": 0.9489795918367347,
+        "lo": 0.9262219186399514,
+        "hi": 0.9832002222376554,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 93,
+        "n": 196,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "meningioma": {
+       "n": 169,
+       "recall": {
+        "point": 0.9053254437869822,
+        "lo": 0.861098484848485,
+        "hi": 0.9424460431654677,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 107,
+        "n": 169,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "notumor": {
+       "n": 57,
+       "recall": {
+        "point": 0.9122807017543859,
+        "lo": 0.830107039187228,
+        "hi": 0.9682539682539683,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 46,
+        "n": 57,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "pituitary": {
+       "n": 141,
+       "recall": {
+        "point": 0.9787234042553191,
+        "lo": 0.9512152481664676,
+        "hi": 1.0,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 102,
+        "n": 141,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "recall": {
+       "subgroup": "meningioma",
+       "value": 0.9053254437869822,
+       "overall": 0.9396092362344582,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    }
+   },
+   "dataset": "Brain Tumor MRI Dataset, leakage-free test split",
+   "model": "brain_cls@d351f062",
+   "note": "the dataset carries no age, sex or scanner metadata, so only the per-class audit is possible; recall per class is the subgroup metric"
+  },
+  "bone_det": {
+   "n": 569,
+   "overall": {
+    "auroc": 0.9231947164465186,
+    "sensitivity_at_val_threshold": 0.8349514563106796,
+    "specificity_at_val_threshold": 0.8798283261802575
+   },
+   "by": {
+    "body_part": {
+     "subgroups": {
+      "hand": {
+       "n": 175,
+       "auroc": {
+        "point": 0.9363330272421182,
+        "lo": 0.893326145583006,
+        "hi": 0.9695522416199892,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 175,
+        "n": 175,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.9074074074074074,
+        "lo": 0.8213928571428571,
+        "hi": 0.9782724329324699,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 175,
+        "n": 175,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.768595041322314,
+        "lo": 0.6886753789050417,
+        "hi": 0.8407079646017699,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 175,
+        "n": 175,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       }
+      },
+      "hip": {
+       "n": 26,
+       "status": "too few images (n < 30)"
+      },
+      "leg": {
+       "n": 295,
+       "auroc": {
+        "point": 0.8695014662756598,
+        "lo": 0.7732925685742217,
+        "hi": 0.9494700695928644,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 294,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.6774193548387096,
+        "lo": 0.5134961884961885,
+        "hi": 0.8422064777327933,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 294,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.9393939393939394,
+        "lo": 0.9090909090909091,
+        "hi": 0.966040927791176,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 294,
+        "n": 295,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "mixed": {
+       "n": 59,
+       "auroc": {
+        "point": 0.8975290697674418,
+        "lo": 0.7688333333333333,
+        "hi": 0.9873087639311043,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 59,
+        "n": 59,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.875,
+        "lo": 0.6666666666666666,
+        "hi": 1.0,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 59,
+        "n": 59,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.7674418604651163,
+        "lo": 0.6399090909090909,
+        "hi": 0.8888888888888888,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 59,
+        "n": 59,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "shoulder": {
+       "n": 14,
+       "status": "too few images (n < 30)"
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "leg",
+       "value": 0.8695014662756598,
+       "overall": 0.9231947164465186,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "sensitivity_at_val_threshold": {
+       "subgroup": "leg",
+       "value": 0.6774193548387096,
+       "overall": 0.8349514563106796,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "specificity_at_val_threshold": {
+       "subgroup": "mixed",
+       "value": 0.7674418604651163,
+       "overall": 0.8798283261802575,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    },
+    "view": {
+     "subgroups": {
+      "frontal": {
+       "n": 353,
+       "auroc": {
+        "point": 0.9399853877465818,
+        "lo": 0.9022137732082263,
+        "hi": 0.97105109060996,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 353,
+        "n": 353,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.835820895522388,
+        "lo": 0.7419215795328142,
+        "hi": 0.9200158730158731,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 353,
+        "n": 353,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.8741258741258742,
+        "lo": 0.8361646459342705,
+        "hi": 0.911355349221863,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 353,
+        "n": 353,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "lateral": {
+       "n": 177,
+       "auroc": {
+        "point": 0.890948275862069,
+        "lo": 0.8043705673758865,
+        "hi": 0.9671571919056879,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 176,
+        "n": 177,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.84375,
+        "lo": 0.7141917293233083,
+        "hi": 0.9655172413793104,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 176,
+        "n": 177,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.896551724137931,
+        "lo": 0.8435374149659864,
+        "hi": 0.9459550154181027,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 176,
+        "n": 177,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "oblique": {
+       "n": 39,
+       "auroc": {
+        "status": "too few positives (< 15)",
+        "n_positives": 4
+       },
+       "sensitivity_at_val_threshold": {
+        "status": "too few positives (< 15)",
+        "n_positives": 4
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.8571428571428571,
+        "lo": 0.7272727272727273,
+        "hi": 0.9478777589134121,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 39,
+        "n": 39,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "lateral",
+       "value": 0.890948275862069,
+       "overall": 0.9231947164465186,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "sensitivity_at_val_threshold": {
+       "subgroup": "frontal",
+       "value": 0.835820895522388,
+       "overall": 0.8349514563106796,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "specificity_at_val_threshold": {
+       "subgroup": "oblique",
+       "value": 0.8571428571428571,
+       "overall": 0.8798283261802575,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    },
+    "hardware": {
+     "subgroups": {
+      "implant present": {
+       "n": 10,
+       "status": "too few images (n < 30)"
+      },
+      "no implant": {
+       "n": 559,
+       "auroc": {
+        "point": 0.9203355023305182,
+        "lo": 0.8788139270025943,
+        "hi": 0.9544050124967812,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 557,
+        "n": 559,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "sensitivity_at_val_threshold": {
+        "point": 0.8279569892473119,
+        "lo": 0.75,
+        "hi": 0.9,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 557,
+        "n": 559,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "specificity_at_val_threshold": {
+        "point": 0.8798283261802575,
+        "lo": 0.8509504206106464,
+        "hi": 0.9071313632657731,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 557,
+        "n": 559,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "no implant",
+       "value": 0.9203355023305182,
+       "overall": 0.9231947164465186,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "sensitivity_at_val_threshold": {
+       "subgroup": "no implant",
+       "value": 0.8279569892473119,
+       "overall": 0.8349514563106796,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "specificity_at_val_threshold": {
+       "subgroup": "no implant",
+       "value": 0.8798283261802575,
+       "overall": 0.8798283261802575,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      }
+     }
+    }
+   },
+   "dataset": "FracAtlas test split",
+   "model": "bone_det@8539baf9",
+   "operating_point": "threshold fixed on the validation split (90% specificity there)",
+   "threshold": 0.020576573908329013
+  },
+  "cxr_chex": {
+   "n": 17785,
+   "overall": {
+    "auroc": 0.7849619434911282,
+    "false_negative_rate_at_control_threshold": 0.10268830225236135
+   },
+   "by": {
+    "age_band": {
+     "subgroups": {
+      "30-49": {
+       "n": 5875,
+       "auroc": {
+        "point": 0.8090882935995887,
+        "lo": 0.7969337762205296,
+        "hi": 0.8202046532698017,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 5827,
+        "n": 5875,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.099002849002849,
+        "lo": 0.08378870388712499,
+        "hi": 0.1148718470539317,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 5827,
+        "n": 5875,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "50-69": {
+       "n": 7467,
+       "auroc": {
+        "point": 0.7860083255746947,
+        "lo": 0.7752197605462837,
+        "hi": 0.7973648661563413,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 7401,
+        "n": 7467,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.07784810126582278,
+        "lo": 0.06496573607028978,
+        "hi": 0.09032031333475798,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 7401,
+        "n": 7467,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "70+": {
+       "n": 1294,
+       "auroc": {
+        "point": 0.7334270187994019,
+        "lo": 0.7026924867304473,
+        "hi": 0.7642637801114405,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 1293,
+        "n": 1294,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.08278145695364239,
+        "lo": 0.05084611245628195,
+        "hi": 0.11786598585120948,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 1293,
+        "n": 1294,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "<30": {
+       "n": 3149,
+       "auroc": {
+        "point": 0.7860185250915916,
+        "lo": 0.7682417592684434,
+        "hi": 0.8032883959518949,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 3139,
+        "n": 3149,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.16251482799525505,
+        "lo": 0.13799715769871607,
+        "hi": 0.18540886760464018,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 3139,
+        "n": 3149,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       }
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "70+",
+       "value": 0.7334270187994019,
+       "overall": 0.7849619434911282,
+       "ci_entirely_worse_than_overall": true,
+       "direction": "lower is worse"
+      },
+      "false_negative_rate_at_control_threshold": {
+       "subgroup": "<30",
+       "value": 0.16251482799525505,
+       "overall": 0.10268830225236135,
+       "ci_entirely_worse_than_overall": true,
+       "direction": "higher is worse"
+      }
+     }
+    },
+    "sex": {
+     "subgroups": {
+      "F": {
+       "n": 7776,
+       "auroc": {
+        "point": 0.7945820979598833,
+        "lo": 0.7838081559072828,
+        "hi": 0.8052017368997471,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 7720,
+        "n": 7776,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.09326424870466321,
+        "lo": 0.08039366337650776,
+        "hi": 0.10672072897900282,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 7720,
+        "n": 7776,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "M": {
+       "n": 10009,
+       "auroc": {
+        "point": 0.7781162910985505,
+        "lo": 0.7679385191906745,
+        "hi": 0.7880071322421341,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 9865,
+        "n": 10009,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.10953177257525083,
+        "lo": 0.09698490437647733,
+        "hi": 0.12237646786155747,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 9865,
+        "n": 10009,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "M",
+       "value": 0.7781162910985505,
+       "overall": 0.7849619434911282,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "lower is worse"
+      },
+      "false_negative_rate_at_control_threshold": {
+       "subgroup": "M",
+       "value": 0.10953177257525083,
+       "overall": 0.10268830225236135,
+       "ci_entirely_worse_than_overall": false,
+       "direction": "higher is worse"
+      }
+     }
+    },
+    "view": {
+     "subgroups": {
+      "AP": {
+       "n": 8247,
+       "auroc": {
+        "point": 0.6993995154503104,
+        "lo": 0.6881288522648228,
+        "hi": 0.7097907739716387,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 8171,
+        "n": 8247,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.060473815461346635,
+        "lo": 0.05264766036055353,
+        "hi": 0.06887175054438999,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 8171,
+        "n": 8247,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": false
+       }
+      },
+      "PA": {
+       "n": 9538,
+       "auroc": {
+        "point": 0.7558660839738431,
+        "lo": 0.7413127868380336,
+        "hi": 0.7708116784053715,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 9378,
+        "n": 9538,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       },
+       "false_negative_rate_at_control_threshold": {
+        "point": 0.249728555917481,
+        "lo": 0.22171615690577423,
+        "hi": 0.2771548948046372,
+        "level": 0.95,
+        "B": 1000,
+        "method": "percentile",
+        "n_groups": 9378,
+        "n": 9538,
+        "stratified": false,
+        "seed": 20261006,
+        "n_valid": 1000,
+        "ci_entirely_worse_than_overall": true
+       }
+      }
+     },
+     "worst": {
+      "auroc": {
+       "subgroup": "AP",
+       "value": 0.6993995154503104,
+       "overall": 0.7849619434911282,
+       "ci_entirely_worse_than_overall": true,
+       "direction": "lower is worse"
+      },
+      "false_negative_rate_at_control_threshold": {
+       "subgroup": "PA",
+       "value": 0.249728555917481,
+       "overall": 0.10268830225236135,
+       "ci_entirely_worse_than_overall": true,
+       "direction": "higher is worse"
+      }
+     }
+    }
+   },
+   "dataset": "RSNA test split (patient-level)",
+   "model": "xrv-densenet121-chex",
+   "label": "Lung Opacity",
+   "note": "ages above 90 are kept as recorded; the FNR column uses the threshold that targets a 10% miss rate overall"
+  }
+ }
+}

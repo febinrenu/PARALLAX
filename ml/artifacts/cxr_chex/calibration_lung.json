@@ -1,0 +1,16 @@
+{
+ "label": "Lung Opacity",
+ "a": 0.6713291722919715,
+ "b": -1.9136441642878244,
+ "alpha": 0.1,
+ "thr_fnr": 0.14164871417776892,
+ "abstain_low": 0.4,
+ "abstain_high": 0.6,
+ "input_kind": "probability",
+ "meta": {
+  "n_a": 3811,
+  "n_b": 3810,
+  "prevalence_b": 0.2325459317585302,
+  "positives_b": 886
+ }
+}

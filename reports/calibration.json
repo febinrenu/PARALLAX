@@ -4239,6 +4239,226 @@
      }
     }
    }
+  },
+  "bone_det": {
+   "model_id": "bone_det@8539baf9",
+   "n_test": 569,
+   "n_positives_test": 103,
+   "method": "Platt scaling on logit(max box confidence); the raw score is not a probability",
+   "ece_raw": {
+    "point": 0.06055226785692216,
+    "lo": 0.049026940265891335,
+    "hi": 0.08474208005289434,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 567,
+    "n": 569,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "ece_platt": {
+    "point": 0.03452419485868117,
+    "lo": 0.022671284206832842,
+    "hi": 0.05702852240916647,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 567,
+    "n": 569,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "platt": {
+    "a": 0.7708012949700155,
+    "b": 1.7888172116181593
+   },
+   "reliability_raw": [
+    {
+     "lo": 0.0,
+     "hi": 0.1,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 32,
+     "confidence": 0.5466406177729368,
+     "accuracy": 0.65625
+    },
+    {
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 24,
+     "confidence": 0.642640924702088,
+     "accuracy": 0.625
+    },
+    {
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 22,
+     "confidence": 0.741497700187293,
+     "accuracy": 0.5454545454545454
+    },
+    {
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 16,
+     "confidence": 0.8446637350134552,
+     "accuracy": 0.625
+    },
+    {
+     "lo": 0.9,
+     "hi": 1.0,
+     "n": 475,
+     "confidence": 0.992954817992684,
+     "accuracy": 0.9452631578947368
+    }
+   ],
+   "reliability_platt": [
+    {
+     "lo": 0.0,
+     "hi": 0.1,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.1,
+     "hi": 0.2,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.2,
+     "hi": 0.30000000000000004,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.30000000000000004,
+     "hi": 0.4,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.4,
+     "hi": 0.5,
+     "n": 0,
+     "confidence": null,
+     "accuracy": null
+    },
+    {
+     "lo": 0.5,
+     "hi": 0.6000000000000001,
+     "n": 17,
+     "confidence": 0.5458019188174776,
+     "accuracy": 0.6470588235294118
+    },
+    {
+     "lo": 0.6000000000000001,
+     "hi": 0.7000000000000001,
+     "n": 30,
+     "confidence": 0.6452535514752381,
+     "accuracy": 0.6666666666666666
+    },
+    {
+     "lo": 0.7000000000000001,
+     "hi": 0.8,
+     "n": 38,
+     "confidence": 0.743473980401685,
+     "accuracy": 0.8421052631578947
+    },
+    {
+     "lo": 0.8,
+     "hi": 0.9,
+     "n": 108,
+     "confidence": 0.8554818682386957,
+     "accuracy": 0.8796296296296297
+    },
+    {
+     "lo": 0.9,
+     "hi": 1.0,
+     "n": 376,
+     "confidence": 0.9753986552986939,
+     "accuracy": 0.976063829787234
+    }
+   ],
+   "fnr_control": {
+    "target_fnr": 0.1,
+    "threshold_calibrated_prob": 0.08177007415621343,
+    "fnr_test": 0.07766990291262135,
+    "fnr_ci95_clopper_pearson": [
+     0.03412864449825134,
+     0.14731394223104977
+    ],
+    "within_3_points_of_target": true,
+    "fpr_test": 0.30042918454935624,
+    "fraction_reported": 0.4130052724077329,
+    "n_positives_in_calibration_B": 68
+   },
+   "abstention": {
+    "band": [
+     0.4,
+     0.6
+    ],
+    "fraction_abstained": 0.029876977152899824,
+    "accuracy_outside_band": 0.9311594202898551,
+    "accuracy_inside_band": 0.6470588235294118
+   },
+   "selective": {
+    "aurc": {
+     "point": 0.024231821926831498,
+     "lo": 0.014448366590556995,
+     "hi": 0.049452087380029965,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 567,
+     "n": 569,
+     "stratified": false,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "oracle_aurc": 0.003137962509761023,
+    "coverage_at_5pct_error": 0.8963093145869947,
+    "coverage_at_10pct_error": 1.0
+   }
   }
  },
  "generated_by": "ml/eval/calibration.py",
