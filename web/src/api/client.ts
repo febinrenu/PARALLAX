@@ -30,6 +30,23 @@ export async function createStudy(file: File, opts: { modalityHint?: string; not
   return json(await fetch(`${API}/studies`, { method: "POST", body }));
 }
 
+export interface TranscribeResult {
+  ok: boolean;
+  note: string;
+  transcript: string;
+  language: string;
+  duration_s: number | null;
+  warnings: string[];
+}
+
+/** Dictation in, the typed note with the transcript appended out. The audio is not stored. */
+export async function transcribe(audio: Blob, typed: string): Promise<TranscribeResult> {
+  const body = new FormData();
+  body.append("audio", audio, audio.type.includes("ogg") ? "dictation.ogg" : audio.type.includes("mp4") ? "dictation.m4a" : "dictation.webm");
+  if (typed) body.append("typed", typed);
+  return json(await fetch(`${API}/transcribe`, { method: "POST", body }));
+}
+
 export async function getStudy(id: string): Promise<StudyResult | StudyStatus> {
   return json(await fetch(`${API}/studies/${encodeURIComponent(id)}`));
 }

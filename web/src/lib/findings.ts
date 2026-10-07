@@ -15,6 +15,7 @@ export interface Stroke {
  */
 export const FLAG_TEXT: Record<string, string> = {
   laterality_conflict: "The notes name the other side of the body.",
+  heatmap_off_target: "The model's heatmap falls outside the segmented lesion, so it is not used as evidence.",
   laterality_uncertain: "Image orientation is unclear, so left and right may be swapped.",
   history_conflict: "The notes' history conflicts with this finding.",
   symptom_finding_incoherent: "The symptoms in the notes do not fit this finding.",
@@ -36,6 +37,12 @@ export function flagNotes(f: Finding): string[] {
 /** The finding's own image region failed the deletion test: where the model looked is not why it decided. */
 export function regionFailed(f: Finding): boolean {
   return f.image_evidence?.[0]?.faithful === false;
+}
+
+/** Short label for a failed region on the image. With a segmentation mask the box is the lesion's, and
+ * what failed is the heatmap beside it, so the label says that rather than blaming the lesion box. */
+export function failedRegionLabel(f: Finding): string {
+  return f.flags?.includes("heatmap_off_target") ? "heatmap off the lesion" : "region failed the test";
 }
 
 export function strokeFor(status: Status): Stroke {

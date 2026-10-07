@@ -5,7 +5,7 @@ import { loadBitmap } from "../gl/core";
 import { Viewer, type Layers, type ViewerBox } from "../gl/viewer";
 import { attachViewerInput } from "../gl/viewerInput";
 import { formatWindow } from "../gl/windowing";
-import { boxOf, displayLabel, heatmapOf, leadMarker, maskOf, regionFailed, regionOf, strokeFor } from "../lib/findings";
+import { boxOf, displayLabel, failedRegionLabel, heatmapOf, leadMarker, maskOf, regionFailed, regionOf, strokeFor } from "../lib/findings";
 import { gl as tokens } from "../design/tokens";
 import { selectFinding, useSession } from "./store";
 
@@ -243,7 +243,7 @@ export function Viewport({ viewerRef, onDropFile }: { viewerRef: MutableRefObjec
           <div className="flex items-center gap-1.5 rounded-[var(--radius-control)] bg-film-base/85 px-1.5 py-1 text-[12px] leading-none text-ink">
             {marker && <span className="grid size-[18px] place-items-center rounded-[3px] border border-ink/70 font-mono text-[11px] font-medium">{marker}</span>}
             <span>{sel ? (region ?? displayLabel(sel.label)) : annotationOnly && annotationOnly.label}</span>
-            {sel && regionFailed(sel) && <span className="text-pencil-red-ink">region failed the test</span>}
+            {sel && regionFailed(sel) && <span className="text-pencil-red-ink">{failedRegionLabel(sel)}</span>}
           </div>
         )}
       </div>
