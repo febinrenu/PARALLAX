@@ -16,8 +16,9 @@ from typing import Any, Protocol
 from pydantic import BaseModel
 
 from medproof.core.schemas import Claim, StageResult
-from medproof.report import lexicon
 from medproof.llm.errors import LLMError
+from medproof.report import lexicon
+from medproof.report.render import display_label
 from medproof.report.slots import SLOT_RE
 from medproof.report.study_view import StudyView
 
@@ -77,7 +78,7 @@ def evidence_for(claim: Claim, view: StudyView) -> dict[str, Any]:
         findings.append(
             {
                 "id": f.finding_id,
-                "label": f.label.replace("_", " "),
+                "label": display_label(f.modality, f.label),
                 "tier": f.tier,
                 "status": f.status,
                 "region": region,

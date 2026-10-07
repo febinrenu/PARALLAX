@@ -11,6 +11,24 @@ from medproof.report.study_view import StudyView
 
 UNSPECIFIED_REGION = "unspecified region"
 
+# The classifiers use the dataset's short codes; a doctor reads names.
+_NAMES: dict[str, dict[str, str]] = {
+    "skin_dermoscopy": {
+        "mel": "melanoma", "nv": "melanocytic nevus", "bcc": "basal cell carcinoma", "akiec": "actinic keratosis",
+        "bkl": "benign keratosis", "df": "dermatofibroma", "vasc": "vascular lesion",
+    },
+    "brain_mri": {"pituitary": "pituitary tumour", "notumor": "no tumour"},
+}
+
+
+def display_label(modality: str, label: str) -> str:
+    """The finding's name as a doctor reads it. Unknown labels are shown as given, with underscores as spaces."""
+    return _NAMES.get(modality, {}).get(label, label.replace("_", " "))
+
+
+def has_region(f: Finding) -> bool:
+    return any(ev.region_name for ev in f.image_evidence)
+
 
 def _region(f: Finding) -> str:
     for ev in f.image_evidence:
@@ -37,7 +55,7 @@ def _flags(f: Finding) -> str:
 
 def _finding_field(f: Finding, name: str) -> str:
     if name == "label":
-        return f.label.replace("_", " ")
+        return display_label(f.modality, f.label)
     if name == "region":
         return _region(f)
     if name == "tier":
