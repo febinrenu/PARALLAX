@@ -34,7 +34,7 @@ from medproof.verify.concordance import apply as apply_concordance
 
 NOTE_ID = "n1"  # the single uploaded note; P4's fixtures and notes panel use the same id
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PRECEDENT_DATASET = {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri"}
+PRECEDENT_DATASET = {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri", "cxr": "rsna"}
 PRECEDENT_EMBEDDER = "medsiglip-448"
 PRECEDENT_K = 5
 

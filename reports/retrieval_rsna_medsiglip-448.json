@@ -1,0 +1,244 @@
+{
+  "dataset": "rsna",
+  "embedder": "medsiglip-448",
+  "k": 5,
+  "index_size": 7621,
+  "queries": 999,
+  "skipped_unreadable": 0,
+  "train_only": true,
+  "excludes_query_id_and_group": true,
+  "precision_at_5": {
+    "point": 0.6665,
+    "lo": 0.6478,
+    "hi": 0.6853
+  },
+  "precision_at_5_if_chosen_by_chance": 0.3567,
+  "majority_vote_accuracy": {
+    "point": 0.7227,
+    "lo": 0.693,
+    "hi": 0.751
+  },
+  "majority_vote_balanced_accuracy": {
+    "point": 0.7158,
+    "lo": 0.6877,
+    "hi": 0.7441
+  },
+  "precision_at_5_by_class": {
+    "Lung_Opacity": 0.569,
+    "No_Lung_Opacity_Not_Normal": 0.6027,
+    "Normal": 0.8255
+  },
+  "train_label_counts": {
+    "Normal": 2445,
+    "Lung_Opacity": 1769,
+    "No_Lung_Opacity_Not_Normal": 3407
+  },
+  "note": "MedSigLIP, the plan's preferred embedder",
+  "demo": [
+    {
+      "query": "00d7c36e-3cdf-4df6-ac03-6c30cdc8e85b",
+      "query_label": "No_Lung_Opacity_Not_Normal",
+      "precedents": [
+        {
+          "case_id": "ac6b624d-71ba-44ca-957e-592a715f0ac2",
+          "dataset": "rsna",
+          "label": "Lung_Opacity",
+          "similarity": 0.8636260032653809,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/ac6b624d-71ba-44ca-957e-592a715f0ac2.jpg"
+        },
+        {
+          "case_id": "76b19fb3-d631-4152-8f46-830d0593fc69",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8333890438079834,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/76b19fb3-d631-4152-8f46-830d0593fc69.jpg"
+        },
+        {
+          "case_id": "e58410e5-a9fc-484a-93b7-9698e1503086",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8327970504760742,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/e58410e5-a9fc-484a-93b7-9698e1503086.jpg"
+        },
+        {
+          "case_id": "bc6a8cf6-bc9a-4be0-b3bb-4e5256d91040",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8307851552963257,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/bc6a8cf6-bc9a-4be0-b3bb-4e5256d91040.jpg"
+        },
+        {
+          "case_id": "a27e7dc6-1003-4059-a14e-a39a16b76896",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8259760141372681,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/a27e7dc6-1003-4059-a14e-a39a16b76896.jpg"
+        }
+      ]
+    },
+    {
+      "query": "00fcc4f0-d7b5-4473-99a9-aa7d3ca071c9",
+      "query_label": "Normal",
+      "precedents": [
+        {
+          "case_id": "1f61f7dd-64ea-4e69-a59b-1b9624421f93",
+          "dataset": "rsna",
+          "label": "Normal",
+          "similarity": 0.8668241500854492,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/1f61f7dd-64ea-4e69-a59b-1b9624421f93.jpg"
+        },
+        {
+          "case_id": "f9049d8a-21b7-4884-972c-2c80f3028220",
+          "dataset": "rsna",
+          "label": "Normal",
+          "similarity": 0.8561288118362427,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/f9049d8a-21b7-4884-972c-2c80f3028220.jpg"
+        },
+        {
+          "case_id": "3588145b-c0eb-49dc-87e5-56dda99847d3",
+          "dataset": "rsna",
+          "label": "Normal",
+          "similarity": 0.8542163372039795,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/3588145b-c0eb-49dc-87e5-56dda99847d3.jpg"
+        },
+        {
+          "case_id": "8d33c03b-b7a1-4e67-8924-2854f2112d24",
+          "dataset": "rsna",
+          "label": "Normal",
+          "similarity": 0.8536269664764404,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/8d33c03b-b7a1-4e67-8924-2854f2112d24.jpg"
+        },
+        {
+          "case_id": "17ad2599-0077-4b6d-b9dc-e80efcb9c815",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8518911600112915,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/17ad2599-0077-4b6d-b9dc-e80efcb9c815.jpg"
+        }
+      ]
+    },
+    {
+      "query": "01c09fb1-a917-46ee-8d94-44f844a4eb85",
+      "query_label": "No_Lung_Opacity_Not_Normal",
+      "precedents": [
+        {
+          "case_id": "ff7bd314-e7ee-4f20-9734-bd4350f091d1",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8403580188751221,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/ff7bd314-e7ee-4f20-9734-bd4350f091d1.jpg"
+        },
+        {
+          "case_id": "cc3a4a05-cbc6-45fb-a5df-6b0675c6836d",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8194820880889893,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/cc3a4a05-cbc6-45fb-a5df-6b0675c6836d.jpg"
+        },
+        {
+          "case_id": "17398977-1b0f-4de4-9038-9c8cb7406c82",
+          "dataset": "rsna",
+          "label": "Lung_Opacity",
+          "similarity": 0.8042392730712891,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/17398977-1b0f-4de4-9038-9c8cb7406c82.jpg"
+        },
+        {
+          "case_id": "763bc9c5-3d0b-4f02-bb13-bd18a8ef920c",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7818713188171387,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/763bc9c5-3d0b-4f02-bb13-bd18a8ef920c.jpg"
+        },
+        {
+          "case_id": "f46cc156-2f2c-429c-a595-3cd0b157cd0e",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7815889120101929,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/f46cc156-2f2c-429c-a595-3cd0b157cd0e.jpg"
+        }
+      ]
+    },
+    {
+      "query": "01ef449e-d493-4db2-9162-d83c69f90f40",
+      "query_label": "No_Lung_Opacity_Not_Normal",
+      "precedents": [
+        {
+          "case_id": "45ca2f83-7941-425b-abdb-1a5a893439ad",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7921155691146851,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/45ca2f83-7941-425b-abdb-1a5a893439ad.jpg"
+        },
+        {
+          "case_id": "3f30761d-5615-4039-a155-0fd26f461742",
+          "dataset": "rsna",
+          "label": "Lung_Opacity",
+          "similarity": 0.7920424938201904,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/3f30761d-5615-4039-a155-0fd26f461742.jpg"
+        },
+        {
+          "case_id": "2456d8c4-83a0-44cb-a947-7d6aa7df6fd5",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7881219983100891,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/2456d8c4-83a0-44cb-a947-7d6aa7df6fd5.jpg"
+        },
+        {
+          "case_id": "34d323af-4035-4c61-bc85-4805f5f7ccb6",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7564876079559326,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/34d323af-4035-4c61-bc85-4805f5f7ccb6.jpg"
+        },
+        {
+          "case_id": "eb82b8a8-8710-4364-bb9b-8dcfe0edf813",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.7547619938850403,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/eb82b8a8-8710-4364-bb9b-8dcfe0edf813.jpg"
+        }
+      ]
+    },
+    {
+      "query": "0216bae7-3ab6-4857-8cc1-3afe8dab3964",
+      "query_label": "No_Lung_Opacity_Not_Normal",
+      "precedents": [
+        {
+          "case_id": "e87a8a11-b8ae-4373-b78d-d5ec6f69724e",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8431683778762817,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/e87a8a11-b8ae-4373-b78d-d5ec6f69724e.jpg"
+        },
+        {
+          "case_id": "86bd39a4-568d-443c-9ad4-4c9807d7f136",
+          "dataset": "rsna",
+          "label": "Normal",
+          "similarity": 0.8329407572746277,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/86bd39a4-568d-443c-9ad4-4c9807d7f136.jpg"
+        },
+        {
+          "case_id": "405ed36e-d013-4580-8a98-99f4b7fab29f",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8252439498901367,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/405ed36e-d013-4580-8a98-99f4b7fab29f.jpg"
+        },
+        {
+          "case_id": "d33bf5bb-4200-4a66-bbbb-29e2e94ef412",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.8243125081062317,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/d33bf5bb-4200-4a66-bbbb-29e2e94ef412.jpg"
+        },
+        {
+          "case_id": "390eb7b5-2719-408a-b9ac-7ad6225c4889",
+          "dataset": "rsna",
+          "label": "No_Lung_Opacity_Not_Normal",
+          "similarity": 0.816524088382721,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/rsna/390eb7b5-2719-408a-b9ac-7ad6225c4889.jpg"
+        }
+      ]
+    }
+  ]
+}
