@@ -198,9 +198,10 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 **Assigned remaining work (2026-10-07, demo laptop = P4's).** P4 wires each item into the pipeline, API and UI as soon as it lands; please reply in the shared log.
 - **P1-A · Masks (brain U-Net, MedSAM).** `readers.classifier.run` and `readers.bone.run` go straight from `predict` to `to_findings`, so no mask ever reaches a finding. Add optional `unet=` / `medsam=` arguments that call `readers.segmenter.attach_unet_masks` / `attach_medsam_masks` before `to_findings`, writing the mask PNG under `ctx.artifact_dir`. Tell P4 the loader calls (e.g. `UNetSegmenter.from_dir(ml/artifacts/brain_seg)`, the MedSAM constructor) and P4 passes them from the pipeline. On the demo laptop: MedSAM weights as a local folder (`MEDPROOF_MEDSAM_MODEL`) and `segmentation-models-pytorch`. Done when a live brain study and a live skin study show the Mask layer.
 - **P1-B · Faithfulness for box-only findings.** Bone findings have no heatmap, so `verify.faithfulness` returns "not assessable" and bone can only ever be supported by notes. A box-region deletion test (blur the box against random boxes of equal area, same permutation rule) would let the image count. Done when bone findings get `faithful` true or false.
+- **P1-D · Router and OOD on the demo laptop** (moved from P3: MedSigLIP and the probe are on P1's machine). The router stage is wired but off here: it needs MedSigLIP (`google/medsiglip-448`, as a local folder via `MEDPROOF_ROUTER_MODEL`) plus `router_probe.npz` and `ood.npz` (sha256 in P1's section) under `backend/artifacts/`. Done when an upload without a chosen modality is routed and `ood` flags appear.
+- **P1-E · MedSigLIP for precedents.** P3's precedents stage embeds with the same MedSigLIP model; the local folder from P1-D covers it. Please hand it over together with P1-D.
 - **P1-C · FYI.** On the demo brain image (AFIP glioblastoma) the classifier's heatmap sits on the lower-left skull edge while the tumour is on the right; the deletion test correctly fails it. Worth a look before the panel.
-- **P3-A · Precedents on the demo laptop.** Needs MedSigLIP (`google/medsiglip-448`, gated: `HF_TOKEN` in `.env`, or a local folder) and the indices under `ml/artifacts/retrieval/` (skin, bone, chest). Licence constraint (CLAUDE.md: only CC-0/CC-BY images in the web app): FracAtlas thumbnails (CC BY 4.0) may be shown; HAM10000 (CC BY-NC) and RSNA (competition rules) may not, so those precedents show label and similarity only. Please mark which datasets' thumbnails are displayable; P4 adds the thumbnail route and a "similar confirmed cases" panel. Done when a live skin or bone study returns precedents.
-- **P3-B · Router and OOD on the demo laptop.** The router stage is wired but off here: it needs the same MedSigLIP model plus P1's `router_probe.npz` and `ood.npz` (sha256 in P1's section) under `backend/artifacts/`. Done when an upload without a chosen modality is routed and `ood` flags appear.
+- **P3-A · Precedents on the demo laptop.** Needs the indices under `ml/artifacts/retrieval/` (skin, bone, chest); the MedSigLIP model comes from P1 (P1-E). Licence constraint (CLAUDE.md: only CC-0/CC-BY images in the web app): FracAtlas thumbnails (CC BY 4.0) may be shown; HAM10000 (CC BY-NC) and RSNA (competition rules) may not, so those precedents show label and similarity only. Please mark which datasets' thumbnails are displayable; P4 adds the thumbnail route and a "similar confirmed cases" panel. Done when a live skin or bone study returns precedents.
 - **P3-C · Voice dictation.** `context.voice.process_dictation` has no API route. Confirm it is final and that `GROQ_KEY_AUDIO` works, and say whether the transcript replaces or appends to typed notes; P4 adds an `audio` field to `POST /studies` and a record button. Done when a dictated note shows its spans in the workstation.
 - **P3-D · Decide the note-only "verified" policy** (see "For the team" above); P4 makes the one-line status-rule change and tests once decided.
 - **P3-E · Report wording.** Live claims omit the region ("Doctor, consider Pneumonia (moderate confidence)…" with no "in the right upper zone"), and "productive cough" is counted as supporting Mass.
@@ -599,5 +600,13 @@ Did: assigned the items nothing on the demo laptop produces yet: P1-A masks (U-N
 State: P4 wiring for each is ready to follow as soon as it lands.
 Verified: interfaces read from `readers/segmenter.py`, `segment/medsam.py`, `context/voice.py`, `retrieval/index.py`, `intake/router.py`.
 Next: wire each delivery; P4.8.
+Decisions: none new.
+Contract change requests: none.
+
+### 2026-10-07 · P4 · Opus 5.5 · Correction to the assignments
+Did: MedSigLIP lives on P1's machine, so router and OOD set-up moved from P3 (old P3-B) to P1 (P1-D), and P1 also hands over the MedSigLIP folder that P3's precedents stage needs (P1-E). P3-A now covers only the retrieval indices and the thumbnail licences.
+State: assignments updated in the P4 section; nothing else changed.
+Verified: n/a (documentation).
+Next: wire each delivery.
 Decisions: none new.
 Contract change requests: none.
