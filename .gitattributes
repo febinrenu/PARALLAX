@@ -2,3 +2,4 @@
 progress.md merge=union
 *.ipynb linguist-documentation
 *.bat text eol=crlf
+.githooks/* text eol=lf

@@ -404,7 +404,7 @@ contracts/           JSON Schema and fixtures for the StudyResult contract
 reports/, docs/      metrics, figures, validation report, model cards, datasheets
 demo/                demo guide, seeded second reads, sample output
 scripts/             contract export, web asset bake, demo warm-up
-plan.md, progress.md project plan and the team's live progress log
+plan.md, progress.md, CONTRIBUTING.md   project plan, live progress log, working rules
 ```
 
 ---

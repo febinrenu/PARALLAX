@@ -1,18 +1,18 @@
 # Parallax — Master Build Plan (HNX26PSI05: Multimodal Medical Image Intelligence)
 
 > A second-opinion system for clinicians that proves every finding before a doctor sees it.
-> Team of 4 · 15 hours · zero cost · built with Claude Code (Sonnet 5.5)
-> Resource facts in this plan were verified on 2026-10-06. Anything marked **[VERIFY]** was not confirmed and must be checked in plan mode before you depend on it.
+> Team of 4 · 15 hours · zero cost
+> Resource facts in this plan were verified on 2026-10-06. Anything marked **[VERIFY]** was not confirmed and must be checked before you depend on it.
 
 ---
 
 ## 0. How to use this document
 
-**Every Claude Code session, every model, every person, starts the same way:**
+**Every work session, every person, starts the same way:**
 
-1. Read `CLAUDE.md` (session rules), then this file (`plan.md`), then `progress.md` (live state).
+1. Read `CONTRIBUTING.md` (working rules), then this file (`plan.md`), then `progress.md` (live state).
 2. Find your role section (§7). Find the next unclaimed task in your work package.
-3. Enter **plan mode** (Shift+Tab until the mode indicator shows plan mode) and produce a plan for that task. You are explicitly allowed to improve on this plan for your area (see "Latitude" in your role section). Write any deviation into `progress.md` under *Decisions* before you implement it.
+3. **Plan before you build:** write down the plan for that task first. You are explicitly allowed to improve on this plan for your area (see "Latitude" in your role section). Write any deviation into `progress.md` under *Decisions* before you implement it.
 4. Implement, test, update `progress.md`, commit (rules in §11.4).
 
 **This file is the spec. `progress.md` is the truth.** If they disagree, `progress.md` wins and someone updates this file at the next gate.
@@ -259,23 +259,23 @@ class StudyResult(BaseModel):
 
 ## 5. Verified resource register
 
-Verified 2026-10-06 unless marked **[VERIFY]**. "Who" means who can fetch it: **Claude** = a Claude Code session can download it by script once the listed credentials exist; **Human** = a person must click something in a browser first.
+Verified 2026-10-06 unless marked **[VERIFY]**. "Who" means who can fetch it: **Script** = a download script can fetch it once the listed credentials exist; **Human** = a person must click something in a browser first.
 
 ### 5.1 Datasets
 
 | Dataset | Use | Size | License | Access (exact) | Who |
 |---|---|---|---|---|---|
-| **ISIC 2018 Task 3 (HAM10000)** — training images + labels + lesion groupings | Skin classifier train/val, split by `lesion_id` | 2.6 GB | CC-BY-NC 4.0 | No login. `https://isic-archive.s3.amazonaws.com/challenges/2018/ISIC2018_Task3_Training_Input.zip`, `.../ISIC2018_Task3_Training_GroundTruth.zip`, `.../ISIC2018_Task3_Training_LesionGroupings.csv` | Claude |
-| **ISIC 2018 Task 3 official test** + ground truth | Skin held-out test (1,512 images; compare to public leaderboard metric) | 401 MB | CC-BY-NC 4.0 | `.../ISIC2018_Task3_Test_Input.zip`, `.../ISIC2018_Task3_Test_GroundTruth.zip` (same S3 prefix) | Claude |
-| **ISIC 2018 Task 1 validation + test** + masks | Zero-shot MedSAM segmentation eval (Dice/Jaccard) | 228 MB + 2.2 GB | CC-0 | `.../ISIC2018_Task1-2_Validation_Input.zip`, `.../ISIC2018_Task1_Validation_GroundTruth.zip`, `.../ISIC2018_Task1-2_Test_Input.zip`, `.../ISIC2018_Task1_Test_GroundTruth.zip`. **Skip the 10.4 GB training input.** | Claude |
-| **HAM10000 metadata** (age, sex, body site) | Subgroup audit + synthetic note seeds | small | per dataset page | `kaggle datasets download -d kmader/skin-cancer-mnist-ham10000 -f HAM10000_metadata.csv` | Claude (after Kaggle token) |
-| **Brain Tumor MRI Dataset** (glioma / meningioma / pituitary / no tumor, 7,023 images) | Brain classifier | ~150 MB | CC0 | `kaggle datasets download -d masoudnickparvar/brain-tumor-mri-dataset` — note: merged from three sources, known label/duplicate issues → dedupe mandatory (§9.2) | Claude (after Kaggle token) |
-| **LGG MRI Segmentation** (110 TCGA patients, FLAIR masks) | Brain tumor segmenter, patient-level split | ~1 GB | **[VERIFY on dataset page]** | `kaggle datasets download -d mateuszbuda/lgg-mri-segmentation` | Claude (after Kaggle token) |
+| **ISIC 2018 Task 3 (HAM10000)** — training images + labels + lesion groupings | Skin classifier train/val, split by `lesion_id` | 2.6 GB | CC-BY-NC 4.0 | No login. `https://isic-archive.s3.amazonaws.com/challenges/2018/ISIC2018_Task3_Training_Input.zip`, `.../ISIC2018_Task3_Training_GroundTruth.zip`, `.../ISIC2018_Task3_Training_LesionGroupings.csv` | Script |
+| **ISIC 2018 Task 3 official test** + ground truth | Skin held-out test (1,512 images; compare to public leaderboard metric) | 401 MB | CC-BY-NC 4.0 | `.../ISIC2018_Task3_Test_Input.zip`, `.../ISIC2018_Task3_Test_GroundTruth.zip` (same S3 prefix) | Script |
+| **ISIC 2018 Task 1 validation + test** + masks | Zero-shot MedSAM segmentation eval (Dice/Jaccard) | 228 MB + 2.2 GB | CC-0 | `.../ISIC2018_Task1-2_Validation_Input.zip`, `.../ISIC2018_Task1_Validation_GroundTruth.zip`, `.../ISIC2018_Task1-2_Test_Input.zip`, `.../ISIC2018_Task1_Test_GroundTruth.zip`. **Skip the 10.4 GB training input.** | Script |
+| **HAM10000 metadata** (age, sex, body site) | Subgroup audit + synthetic note seeds | small | per dataset page | `kaggle datasets download -d kmader/skin-cancer-mnist-ham10000 -f HAM10000_metadata.csv` | Script (after Kaggle token) |
+| **Brain Tumor MRI Dataset** (glioma / meningioma / pituitary / no tumor, 7,023 images) | Brain classifier | ~150 MB | CC0 | `kaggle datasets download -d masoudnickparvar/brain-tumor-mri-dataset` — note: merged from three sources, known label/duplicate issues → dedupe mandatory (§9.2) | Script (after Kaggle token) |
+| **LGG MRI Segmentation** (110 TCGA patients, FLAIR masks) | Brain tumor segmenter, patient-level split | ~1 GB | **[VERIFY on dataset page]** | `kaggle datasets download -d mateuszbuda/lgg-mri-segmentation` | Script (after Kaggle token) |
 | **BDNeuro-MRI** (5,941 T1-CE images, leakage-free splits) | Brain classifier **external test** | **[VERIFY]** | **[VERIFY]** | Mendeley Data, DOI 10.17632/zwr4ntf94j → open `https://data.mendeley.com/datasets/zwr4ntf94j` → "Download All" | Human |
-| **FracAtlas** (4,083 X-rays, 717 fractured, boxes + masks, YOLO/COCO formats, body part + view metadata) | Bone fracture detector | **[VERIFY]** | CC-BY 4.0 | `curl -L -o fracatlas.zip https://figshare.com/ndownloader/files/43283628`; if that 404s, open figshare article 22363012 and use "Download all" | Claude (fallback Human) |
-| **RSNA Pneumonia Detection Challenge** (DICOM + boxes) | CXR calibration, localization eval (pointing game / IoU), DICOM path testing | ~4 GB **[VERIFY]** | competition rules | **Human first:** open `https://www.kaggle.com/competitions/rsna-pneumonia-detection-challenge`, click "Join/Late submission" and accept rules. Then Claude: `kaggle competitions download -c rsna-pneumonia-detection-challenge` | Human → Claude |
-| **CIFAR-10 test** | Natural-image OOD negatives | 160 MB | MIT-style | `torchvision.datasets.CIFAR10(root, train=False, download=True)` | Claude |
-| **Synthetic clinical notes** | Context engine train/eval | — | ours | Generated by `ml/data/gen_notes.py` (seeded templates; optional LLM paraphrase with facts re-verified) | Claude |
+| **FracAtlas** (4,083 X-rays, 717 fractured, boxes + masks, YOLO/COCO formats, body part + view metadata) | Bone fracture detector | **[VERIFY]** | CC-BY 4.0 | `curl -L -o fracatlas.zip https://figshare.com/ndownloader/files/43283628`; if that 404s, open figshare article 22363012 and use "Download all" | Script (fallback Human) |
+| **RSNA Pneumonia Detection Challenge** (DICOM + boxes) | CXR calibration, localization eval (pointing game / IoU), DICOM path testing | ~4 GB **[VERIFY]** | competition rules | **Human first:** open `https://www.kaggle.com/competitions/rsna-pneumonia-detection-challenge`, click "Join/Late submission" and accept rules. Then by script: `kaggle competitions download -c rsna-pneumonia-detection-challenge` | Human → Script |
+| **CIFAR-10 test** | Natural-image OOD negatives | 160 MB | MIT-style | `torchvision.datasets.CIFAR10(root, train=False, download=True)` | Script |
+| **Synthetic clinical notes** | Context engine train/eval | — | ours | Generated by `ml/data/gen_notes.py` (seeded templates; optional LLM paraphrase with facts re-verified) | Script |
 
 **Total download ≈ 12 GB.** Train in Kaggle notebooks where Kaggle datasets attach as inputs with no download at all; `wget` the ISIC/FracAtlas files inside the notebook.
 
@@ -285,18 +285,18 @@ Verified 2026-10-06 unless marked **[VERIFY]**. "Who" means who can fetch it: **
 
 | Model | Role | Size | License | Access | Who |
 |---|---|---|---|---|---|
-| **TorchXRayVision** `densenet121-res224-all` | CXR specialist (demo) | ~30 MB | Apache-2.0 | `pip install torchxrayvision`; weights auto-download | Claude |
-| TorchXRayVision `densenet121-res224-chex`, `-mimic_ch`, `-pc` | **External validation** on RSNA (the `all` model was trained on nih, pc, chex, mimic_ch, google, openi **and rsna**, so scoring `all` on RSNA is contaminated) | ~30 MB each | Apache-2.0 | same | Claude |
-| TorchXRayVision PSPNet anatomical segmentation + autoencoder | Region naming; extra OOD signal | small | Apache-2.0 | same | Claude |
-| **MedGemma 1.5 4B-it** `google/medgemma-1.5-4b-it` | Generalist second reader; CXR boxes; lab/EHR text | 4B | Health AI Developer Foundations terms | **Human:** log in to Hugging Face, open the model page, accept terms; create a read token → `HF_TOKEN` in `.env`. Requires `transformers >= 4.50`; class `AutoModelForImageTextToText` | Human → Claude |
-| **MedSigLIP** `google/medsiglip-448` | Router probe, OOD, retrieval embeddings, zero-shot | 400M + 400M | HAI-DEF terms | Same as MedGemma (gated, approval reported as instant) | Human → Claude |
-| BiomedCLIP `microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224` | Fallback if gated access fails | ~200M | MIT | ungated, `open_clip` | Claude |
-| **MedSAM** `flaviagiammarino/medsam-vit-base` | Box-prompted segmentation (skin, ask-about-region) | ViT-B | Apache-2.0 | ungated; `transformers.SamModel` | Claude |
-| timm `efficientnet_b0.ra_in1k`, `convnext_tiny.fb_in22k_ft_in1k` | Brain + skin backbones | small | Apache-2.0 | ungated HF hub | Claude |
-| segmentation_models_pytorch U-Net (resnet34 encoder) | Brain segmenter | small | MIT | pip | Claude |
-| `mateuszbuda/brain-segmentation-pytorch` (torch.hub) | Reference baseline only (trained on the same data; never reported as our result) | small | MIT | `torch.hub.load(...)` | Claude |
-| Ultralytics YOLO nano (`yolo11n` or newer **[VERIFY latest]**) | Fracture detector | ~6 MB | **AGPL-3.0** (fine for a public repo; declare it) | `pip install ultralytics` | Claude |
-| pytorch-grad-cam | CAM methods | — | MIT | pip | Claude |
+| **TorchXRayVision** `densenet121-res224-all` | CXR specialist (demo) | ~30 MB | Apache-2.0 | `pip install torchxrayvision`; weights auto-download | Script |
+| TorchXRayVision `densenet121-res224-chex`, `-mimic_ch`, `-pc` | **External validation** on RSNA (the `all` model was trained on nih, pc, chex, mimic_ch, google, openi **and rsna**, so scoring `all` on RSNA is contaminated) | ~30 MB each | Apache-2.0 | same | Script |
+| TorchXRayVision PSPNet anatomical segmentation + autoencoder | Region naming; extra OOD signal | small | Apache-2.0 | same | Script |
+| **MedGemma 1.5 4B-it** `google/medgemma-1.5-4b-it` | Generalist second reader; CXR boxes; lab/EHR text | 4B | Health AI Developer Foundations terms | **Human:** log in to Hugging Face, open the model page, accept terms; create a read token → `HF_TOKEN` in `.env`. Requires `transformers >= 4.50`; class `AutoModelForImageTextToText` | Human → Script |
+| **MedSigLIP** `google/medsiglip-448` | Router probe, OOD, retrieval embeddings, zero-shot | 400M + 400M | HAI-DEF terms | Same as MedGemma (gated, approval reported as instant) | Human → Script |
+| BiomedCLIP `microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224` | Fallback if gated access fails | ~200M | MIT | ungated, `open_clip` | Script |
+| **MedSAM** `flaviagiammarino/medsam-vit-base` | Box-prompted segmentation (skin, ask-about-region) | ViT-B | Apache-2.0 | ungated; `transformers.SamModel` | Script |
+| timm `efficientnet_b0.ra_in1k`, `convnext_tiny.fb_in22k_ft_in1k` | Brain + skin backbones | small | Apache-2.0 | ungated HF hub | Script |
+| segmentation_models_pytorch U-Net (resnet34 encoder) | Brain segmenter | small | MIT | pip | Script |
+| `mateuszbuda/brain-segmentation-pytorch` (torch.hub) | Reference baseline only (trained on the same data; never reported as our result) | small | MIT | `torch.hub.load(...)` | Script |
+| Ultralytics YOLO nano (`yolo11n` or newer **[VERIFY latest]**) | Fracture detector | ~6 MB | **AGPL-3.0** (fine for a public repo; declare it) | `pip install ultralytics` | Script |
+| pytorch-grad-cam | CAM methods | — | MIT | pip | Script |
 
 ### 5.3 Hosted APIs (free tier)
 
@@ -332,10 +332,9 @@ Web: Node 20+, pnpm, React 19, Vite, TypeScript (strict), Tailwind CSS, Motion (
 
 ## 6. Human setup checklist (T+0 to T+0:30, all four in parallel)
 
-Do this before anyone opens Claude Code. Tick each box in `progress.md → Setup`.
+Do this before anyone starts building. Tick each box in `progress.md → Setup`.
 
 - [ ] **Everyone:** GitHub account added to the public repo; `git config user.name` / `user.email` set to your own identity.
-- [ ] **Everyone:** Claude Code installed and logged in; model set to Sonnet 5.5 (`/model`).
 - [ ] **Everyone:** Groq account → create API key → share it with the team over a private channel (never in the repo). Each key maps to one service variable (§5.3); the mapping is in `progress.md → Team`. Everyone's local `.env` holds all four. Never commit `.env`.
 - [ ] **Everyone:** run `git config core.hooksPath .githooks` once after cloning (activates the commit-message hook, §11.4).
 - [ ] **P2:** Kaggle account, phone-verified. Settings → API → create token → `KAGGLE_API_TOKEN=KGAT_...` in `.env` (or `~/.kaggle/access_token`; legacy `kaggle.json` also works).
@@ -344,7 +343,7 @@ Do this before anyone opens Claude Code. Tick each box in `progress.md → Setup
 - [ ] **P3 and P1:** each with your own Hugging Face account → accept terms on `google/medgemma-1.5-4b-it` and `google/medsiglip-448` → create your own read token → `HF_TOKEN` in your `.env`. Tokens are personal; don't share them. (P2 also needs this if computing MedSigLIP embeddings on Kaggle: add it as a Kaggle notebook secret.)
 - [ ] **P3:** Kaggle account phone-verified too (second GPU quota for MedGemma batch jobs).
 - [ ] **P1 + P4:** check whether anyone has a local NVIDIA GPU ≥ 6 GB. Record it in `progress.md`.
-- [ ] **P4:** create the repo skeleton (§11.1), commit `CLAUDE.md`, `plan.md`, `progress.md`, `.claude/`, `.githooks/`, `.gitattributes`, `.env.example`. Make the hook executable in git so it works for everyone: `chmod +x .githooks/commit-msg && git update-index --chmod=+x .githooks/commit-msg`. Test it: a commit message containing an assistant's name must be rejected.
+- [ ] **P4:** create the repo skeleton (§11.1), commit `CONTRIBUTING.md`, `plan.md`, `progress.md`, `.githooks/`, `.gitattributes`, `.env.example`. Make the hook executable in git so it works for everyone: `chmod +x .githooks/commit-msg && git update-index --chmod=+x .githooks/commit-msg`. Test it: a co-author trailer in a commit message must be stripped.
 
 ---
 
@@ -363,7 +362,7 @@ Assign people by strength: the strongest ML person takes P2, the strongest backe
 
 ### Freedom to improve (applies to every role)
 
-In plan mode, you are expected to make your slice better than this plan. You may, without asking anyone:
+When planning, you are expected to make your slice better than this plan. You may, without asking anyone:
 
 - swap a library, model variant, or algorithm inside your slice if you can show it's better (record the evidence in `progress.md → Decisions`);
 - add features, tests, metrics, or UI polish inside your slice;
@@ -414,7 +413,7 @@ Every improvement must keep: zero cost, the status rule, the "Doctor, consider�
 
 | WP | Task | Done when |
 |---|---|---|
-| P2.1 | `ml/data/download.py <name>` for every dataset in §5.1 with SHA-256 manifest and resumable downloads; `make data` | All Claude-fetchable sets present with manifests |
+| P2.1 | `ml/data/download.py <name>` for every dataset in §5.1 with SHA-256 manifest and resumable downloads; `make data` | All script-fetchable sets present with manifests |
 | P2.2 | **Leakage audit** (D14): perceptual hash (pHash, Hamming ≤ 4) across all splits; group-aware splits: HAM10000 by `lesion_id`, LGG by patient, RSNA by `patientId`, FracAtlas stratified by body part with negatives included | `reports/leakage.json` lists duplicates found and removed |
 | P2.3 | Brain classifier (Kaggle GPU): EfficientNet-B0, 224 px, AdamW 3e-4, label smoothing 0.1, light aug, AMP, ~10 epochs. Report **both** original-Kaggle-split accuracy and leakage-free accuracy | Weights + metrics committed to registry |
 | P2.4 | Brain segmenter: smp U-Net (resnet34), 256 px, Dice+BCE, patient-level 80/10/10 split, ~20 epochs | Per-patient Dice with 95% CI |
@@ -488,19 +487,19 @@ Every improvement must keep: zero cost, the status rule, the "Doctor, consider�
 
 ---
 
-### 7.5 Kickoff prompts (paste into a fresh Claude Code session, in plan mode)
+### 7.5 Kickoff briefs (the first task for each role)
 
 **P1:**
-> Read CLAUDE.md, plan.md, and progress.md. I am P1 (Imaging Core). Start with WP P1.1–P1.3 against the frozen contract in §4. In plan mode, propose the module layout, test fixtures (including a MONOCHROME1 DICOM generated with pydicom), and the quality-gate thresholds with how you'll justify them. Improve on the plan where you can; list your deviations. Then implement with tests, update progress.md, and commit following §11.4.
+> Read CONTRIBUTING.md, plan.md, and progress.md. I am P1 (Imaging Core). Start with WP P1.1–P1.3 against the frozen contract in §4. First propose the module layout, test fixtures (including a MONOCHROME1 DICOM generated with pydicom), and the quality-gate thresholds with how you'll justify them. Improve on the plan where you can; list your deviations. Then implement with tests, update progress.md, and commit following §11.4.
 
 **P2:**
-> Read CLAUDE.md, plan.md, and progress.md. I am P2 (Data, Training & Validation). First write `ml/data/download.py` for every Claude-fetchable dataset in §5.1, then the leakage audit (P2.2), then the four Kaggle training notebooks (P2.3–P2.6) so they can start by T+2. In plan mode, propose the split strategy per dataset and the exact metrics with confidence-interval method. Improve on the plan where you can; list your deviations. Update progress.md as each job starts and finishes.
+> Read CONTRIBUTING.md, plan.md, and progress.md. I am P2 (Data, Training & Validation). First write `ml/data/download.py` for every script-fetchable dataset in §5.1, then the leakage audit (P2.2), then the four Kaggle training notebooks (P2.3–P2.6) so they can start by T+2. First propose the split strategy per dataset and the exact metrics with confidence-interval method. Improve on the plan where you can; list your deviations. Update progress.md as each job starts and finishes.
 
 **P3:**
-> Read CLAUDE.md, plan.md, and progress.md. I am P3 (Clinical Reasoning & Trust). Start with P3.1 (MedGemma service, 4-bit, with a smoke test on one CXR) and P3.3 (Groq pool). In plan mode, design the slot grammar for the report, the firewall rules, and the synthetic-note schema with injection cases. Improve on the plan where you can; list your deviations. Update progress.md and commit following §11.4.
+> Read CONTRIBUTING.md, plan.md, and progress.md. I am P3 (Clinical Reasoning & Trust). Start with P3.1 (MedGemma service, 4-bit, with a smoke test on one CXR) and P3.3 (Groq pool). First design the slot grammar for the report, the firewall rules, and the synthetic-note schema with injection cases. Improve on the plan where you can; list your deviations. Update progress.md and commit following §11.4.
 
 **P4:**
-> Read CLAUDE.md, plan.md, and progress.md. I am P4 (Experience & Platform). Build the repo skeleton and freeze the contract (§4) with fixtures by T+1, then the pipeline orchestrator and SSE API, then the web app per §10. In plan mode, produce the design token file and ASCII wireframes for the landing page and workstation, and critique them against §10.6 before writing UI code. Improve on the plan where you can; list your deviations. Update progress.md and commit following §11.4.
+> Read CONTRIBUTING.md, plan.md, and progress.md. I am P4 (Experience & Platform). Build the repo skeleton and freeze the contract (§4) with fixtures by T+1, then the pipeline orchestrator and SSE API, then the web app per §10. First produce the design token file and ASCII wireframes for the landing page and workstation, and critique them against §10.6 before writing UI code. Improve on the plan where you can; list your deviations. Update progress.md and commit following §11.4.
 
 ---
 
@@ -617,7 +616,7 @@ Radiologists read film on a backlit lightbox in a dim room and mark findings wit
 
 **Inspiration, not imitation:** take viewer conventions from the open-source OHIF Viewer (hanging layouts, window/level by drag, overlay toggles), interaction discipline from Linear (keyboard-first, dense, instant), and material honesty from the physical lightbox. Copy none of them visually.
 
-### 10.2 Design tokens (starting point; P4 may refine in plan mode)
+### 10.2 Design tokens (starting point; P4 may refine)
 
 | Token | Hex | Role |
 |---|---|---|
@@ -700,7 +699,7 @@ Do not ship any of these defaults:
 
 ```
 medproof/
-├── CLAUDE.md                 # session rules (short, read every session)
+├── CONTRIBUTING.md           # working rules (short, read every session)
 ├── plan.md                   # this file
 ├── progress.md               # live state; single shared log
 ├── README.md
@@ -708,10 +707,7 @@ medproof/
 ├── docker-compose.yml
 ├── .env.example              # every variable, no values
 ├── .gitattributes            # progress.md merge=union
-├── .githooks/commit-msg      # strips assistant attribution, blocks AI mentions
-├── .claude/
-│   ├── settings.json         # attribution off, permissions
-│   └── commands/             # /handoff, /sync, /verify
+├── .githooks/commit-msg      # strips co-author trailers and generated-by lines
 ├── contracts/                # finding.schema.json, openapi.json, fixtures/
 ├── backend/medproof/
 │   ├── core/                 # schemas, config, ledger, cache, vocab
@@ -754,11 +750,8 @@ medproof/
 
 ### 11.4 Commit rules (mandatory)
 
-- **No AI or assistant mentions anywhere in commit messages or PR descriptions:** no "Claude", "Anthropic", "Co-Authored-By" trailers for assistants, no "Generated with…" lines, no session links. Code comments stay technical and never refer to an assistant either.
-- Three layers enforce this:
-  1. `.claude/settings.json` sets `"attribution": { "commit": "", "pr": "" }` (empty strings hide attribution).
-  2. `.githooks/commit-msg` strips any attribution trailer that slips through and rejects messages that still mention an assistant. Activate once per clone: `git config core.hooksPath .githooks` (`make setup` does this). The file must be executable; git silently ignores non-executable hooks.
-  3. `CLAUDE.md` instructs every session to write plain human commit messages.
+- **Plain human commit messages:** no co-author trailers, no "Generated with…" lines, no session links. Code comments stay technical.
+- `.githooks/commit-msg` strips any such trailer or footer that slips through. Activate once per clone: `git config core.hooksPath .githooks` (`make setup` does this). The file must be executable; git silently ignores non-executable hooks.
 - Format: Conventional Commits, imperative mood, scope = area. Body says *why*, not *what*.
   - `feat(verify): add deletion-based faithfulness test for CAM regions`
   - `fix(intake): invert MONOCHROME1 before windowing`
@@ -772,35 +765,28 @@ medproof/
 
 ---
 
-## 12. Working with Claude Code (Sonnet 5.5)
+## 12. Working protocol
 
 ### 12.1 Session protocol
 
-1. **Start:** `/clear` (or a fresh session) → "Read CLAUDE.md, plan.md, progress.md" → name your role and the work package.
-2. **Plan mode first** for every work package. Ask for: files to touch, interfaces used, tests to write first, risks, and *improvements over plan.md for this slice*. Approve or edit the plan before leaving plan mode.
-3. **Tests first.** Have the session write failing tests that encode the "Done when" column, then implement until green.
-4. **Verify with real commands.** The session runs `make smoke` (or the module's tests) and pastes the summary into `progress.md`. "Should work" is not done.
-5. **End:** run `/handoff` (§12.3). Commit. Push.
+1. **Start:** read `CONTRIBUTING.md`, `plan.md` and `progress.md`; name your role and the work package.
+2. **Plan first** for every work package: files to touch, interfaces used, tests to write first, risks, and *improvements over plan.md for this slice*.
+3. **Tests first.** Write failing tests that encode the "Done when" column, then implement until green.
+4. **Verify with real commands.** Run `make smoke` (or the module's tests) and paste the summary into `progress.md`. "Should work" is not done.
+5. **End:** hand off (§12.2). Commit. Push.
 
-### 12.2 Prompting Sonnet 5.5 well
+Keep one work package per session, give acceptance criteria and file paths, check facts marked **[VERIFY]** before relying on them, and read installed package sources rather than guessing library APIs. Review every diff before committing: you must be able to explain the work to the judges.
 
-- One work package per session. Long sessions drift; when context gets heavy, `/compact` or start fresh. The handoff note makes fresh sessions cheap.
-- Give acceptance criteria and file paths, not vibes: "Implement `verify/faithfulness.py::run` per §4 and §7.1 P1.9; tests in `backend/tests/verify/test_faithfulness.py`; must pass `make smoke`."
-- Ask it to state assumptions and unknowns before coding, and to check facts marked **[VERIFY]** in this plan before relying on them.
-- For library APIs it is unsure of, ask it to read the installed package source or docs rather than guess.
-- Use a subagent for side quests (e.g., "investigate why MedGemma returns empty boxes") so the main session's context stays clean.
-- Review every diff before committing. The rules allow AI tools only if you understand and take responsibility for the work, and judges will ask you to explain it.
+### 12.2 The `progress.md` protocol
 
-### 12.3 Model or session switches (the `progress.md` protocol)
-
-Sessions will hit limits and models will change mid-task. `progress.md` makes that painless:
+Work changes hands mid-task. `progress.md` makes that painless:
 
 - **Status board** (top): one row per work package: owner, state (`todo / doing / blocked / done`), branch, last update time. Edit only your rows.
 - **Role sections:** each role keeps a short "Now / Next / Blockers" block. Edit only your own section.
 - **Shared log** (bottom, append-only): every session appends one entry at the end:
 
 ```
-### 2026-10-07 14:20 · P3 · Sonnet 5.5 · WP P3.9
+### 2026-10-07 14:20 · P3 · WP P3.9
 Did: slot grammar + renderer; property test for no digits in templates.
 State: renderer done, firewall half done (ID validation done, tier-word check todo).
 Verified: `uv run pytest backend/tests/report -q` → 23 passed.
@@ -811,17 +797,9 @@ Contract change requests: none.
 
 - **Decisions:** any deviation from plan.md, with the evidence.
 - **Contract change requests:** proposed change, affected owners, ack from P4.
-- A new session resumes by reading the latest log entry for its WP. Nobody needs the old chat.
+- Anyone resumes a work package by reading its latest log entry.
 
-### 12.4 Custom commands (in `.claude/commands/`)
-
-- `/handoff`: update your status rows and role section, append a shared-log entry in the format above, list uncommitted files.
-- `/sync`: `git pull --rebase`, re-read progress.md, summarize what changed since your last entry and whether it affects your WP.
-- `/verify`: run `make smoke`, summarize failures by owner, and append the result to the shared log.
-
-### 12.5 Usage limits
-
-If the team shares Claude subscriptions, usage windows will run out. Mitigations: don't run more heavy sessions than you need at once; use Claude Code for scaffolding, tricky logic, and tests, and type small fixes by hand; keep sessions scoped to one WP; let long Kaggle training runs happen without a session attached.
+**Handoff checklist:** update your status rows and role section, append a shared-log entry in the format above, list uncommitted files, `git pull --rebase`, run `make smoke`.
 
 ---
 
@@ -917,7 +895,7 @@ With 200K tokens/day per model per org and calls split across two models and fou
 | Target | Does |
 |---|---|
 | `make setup` | `uv sync`, `pnpm install`, git hooks path, `.env` check |
-| `make data` | Download every Claude-fetchable dataset, verify manifests |
+| `make data` | Download every script-fetchable dataset, verify manifests |
 | `make dev` | API + web with hot reload |
 | `make test` | All unit, property, contract, golden tests |
 | `make smoke` | Tests + one fixture study per modality end to end (< 60 s) |

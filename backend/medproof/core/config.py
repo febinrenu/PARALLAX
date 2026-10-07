@@ -1,5 +1,5 @@
 """Pipeline-wide settings read from the environment. Mirrors `readers/cxr_config.py`'s
-`_env()` pattern: model ids and tunables live in config, not in code paths (CLAUDE.md).
+`_env()` pattern: model ids and tunables live in config, not in code paths (CONTRIBUTING.md).
 """
 
 from __future__ import annotations

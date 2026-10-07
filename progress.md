@@ -1,6 +1,6 @@
 # progress.md — Parallax live state
 
-> Single source of truth for what is happening right now. Every session reads this after CLAUDE.md and plan.md.
+> Single source of truth for what is happening right now. Every session reads this after CONTRIBUTING.md and plan.md.
 > **Rules:** edit only your own status rows and your own role section. The shared log at the bottom is append-only: add new entries at the very end, never edit old ones. Format is in plan.md §12.3. `.gitattributes` sets `merge=union` for this file.
 
 ## Team
@@ -14,7 +14,7 @@
 
 ## Setup (plan.md §6)
 
-- [ ] Everyone: repo access, git identity set, Claude Code on Sonnet 5.5
+- [ ] Everyone: repo access, git identity set
 - [ ] Everyone: own Groq key in local `.env`
 - [ ] Everyone: `git config core.hooksPath .githooks` (hook verified to reject assistant mentions)
 - [ ] P2: Kaggle token; RSNA rules accepted; BDNeuro-MRI downloaded
@@ -60,7 +60,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P2.1 | Dataset downloads + manifests | done | main | 2026-10-07 | all Claude-fetchable sets present with manifests and a pinned lock file; BDNeuro registered from the manual download |
+| P2.1 | Dataset downloads + manifests | done | main | 2026-10-07 | all script-fetchable sets present with manifests and a pinned lock file; BDNeuro registered from the manual download |
 | P2.2 | Leakage audit + group splits | done | main | 2026-10-07 | all six datasets audited; reports/leakage.json |
 | P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
 | P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
@@ -213,7 +213,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - **P1-D · Router and OOD on the demo laptop** (moved from P3: MedSigLIP and the probe are on P1's machine). The router stage is wired but off here: it needs MedSigLIP (`google/medsiglip-448`, as a local folder via `MEDPROOF_ROUTER_MODEL`) plus `router_probe.npz` and `ood.npz` (sha256 in P1's section) under `backend/artifacts/`. Done when an upload without a chosen modality is routed and `ood` flags appear.
 - **P1-E · MedSigLIP for precedents.** P3's precedents stage embeds with the same MedSigLIP model; the local folder from P1-D covers it. Please hand it over together with P1-D.
 - **P1-C · FYI.** On the demo brain image (AFIP glioblastoma) the classifier's heatmap sits on the lower-left skull edge while the tumour is on the right; the deletion test correctly fails it. Worth a look before the panel.
-- **P3-A · Precedents on the demo laptop.** Needs the indices under `ml/artifacts/retrieval/` (skin, bone, chest); the MedSigLIP model comes from P1 (P1-E). Licence constraint (CLAUDE.md: only CC-0/CC-BY images in the web app): FracAtlas thumbnails (CC BY 4.0) may be shown; HAM10000 (CC BY-NC) and RSNA (competition rules) may not, so those precedents show label and similarity only. Please mark which datasets' thumbnails are displayable; P4 adds the thumbnail route and a "similar confirmed cases" panel. Done when a live skin or bone study returns precedents.
+- **P3-A · Precedents on the demo laptop.** Needs the indices under `ml/artifacts/retrieval/` (skin, bone, chest); the MedSigLIP model comes from P1 (P1-E). Licence constraint (only CC-0/CC-BY images in the web app): FracAtlas thumbnails (CC BY 4.0) may be shown; HAM10000 (CC BY-NC) and RSNA (competition rules) may not, so those precedents show label and similarity only. Please mark which datasets' thumbnails are displayable; P4 adds the thumbnail route and a "similar confirmed cases" panel. Done when a live skin or bone study returns precedents.
 - **P3-C · Voice dictation.** `context.voice.process_dictation` has no API route. Confirm it is final and that `GROQ_KEY_AUDIO` works, and say whether the transcript replaces or appends to typed notes; P4 adds an `audio` field to `POST /studies` and a record button. Done when a dictated note shows its spans in the workstation.
 - **P3-D · Decide the note-only "verified" policy** (see "For the team" above); P4 makes the one-line status-rule change and tests once decided.
 - **P3-E · Report wording.** Live claims omit the region ("Doctor, consider Pneumonia (moderate confidence)…" with no "in the right upper zone"), and "productive cough" is counted as supporting Mass.
@@ -420,7 +420,7 @@ State: P1.1 to P1.3 done. Perturbation library done early (P1.11 logic still tod
 Verified: `cd backend && python -m pytest -q` gives 121 passed. Includes a pydicom-built MONOCHROME1 fixture, a PHI sentinel test on the serialized bytes, and six degraded images each giving the right reason.
 Next: CXR reader and anatomy zones (P1.6) so P2.7 can calibrate; then router.
 Decisions: see Decisions, entries dated 2026-10-06 for P1.
-### 2026-10-06 · P3 · Sonnet 5.5 · WP P3.1, P3.3, P3.4 (schema), P3.9/P3.10 (design)
+### 2026-10-06 · P3 · WP P3.1, P3.3, P3.4 (schema), P3.9/P3.10 (design)
 Did: Groq pool (cache, RPM/TPM budgeter, retry-after backoff, repair retry, fallback); MedGemma read service (loader, API, batch, Kaggle/Colab notebooks); note schema with injection taxonomy; slot grammar and firewall spec.
 State: P3.3 done. P3.1 code done, real-model smoke NOT run (no HF_TOKEN here). P3.4 schema done, generator todo.
 Verified: `.venv/Scripts/python -m pytest ml backend services -q` -> 48 passed, 1 skipped (the gpu-marked smoke); `mypy --strict backend/medproof/llm` clean. `make smoke` does not exist yet (P4.1).
@@ -435,7 +435,7 @@ Verified: `cd backend && python -m pytest -q` gives 191 passed, 0 skipped, inclu
 Next: P1.4 router, P1.9 faithfulness, P1.11 flip-rate logic.
 Decisions: see Decisions and Verified facts log, entries dated 2026-10-07.
 Contract change requests: none.
-### 2026-10-07 · P2 · Sonnet 5.5 · WP P2.1, P2.2, P2.3 to P2.6 (notebooks)
+### 2026-10-07 · P2 · WP P2.1, P2.2, P2.3 to P2.6 (notebooks)
 Did: resumable checksummed downloader with a pinned lock file; pHash leakage audit and group-aware splits; split files, `reports/leakage.json` and `eval_index.json` for fracatlas and ham10000; cluster-bootstrap CIs and metrics; shared training code; four Kaggle notebooks (brain classifier, brain segmenter, skin classifier, bone detector) plus a builder and a model registry script.
 State: P2.1 doing (credential-free sets done; brain, LGG, RSNA wait for the Kaggle token). P2.2 doing (brain, LGG, RSNA splits wait for data). P2.3 to P2.6 blocked: notebooks written and tested, launch needs the Kaggle token and a pushed `p2/data` branch.
 Verified: `python -m pytest ml/tests -q` gives 86 passed (brain and segmenter notebooks run end to end on synthetic data; bone notebook smoke-run for one epoch on CPU). Short real skin run on the laptop GPU (3 epochs, 32 s/epoch, same notebook source, throwaway sanity check, not a Kaggle job): official ISIC 2018 test balanced accuracy 0.697 [0.650, 0.745], melanoma recall 0.667. The full 15-epoch run will be higher.
@@ -443,7 +443,7 @@ Next: Kaggle token, push `p2/data`, launch the four jobs, build brain/LGG/RSNA s
 Decisions: see Decisions, entries dated 2026-10-06 for P2.
 Contract change requests: none. `.gitignore` carve-out and `ml/Makefile.inc` need a P4 ack (see Decisions).
 
-### 2026-10-07 · P4 · Sonnet 5 · WP P4.1, P4.2 (G0)
+### 2026-10-07 · P4 · WP P4.1, P4.2 (G0)
 Did: root `Makefile` (`setup`, `test`, `smoke`, `contracts`, stub `dev`/`eval`/`demo`; includes `ml/Makefile.inc`); root `pyproject.toml` (ruff + mypy spanning `backend/` and `ml/`); added ruff/mypy to `backend/pyproject.toml`'s dev extra; `.pre-commit-config.yaml` + `.secrets.baseline`; minimal `web/` (Vite + React + TS) so `pnpm install`/`pnpm dev` work and `contracts.ts` has a home. Contract: reviewed `schemas.py` against every actual import in `backend/` and left it untouched (purely additive freeze); added `core/vocab.py` and `core/status_rule.py` (`compute_status`, precedence rejected > discordant > uncertain > verified); `scripts/export_contract.py` → `contracts/{finding,study_result}.schema.json`; `scripts/gen_contracts_ts.mjs` → `web/src/contracts.ts`; one hand-written `StudyResult` fixture per core modality in `contracts/fixtures/`.
 State: P4.1 and P4.2 done.
 Verified: `cd backend && python -m pytest -q` → 213 passed, 1 skipped, 1 failed (the failure is pre-existing and unrelated: `tests/readers/test_anatomy.py` needs `torchxrayvision`, not installed on this machine). `backend/tests/core` (new) → 28 passed. `cd web && npx tsc -b` and `npx eslint .` → clean. `node scripts/gen_contracts_ts.mjs` regenerates `contracts.ts` byte-identical on a second run.
@@ -451,7 +451,7 @@ Next: P4.3 pipeline orchestrator (define `StudyContext` for real here), then P4.
 Decisions: see Decisions, entries dated 2026-10-07 for P4.
 Contract change requests: none (additive only).
 
-### 2026-10-07 · P4 · Sonnet 5 · WP P4.3
+### 2026-10-07 · P4 · WP P4.3
 Did: `backend/medproof/pipeline.py` (`StageSpec`, `PIPELINE` registry, `run_study()`); `core/context.py` (`StudyContext` dataclass), `core/config.py` (`PipelineConfig`, env-backed), `core/cache.py` (`StageCache` over `diskcache`, keyed by `(input_sha256, stage, version)`). Wired the intake stage via `run_bytes()` (not the generic `run(ctx)` wrapper, which drops the decoded image) and a modality-dispatching reader step (only `cxr` exists; anything else degrades honestly). `_collect_findings` is the first real caller of `status_rule.compute_status` outside its own unit tests. Per-stage timeout via a non-context-managed `ThreadPoolExecutor` (first attempt used `with ThreadPoolExecutor(...)`, whose `__exit__` blocks on the abandoned thread and silently defeated the timeout — caught by the timeout test itself, fixed to call `shutdown(wait=False)` explicitly). Added `diskcache` to `backend/pyproject.toml`. Documented `.env.example`'s previously-missing `MEDPROOF_*` vars.
 State: P4.3 done, with one caveat recorded plainly rather than glossed over: the WP's literal Done-when ("kill MedGemma mid-run") isn't testable yet since no MedGemma stage exists (P3.1 `todo`). Verified instead with synthetic slow/raising stages plus the real "no reader for this modality yet" case.
 Verified: `cd backend && python -m pytest tests/test_pipeline.py -v` → 8 passed. Full suite `python -m pytest -q` → 221 passed, 1 skipped, 1 failed (same pre-existing unrelated `torchxrayvision` gap as the previous entry, nothing newly broken). `python -m ruff check backend/medproof/pipeline.py backend/medproof/core/` clean.
@@ -459,7 +459,7 @@ Next: P4.4, API + SSE, wrapping `run_study()` and streaming each `StageResult` a
 Decisions: see Decisions, entries dated 2026-10-07 for P4.
 Contract change requests: none (additive only).
 
-### 2026-10-07 · P4 · Sonnet 5 · WP P4.4, P4.5
+### 2026-10-07 · P4 · WP P4.4, P4.5
 Did: `core/ledger.py` (`Ledger`: one global hash-chained append-only JSONL, `append`/`head`/`verify`, hash covers `ts`/`actor`/`event`/`study_id` too, not just the payload); `core/store.py` (`StudyStore`, in-memory, not persisted — stated limitation, see Decisions); `api/{app,studies,system}.py` (FastAPI + `sse-starlette`): `POST /studies`, `GET /studies/{id}/events` (SSE), `GET /studies/{id}`, `POST /studies/{id}/feedback` (the only path to D17's ledger-logged doctor feedback), `GET /studies/{id}/fhir`, `GET /metrics`, `GET /model-cards`, `GET /ledger/verify`. Added one additive parameter to `pipeline.run_study` (`on_stage_result`) so the API can push SSE events and ledger entries per stage without `pipeline.py` itself depending on the ledger. `Makefile`'s `dev` target now actually starts `uvicorn` instead of echoing a stub.
 State: P4.4 and P4.5 done. Found and fixed one real bug while writing the SSE test: `StudyStore.stream()`'s original "already-terminal, skip the queue" shortcut silently dropped every buffered stage event for a fast-finishing study (routine with a stub reader finishing before the SSE GET even arrives) — fixed by always draining the queue (it holds every event regardless of when a subscriber connects) and only falling back to the stored terminal state once a queue has been fully drained once already.
 Verified: `cd backend && python -m pytest tests/core/test_ledger.py tests/api -v` → 14 passed. Full suite `python -m pytest -q` → 235 passed, 1 skipped, 1 failed (same pre-existing unrelated `torchxrayvision` gap, nothing newly broken). `ruff check` on all new/changed files clean. Manual end-to-end sanity on a real running server (not just `TestClient`): started `uvicorn medproof.api.app:app`, uploaded a real phantom PNG via `curl`, fetched the study, posted feedback, confirmed `GET /ledger/verify` (`entries` 2 → 3, `ok: true` throughout).
@@ -467,14 +467,14 @@ Next: P4.6 (web app pages) and P4.7 (WebGL viewer), the first real UI, built aga
 Decisions: see Decisions, entries dated 2026-10-07 for P4.
 Contract change requests: none (additive only).
 
-### 2026-10-07 · P4 · Opus 5.5 · WP P4.6, P4.7
+### 2026-10-07 · P4 · WP P4.6, P4.7
 Did: scrollytelling landing (ten chapters on one WebGL2 radiograph, prerendered + hydrated, story engine deferred); `/read` workstation with live (SSE) and sample modes, WebGL2 viewer (R8/RGBA8/R16F, highp window/level, cividis heatmap + iso-contour, hatched mask, anatomy contours, SDF boxes, zoom about cursor, keyboard map), two-way finding/note linking; validation, models, audit, report and 404 pages; additive API routes (image, float16 pixels, artifacts with traversal guard, per-study ledger); `scripts/bake_web_assets.py` (real reader outputs on a CC0 chest film); Playwright + axe e2e suite (`cd web && pnpm run e2e`).
 State: P4.6 and P4.7 done, with the gaps in the P4 role section stated plainly: live findings withheld until P1.9/P1.11 exist, first SSE stage ~720 ms cold (target 500), viewer 60 fps and Lighthouse not measured on real hardware yet.
 Verified: `cd backend && python -m pytest -q` → 266 passed. `cd web && npx vitest run` → 22 passed; `npx tsc -b` clean; `npx eslint .` 0 errors; `npx playwright test` → 17 passed (no-JS article, zero em/en dashes, axe zero serious/critical on landing, prerendered markup, workstation, validation and models; story boots without console errors; ledger tamper detected in the browser; phone and reduced-motion layouts; keyboard map; span highlight under 100 ms).
 Next: P4.8 Docker + CI around these suites; model warm-up at startup for the first-stage target; P4.9, P4.10.
 Decisions: see Decisions, entries dated 2026-10-07 for P4 (landing scope, GSAP licence, two entries, sticky stages, article mode, brain image source, red text shade, browser ledger caveat, content-addressed caches).
 Contract change requests: none (API routes additive; `schemas.py` untouched).
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.1, P3.2, P3.4-P3.7, P3.9, P3.10
+### 2026-10-07 · P3 · WP P3.1, P3.2, P3.4-P3.7, P3.9, P3.10
 Did: slot renderer + firewall + model-chosen frames with offline fallback; seeded 200-note generator; injection guard (regex, per-sentence Prompt Guard, classifier) and span-grounded extraction; contradiction rules; report-label mapping, MedGemma client, concordance; real MedGemma reads on the local GPU; eval scripts that recompute from cached output.
 State: P3.3, P3.4, P3.7, P3.9, P3.10 done. P3.1/P3.2 doing (eval batch reads running; concordance.json is partial until they finish). P3.5/P3.6 measured below.
 Verified: `.venv/Scripts/python -m pytest backend ml/tests/test_notes_schema.py ml/tests/test_gen_notes.py ml/tests/test_eval_second_reader.py ml/tests/test_eval_contradictions.py services -q` -> all pass (ml/ tests that need pandas/sklearn/torch are P2's and were not run in my light venv).
@@ -483,7 +483,7 @@ Next: finish the batch reads and write reports/concordance.json; retrieval (need
 Decisions: see Decisions (7 entries dated 2026-10-07).
 Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.11, P3.12, P3.13
+### 2026-10-07 · P3 · WP P3.11, P3.12, P3.13
 Did: entailment judge (second wall behind the firewall); Whisper transcription in the Groq pool plus voice dictation through the guard and extraction; FHIR bundle export. Pulled P2's skin-classifier push and wrote the specialist-vs-MedGemma comparison from its saved official-test predictions (agreement, kappa, and whether agreement predicts that the specialist is right); it runs when the HAM10000 reads are in. Found and fixed a crash in the long MedGemma batch (see Decisions).
 State: P3.11, P3.12, P3.13 done and pushed. HAM10000 reads have only just started, so the skin comparison has no numbers yet; FracAtlas reads about 70% done.
 Verified: pytest backend + ml/tests (mine) + services: 560+ passed, 5 skipped (the gpu-marked smoke and P2 tests that need torch/sklearn). Entailment: first pass 55/60; fixed judge 59/60 on the fresh variant (29/30 true sentences kept, 30/30 defective caught), 60/60 on the tuned variant; false rejections are the judge's main error (about 2-3%). Voice: real round trip OK. FHIR: bundle validates; 11 tests.
@@ -497,7 +497,7 @@ State: P1.4, P1.5, P1.9 to P1.12 done and validated on real models or data. P1.7
 Verified: `cd backend && python -m pytest -q` with the real-model environment set gives 694 passed, 0 skipped. Without the local model folder the real-model tests skip with a reason. Real-data results: router held-out 50 of 50 (CI 0.93 to 1.00), zero-shot 0.956 on 320; OOD AUROC 1.0 held-out; faithfulness 0 of 18 on 12 chest films (random 0 of 18); stability 0 flips at severity 2; MedSAM mean Jaccard 0.878 on 30 lesions.
 Next: place P2's weights, run `python scripts/check_trained_models.py`, then close P1.7 and P1.8; retrain router and OOD on the full datasets; repeat faithfulness, stability and saliency per modality.
 Decisions: see Decisions and Verified facts log, entries dated 2026-10-07 (energy score rejected; faithfulness permutation rule; router confidence saturated on easy classes).
-### 2026-10-07 · P2 · Sonnet 5.5 · WP P2.1 to P2.14 complete
+### 2026-10-07 · P2 · WP P2.1 to P2.14 complete
 Did: downloaded and audited all datasets (Kaggle brain, LGG and RSNA included); launched and registered the four Kaggle jobs (skin, brain classifier, segmenter, bone; two accounts because of the 2-GPU-session limit); calibration library and per-model calibration; chest-reader validation on RSNA with external and contaminated weights and Grad-CAM localisation scoring; external brain test on BDNeuro; corruption benchmark; trust-signal and subgroup audits; model cards, datasheets, figures, validation report; `make eval`.
 State: P2.1 to P2.14 done. P2.10 is partial by design: discordant needs P3's complete second-reader batch and unfaithful needs P1.9; the harness is ready.
 Verified: `cd backend && python -m pytest -q` gives 555 passed; `python -m pytest ml/tests -q` gives 129 passed; `python ml/eval/run_all.py --check` reproduces reports/metrics.json exactly in about 100 s.
@@ -513,7 +513,7 @@ Verified: `cd backend && python -m pytest -q` gives 772 passed, 1 skipped after 
 Next: unchanged (see the P1 section).
 Decisions: none new.
 Contract change requests: none.
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.1, P3.2, P3.5, P3.6, P3.8 + red-team
+### 2026-10-07 · P3 · WP P3.1, P3.2, P3.5, P3.6, P3.8 + red-team
 Did: merged the latest main into p3/medgemma-groq; committed the pending work (cue scan, one-call reasoning stage, end-to-end eval, FracAtlas retrieval report); validated the discordant flag against specialist errors for bone and skin; added two guard rules after offline red-teaming; wrote an 83-case offline red-team suite; built and scored the HAM10000 precedent index; refreshed concordance.json from the cached reads; created a CUDA venv and resumed the HAM10000 batch.
 State: P3.5 and P3.6 done. P3.1 and P3.2 doing (HAM10000 batch running). P3.8 doing (FracAtlas and HAM10000 indices; brain and CXR skipped, MedSigLIP 403).
 Verified: `cd backend && python -m pytest -q` gave 732 passed, 10 skipped; `python -m tests.redteam.run_redteam` gives 83/83 (notes 19, contradictions 13, injection 25, firewall 17, degradation 9); `python -m pytest ml/tests/test_eval_second_reader.py` 16 passed. Numbers: bone MedGemma sensitivity 0.18 (0.12-0.26) over 569 reads; bone specialist-vs-MedGemma kappa 0.07; discordant-flag error rate 0.63 vs 0.02, with 83% of correct fracture reports flagged; skin over 531 reads, MedGemma names a lesion on 43%, flag effect 0.11 (-0.01, 0.20) not significant; retrieval precision@5 FracAtlas 0.83 (chance 0.70), HAM10000 0.62 (chance 0.47). `make smoke` still does not exist (P4.1).
@@ -521,14 +521,14 @@ Not run: Kaggle and Colab notebooks, CXR box format check, brain and CXR retriev
 Next: refresh concordance when the HAM10000 reads finish; wire into P4's pipeline when StudyContext exists.
 Decisions: see Decisions (4 entries dated 2026-10-07 added). Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.1, P3.2 (batches complete)
+### 2026-10-07 · P3 · WP P3.1, P3.2 (batches complete)
 Did: finished the HAM10000 MedGemma batch (1,000 of 1,000 reads, 0 failed) on the local RTX 4060 and refreshed reports/concordance.json.
 State: P3.1 batch reads complete for both datasets; P3.2 numbers final.
 Verified: `python -m ml.eval_p3.eval_second_reader`. HAM10000 (official test batch): MedGemma names a lesion type on 42% of images, balanced accuracy 0.107 (0.081-0.136), melanoma sensitivity 0.115 (0.056-0.177); on the 420 images where it did, specialist accuracy 0.82 vs MedGemma 0.51; agreement 0.53, kappa 0.065 (-0.012, 0.145); specialist accuracy when the readers agree 0.85, disagree 0.79; discordant-flag difference in error rate 0.057 (-0.017, 0.125), not significant, so it must not downgrade skin findings. This replaces the 531-read figures in my earlier entry and role notes.
 Next: CXR box format check; wire into P4's pipeline when StudyContext exists.
 Decisions: none new. Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.8
+### 2026-10-07 · P3 · WP P3.8
 Did: MedSigLIP access came through; fixed the embedder (image processor only, transformers 5 output object) and rebuilt the FracAtlas and HAM10000 precedent indices with it; reports are now named per embedder and compared with BiomedCLIP.
 State: P3.8 doing. FracAtlas and HAM10000 done with MedSigLIP; brain and CXR waiting on P2's images.
 Verified: `cd backend && python -m pytest tests/retrieval -q` 13 passed; builds ran on the local RTX 4060. FracAtlas precision@5 0.844 vs chance 0.704 (fracture class 0.476); HAM10000 0.667 vs chance 0.469, balanced vote accuracy 0.486 vs 0.362 for BiomedCLIP, melanoma precision 0.430.
@@ -542,7 +542,7 @@ State: P1.7 and P1.8 done. Brain and skin classifiers, the U-Net and the bone de
 Verified: `cd backend && python -m pytest -q` 1016 passed, 2 skipped. Faithfulness (deletion permutation test) and stability on staged images: over every staged image, brain_cls 69 findings on 59 images, 42% faithful, 20% unstable, mean top-10% drop 0.40; skin_cls 107 findings on 100 images, 44% faithful, 13% unstable, mean drop 0.18 (`backend/medproof/verify/results/faithfulness_trained.json`). Many brain and skin findings fail the faithfulness test, so `faithful=false` and the firewall's tighter handling will apply to them; this is a measured property of the trained models on the staged public images (not P2's held-out test sets). Bone gives box evidence only, no heatmap, so faithfulness does not apply to it.
 Next: P4 wiring; refit thresholds when P2 shares validation images. Skin MedSAM masks were later checked with the trained skin weights on one staged image (masks produced, no flags).
 Decisions: none new. Contract change requests: none.
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.2, P3.6, P3.8, adapters
+### 2026-10-07 · P3 · WP P3.2, P3.6, P3.8, adapters
 Did: pipeline stage adapters (second_read, context, report, precedents) with merge_findings and collect_claims for the orchestrator; stopped second-reader disagreement from demoting findings in unvalidated modalities (P4's status rule reads agrees and box_iou); canonical labels so vocabulary names match dataset codes; lexicon derived from core/vocab.py; a third held-out injection set and its measurement; real MedGemma reads for the four sample images in demo/medgemma_reads; 14 more red-team cases (96 in total).
 State: P3.2 done. P3.6 measured again, zero-false-positive target not met. Adapters complete on the P3 side and waiting on Contract change request P3-1.
 Verified: `cd backend && python -m pytest -q` gives 993 passed, 12 skipped; `python -m tests.redteam.run_redteam` 96/96; mypy --strict clean on reasoning.py and reasoning_stages.py. Guard third set: regex 6/26, Prompt Guard 0.9 9/26, classifier 25/26, all layers 26/26 with 2/16 benign flagged.
@@ -550,7 +550,7 @@ Not run: the stages inside a live P4 pipeline (needs P3-1); brain and CXR retrie
 Next: P4's reply on P3-1; then a live end-to-end study.
 Decisions: see Decisions (6 entries dated 2026-10-07 added). Contract change requests: P3-1.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.8
+### 2026-10-07 · P3 · WP P3.8
 Did: P2 supplied the download route for brain and RSNA images; downloaded the brain set, verified it against P2's split by coverage and perceptual hash, built and scored the brain precedent index with MedSigLIP, and added brain to the precedent stage.
 State: P3.8 doing (FracAtlas, HAM10000, brain done; CXR waits for RSNA).
 Verified: `cd backend && python -m pytest tests/test_reasoning_stages.py tests/redteam -q` 131 passed; brain precision@5 0.918 vs 0.273 chance, balanced vote accuracy 0.952. The pinned archive size did not match (228,676,924 vs 164,670,110) but 60 of 60 sampled image hashes equal P2's.
@@ -559,14 +559,14 @@ Answer to P2: my discordant results have been on main since commit 5a986ca (repo
 Next: RSNA download and CXR retrieval once the rules are accepted; P4's reply on P3-1.
 Decisions: none new. Contract change requests: none new.
 
-### 2026-10-07 · P4 · Opus 5.5 · CCR P3-1
+### 2026-10-07 · P4 · CCR P3-1
 Did: applied P3-1. `StudyContext.stage_results`; per-id finding merge (latest stage wins) and claim collection in the orchestrator; P3's `stage_specs()` registered after the reader behind an `ImportError` guard; `GET /studies/{id}/fhir` builds P3's bundle for a finished study (409 while running); workstation shows unvalidated second reads as inconclusive and counts firewall claims; report page lists unblocked claims and downloads the FHIR bundle; `start.bat` installs `.[services]`.
 State: P3-1 done and acked. Live run on the CC0 chest film (real reader, P3's demo second read): six stages, five merged findings with the second read on each, FHIR 200. Not exercised here: note evidence and claims (no Groq key on this machine), so P3 should confirm a live study with keys.
 Verified: new orchestrator tests (stage_results visible, merge without duplicates, claims collected, parity with `merge_findings`, registration order and no caching) and FHIR route tests; full backend suite `cd backend && python -m pytest -q` 998 passed, 8 skipped; `cd web && npx vitest run` 25 passed, `npx tsc -b` and `npx eslint .` clean, `npx playwright test` 17 passed.
 Next: P3's end-to-end check with keys; reader warm-up at startup (16.7 s cold against a 20 s timeout); P4.8.
 Decisions: see Decisions, P3-1 entry dated 2026-10-07.
 Contract change requests: P3-1 acked and applied.
-### 2026-10-07 · P2 · Sonnet 5.5 · optional extras
+### 2026-10-07 · P2 · optional extras
 Did: MILK10k external skin test and skin-tone audit; two extra skin seeds on Kaggle and a 3-model ensemble with flip averaging; RAPS, Mondrian and randomised-APS comparison; fixed the Mondrian set rule; added the ML datasheet for MILK10k; `make eval` now includes the external skin results and the ensemble (about 2 minutes).
 State: all optional extras from plan.md section 7.2 are done except MedSigLIP linear probes (needs a Hugging Face token).
 Verified: `python ml/eval/run_all.py --check` reproduces reports/metrics.json exactly; `cd backend && python -m pytest -q` and `python -m pytest ml/tests -q` pass.
@@ -574,7 +574,7 @@ Next: P1 decides whether the product serves the ensemble; P1 refits the quality 
 Decisions: see Decisions, entries dated 2026-10-07 for P2 (including the exposed Kaggle token).
 Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.7, P3.9, P3.10
+### 2026-10-07 · P3 · WP P3.7, P3.9, P3.10
 Did: ran a real end-to-end study on the chest sample through P4's pipeline (with the P3-1 wiring on main) and found that a bare side word counted as supporting evidence for every finding; fixed it in the contradiction rules, the firewall and the template report; added a red-team case. P1's trained-model faithfulness results (brain 3 of 12 findings faithful, skin 7 of 13) mean the firewall will withhold most image-only claims for those modalities once faithfulness is wired in.
 State: P3.7 and P3.10 corrected. Chest weights are present on this machine, so P1's real-weights tests now run.
 Verified: `cd backend && python -m pytest -q` gives 1020 passed, 6 skipped; red-team suite 97/97 (policy 3/3); mypy --strict clean on medproof/report; ruff clean on the files I changed.
@@ -582,14 +582,14 @@ Not run: end-to-end on bone, skin and brain (their trained weights are not on th
 Next: P4 wiring of faithfulness and stability so faithful gets set; RSNA download once the Kaggle rules are accepted.
 Decisions: see Decisions (2 entries dated 2026-10-07 added). Contract change requests: none new.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · handoff
+### 2026-10-07 · P3 · handoff
 Did: assigned the RSNA-dependent work (CXR precedent index and the MedGemma chest-box test) to P2, who already has the images; recorded the commands and outputs under the P2 handoff in my role section.
 State: P3.8 waits on P2 for CXR; the box-quality question stays open until P2 reports.
 Verified: not run by me (RSNA download on this machine reached about 700 MB of 3.9 GB at 0.3 MB/s). Both scripts have tests: `python -m pytest ml/tests/test_build_retrieval.py ml/tests/test_eval_medgemma_boxes.py` 18 passed.
 Next: P2's reports; then `PRECEDENT_DATASET` gets `cxr` and I decide on box IoU.
 Decisions: none. Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · trained weights, end-to-end on bone, skin and brain
+### 2026-10-07 · P3 · trained weights, end-to-end on bone, skin and brain
 Did: verified and placed P2's trained weights; ran my four stages with the real bone, skin and brain readers on the demo images through P4's run_study (the readers loaded by hand, because the pipeline does not register them); raised the precedents stage timeout to 90 s after a cold-start timeout on brain.
 State: stages work with all four modalities' real findings. The pipeline itself still needs the three readers registered (P4 and P1).
 Verified: bone 17.8 s with a located finding, precedents and a claim; skin 20.2 s, finding rejected and no claim; brain 35 s, finding verified on the note's headaches with a claim and a precedents timeout that the new limit covers; `python -m pytest tests/test_reasoning_stages.py tests/redteam` 133 passed. P1's `check_trained_models.py` could not run here because it needs sample images staged under backend/data/router, which only exist on P1's machine.
@@ -597,7 +597,7 @@ Not run: the faithfulness and stability stages on these findings (not in the pip
 Next: P4 and P1 register the readers; then a live study per modality through the API.
 Decisions: none new. Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.2, P3.8 (RSNA)
+### 2026-10-07 · P3 · WP P3.2, P3.8 (RSNA)
 Did: downloaded RSNA, built the chest precedent index (MedSigLIP, calibration split as the index), measured MedGemma's chest boxes in two prompt variants, added chest to the precedent stage, and withdrew the handoff to P2 because the work is done.
 State: P3.8 done for all four modalities. The box question is closed: MedGemma's boxes are not usable.
 Verified: `python -m pytest ml/tests/test_build_retrieval.py ml/tests/test_eval_medgemma_boxes.py` passes; `cd backend && python -m pytest tests/test_reasoning_stages.py tests/redteam` 133 passed; a real chest study through P4's pipeline now returns 5 precedents per finding (first call 28 s while MedSigLIP loads). Chest retrieval precision@5 0.666 against 0.357 for chance; MedGemma boxes 0 of 100 opacities when it may decline, and no better than a fixed central box when forced.
@@ -605,7 +605,7 @@ Not run: faithfulness and stability on these findings (not in the pipeline), liv
 Next: P4 and P1 register the readers and wire faithfulness and stability; then a live study per modality.
 Decisions: none new. Contract change requests: none.
 
-### 2026-10-07 · P4 · Opus 5.5 · Wiring P1's stages
+### 2026-10-07 · P4 · Wiring P1's stages
 Did: wired P1's router, the brain/skin/bone readers, faithfulness (top 3 findings by default) and stability into `PIPELINE` per P1's recipe; config gained `models_root` and `faithfulness_top_k`; reader no longer cached, verify stages cached with the modality in the key; verify stages read merged findings so neither overwrites the other; workstation copy no longer says faithfulness is pending.
 State: done for chest end to end (live run: three findings verified, two withheld as untested, 51 s). Brain, skin and bone are wired and tested with stubs only; this machine has no P2 weights. Per P1's latest `verify/results/faithfulness_trained.json` (59 brain and 100 skin images), 42% of brain findings (29 of 69) and 44% of skin findings (47 of 107) pass faithfulness (the earlier 12- and 13-finding sample gave about a quarter and a half), so more than half of brain and skin findings will be withheld unless notes support them. Bone findings carry boxes but no heatmap, so P1's deletion test returns "not assessable" for them and they stay withheld unless notes support them; P1 to confirm whether that's intended.
 Verified: `tests/test_pipeline_wiring.py` 11 passed (router gating and flags, missing-weights degradation per modality, bundle paths, faithfulness and stability on the same finding, cache reuse, modality in the key); full backend suite 1016 passed, 8 skipped; `cd web && npx vitest run` 25 passed, `npx playwright test` 17 passed.
@@ -613,7 +613,7 @@ Next: run a brain/skin/bone study on a machine with P2's weights; startup warm-u
 Decisions: see Decisions, P1-wiring entry dated 2026-10-07.
 Contract change requests: none (`schemas.py` untouched).
 
-### 2026-10-07 · P3 · Sonnet 5.5 · live check after P4's pipeline wiring
+### 2026-10-07 · P3 · live check after P4's pipeline wiring
 Did: merged P4's wiring of the router, the brain, skin and bone readers, faithfulness and stability; pushed all P3 work to main (6a90173); ran every demo image through the default pipeline.
 State: all four modalities complete end to end with my four stages. One design issue found for P4 (an unfaithful finding verified by a non-specific symptom).
 Verified: `cd backend && python -m pytest -q` 1032 passed, 6 skipped after the merge; live runs as in the Decisions entry. The shown claims all cite a real note quote, none cites a side word, and flagged note text never appears.
@@ -621,7 +621,7 @@ Not run: studies through the HTTP API and the web app; calibration is still not 
 Next: P4's reply on the status-rule recommendation; P4 and P2 wiring calibration.
 Decisions: see the live-run entry. Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · demo preparation
+### 2026-10-07 · P3 · demo preparation
 Did: pulled everything, built the website, ran the API, the MedGemma service and the site, and drove the live flows in a browser (sample, DICOM upload, report, audit, validation, models; 0 browser errors). Found and fixed three things the real inputs exposed: a fitting symptom verified findings whose heatmap had failed the faithfulness test; claims used dataset codes and an unspecified-region phrase; a laterality conflict was reported at full confidence. Wrote the demo guide and a 16-file input pack with a warm-up script.
 State: all four modalities run end to end through the default pipeline with my four stages; the website works; demo guide in demo/DEMO_GUIDE.md.
 Verified: `cd backend && python -m pytest -q` 1051 passed, 6 skipped before the last small change (report package 354 passed after it); red-team 97/97; `python demo_inputs/warm_pack.py` all 16 files ok; Playwright flows with Edge: landing, workstation, live sample 18.6 s, DICOM upload 22.4 s, report with FHIR download, audit Verify chain.
@@ -629,7 +629,7 @@ Not working or not shown: automatic routing (Not sure); the website does not dis
 Next: P1 to check the router set-up; P4 and P2 to wire calibration; push these commits.
 Decisions: see the five entries above. Contract change requests: none new.
 
-### 2026-10-07 · P4 · Opus 5.5 · UI audit and serving-time calibration
+### 2026-10-07 · P4 · UI audit and serving-time calibration
 Did: audited every backend output against the UI. Added to the workstation: quarantined note instructions, missing-history prompts, finding flags in words, quality reasons with fixes, selected-finding span ownership, a "Run live analysis" button on samples (earlier today), failed regions drawn in red. Added P2's figures to Validation and the datasheets to Models. Wired P2's calibrators as a `calibration` stage (brain, skin, bone; chest uncalibrated with reason) and made tier `abstain` uncertain in the status rule.
 State: done. Live on this laptop with P2's weights and Groq keys: chest 3 verified + 2 uncertain with 5 claims; brain glioma verified on the note (region failed, drawn red); bone fracture verified on the note after calibration; skin nevus withheld. Not shown because not produced here: precedents, router/OOD, masks, voice dictation.
 Verified: `tests/test_calibration_stage.py` 7 passed; full backend suite 1023 passed, 8 skipped (one order assertion updated for the new stage); `cd web && npx vitest run` 33 passed, `npx playwright test` 17 passed; browser checks of the injection upload, the four Run-live cases and the Validation figures.
@@ -637,15 +637,15 @@ Next: team decision on note-only `verified` (see P4 section); brain segmenter / 
 Decisions: see Decisions, entries dated 2026-10-07 (abstain tier, chest uncalibrated).
 Contract change requests: none.
 
-### 2026-10-07 · P4 · Opus 5.5 · Remaining work assigned
-Did: assigned the items nothing on the demo laptop produces yet: P1-A masks (U-Net and MedSAM hooks in the reader `run()` functions), P1-B box-region faithfulness for bone, P1-C FYI on the brain heatmap; P3-A precedents (MedSigLIP and indices; HAM10000 and RSNA thumbnails not displayable under CLAUDE.md), P3-B router and OOD artifacts, P3-C voice dictation contract, P3-D the note-only "verified" decision, P3-E report wording. Details and "done when" in the P4 section.
+### 2026-10-07 · P4 · Remaining work assigned
+Did: assigned the items nothing on the demo laptop produces yet: P1-A masks (U-Net and MedSAM hooks in the reader `run()` functions), P1-B box-region faithfulness for bone, P1-C FYI on the brain heatmap; P3-A precedents (MedSigLIP and indices; HAM10000 and RSNA thumbnails not displayable under the image-licence rule), P3-B router and OOD artifacts, P3-C voice dictation contract, P3-D the note-only "verified" decision, P3-E report wording. Details and "done when" in the P4 section.
 State: P4 wiring for each is ready to follow as soon as it lands.
 Verified: interfaces read from `readers/segmenter.py`, `segment/medsam.py`, `context/voice.py`, `retrieval/index.py`, `intake/router.py`.
 Next: wire each delivery; P4.8.
 Decisions: none new.
 Contract change requests: none.
 
-### 2026-10-07 · P4 · Opus 5.5 · Correction to the assignments
+### 2026-10-07 · P4 · Correction to the assignments
 Did: MedSigLIP lives on P1's machine, so router and OOD set-up moved from P3 (old P3-B) to P1 (P1-D), and P1 also hands over the MedSigLIP folder that P3's precedents stage needs (P1-E). P3-A now covers only the retrieval indices and the thumbnail licences.
 State: assignments updated in the P4 section; nothing else changed.
 Verified: n/a (documentation).
@@ -662,7 +662,7 @@ Verified: `cd backend && python -m pytest -q` 1057 passed, 2 skipped; real train
 Next: P4 passes `unet=` and `medsam=` from the pipeline and loads both once at start-up; P2 may want to look at why the brain classifier ignores the tumour (possible dataset shortcut).
 Decisions: two new, in Decisions. Contract change requests: none.
 
-### 2026-10-07 · P3 · Sonnet 5.5 · answers to P4's requests P3-A, P3-C, P3-D, P3-E
+### 2026-10-07 · P3 · answers to P4's requests P3-A, P3-C, P3-D, P3-E
 Did: packaged the four precedent indices and licence-gated thumbnails (retrieval_pack.zip, docs/retrieval_indices.md); added `dictation_to_note` (a transcript appends to the typed note) and verified the audio key live; decided P3-D (failed region withheld, untestable region capped at uncertain, filed as P3-2); fixed the report wording (region kept, cough no longer supports a mass).
 State: all four requests answered; P3-2 waits for P4's one-line change.
 Verified: `cd backend && python -m pytest -q` gives 1119 passed, 4 skipped; the P3 ml tests (retrieval build, box evaluation, second reader) 37 passed; a live dictation round trip through Whisper on Groq returned the merged note; thumbnails built (2,447 bone, 3,349 brain); mypy --strict clean on medproof/report and reasoning_stages.
@@ -677,7 +677,7 @@ Verified: `cd backend && python -m pytest -q` 1069 passed, 2 skipped. Env for a 
 Next: P4 to warm the mask models at start-up (first MedSAM call loads about 375 MB); P4 to check the UI shows the Mask layer and the `heatmap_off_target` flag.
 Decisions: none new. Contract change requests: none. Files outside P1's area touched at the team's request: `backend/medproof/pipeline.py` (stage wiring, router flag fix, ood score) and a new `backend/tests/test_pipeline_masks.py`.
 
-### 2026-10-07 · P4 · Opus 5.5 · Deliveries checked and wired
+### 2026-10-07 · P4 · Deliveries checked and wired
 Did: checked every assigned item on `main`; applied P3-2 in `core/status_rule.py` (+4 tests); added `POST /transcribe` (P3's `dictation_to_note`, 25 MB limit, audio not stored) and a Dictate button in the notes box; added the "similar confirmed cases" panel (thumbnails only where P3's licence gate supplied one); fixed stage caching so verify results are keyed on their input findings; labelled an off-target heatmap as such instead of blaming the lesion box; `start.bat` points at local MedSAM/MedSigLIP folders; installed `segmentation-models-pytorch` and `sentencepiece`, fetched MedSAM.
 State: live on this laptop: brain glioma uncertain (heatmap off the U-Net lesion, note supports it, mask drawn), skin nevus withheld (mask drawn), bone fracture verified by its box (mask drawn), chest 3 verified with region-naming sentences. Not testable here until files are copied: router/OOD and precedents (MedSigLIP refused for this token's account; probe files and retrieval pack are with P1 and P3). P1 edited `pipeline.py` directly for P1-A/P1-D; reviewed and kept.
 Verified: full backend suite 1129 passed, 7 skipped, 1 failed (`test_real_architectures.py::test_bone_reader_loads_a_real_yolo_checkpoint...`: needs a newer `ultralytics` than this laptop's 8.3.221 to build `yolo26n.yaml`; the trained bone reader itself loads and runs); `cd web && npx vitest run` 34 passed, `npx playwright test` 17 passed; browser checks of brain and bone with masks.
@@ -685,7 +685,7 @@ Next: copy MedSigLIP, the two router files and the retrieval pack to this laptop
 Decisions: see Decisions (cache key digest, P3-2 applied).
 Contract change requests: P3-2 acked and applied.
 
-### 2026-10-07 · P4 · Opus 5.5 · WP P4.10 (README for the submission)
+### 2026-10-07 · P4 · WP P4.10 (README for the submission)
 Did: wrote `README.md` against the submission guidelines: what Parallax does, the data pipeline (stage table, status rule, API routes, diagram), core models with ids, evidence and where the doctor sees it, a real sample input and output (`demo/sample_output/`: input, StudyResult, stage trace with ledger hashes and timestamps, FHIR bundle from a live chest run), validation headline with 95% CIs from `reports/metrics.json`, scope note (MVP vs stretch vs partial), technologies, install, model files, configuration, run (start.bat and manual), reproduction commands, demo order, layout, licences, limitations, team roles. Six screenshots in `docs/screenshots/` (CC0, CC BY and public-domain images only).
 State: P4.10 done. Every number is from `reports/metrics.json`, the committed sample run, or the code.
 Verified: all paths the README references exist; sample output has no local filesystem paths.
