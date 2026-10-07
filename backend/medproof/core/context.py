@@ -11,8 +11,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
-from medproof.core.schemas import Modality, StageResult
+from medproof.core.config import PipelineConfig
+from medproof.core.schemas import Finding, Modality, StageResult
 from medproof.intake.decode import DecodedImage
 
 
@@ -31,3 +33,13 @@ class StudyContext:
     # Every StageResult so far, in run order, appended by the orchestrator right after each stage
     # (cache hits included). Later stages read earlier findings from here (P3-1).
     stage_results: list[StageResult] = field(default_factory=list)
+    config: PipelineConfig | None = None  # the run's config, for stages that need model paths or budgets
+    # Set by the router stage (P1.4) when it runs: body part for the bone reader, flags (ood,
+    # router_uncertain) that the reader step copies onto every finding.
+    body_part: str | None = None
+    router_flags: list[str] = field(default_factory=list)
+    # Left by every reader (P1's `_share`) so faithfulness and stability can re-score the same image:
+    # the live reader object, its raw `ReaderOutput`, and its contract findings.
+    reader: Any = None
+    reader_output: Any = None
+    findings: list[Finding] | None = None
