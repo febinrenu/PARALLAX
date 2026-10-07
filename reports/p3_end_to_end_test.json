@@ -1,0 +1,51 @@
+{
+  "split": "test",
+  "notes_scored": 44,
+  "extraction_failures": 0,
+  "contradiction_notes": 14,
+  "gold_facts": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 14,
+    "fn": 0,
+    "unexpected_flags": 0,
+    "clean_notes": 30,
+    "clean_notes_flagged": 0,
+    "by_flag": {
+      "demographic_implausible:hit": 4,
+      "history_conflict:hit": 2,
+      "laterality_conflict:hit": 5,
+      "symptom_finding_incoherent:hit": 3
+    }
+  },
+  "model_facts_only": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 14,
+    "fn": 0,
+    "unexpected_flags": 0,
+    "clean_notes": 30,
+    "clean_notes_flagged": 0,
+    "by_flag": {
+      "demographic_implausible:hit": 4,
+      "history_conflict:hit": 2,
+      "laterality_conflict:hit": 5,
+      "symptom_finding_incoherent:hit": 3
+    }
+  },
+  "model_facts_plus_cue_scan": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 14,
+    "fn": 0,
+    "unexpected_flags": 0,
+    "clean_notes": 30,
+    "clean_notes_flagged": 0,
+    "by_flag": {
+      "demographic_implausible:hit": 4,
+      "history_conflict:hit": 2,
+      "laterality_conflict:hit": 5,
+      "symptom_finding_incoherent:hit": 3
+    }
+  }
+}
