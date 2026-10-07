@@ -69,8 +69,22 @@ def prior_results(ctx: Any) -> list[StageResult]:
     return list(getattr(ctx, "stage_results", None) or [])
 
 
+def _reader_findings(ctx: Any) -> list[Finding]:
+    """The contract findings the reader stage leaves on the context (a snapshot taken before verification)."""
+    out: list[Finding] = []
+    raw = getattr(ctx, "findings", None)
+    for item in raw if isinstance(raw, list) else []:
+        try:
+            out.append(item if isinstance(item, Finding) else Finding.model_validate(item))
+        except ValueError:
+            continue
+    return out
+
+
 def prior_findings(ctx: Any) -> list[Finding]:
-    return merge_findings(prior_results(ctx))
+    """Findings from earlier stages. `ctx.stage_results` is preferred because it includes what later stages
+    changed (faithfulness, stability); without it, the reader's own findings on `ctx.findings` are used."""
+    return merge_findings(prior_results(ctx)) or _reader_findings(ctx)
 
 
 def _notes(ctx: Any) -> dict[str, str]:

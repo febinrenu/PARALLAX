@@ -258,3 +258,27 @@ def test_every_demo_image_is_answered_from_its_shipped_seed(case, modality, monk
     finally:
         reader.close()
     assert read.ok and read.source == "seed" and read.findings_text
+
+
+# ---------------------------------------------------------------- working with the reader's ctx.findings (until the orchestrator keeps stage_results)
+
+def test_prior_findings_falls_back_to_the_findings_the_reader_left_on_ctx():
+    c = SimpleNamespace(findings=[finding(), finding("f2", "Effusion")], notes=None, decoded=None)  # no stage_results at all
+    assert [f.finding_id for f in prior_findings(c)] == ["f1", "f2"]
+
+
+def test_stage_results_win_over_the_reader_snapshot_because_they_include_later_updates():
+    updated = finding().model_copy(update={"flags": ["unstable"]})
+    c = SimpleNamespace(findings=[finding()], stage_results=[reader_result(updated)])
+    assert prior_findings(c)[0].flags == ["unstable"]
+
+
+def test_a_second_read_runs_from_ctx_findings_alone():
+    c = SimpleNamespace(findings=[finding()], notes=None, decoded=decoded(), modality_hint="cxr")
+    out = second_read_step(c, services(reader=FakeReader()))
+    assert out.ok and Finding.model_validate(out.payload["findings"][0]).second_read is not None
+
+
+def test_malformed_ctx_findings_are_ignored():
+    assert prior_findings(SimpleNamespace(findings=[None, 3, "x"])) == []
+    assert prior_findings(SimpleNamespace(findings="not a list")) == []
