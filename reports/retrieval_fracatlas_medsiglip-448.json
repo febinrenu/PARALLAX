@@ -1,0 +1,242 @@
+{
+  "dataset": "fracatlas",
+  "embedder": "medsiglip-448",
+  "k": 5,
+  "index_size": 2447,
+  "queries": 563,
+  "skipped_unreadable": 31,
+  "train_only": true,
+  "excludes_query_id_and_group": true,
+  "precision_at_5": {
+    "point": 0.8444,
+    "lo": 0.8231,
+    "hi": 0.865
+  },
+  "precision_at_5_if_chosen_by_chance": 0.7035,
+  "majority_vote_accuracy": {
+    "point": 0.8774,
+    "lo": 0.8496,
+    "hi": 0.9023
+  },
+  "majority_vote_balanced_accuracy": {
+    "point": 0.714,
+    "lo": 0.6659,
+    "hi": 0.7636
+  },
+  "precision_at_5_by_class": {
+    "fracture": 0.4757,
+    "no_fracture": 0.927
+  },
+  "train_label_counts": {
+    "no_fracture": 2004,
+    "fracture": 443
+  },
+  "note": "MedSigLIP, the plan's preferred embedder",
+  "demo": [
+    {
+      "query": "IMG0000003",
+      "query_label": "no_fracture",
+      "precedents": [
+        {
+          "case_id": "IMG0000269",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9600593447685242,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000269.jpg"
+        },
+        {
+          "case_id": "IMG0002068",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9551020860671997,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002068.jpg"
+        },
+        {
+          "case_id": "IMG0002280",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9541664123535156,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002280.jpg"
+        },
+        {
+          "case_id": "IMG0001905",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9540748596191406,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0001905.jpg"
+        },
+        {
+          "case_id": "IMG0000959",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9526620507240295,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000959.jpg"
+        }
+      ]
+    },
+    {
+      "query": "IMG0000004",
+      "query_label": "no_fracture",
+      "precedents": [
+        {
+          "case_id": "IMG0001407",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.957617998123169,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0001407.jpg"
+        },
+        {
+          "case_id": "IMG0000285",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9575297832489014,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000285.jpg"
+        },
+        {
+          "case_id": "IMG0001519",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9571167826652527,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0001519.jpg"
+        },
+        {
+          "case_id": "IMG0000893",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9537678956985474,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000893.jpg"
+        },
+        {
+          "case_id": "IMG0000310",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9533296823501587,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000310.jpg"
+        }
+      ]
+    },
+    {
+      "query": "IMG0000006",
+      "query_label": "no_fracture",
+      "precedents": [
+        {
+          "case_id": "IMG0002961",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9398159980773926,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002961.jpg"
+        },
+        {
+          "case_id": "IMG0002194",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9383345246315002,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002194.jpg"
+        },
+        {
+          "case_id": "IMG0002648",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9351212978363037,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002648.jpg"
+        },
+        {
+          "case_id": "IMG0001062",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9335084557533264,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0001062.jpg"
+        },
+        {
+          "case_id": "IMG0003884",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9311139583587646,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0003884.jpg"
+        }
+      ]
+    },
+    {
+      "query": "IMG0000010",
+      "query_label": "no_fracture",
+      "precedents": [
+        {
+          "case_id": "IMG0000039",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9751282930374146,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000039.jpg"
+        },
+        {
+          "case_id": "IMG0000114",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9700766801834106,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000114.jpg"
+        },
+        {
+          "case_id": "IMG0000085",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9679853320121765,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000085.jpg"
+        },
+        {
+          "case_id": "IMG0000141",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9668188691139221,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000141.jpg"
+        },
+        {
+          "case_id": "IMG0000211",
+          "dataset": "fracatlas",
+          "label": "no_fracture",
+          "similarity": 0.9664896726608276,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000211.jpg"
+        }
+      ]
+    },
+    {
+      "query": "IMG0000011",
+      "query_label": "no_fracture",
+      "precedents": [
+        {
+          "case_id": "IMG0002375",
+          "dataset": "fracatlas",
+          "label": "fracture",
+          "similarity": 0.9357154369354248,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002375.jpg"
+        },
+        {
+          "case_id": "IMG0000188",
+          "dataset": "fracatlas",
+          "label": "fracture",
+          "similarity": 0.9205712080001831,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000188.jpg"
+        },
+        {
+          "case_id": "IMG0002318",
+          "dataset": "fracatlas",
+          "label": "fracture",
+          "similarity": 0.911615252494812,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002318.jpg"
+        },
+        {
+          "case_id": "IMG0000142",
+          "dataset": "fracatlas",
+          "label": "fracture",
+          "similarity": 0.9109407067298889,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0000142.jpg"
+        },
+        {
+          "case_id": "IMG0002310",
+          "dataset": "fracatlas",
+          "label": "fracture",
+          "similarity": 0.9044888019561768,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/fracatlas/IMG0002310.jpg"
+        }
+      ]
+    }
+  ]
+}
