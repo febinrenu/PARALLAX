@@ -388,6 +388,10 @@ _reg(Dataset("isic2018_t1_eval", "extended", "CC-0", "ISIC 2018 Task 1 validatio
              source="https://challenge.isic-archive.com/data/#2018"))
 _reg(Dataset("rsna_pneumonia", "extended", "Kaggle competition rules (research use)", "RSNA Pneumonia Detection Challenge, DICOM + boxes",
              fetch=_kaggle_fetch("competition", "rsna-pneumonia-detection-challenge"), source="https://www.kaggle.com/competitions/rsna-pneumonia-detection-challenge"))
+_MILK = "https://isic-archive.s3.amazonaws.com/dois/10.34970-648456/"
+_reg(Dataset("milk10k", "extended", "CC-BY-NC 4.0", "MILK10k: 5,240 lesions with paired clinical and dermoscopic images, 11 diagnostic classes and a 6-level skin-tone grade (external skin test and skin-tone audit)",
+             [Item(_MILK + "milk10k.zip", "milk10k.zip", extract=True), Item(_MILK + "milk10k.csv", "milk10k.csv"), Item(_MILK + "supplements/training_gt.csv", "training_gt.csv"),
+              Item(_MILK + "supplements/training_input.csv", "training_input.csv"), Item(_MILK + "supplements/training_supp.csv", "training_supp.csv")], source="https://doi.org/10.34970/648456"))
 _reg(Dataset("cifar10_test", "extended", "MIT-style (Krizhevsky)", "CIFAR-10, natural-image OOD negatives", _cifar_items(), source="https://www.cs.toronto.edu/~kriz/cifar.html"))
 _reg(Dataset("bdneuro", "human", "see Mendeley page (verify)", "BDNeuro-MRI, 5,941 T1-CE images: external brain test",
              source="https://data.mendeley.com/datasets/zwr4ntf94j",

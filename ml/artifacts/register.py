@@ -58,7 +58,8 @@ def register(model_dir: Path, note: str = "", registry: Path = REGISTRY) -> dict
             raise SystemExit(f"{wf}: sha256 {wsha[:12]} does not match model_meta.json {meta['weights_sha256'][:12]}; the download is corrupt")
         meta["weights_sha256"] = wsha
     key = meta["model_id"]
-    lic, contamination = LICENSES.get(key.split("@")[0], ("see model card", "see model card"))
+    base = key.split("@")[0]
+    lic, contamination = LICENSES.get(base, LICENSES.get(base.rsplit("_s", 1)[0], ("see model card", "see model card")))
     entry = {
         "model_id": key, "task": meta["task"], "arch": meta["arch"], "classes": meta["classes"], "preproc_spec": meta["preproc_spec"],
         "weights_file": wf, "weights_sha256": meta.get("weights_sha256"), "weights_bytes": (model_dir / wf).stat().st_size if wf else None,

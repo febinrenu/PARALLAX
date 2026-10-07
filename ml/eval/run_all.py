@@ -60,6 +60,8 @@ def task_rest() -> tuple:
     infl = {k: nb[k] for k in ("A_original_testing", "A_testing_without_duplicates", "A_testing_without_scan_neighbours", "inflation") if k in nb}
     infl["note"] = "computed in the training notebook (bootstrap B=2000); model A is the diagnostic model trained on the original Kaggle split"
     out["brain_inflation"] = infl
+    if (ART / "skin_cls" / "predictions" / "milk10k.npz").is_file():
+        out["skin_external"] = external.evaluate_skin(B)
     if (ART / "brain_cls" / "predictions" / "bdneuro.npz").is_file():
         out["brain_external"] = external.evaluate(B)
     meta = json.loads((ART / "bone_det" / "model_meta.json").read_text())
@@ -108,7 +110,7 @@ def task_subgroup(name: str) -> tuple:
     from ml.eval import subgroups as sg
 
     sg.B = 500  # per-subgroup resamples: many subgroups x metrics, so a lighter bootstrap than the headline numbers
-    return ("subgroup", name, {"skin_cls": sg.skin, "brain_cls": sg.brain, "bone_det": sg.bone, "cxr_chex": sg.cxr}[name]())
+    return ("subgroup", name, {"skin_cls": sg.skin, "skin_cls_milk10k": sg.skin_milk, "brain_cls": sg.brain, "bone_det": sg.bone, "cxr_chex": sg.cxr}[name]())
 
 
 def task_corruption(name: str) -> tuple:
@@ -136,6 +138,10 @@ def headline(s: dict) -> list[dict]:
     t = m["skin_cls"]["splits"]["official_test"]
     rows.append({"model": "skin_cls", "task": "skin lesion classification (7 classes)", "eval_set": "ISIC 2018 Task 3 official test", "n": t["n"], "metric": "balanced multiclass accuracy", "value": round(t["balanced_accuracy"]["point"], 4), "ci95": _ci(t["balanced_accuracy"]), "external": False, "contaminated": False,
                  "also": {"melanoma sensitivity": round(t["per_class_recall"]["mel"]["point"], 4), "melanoma AUROC": round(t["auroc_mel_vs_rest"]["point"], 4)}})
+    if "external_milk10k" in m["skin_cls"]:
+        e = m["skin_cls"]["external_milk10k"]
+        rows.append({"model": "skin_cls", "task": "skin lesion classification (7 classes)", "eval_set": "MILK10k dermoscopic images (external)", "n": e["n"], "metric": "balanced multiclass accuracy", "value": round(e["balanced_accuracy"]["point"], 4), "ci95": _ci(e["balanced_accuracy"]),
+                     "external": True, "contaminated": False, "also": {"accuracy": round(e["accuracy"]["point"], 4), "melanoma sensitivity": round(e["per_class_recall"]["mel"]["point"], 4)}})
     t = m["brain_cls"]["splits"]["test"]
     rows.append({"model": "brain_cls", "task": "brain MRI classification (4 classes)", "eval_set": "leakage-free test split", "n": t["n"], "metric": "accuracy", "value": round(t["accuracy"]["point"], 4), "ci95": _ci(t["accuracy"]), "external": False, "contaminated": False,
                  "also": {"balanced accuracy": round(t["balanced_accuracy"]["point"], 4), "macro F1": round(t["macro_f1"]["point"], 4)}})
@@ -165,6 +171,7 @@ def contamination_ledger() -> list[dict]:
     L = [
         ("skin_cls", "ISIC 2018 Task 3 official test", "clean", "never used for training, validation or calibration; 115 training copies of test images were removed by the audit"),
         ("skin_cls", "HAM10000 internal test split", "clean", "lesion-grouped split"),
+        ("skin_cls", "MILK10k dermoscopic images", "clean (external)", "94 images that duplicate HAM10000 images and 576 images of classes the model does not cover are excluded"),
         ("brain_cls", "leakage-free test split", "clean", "similarity-grouped split; no duplicate crosses splits"),
         ("brain_cls", "original Kaggle Testing folder", "contaminated", "727 of 1,600 images have a near-duplicate in the Kaggle Training folder; shown only to measure inflation"),
         ("brain_cls", "BDNeuro-MRI non-duplicate images", "clean (external)", "71% of BDNeuro duplicates the Kaggle training source and is excluded; the remaining 1,644 images are independent"),
@@ -194,7 +201,7 @@ def run() -> dict:
         p2 = [ex.submit(task_split, "skin_cls", s_, B if s_ in ("official_test", "test") else B_LIGHT) for s_ in ("official_test", "test", "val", "cal")]
         p2 += [ex.submit(task_split, "brain_cls", s_, B if s_ == "test" else B_LIGHT) for s_ in ("test", "val", "cal")]
         p2 += [ex.submit(task_rest)]
-        p2 += [ex.submit(task_subgroup, n) for n in ("skin_cls", "brain_cls", "bone_det")]
+        p2 += [ex.submit(task_subgroup, n) for n in ("skin_cls", "skin_cls_milk10k", "brain_cls", "bone_det")]
         p2 += [ex.submit(task_corruption, m) for m in co.MODELS if (ART / m / "predictions" / "corruption.npz").is_file()]
         for f in writers:
             r = f.result()
@@ -221,12 +228,14 @@ def run() -> dict:
     got["models"]["brain_cls"]["benchmark_inflation"] = rest["brain_inflation"]
     if "brain_external" in rest:
         got["models"]["brain_cls"]["external_bdneuro"] = rest["brain_external"]
+    if "skin_external" in rest:
+        got["models"]["skin_cls"]["external_milk10k"] = rest["skin_external"]
     got["models"]["bone_det"] = rest["bone_det"]
     got["models"]["brain_seg"] = rest["brain_seg"]
     s = {
         "models": {k: got["models"][k] for k in ("skin_cls", "brain_cls", "brain_seg", "bone_det")}, "calibration": got["calibration"],
         "cxr": {"dataset": "RSNA Pneumonia Detection Challenge (stage 2 train images), patient-level split", "target": "RSNA class Lung_Opacity vs the other two classes", "models": {t: got["cxr"][t] for t in cxr_mod.WEIGHTS if t in got["cxr"]}},
-        "subgroups": {"min_n": sg.MIN_N, "min_positives": sg.MIN_POS, "bootstrap_B": 500, "datasets": {n: got["subgroup"][n] for n in ("skin_cls", "brain_cls", "bone_det", "cxr_chex")}},
+        "subgroups": {"min_n": sg.MIN_N, "min_positives": sg.MIN_POS, "bootstrap_B": 500, "datasets": {n: got["subgroup"][n] for n in ("skin_cls", "skin_cls_milk10k", "brain_cls", "bone_det", "cxr_chex")}},
         "corruption": {"seed": co.SEED, "models": {m: got["corruption"][m] for m in co.MODELS if m in got["corruption"]}}, "signals": got["signals"],
     }
     reg = json.loads((ART / "registry.json").read_text())

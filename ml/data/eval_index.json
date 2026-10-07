@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-06T20:30:56Z",
+ "generated_utc": "2026-10-07T05:29:29Z",
  "batch_cap": 1000,
  "datasets": {
   "fracatlas": {
@@ -124,6 +124,37 @@
    "train_split_for_retrieval": "train",
    "source_dirs": [
     "bdneuro"
+   ]
+  },
+  "milk10k": {
+   "split_file": "ml/data/splits/milk10k.csv",
+   "test_splits": [
+    "external_test"
+   ],
+   "n_test": 4566,
+   "n_batch": 1000,
+   "batch_filter": "eval_batch == True",
+   "test_label_counts": {
+    "bcc": 2504,
+    "nv": 708,
+    "bkl": 529,
+    "mel": 430,
+    "akiec": 303,
+    "df": 49,
+    "vasc": 43
+   },
+   "batch_label_counts": {
+    "bcc": 519,
+    "nv": 155,
+    "bkl": 116,
+    "mel": 94,
+    "akiec": 66,
+    "df": 25,
+    "vasc": 25
+   },
+   "train_split_for_retrieval": "train",
+   "source_dirs": [
+    "milk10k"
    ]
   },
   "rsna": {

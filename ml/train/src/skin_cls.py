@@ -11,7 +11,9 @@ from pathlib import Path
 REPO_URL = os.environ.get("PARALLAX_REPO_URL", "https://github.com/febinrenu/PARALLAX.git")
 BRANCH = os.environ.get("PARALLAX_BRANCH", "main")
 SMOKE = os.environ.get("SMOKE") == "1"
-SLUG = "skin_cls"
+SUFFIX = os.environ.get("SLUG_SUFFIX", "")  # "_s2", "_s3": extra seeds for the ensemble
+SLUG = "skin_cls" + SUFFIX
+SEED = int(os.environ.get("SEED", "20261006"))
 ON_KAGGLE = Path("/kaggle/working").is_dir()
 if ON_KAGGLE:
     SCRATCH = Path("/kaggle/temp") if Path("/kaggle/temp").is_dir() else Path("/tmp")  # anything under /kaggle/working is saved as notebook output
@@ -66,7 +68,7 @@ print(f"preprocessed in {time.time() - t0:.0f}s")
 run_t0 = time.time()
 res = tc.train_classifier(
     data["train"]["X"], data["train"]["y"], data["val"]["X"], data["val"]["y"], arch=CFG["arch"], n_classes=7, epochs=CFG["epochs"], lr=CFG["lr"], weight_decay=CFG["weight_decay"],
-    batch_size=CFG["batch_size"], label_smoothing=CFG["label_smoothing"], balance_power=CFG["balance_power"], aug=CFG["aug"], pretrained=not SMOKE,
+    batch_size=CFG["batch_size"], label_smoothing=CFG["label_smoothing"], balance_power=CFG["balance_power"], aug=CFG["aug"], pretrained=not SMOKE, seed=SEED,
 )
 print("best epoch", res["best_epoch"])
 
@@ -92,8 +94,8 @@ metrics["notes"] = {
 # %%
 from ml.data.common import SPLITS_DIR
 split_hash = json.load(open(SPLITS_DIR / "split_hashes.json"))["ham10000"]["split_hash"]
-model_id = f"skin_cls@{tc.git_commit()[:8]}"
+model_id = f"skin_cls{SUFFIX}@{tc.git_commit()[:8]}"
 tc.write_run(OUT, model_id=model_id, task="classification", arch=CFG["arch"], classes=CLASSES, preproc_spec=SPEC, state_dict=res["state_dict"], weights_name="weights.pt", split_name="ham10000",
              split_hash=split_hash, training_data=["isic2018_t3_train (HAM10000)"], metrics=metrics, predictions=preds, data_info=HEADER, wall_sec=time.time() - run_t0,
-             extra={"kaggle_kernel": os.environ.get("KAGGLE_KERNEL_RUN_TYPE") and "parallax-skin-cls"})
+             extra={"kaggle_kernel": os.environ.get("KAGGLE_KERNEL_RUN_TYPE") and "parallax-skin-cls", "seed": SEED})
 print("wrote", OUT, sorted(p.name for p in OUT.iterdir()))

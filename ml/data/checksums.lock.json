@@ -39,6 +39,26 @@
   "bytes": 748584920,
   "sha256": "cac105de01272f0ca28dc56178f8d164a7df85d118a5b4baca388d6bcb4e854e"
  },
+ "milk10k/milk10k.csv": {
+  "bytes": 2129778,
+  "sha256": "347c3a386331c1a8948f4d87a952be9aff3e859b668ddb2d08f35321addc2ebf"
+ },
+ "milk10k/milk10k.zip": {
+  "bytes": 361486216,
+  "sha256": "47cfe0870997657429d3578e40d22900521a7e0194b1e03fa946bfc4a3e93b58"
+ },
+ "milk10k/training_gt.csv": {
+  "bytes": 188730,
+  "sha256": "1d85ce6087728cb92d944f8884a0a680964f9006e5f7b7495511d750ce9b49a8"
+ },
+ "milk10k/training_input.csv": {
+  "bytes": 2587003,
+  "sha256": "ec9a30c4d9f56bd89d17d98d0e24624423a9cea840e80e9081975ef16a7dc98e"
+ },
+ "milk10k/training_supp.csv": {
+  "bytes": 641153,
+  "sha256": "13768a20082af5ec869d715760aaa96fae29ac0078b17ab11e6078acd9e17fba"
+ },
  "rsna_pneumonia/rsna-pneumonia-detection-challenge.zip": {
   "bytes": 3932287530,
   "sha256": "133acacf95aa68c4d219124b17937f31cec073052096b9f9b122180df9d9af18"
