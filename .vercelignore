@@ -1,0 +1,15 @@
+# Upload only what the static site build needs: the web app and the committed reports and docs it
+# imports. Backend code, model folders, datasets and local caches never leave the machine.
+/*
+!/web
+!/reports
+!/docs
+!/package.json
+!/pnpm-workspace.yaml
+!/pnpm-lock.yaml
+!/vercel.json
+/web/node_modules
+/web/dist
+/web/dist-ssr
+/web/test-results
+/web/playwright-report

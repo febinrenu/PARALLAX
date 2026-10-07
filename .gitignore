@@ -71,3 +71,4 @@ ml/artifacts/retrieval/
 
 # local model folders from scripts/fetch_models.py
 backend/models/
+.vercel

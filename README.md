@@ -5,6 +5,10 @@ Hackathon problem HNX26PSI05.
 
 > Decision support only. Not a medical device and not a diagnosis. Every statement Parallax shows is phrased for a doctor to consider ("Doctor, consider ..."), and a qualified clinician must confirm it.
 
+**Live site: https://parallax-two-xi.vercel.app** · workstation: https://parallax-two-xi.vercel.app/read · validation: https://parallax-two-xi.vercel.app/validation
+
+The hosted site is the static web app: the landing page, the workstation with the four sample cases (their recorded pipeline results, overlays and verification chains), sample reports, and the Validation and Models pages built from the committed reports. Analysing your own images needs the analysis server (PyTorch models and minutes of CPU per study, beyond what static hosting runs): start it locally as described in [Run](#run), and the same web app switches its live controls on.
+
 ![Landing page](docs/screenshots/landing.png)
 
 Parallax reads a medical image (chest X-ray, brain MRI, skin dermoscopy or bone X-ray) together with the clinical notes. It does not stop at a prediction. Each finding has to survive a chain of independent checks, its "lines of sight", before it reaches the report:
@@ -376,6 +380,7 @@ Keyboard: `J`/`K` next and previous finding, `1`-`4` heatmap, mask, boxes, anato
 
 ## Live demonstration
 
+- Hosted, no setup: https://parallax-two-xi.vercel.app (sample cases and recorded results).
 - Start with `start.bat` (or the manual commands) about 10 minutes before, so the warm-up caches the four sample cases.
 - In the workstation, each sample case has a **Run live analysis** button that sends its exact image and note through the live pipeline.
 - A suggested order: chest (the full chain passes; open the report and the FHIR export), brain (the heatmap is off the lesion and the test catches it), skin (withheld: no proof), bone (verified by its own box), then the audit trail (change one value and verification fails).
