@@ -389,11 +389,18 @@ PIPELINE: list[StageSpec] = [
 PIPELINE.extend(_reasoning_specs())
 
 
+def _inputs_digest(stage_results: list[StageResult]) -> str:
+    material = json.dumps([sr.payload.get("findings") for sr in stage_results], sort_keys=True, default=str)
+    return hashlib.sha256(material.encode()).hexdigest()[:16]
+
+
 def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, config: PipelineConfig) -> StageResult:
     key = None
     if cache is not None and ctx.input_sha256 and spec.cacheable:
-        # The modality is part of the key: the same bytes read as another modality is another result.
-        key = cache_key(ctx.input_sha256, spec.name, f"{spec.cache_version}:{ctx.modality_hint}")
+        # The key covers the modality (the same bytes read as another modality is another result) and the
+        # findings this stage starts from: cached verify results carry full finding copies, so a reader that
+        # now adds evidence (a mask, a new model) must not be overruled by a copy made before it did.
+        key = cache_key(ctx.input_sha256, spec.name, f"{spec.cache_version}:{ctx.modality_hint}:{_inputs_digest(ctx.stage_results)}")
         cached = cache.get(key)
         if cached is not None:
             return cached

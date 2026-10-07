@@ -235,9 +235,9 @@ def test_support_from_the_note_does_not_rescue_a_heatmap_that_failed_the_deletio
 
 @pytest.mark.parametrize("flags,expected,status", [
     ((True,), "supports", "verified"),
-    ((None,), "supports", "verified"),  # not assessable (a box detector has no heatmap): the note may still support it
+    ((None,), "supports", "uncertain"),  # not assessable: the note still supports it, but P3-2 caps it at uncertain
     ((False, True), "supports", "verified"),  # one faithful region is enough
-    ((False, None), "supports", "verified"),
+    ((False, None), "supports", "uncertain"),  # no region passed the test (P3-2)
 ])
 def test_support_stands_unless_every_image_evidence_failed(flags, expected, status):
     from medproof.core.status_rule import compute_status

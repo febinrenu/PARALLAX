@@ -31,6 +31,10 @@ def _is_discordant(finding: Finding) -> bool:
 
 
 def _is_uncertain(finding: Finding) -> bool:
+    # P3-2: when the finding has an image region, only a region that passed the deletion test can make
+    # it verified; supporting note text alone lifts it to uncertain at most.
+    if finding.image_evidence and not any(ie.faithful is True for ie in finding.image_evidence):
+        return True
     if finding.stability is not None and finding.stability.flip_rate > FLIP_RATE_LIMIT:
         return True
     if "ood" in finding.flags:

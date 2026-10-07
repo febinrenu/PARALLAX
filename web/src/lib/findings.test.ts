@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import chest from "../../public/cases/chest/case.json";
 import type { CaseFile } from "../api/types";
 import type { Claim } from "../contracts";
-import { chainFor, displayLabel, leadMarker, regionFailed, strokeFor } from "./findings";
+import { chainFor, displayLabel, failedRegionLabel, leadMarker, regionFailed, strokeFor } from "./findings";
 
 const study = (chest as unknown as CaseFile).study;
 
@@ -110,5 +110,13 @@ describe("calibration step", () => {
 
   it("says so when the model is not calibrated", () => {
     expect(cal({ flags: ["uncalibrated"] }).state).toBe("unavailable");
+  });
+});
+
+describe("failed region label", () => {
+  const base = study.findings.find((f) => f.label === "Pneumonia")!;
+  it("blames the heatmap, not the lesion box, when the heatmap is off the segmented lesion", () => {
+    expect(failedRegionLabel({ ...base, flags: ["heatmap_off_target"] })).toBe("heatmap off the lesion");
+    expect(failedRegionLabel({ ...base, flags: [] })).toBe("region failed the test");
   });
 });

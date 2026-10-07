@@ -160,3 +160,27 @@ def test_the_cache_key_includes_the_modality(tmp_path):
         cache.close()
     faith = next(r for r in results if r.stage == "faithfulness")
     assert not faith.ok  # no brain reader here, so no cached chest verification may answer for it
+
+
+def test_a_changed_reader_output_invalidates_cached_verification(tmp_path):
+    # Cached verify stages carry full finding copies; if the reader starts adding evidence (a mask, a new
+    # model), a stale cache hit would win the merge and silently drop it.
+    cfg = _config(tmp_path, faithfulness_top_k=1)
+    cache = StageCache(cfg.cache_dir)
+    try:
+        run_study(_bytes(), modality_hint="cxr", stages=_stages(), config=cfg, cache=cache)
+
+        reader = make_reader()
+        original = reader.predict
+
+        def predict_with_flag(img):
+            out = original(img)
+            for rf in out.findings:
+                rf.flags.append("new_evidence")
+            return out
+
+        reader.predict = predict_with_flag
+        study, _ = run_study(_bytes(), modality_hint="cxr", stages=_stages(reader=reader), config=cfg, cache=cache)
+    finally:
+        cache.close()
+    assert study.findings and all("new_evidence" in f.flags for f in study.findings)

@@ -57,6 +57,10 @@ if not exist "node_modules\.pnpm" (
 rem ---- Servers, each in its own window so their logs stay readable
 rem Keys (GROQ_KEY_*, MEDGEMMA_URL, HF_TOKEN) come from .env at the repo root. Without it the notes
 rem and report stages fall back to template-only output.
+rem Local model folders from backend\scripts\fetch_models.py (git-ignored). The router also needs
+rem backend\artifacts\router_probe.npz and ood.npz; it switches itself on when the probe is there.
+if exist "backend\models\medsam\config.json" set "MEDPROOF_MEDSAM_MODEL=%CD%\backend\models\medsam"
+if exist "backend\models\medsiglip\config.json" set "MEDPROOF_ROUTER_MODEL=%CD%\backend\models\medsiglip"
 set "ENVFILE="
 if exist ".env" (
   set "ENVFILE=--env-file ..\.env"

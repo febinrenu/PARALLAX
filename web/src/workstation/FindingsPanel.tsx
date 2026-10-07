@@ -1,8 +1,42 @@
 import { useEffect, useRef, useState } from "react";
+import { assetUrl } from "../api/client";
 import type { Finding } from "../api/types";
 import { chainFor, displayLabel, flagNotes, leadMarker, regionOf, strokeFor, TIER_WORD } from "../lib/findings";
 import { ChainBar, ChainDetail } from "./VerificationChain";
 import { selectFinding, useSession } from "./store";
+
+// Credit lines for precedent sources. Thumbnails come only from datasets whose licence allows display
+// (P3 enforces this: HAM10000 and RSNA precedents arrive without a thumbnail).
+const PRECEDENT_SOURCE: Record<string, string> = {
+  fracatlas: "FracAtlas, CC BY 4.0",
+  brain_mri: "Brain Tumor MRI Dataset, CC0",
+  ham10000: "HAM10000, CC BY-NC 4.0",
+  rsna: "RSNA Pneumonia Challenge",
+};
+
+function Precedents({ f }: { f: Finding }) {
+  const list = f.precedents ?? [];
+  if (!list.length) return null;
+  return (
+    <div className="mt-3">
+      <p className="text-[12.5px] text-ink">Similar confirmed cases</p>
+      <ul className="mt-1.5 space-y-1.5">
+        {list.map((p) => (
+          <li key={`${p.dataset}:${p.case_id}`} className="flex items-center gap-2 text-[12.5px]">
+            {p.thumb_ref ? (
+              <img src={assetUrl(p.thumb_ref)} alt={`${displayLabel(p.label)}, ${PRECEDENT_SOURCE[p.dataset] ?? p.dataset}`} width={36} height={36} loading="lazy" className="size-9 shrink-0 rounded-[3px] bg-film-base object-cover" />
+            ) : (
+              <span className="grid size-9 shrink-0 place-items-center rounded-[3px] border border-film-line text-[10px] leading-tight text-ink-dim" title="Not shown: the dataset licence does not allow display">n/a</span>
+            )}
+            <span className="min-w-0 flex-1 truncate text-ink">{displayLabel(p.label)}</span>
+            <span className="font-mono text-ink-dim tabular">{p.similarity.toFixed(2)}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-1 text-[11.5px] text-ink-dim">{[...new Set(list.map((p) => PRECEDENT_SOURCE[p.dataset] ?? p.dataset))].join("; ")}. Similarity of image embeddings, not a diagnosis.</p>
+    </div>
+  );
+}
 
 function StrokeSwatch({ status }: { status: Finding["status"] }) {
   const s = strokeFor(status);
@@ -114,6 +148,7 @@ export function FindingsPanel() {
                 {isSel && (
                   <div className="pl-[30px]">
                     <ChainDetail steps={steps} />
+                    <Precedents f={f} />
                     {flagNotes(f).length > 0 && (
                       <ul className="mt-2 space-y-0.5 text-[12.5px] leading-snug text-ink-dim">
                         {flagNotes(f).map((t) => (
