@@ -1,0 +1,220 @@
+{
+ "alpha": 0.1,
+ "target_coverage": 0.9,
+ "models": {
+  "skin_cls": {
+   "official_test": {
+    "randomised APS (shipped)": {
+     "coverage": 0.8981481481481481,
+     "coverage_ci95": [
+      0.8817908062539692,
+      0.9129393786776984
+     ],
+     "mean_set_size": 1.2638888888888888,
+     "min_class_coverage": 0.627906976744186,
+     "worst_class": "akiec"
+    },
+    "Mondrian APS": {
+     "coverage": 0.9166666666666666,
+     "coverage_ci95": [
+      0.9015814602620683,
+      0.9301087167312456
+     ],
+     "mean_set_size": 2.062169312169312,
+     "min_class_coverage": 0.6,
+     "worst_class": "vasc"
+    },
+    "RAPS (k_reg=1, lambda=0.01)": {
+     "coverage": 0.9312169312169312,
+     "coverage_ci95": [
+      0.9172719408683038,
+      0.9434567537721638
+     ],
+     "mean_set_size": 1.6898148148148149,
+     "min_class_coverage": 0.7674418604651163,
+     "worst_class": "akiec"
+    },
+    "RAPS (k_reg=2, lambda=0.05)": {
+     "coverage": 0.9298941798941799,
+     "coverage_ci95": [
+      0.9158394437972744,
+      0.9422494586351562
+     ],
+     "mean_set_size": 1.9007936507936507,
+     "min_class_coverage": 0.7209302325581395,
+     "worst_class": "akiec"
+    }
+   },
+   "test": {
+    "randomised APS (shipped)": {
+     "coverage": 0.9249743062692704,
+     "coverage_ci95": [
+      0.9065882171796134,
+      0.9407338562361348
+     ],
+     "mean_set_size": 1.226104830421377,
+     "min_class_coverage": 0.7272727272727273,
+     "worst_class": "df"
+    },
+    "Mondrian APS": {
+     "coverage": 0.9383350462487153,
+     "coverage_ci95": [
+      0.9213343445029567,
+      0.9526168704817114
+     ],
+     "mean_set_size": 2.0339157245632067,
+     "min_class_coverage": 0.9099099099099099,
+     "worst_class": "mel"
+    },
+    "RAPS (k_reg=1, lambda=0.01)": {
+     "coverage": 0.9496402877697842,
+     "coverage_ci95": [
+      0.9339653908157217,
+      0.9625147219289995
+     ],
+     "mean_set_size": 1.6135662898252827,
+     "min_class_coverage": 0.8648648648648649,
+     "worst_class": "mel"
+    },
+    "RAPS (k_reg=2, lambda=0.05)": {
+     "coverage": 0.9506680369989723,
+     "coverage_ci95": [
+      0.9351221780380805,
+      0.9634057951103051
+     ],
+     "mean_set_size": 1.8735868448098665,
+     "min_class_coverage": 0.7272727272727273,
+     "worst_class": "df"
+    }
+   },
+   "milk10k": {
+    "randomised APS (shipped)": {
+     "coverage": 0.7325886990801577,
+     "coverage_ci95": [
+      0.7194950329023253,
+      0.7453842690668311
+     ],
+     "mean_set_size": 1.6925098554533509,
+     "min_class_coverage": 0.49834983498349833,
+     "worst_class": "akiec"
+    },
+    "Mondrian APS": {
+     "coverage": 0.8659658344283837,
+     "coverage_ci95": [
+      0.8557402521415473,
+      0.8757208255922408
+     ],
+     "mean_set_size": 2.4894875164257555,
+     "min_class_coverage": 0.7604651162790698,
+     "worst_class": "mel"
+    },
+    "RAPS (k_reg=1, lambda=0.01)": {
+     "coverage": 0.8206307490144547,
+     "coverage_ci95": [
+      0.809189062040341,
+      0.8316608018884019
+     ],
+     "mean_set_size": 2.293911519929917,
+     "min_class_coverage": 0.6270627062706271,
+     "worst_class": "akiec"
+    },
+    "RAPS (k_reg=2, lambda=0.05)": {
+     "coverage": 0.7869031975470872,
+     "coverage_ci95": [
+      0.7747344474382645,
+      0.7987039101227327
+     ],
+     "mean_set_size": 2.1226456416995183,
+     "min_class_coverage": 0.5577557755775577,
+     "worst_class": "akiec"
+    }
+   }
+  },
+  "brain_cls": {
+   "test": {
+    "randomised APS (shipped)": {
+     "coverage": 0.9396092362344582,
+     "coverage_ci95": [
+      0.9166293153797723,
+      0.9578187792695072
+     ],
+     "mean_set_size": 1.0,
+     "min_class_coverage": 0.9053254437869822,
+     "worst_class": "meningioma"
+    },
+    "Mondrian APS": {
+     "coverage": 0.9502664298401421,
+     "coverage_ci95": [
+      0.9289206595965316,
+      0.9667015074024956
+     ],
+     "mean_set_size": 1.014209591474245,
+     "min_class_coverage": 0.9298245614035088,
+     "worst_class": "notumor"
+    },
+    "RAPS (k_reg=1, lambda=0.01)": {
+     "coverage": 0.9786856127886323,
+     "coverage_ci95": [
+      0.9630642720998861,
+      0.9889392027071653
+     ],
+     "mean_set_size": 1.3410301953818828,
+     "min_class_coverage": 0.9644970414201184,
+     "worst_class": "meningioma"
+    },
+    "RAPS (k_reg=2, lambda=0.05)": {
+     "coverage": 0.9840142095914742,
+     "coverage_ci95": [
+      0.9698716368403937,
+      0.992664896289787
+     ],
+     "mean_set_size": 1.6873889875666075,
+     "min_class_coverage": 0.9704142011834319,
+     "worst_class": "meningioma"
+    }
+   },
+   "bdneuro": {
+    "randomised APS (shipped)": {
+     "coverage": 0.7548661800486618,
+     "coverage_ci95": [
+      0.7333242712466865,
+      0.7754942171142198
+     ],
+     "mean_set_size": 1.0,
+     "min_class_coverage": 0.4300341296928328,
+     "worst_class": "pituitary"
+    },
+    "Mondrian APS": {
+     "coverage": 0.7682481751824818,
+     "coverage_ci95": [
+      0.7470785489489071,
+      0.7884555956978534
+     ],
+     "mean_set_size": 1.114963503649635,
+     "min_class_coverage": 0.4300341296928328,
+     "worst_class": "pituitary"
+    },
+    "RAPS (k_reg=1, lambda=0.01)": {
+     "coverage": 0.8874695863746959,
+     "coverage_ci95": [
+      0.8711928542477501,
+      0.9023476171858428
+     ],
+     "mean_set_size": 1.5973236009732361,
+     "min_class_coverage": 0.7610921501706485,
+     "worst_class": "pituitary"
+    },
+    "RAPS (k_reg=2, lambda=0.05)": {
+     "coverage": 0.8911192214111923,
+     "coverage_ci95": [
+      0.8750540731864471,
+      0.9057719784245085
+     ],
+     "mean_set_size": 1.8181265206812651,
+     "min_class_coverage": 0.7474402730375427,
+     "worst_class": "pituitary"
+    }
+   }
+  }
+ }
+}

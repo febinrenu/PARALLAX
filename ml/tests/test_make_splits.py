@@ -186,3 +186,45 @@ def test_bdneuro_external_set_excludes_images_that_duplicate_the_training_datase
     assert rep["overlap_with_brain_mri_images"] == 1
     assert set(df[df.split == "external_test"].label) == {"notumor"} and (df.split == "external_test").sum() == 6
     assert df[df.image_id == "glioma_train_0"].iloc[0].dropped_reason == "duplicate_of_brain_mri"
+
+
+def test_milk10k_external_split_excludes_unmapped_classes_and_ham_duplicates(env):
+    root, tmp = env
+    for n in ("isic2018_t3_train", "isic2018_t3_test", "ham10000_meta"):
+        _manifest(root, n)
+    classes = ["MEL", "NV", "BCC", "AKIEC", "BKL", "DF", "VASC"]
+    tr_dir = root / "isic2018_t3_train"
+    rows = []
+    for i in range(30):
+        name = f"ISIC_{i:07d}"
+        _save(_scene(300 + i), tr_dir / "ISIC2018_Task3_Training_Input" / f"{name}.jpg")
+        rows.append([name] + [1.0 if classes[i % 3] == k else 0.0 for k in classes])
+    pd.DataFrame(rows, columns=["image"] + classes).to_csv(tr_dir / "ISIC2018_Task3_Training_GroundTruth.csv", index=False)
+    pd.DataFrame([(r[0], f"HAM_{i:04d}") for i, r in enumerate(rows)], columns=["image", "lesion_id"]).to_csv(tr_dir / "ISIC2018_Task3_Training_LesionGroupings.csv", index=False)
+    pd.DataFrame([(f"HAM_{i:04d}", r[0], "mel", "histo", 50.0, "male", "back", "x") for i, r in enumerate(rows)], columns=["lesion_id", "image_id", "dx", "dx_type", "age", "sex", "localization", "dataset"]).to_csv(root / "ham10000_meta" / "HAM10000_metadata.csv", index=False)
+    te = root / "isic2018_t3_test"
+    (te / "ISIC2018_Task3_Test_Input").mkdir(parents=True)
+    pd.DataFrame([["ISIC_9990000"] + [1.0, 0, 0, 0, 0, 0, 0]], columns=["image"] + classes).to_csv(te / "ISIC2018_Task3_Test_GroundTruth.csv", index=False)
+    _save(_scene(999), te / "ISIC2018_Task3_Test_Input" / "ISIC_9990000.jpg")
+    ms.run("ham10000", root)
+    _manifest(root, "milk10k")
+    m = root / "milk10k"
+    gt_cols = ["AKIEC", "BCC", "BEN_OTH", "BKL", "DF", "INF", "MAL_OTH", "MEL", "NV", "SCCKA", "VASC"]
+    inp, gt = [], []
+    kinds = ["BCC", "NV", "SCCKA", "MEL", "BCC", "NV"]
+    for i, k in enumerate(kinds):
+        lid, iid = f"IL_{i}", f"ISIC_{8000000 + i}"
+        img = _jpeg(np.asarray(Image.open(tr_dir / "ISIC2018_Task3_Training_Input" / "ISIC_0000004.jpg")), 60) if i == 5 else _scene(7000 + i)
+        _save(img, m / "images" / f"{iid}.jpg")
+        _save(_scene(7500 + i), m / "images" / f"ISIC_{8100000 + i}.jpg")
+        inp.append((lid, "dermoscopic", iid, 60, "male", 3, "trunk"))
+        inp.append((lid, "clinical: close-up", f"ISIC_{8100000 + i}", 60, "male", 3, "trunk"))
+        gt.append([lid] + [1 if c == k else 0 for c in gt_cols])
+    pd.DataFrame(inp, columns=["lesion_id", "image_type", "isic_id", "age_approx", "sex", "skin_tone_class", "site"]).to_csv(m / "training_input.csv", index=False)
+    pd.DataFrame(gt, columns=["lesion_id"] + gt_cols).to_csv(m / "training_gt.csv", index=False)
+    ms.run("milk10k", root)
+    df = common.load_split("milk10k", tmp / "splits")
+    assert len(df) == 6 and (df.split == "external_test").sum() == 4
+    assert df[df.image_id == "ISIC_8000002"].iloc[0].dropped_reason == "unmapped_class:sccka"
+    assert df[df.image_id == "ISIC_8000005"].iloc[0].dropped_reason == "duplicate_of_ham10000"
+    assert {str(t) for t in df[df.split == "external_test"].skin_tone} == {"3"}

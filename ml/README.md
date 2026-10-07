@@ -27,7 +27,7 @@ Set `PARALLAX_SKIP_PIP=1` when you do not want the script to touch your Python e
 
 ## Validation (`make eval`)
 
-`python ml/eval/run_all.py` recomputes every metric from the committed cached predictions in about 100 s (CPU, no raw data) and writes `reports/metrics.json`, the only file the web app reads. `--check` fails if the result is not byte-identical. Then `python ml/eval/figures.py`, `build_cards.py` and `build_report.py` regenerate `reports/figures/`, `docs/model_cards/`, `docs/datasheets/` and `docs/validation_report.md`.
+`python ml/eval/run_all.py` recomputes every metric from the committed cached predictions in about two minutes (CPU, no raw data) and writes `reports/metrics.json`, the only file the web app reads. `--check` fails if the result is not byte-identical. Then `python ml/eval/figures.py`, `build_cards.py` and `build_report.py` regenerate `reports/figures/`, `docs/model_cards/`, `docs/datasheets/` and `docs/validation_report.md`.
 
 The heavier steps that produce the caches need the raw data and a GPU: `ml/eval/cxr_cache.py` then `cxr.py score|localize` (chest reader on RSNA), `corruption.py run`, `signals.py quality|ood`, `external.py score`.
 

@@ -249,6 +249,204 @@
    "weights_bytes": 111357395,
    "weights_file": "weights.pt",
    "weights_sha256": "1fb2ea5ab200743bb6b5ec45640e3fe6a63b003c3e35bd94ab7002322998bddb"
+  },
+  "skin_cls_s2@6198c549": {
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "conformal": null,
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "git_commit": "6198c5491ef9311889da2ae52a6617a3c8d9829e",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8565,
+     "lo": 0.8142,
+     "point": 0.836
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7655,
+     "lo": 0.6694,
+     "point": 0.7189
+    },
+    "headline.macro_f1": {
+     "hi": 0.7875,
+     "lo": 0.7046,
+     "point": 0.7477
+    },
+    "official_test.accuracy": {
+     "hi": 0.8565,
+     "lo": 0.8142,
+     "point": 0.836
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7655,
+     "lo": 0.6694,
+     "point": 0.7189
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7875,
+     "lo": 0.7046,
+     "point": 0.7477
+    },
+    "test.accuracy": {
+     "hi": 0.8943,
+     "lo": 0.844,
+     "point": 0.8705
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8278,
+     "lo": 0.6994,
+     "point": 0.7685
+    },
+    "test.macro_f1": {
+     "hi": 0.8202,
+     "lo": 0.7076,
+     "point": 0.7711
+    }
+   },
+   "kaggle_kernel": "parallax-skin-cls",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "metrics_file": "ml/artifacts/skin_cls_s2/metrics.json",
+   "model_id": "skin_cls_s2@6198c549",
+   "note": "seed variant for the skin ensemble",
+   "preproc_spec": "skin_cls",
+   "registered_utc": "2026-10-07T05:52:53Z",
+   "seed": 2,
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "split_name": "ham10000",
+   "task": "classification",
+   "temperature": null,
+   "training_data": [
+    "isic2018_t3_train (HAM10000)"
+   ],
+   "weights_bytes": 111357395,
+   "weights_file": "weights.pt",
+   "weights_sha256": "da6b46a68e67edd96f73a5ddbc73fb42a3e82dbf990e6780fc430b84e2c37fdb"
+  },
+  "skin_cls_s3@6198c549": {
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "conformal": null,
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "git_commit": "6198c5491ef9311889da2ae52a6617a3c8d9829e",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8077,
+     "lo": 0.7617,
+     "point": 0.7851
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7615,
+     "lo": 0.6671,
+     "point": 0.7159
+    },
+    "headline.macro_f1": {
+     "hi": 0.7647,
+     "lo": 0.6829,
+     "point": 0.7262
+    },
+    "official_test.accuracy": {
+     "hi": 0.8077,
+     "lo": 0.7617,
+     "point": 0.7851
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7615,
+     "lo": 0.6671,
+     "point": 0.7159
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7647,
+     "lo": 0.6829,
+     "point": 0.7262
+    },
+    "test.accuracy": {
+     "hi": 0.8439,
+     "lo": 0.7818,
+     "point": 0.814
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8129,
+     "lo": 0.6429,
+     "point": 0.7283
+    },
+    "test.macro_f1": {
+     "hi": 0.784,
+     "lo": 0.6396,
+     "point": 0.7198
+    }
+   },
+   "kaggle_kernel": "parallax-skin-cls",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "metrics_file": "ml/artifacts/skin_cls_s3/metrics.json",
+   "model_id": "skin_cls_s3@6198c549",
+   "note": "seed variant for the skin ensemble",
+   "preproc_spec": "skin_cls",
+   "registered_utc": "2026-10-07T05:52:54Z",
+   "seed": 3,
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "split_name": "ham10000",
+   "task": "classification",
+   "temperature": null,
+   "training_data": [
+    "isic2018_t3_train (HAM10000)"
+   ],
+   "weights_bytes": 111357395,
+   "weights_file": "weights.pt",
+   "weights_sha256": "fa77ade97f89bf9a1c565eb3819670099664b7fd9d49f56cbc117227d44f0f61"
+  },
+  "skin_ens": {
+   "arch": "mean of 3 x convnext_tiny.fb_in22k_ft_in1k logits (seeds 1,2,3)",
+   "calibration_file": "ml/artifacts/skin_ens/calibration.json",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "contamination": "clean on the official test; see model card",
+   "headline": {
+    "ensemble_tta.milk10k.balanced_accuracy": {
+     "hi": 0.6386,
+     "lo": 0.5801,
+     "point": 0.6085
+    },
+    "ensemble_tta.official_test.balanced_accuracy": {
+     "hi": 0.7746,
+     "lo": 0.6815,
+     "point": 0.7282
+    }
+   },
+   "license": "non-commercial (CC BY-NC training data)",
+   "members": [
+    "skin_cls@a217517b",
+    "skin_cls_s2@6198c549",
+    "skin_cls_s3@6198c549"
+   ],
+   "model_id": "skin_ens",
+   "preproc_spec": "skin_cls",
+   "recommendation": "ship the ensemble",
+   "registered_utc": "2026-10-07T06:01:25Z",
+   "task": "classification (ensemble)",
+   "tta": "optional 4-way flip average"
   }
  },
  "schema": 1

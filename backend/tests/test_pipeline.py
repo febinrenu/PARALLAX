@@ -151,3 +151,80 @@ def test_a_failed_stage_is_not_cached(tmp_path):
     _, second = run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
     assert first[1].ok is False and second[1].ok is True
     assert calls["n"] == 2
+
+
+# -- P3-1: later stages see earlier results; findings merge by id; claims reach the study ---------
+def _finding_update(finding: dict, **changes) -> dict:
+    return {**finding, **changes}
+
+
+def _reader_then(*later: StageSpec) -> list[StageSpec]:
+    return [*_cxr_stages(), *later]
+
+
+def test_later_stages_see_every_earlier_result_on_the_context(tmp_path):
+    seen: list[list[str]] = []
+
+    def probe(ctx: StudyContext) -> StageResult:
+        seen.append([sr.stage for sr in ctx.stage_results])
+        return StageResult(stage="probe", ok=True, ms=0, payload={})
+
+    run_study(_cxr_bytes(), modality_hint="cxr", stages=_reader_then(StageSpec(name="probe", run=probe)), config=_config(tmp_path))
+    assert seen == [["intake", "reader"]]
+
+
+def test_a_stage_that_updates_findings_replaces_them_instead_of_duplicating(tmp_path):
+    def second_read(ctx: StudyContext) -> StageResult:
+        reader = next(sr for sr in ctx.stage_results if sr.stage == "reader")
+        updated = [_finding_update(f, flags=[*f["flags"], "second_read_seen"]) for f in reader.payload["findings"]]
+        return StageResult(stage="second_read", ok=True, ms=0, payload={"findings": updated})
+
+    def context(ctx: StudyContext) -> StageResult:
+        latest = next(sr for sr in reversed(ctx.stage_results) if sr.payload.get("findings"))
+        updated = [_finding_update(f, flags=[*f["flags"], "context_seen"]) for f in latest.payload["findings"]]
+        return StageResult(stage="context", ok=True, ms=0, payload={"findings": updated})
+
+    stages = _reader_then(StageSpec(name="second_read", run=second_read), StageSpec(name="context", run=context))
+    study, results = run_study(_cxr_bytes(), modality_hint="cxr", stages=stages, config=_config(tmp_path))
+
+    reader_ids = [f["finding_id"] for f in results[1].payload["findings"]]
+    assert reader_ids, "the stub reader should produce at least one finding"
+    assert [f.finding_id for f in study.findings] == reader_ids  # one per id, reader order kept
+    for f in study.findings:
+        assert {"second_read_seen", "context_seen"} <= set(f.flags)  # both updates on the same finding
+        assert f.status == compute_status(f)
+
+
+def test_claims_from_any_stage_reach_the_study(tmp_path):
+    claim = {"claim_id": "c1", "template": "Doctor, consider {f1.label}.", "evidence_ids": ["e1"], "rendered": "Doctor, consider x."}
+
+    def report(ctx: StudyContext) -> StageResult:
+        return StageResult(stage="report", ok=True, ms=0, payload={"claims": [claim, {"claim_id": "broken"}]})
+
+    study, _ = run_study(_cxr_bytes(), modality_hint="cxr", stages=_reader_then(StageSpec(name="report", run=report)), config=_config(tmp_path))
+    assert [c.claim_id for c in study.claims] == ["c1"]  # the malformed one is dropped, not fatal
+
+
+def test_merge_matches_the_reasoning_module_helper(tmp_path):
+    reasoning = pytest.importorskip("medproof.reasoning_stages")
+    from medproof.pipeline import _collect_claims, _collect_findings
+
+    def update(ctx: StudyContext) -> StageResult:
+        latest = ctx.stage_results[-1].payload["findings"]
+        return StageResult(stage="update", ok=True, ms=0, payload={"findings": [_finding_update(f, flags=["x"]) for f in latest[:1]]})
+
+    _, results = run_study(_cxr_bytes(), modality_hint="cxr", stages=_reader_then(StageSpec(name="update", run=update)), config=_config(tmp_path))
+    ours = _collect_findings(results)
+    theirs = reasoning.merge_findings(results)
+    for f in theirs:
+        f.status = compute_status(f)
+    assert [f.model_dump() for f in ours] == [f.model_dump() for f in theirs]
+    assert _collect_claims(results) == reasoning.collect_claims(results)
+
+
+def test_reasoning_stages_are_registered_after_the_reader_and_never_cached():
+    pytest.importorskip("medproof.reasoning_stages")
+    names = [s.name for s in PIPELINE]
+    assert names[:2] == ["intake", "reader"]
+    assert names[2:6] == ["second_read", "context", "report", "precedents"]
+    assert not any(s.cacheable for s in PIPELINE[2:6])

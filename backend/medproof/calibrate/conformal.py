@@ -91,11 +91,8 @@ def aps_sets_mondrian(probs: np.ndarray, qhats: list[float], u: np.ndarray | Non
     score_sorted = before + uu * srt  # score of the class at each rank
     q_sorted = np.asarray(qhats)[order]
     keep = score_sorted <= q_sorted + 1e-12
-    out = []
-    for i in range(len(order)):
-        k = [int(c) for c in order[i][keep[i]]]
-        out.append(k or [int(order[i][0])])
-    return out
+    keep[:, 0] = True  # the top class is always named, matching the zero score a true top class gets when fitting
+    return [[int(c) for c in order[i][keep[i]]] for i in range(len(order))]
 
 
 # ----------------------------------------------------------------------------- RAPS

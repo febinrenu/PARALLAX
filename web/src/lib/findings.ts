@@ -77,8 +77,7 @@ export interface ChainStep {
  * Where each finding stands on the verification chain. `live` is true while the SSE stream is
  * still running: stages that have not reported yet are "pending" rather than "unavailable".
  */
-export function chainFor(f: Finding, study: StudyResult | null, stages: StageResult[], live: boolean): ChainStep[] {
-  const seen = new Set(stages.map((s) => s.stage));
+export function chainFor(f: Finding, study: StudyResult | null, _stages: StageResult[], live: boolean): ChainStep[] {
   const quality = (study?.quality ?? {}) as { passed?: boolean };
   const missing = (detail: string): Pick<ChainStep, "state" | "detail"> =>
     live ? { state: "pending", detail: "Waiting for this stage" } : { state: "unavailable", detail };
@@ -102,11 +101,17 @@ export function chainFor(f: Finding, study: StudyResult | null, stages: StageRes
         ? { state: "pass", detail: `Flipped in ${Math.round(f.stability.flip_rate * f.stability.tests)} of ${f.stability.tests} perturbations` }
         : { state: "fail", detail: `Flipped in ${Math.round(f.stability.flip_rate * f.stability.tests)} of ${f.stability.tests} perturbations` }
       : missing("Stability not tested"),
-    "Second read": f.second_read
-      ? f.second_read.agrees === false || (f.second_read.box_iou ?? 1) < 0.1
-        ? { state: "fail", detail: `Second reader disagrees${f.second_read.label ? `: ${f.second_read.label}` : ""}` }
-        : { state: "pass", detail: "Second reader agrees" }
-      : missing("Second reader not available yet"),
+    "Second read": (() => {
+      const sr = f.second_read;
+      if (!sr) return missing("Second reader not available yet");
+      if (sr.agrees === false || (sr.box_iou != null && sr.box_iou < 0.1))
+        return { state: "fail" as const, detail: `Second reader disagrees${sr.label ? `: ${sr.label}` : ""}` };
+      if (sr.agrees === true) return { state: "pass" as const, detail: `Second reader agrees${sr.box_iou != null ? ` (box overlap ${sr.box_iou.toFixed(2)})` : ""}` };
+      // Agreement is left empty where the second reader is not validated for this modality: its
+      // read is kept as an audit flag and never changes the status.
+      const noted = f.flags?.includes("second_reader_disagrees") ? "; its disagreement is logged as an audit flag" : "";
+      return { state: "unavailable" as const, detail: `Inconclusive: the second reader is not validated for this modality${noted}` };
+    })(),
     Context: f.text_evidence?.length
       ? f.text_evidence.some((t) => t.polarity === "contradicts")
         ? { state: "fail", detail: "Notes contradict this finding" }
@@ -119,8 +124,14 @@ export function chainFor(f: Finding, study: StudyResult | null, stages: StageRes
       : f.conformal_set.length > 2
         ? { state: "fail", detail: `Conformal set has ${f.conformal_set.length} labels` }
         : { state: "pass", detail: "Calibrated, conformal set is small" },
-    Firewall: study?.claims?.length ? { state: "pass", detail: "Report claims passed the firewall" } : missing("Report not generated yet"),
+    Firewall: (() => {
+      const claims = study?.claims ?? [];
+      if (!claims.length) return missing("Report not generated yet");
+      const passed = claims.filter((c) => c.blocked_reason == null).length;
+      const blocked = claims.length - passed;
+      if (!passed) return { state: "fail" as const, detail: `All ${claims.length} report claims were blocked` };
+      return { state: "pass" as const, detail: `${passed} report ${passed === 1 ? "claim" : "claims"} passed${blocked ? `, ${blocked} blocked` : ""}` };
+    })(),
   };
-  void seen; // stage names map onto chain steps once more stages exist; today only intake and reader report
   return CHAIN.map((stage) => ({ stage, ...steps[stage] }));
 }

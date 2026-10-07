@@ -9,10 +9,10 @@ class is a stricter, defaulted stand-in for the same shape, not a replacement fo
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from medproof.core.schemas import Modality
+from medproof.core.schemas import Modality, StageResult
 from medproof.intake.decode import DecodedImage
 
 
@@ -22,9 +22,12 @@ class StudyContext:
     raw_bytes: bytes | None = None
     path: str | None = None
     modality_hint: Modality | None = None
-    notes: str | None = None  # raw uploaded note text; no context stage reads it yet (P3)
+    notes: str | None = None  # raw uploaded note text; the P3 context and report stages read it
     decoded: DecodedImage | None = None
     artifact_dir: Path | None = None
     finding_start: int = 1
     evidence_start: int = 1
     input_sha256: str | None = None  # set by the orchestrator before any stage runs
+    # Every StageResult so far, in run order, appended by the orchestrator right after each stage
+    # (cache hits included). Later stages read earlier findings from here (P3-1).
+    stage_results: list[StageResult] = field(default_factory=list)
