@@ -14,7 +14,7 @@ import html
 import json
 import re
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fhir.resources.R4B.bundle import Bundle
@@ -119,8 +119,8 @@ def build_bundle(
         "category": [{"coding": [{"system": "http://terminology.hl7.org/CodeSystem/v2-0074", "code": "RAD", "display": "Radiology"}]}],
         "code": {"coding": [{"system": "http://loinc.org", "code": "18748-4", "display": "Diagnostic imaging study"}]},
         "subject": {"display": "De-identified study"},
-        "effectiveDateTime": issued.astimezone(timezone.utc).isoformat(timespec="seconds"),
-        "issued": issued.astimezone(timezone.utc).isoformat(timespec="seconds"),
+        "effectiveDateTime": issued.astimezone(UTC).isoformat(timespec="seconds"),
+        "issued": issued.astimezone(UTC).isoformat(timespec="seconds"),
         "conclusion": conclusion,
     }
     if refs:
