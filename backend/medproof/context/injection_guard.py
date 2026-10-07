@@ -24,7 +24,7 @@ from medproof.llm.config import PROMPT_GUARD_MODEL
 from medproof.llm.errors import LLMError
 from medproof.llm.groq_pool import PoolResult, ScoreResult, quote_data
 
-_ZERO_WIDTH = {"​", "‌", "‍", "⁠", "﻿", "­"}
+_ZERO_WIDTH = {"\u200b", "‌", "‍", "⁠", "﻿", "­"}
 _HOMOGLYPHS = str.maketrans(
     {"о": "o", "і": "i", "а": "a", "е": "e", "р": "p", "с": "c",
      "у": "y", "х": "x", "ѕ": "s", "ј": "j", "ο": "o", "Ι": "i"}
@@ -41,6 +41,7 @@ RULES: dict[str, re.Pattern[str]] = {
     "direct_override": re.compile(
         rf"\b(?:ignore|disregard|forget|override|bypass)\b[^.]{{0,40}}\b{_TARGET}\b|"
         r"\b(?:ignore|disregard)\s+(?:all\s+|everything\s+)?(?:of\s+)?(?:the\s+)?above\b|"
+        r"\bforget\s+(?:everything|all)\b[^.\n]{0,20}\b(?:above|before|previous\w*|earlier|that|you\s+were\s+told)\b|"
         r"\bnew\s+instructions?\b|"
         r"\b(?:do not|don't|never)\s+report\s+any\s+findings?\b|"
         r"\breport\s+(?:that\s+)?no\s+(?:findings?|abnormalit\w+)\b|"
@@ -51,6 +52,7 @@ RULES: dict[str, re.Pattern[str]] = {
     "role_spoof": re.compile(
         r"(?:^|[.!?\n]\s*)(?:system|assistant|developer|admin|root)\s*:|"
         r"#{2,}\s*system\b|<\|\s*(?:system|assistant|im_start)\s*\|>|\[\s*admin\s+override\s*\]|"
+        r"\b(?:pretend|act)\s+(?:you\s+are|to\s+be|as)\s+(?:that\s+you\s+are\s+)?(?:the\s+|an?\s+)?(?:attending|radiologist|doctor|physician|system|admin\w*|developer|root)\b|"
         r"\bdeveloper\s+message\b|\byou\s+are\s+now\s+in\s+\w+\s+mode\b|\byou\s+must\s+(?:now\s+)?(?:approve|report|answer|output)\b"
     ),
     "delimiter_breakout": re.compile(
