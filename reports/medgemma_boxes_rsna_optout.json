@@ -1,0 +1,74 @@
+{
+  "what": "MedGemma 1.5 4B (4-bit) asked to box lung opacities on RSNA test images; ground truth from stage_2_train_labels.csv",
+  "prompt": "This is a chest X-ray for a research evaluation. Locate any lung opacity or consolidation. Reply with JSON only: [{\"label\": \"opacity\", \"box_2d\": [y_min, x_min, y_max, x_max]}] with coordinates normalized to 0-1000. If there is no opacity, reply [].",
+  "image_size": 1024,
+  "answered": 150,
+  "requested": 150,
+  "opacity_images": {
+    "n": 100,
+    "any_box": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "pointing_hit": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "iou_ge_0.1": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "iou_ge_0.3": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "iou_ge_0.5": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "mean_best_iou": 0.0
+  },
+  "normal_images": {
+    "n": 50,
+    "any_box": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    }
+  },
+  "baseline_central_box": {
+    "any_box": {
+      "point": 1.0,
+      "lo": 1.0,
+      "hi": 1.0
+    },
+    "pointing_hit": {
+      "point": 0.1,
+      "lo": 0.05,
+      "hi": 0.16
+    },
+    "iou_ge_0.1": {
+      "point": 0.69,
+      "lo": 0.6,
+      "hi": 0.78
+    },
+    "iou_ge_0.3": {
+      "point": 0.1,
+      "lo": 0.04,
+      "hi": 0.16
+    },
+    "iou_ge_0.5": {
+      "point": 0.0,
+      "lo": 0.0,
+      "hi": 0.0
+    },
+    "mean_best_iou": 0.1603
+  },
+  "note": "the box convention is [y_min, x_min, y_max, x_max] on a 0-1000 grid; the baseline is a fixed central box covering a quarter of the image",
+  "variant": "optout"
+}

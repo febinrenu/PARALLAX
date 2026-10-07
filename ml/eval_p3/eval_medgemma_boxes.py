@@ -9,7 +9,9 @@ whose centre lies inside a true box (pointing game), and the share with IoU of a
 central box is scored the same way as the baseline a model must beat, and the share of Normal images that get a
 box is the false-alarm rate. Replies are cached, so a rerun costs nothing; evaluation alone needs no GPU.
 
-Writes reports/medgemma_boxes_rsna.json and ml/artifacts/medgemma_reads/rsna_boxes.jsonl (gitignored).
+Two prompt variants (--variant optout|forced): `optout` lets the model say there is no opacity, which measures detection,
+and `forced` tells it the opacity is there, which measures where it points. Writes reports/medgemma_boxes_rsna_<variant>.json and
+ml/artifacts/medgemma_reads/rsna_boxes_<variant>.jsonl (gitignored).
 """
 
 from __future__ import annotations
@@ -32,12 +34,17 @@ from ml.eval.bootstrap import ci  # noqa: E402
 
 Box = tuple[float, float, float, float]
 BASELINE_BOX: Box = (250.0, 250.0, 750.0, 750.0)  # on the 0-1000 grid: the central quarter of the image, a guess that needs no model
-PROMPT = (
-    "This is a chest X-ray for a research evaluation. Locate any lung opacity or consolidation. "
+_FORMAT = (
     'Reply with JSON only: [{"label": "opacity", "box_2d": [y_min, x_min, y_max, x_max]}] with coordinates '
-    "normalized to 0-1000. If there is no opacity, reply []."
+    "normalized to 0-1000."
 )
-READS = ROOT / "ml" / "artifacts" / "medgemma_reads" / "rsna_boxes.jsonl"
+PROMPTS = {
+    # detection: the model may decline; a model that never sees an opacity answers [] every time
+    "optout": f"This is a chest X-ray for a research evaluation. Locate any lung opacity or consolidation. {_FORMAT} If there is no opacity, reply [].",
+    # localisation: every image in the test set has an opacity, so the model is told to name the most likely region
+    "forced": f"This is a chest X-ray for a research evaluation that contains a lung opacity. Give at least one box for the region most likely to be the opacity. {_FORMAT}",
+}
+READS_DIR = ROOT / "ml" / "artifacts" / "medgemma_reads"
 LABELS_CSV = ROOT / "ml" / "data" / "raw" / "rsna_pneumonia" / "stage_2_train_labels.csv"
 _BOX_RE = re.compile(r'"box_2d"\s*:\s*\[([^\]]*)\]')
 
@@ -136,27 +143,28 @@ def _select(n: int) -> list[tuple[str, str, Path]]:
     return picks
 
 
-def run_model(picks: list[tuple[str, str, Path]]) -> dict[str, str]:
+def run_model(picks: list[tuple[str, str, Path]], variant: str) -> dict[str, str]:
     """Replies by image id, cached in READS so an interrupted run resumes."""
     from PIL import Image
 
     from medproof.intake.decode import load_image
     from services.medgemma.loader import TransformersBackend
 
-    READS.parent.mkdir(parents=True, exist_ok=True)
+    reads = READS_DIR / f"rsna_boxes_{variant}.jsonl"
+    reads.parent.mkdir(parents=True, exist_ok=True)
     replies: dict[str, str] = {}
-    if READS.exists():
-        for line in READS.read_text(encoding="utf-8").splitlines():
+    if reads.exists():
+        for line in reads.read_text(encoding="utf-8").splitlines():
             if line.strip():
                 row = json.loads(line)
                 replies[row["id"]] = row["reply"]
     todo = [p for p in picks if p[0] not in replies]
     if todo:
         backend = TransformersBackend.from_env()
-        with READS.open("a", encoding="utf-8") as fh:
+        with reads.open("a", encoding="utf-8") as fh:
             for image_id, _, path in todo:
                 img = Image.fromarray(load_image(path.read_bytes()).display).convert("RGB")
-                reply = backend.generate(img, PROMPT, max_new_tokens=200)
+                reply = backend.generate(img, PROMPTS[variant], max_new_tokens=200)
                 replies[image_id] = reply
                 fh.write(json.dumps({"id": image_id, "reply": reply}) + "\n")
                 fh.flush()
@@ -166,14 +174,16 @@ def run_model(picks: list[tuple[str, str, Path]]) -> dict[str, str]:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=100, help="opacity images (half as many Normal images are added)")
+    ap.add_argument("--variant", choices=sorted(PROMPTS), default="optout")
     ap.add_argument("--no-model", action="store_true", help="score cached replies only")
     args = ap.parse_args(argv)
     picks = _select(args.n)
     gt = _gt_boxes()
     if args.no_model:
-        replies = {json.loads(line)["id"]: json.loads(line)["reply"] for line in READS.read_text(encoding="utf-8").splitlines() if line.strip()}
+        cached = READS_DIR / f"rsna_boxes_{args.variant}.jsonl"
+        replies = {json.loads(line)["id"]: json.loads(line)["reply"] for line in cached.read_text(encoding="utf-8").splitlines() if line.strip()}
     else:
-        replies = run_model(picks)
+        replies = run_model(picks, args.variant)
     rows = []
     for image_id, label, _ in picks:
         if image_id in replies:
@@ -181,11 +191,11 @@ def main(argv: list[str] | None = None) -> int:
                          "pred": [to_pixels(b, 1024, 1024) for b in parse_boxes(replies[image_id])]})
     out = {
         "what": "MedGemma 1.5 4B (4-bit) asked to box lung opacities on RSNA test images; ground truth from stage_2_train_labels.csv",
-        "prompt": PROMPT, "image_size": 1024, "answered": len(rows), "requested": len(picks),
+        "variant": args.variant, "prompt": PROMPTS[args.variant], "image_size": 1024, "answered": len(rows), "requested": len(picks),
         **evaluate(rows, size=1024),
         "note": "the box convention is [y_min, x_min, y_max, x_max] on a 0-1000 grid; the baseline is a fixed central box covering a quarter of the image",
     }
-    path = ROOT / "reports" / "medgemma_boxes_rsna.json"
+    path = ROOT / "reports" / f"medgemma_boxes_rsna_{args.variant}.json"
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(out, indent=2), encoding="utf-8")
     print(json.dumps(out, indent=1))
