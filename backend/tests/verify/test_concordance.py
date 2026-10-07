@@ -174,3 +174,33 @@ def test_unvalidated_modalities_do_not_let_a_poor_box_demote_either():
     out, _ = _apply([f], read("Small right pleural effusion.", boxes=boxes))
     assert out[0].second_read.box_iou is None and "second_box_mismatch" in out[0].flags
     assert compute_status(out[0]) == "verified"
+
+
+# ---- finding labels may use P4's vocabulary names (melanoma, Pleural_Thickening) or the dataset codes (mel)
+
+@pytest.mark.parametrize("modality,label,text,expected", [
+    ("skin_dermoscopy", "melanoma", "Suspicious for melanoma.", True),
+    ("skin_dermoscopy", "mel", "Suspicious for melanoma.", True),
+    ("skin_dermoscopy", "melanocytic_nevus", "A benign melanocytic nevus.", True),
+    ("skin_dermoscopy", "basal_cell_carcinoma", "Consistent with basal cell carcinoma.", True),
+    ("skin_dermoscopy", "benign_keratosis", "Seborrheic keratosis.", True),
+    ("skin_dermoscopy", "actinic_keratosis", "Actinic keratosis.", True),
+    ("skin_dermoscopy", "vascular_lesion", "Cherry hemangioma.", True),
+    ("skin_dermoscopy", "melanoma", "A benign nevus.", False),
+    ("cxr", "Pleural_Thickening", "Pleural thickening on the left.", True),
+    ("cxr", "pleural thickening", "Pleural thickening on the left.", True),
+    ("cxr", "Lung Lesion", "A lung lesion is seen.", True),
+    ("bone_xray", "fracture", "Transverse fracture.", True),
+])
+def test_vocabulary_names_and_dataset_codes_match_the_same_report(modality, label, text, expected):
+    out, _ = apply([finding(label=label, modality=modality)], read(text, modality))
+    assert out[0].second_read.agrees is expected
+
+
+def test_canonical_label_leaves_unknown_labels_alone():
+    from medproof.verify.report_labels import canonical_label
+
+    assert canonical_label("skin_dermoscopy", "melanoma") == "mel"
+    assert canonical_label("cxr", "pleural thickening") == "Pleural_Thickening"
+    assert canonical_label("skin_dermoscopy", "something new") == "something new"
+    assert canonical_label("other", "Anything") == "Anything"

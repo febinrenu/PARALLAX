@@ -20,7 +20,7 @@ from collections.abc import Hashable, Sequence
 
 from medproof.core.schemas import Finding, SecondRead, StageResult
 from medproof.readers.generalist import GeneralistRead
-from medproof.verify.report_labels import ReportLabel
+from medproof.verify.report_labels import ReportLabel, canonical_label
 
 BoxXYXY = tuple[float, float, float, float]
 MIN_IOU = 0.1  # plan.md status rule: below this the two readers localise different things
@@ -59,9 +59,9 @@ def _matching_label(read: GeneralistRead, label: str) -> str | None:
     return pos[0].label if pos else None
 
 
-def _best_iou(finding: Finding, read: GeneralistRead) -> float | None:
+def _best_iou(finding: Finding, read: GeneralistRead, name: str) -> float | None:
     mine = [e.bbox_xyxy for e in finding.image_evidence if e.bbox_xyxy is not None]
-    theirs = [b for name, b in read.boxes if name == finding.label]
+    theirs = [b for box_name, b in read.boxes if box_name == name]
     if not mine or not theirs:
         return None
     return max(box_iou(m, t) for m in mine for t in theirs)
@@ -85,8 +85,9 @@ def apply(
         )
         return out, stage
     for f in findings:
-        agrees = _agrees(read, f.label)
-        iou = _best_iou(f, read)
+        name = canonical_label(f.modality, f.label)
+        agrees = _agrees(read, name)
+        iou = _best_iou(f, read, name)
         flags = list(f.flags)
         if agrees is False:
             flags.append("second_reader_disagrees")
@@ -97,7 +98,7 @@ def apply(
             # audit only: the status rule reads these two fields, so they must not carry the disagreement
             agrees = True if agrees else None
             iou = None
-        sr = SecondRead(model=read.model, label=_matching_label(read, f.label), agrees=agrees, box_iou=iou, raw_ref=read.raw_ref)
+        sr = SecondRead(model=read.model, label=_matching_label(read, name), agrees=agrees, box_iou=iou, raw_ref=read.raw_ref)
         out.append(f.model_copy(update={"second_read": sr, "flags": list(dict.fromkeys(flags))}))
     stage = StageResult(
         stage="concordance", ok=True, ms=int((time.perf_counter() - t0) * 1000),

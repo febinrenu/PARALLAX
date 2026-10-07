@@ -59,6 +59,33 @@ BRAIN: Vocab = {
 }
 VOCABS: dict[str, Vocab] = {"cxr": CXR, "skin_dermoscopy": SKIN, "bone_xray": BONE, "brain_mri": BRAIN}
 
+# P4's core/vocab.py names the skin classes in full; the dataset codes above are what the classifier and this parser use.
+_SKIN_ALIASES = {
+    "melanoma": "mel", "melanocytic_nevus": "nv", "basal_cell_carcinoma": "bcc", "actinic_keratosis": "akiec",
+    "benign_keratosis": "bkl", "dermatofibroma": "df", "vascular_lesion": "vasc",
+}
+
+
+def _key(name: str) -> str:
+    return re.sub(r"[\s_-]+", "_", name.strip().lower())
+
+
+def canonical_label(modality: str, label: str) -> str:
+    """The name this module uses for a finding label, whichever spelling the reader or vocab gave it.
+
+    Case, spaces and underscores do not matter ("pleural thickening" is "Pleural_Thickening"), and the full
+    skin names map to the dataset codes. A label this module does not know is returned unchanged."""
+    vocab = VOCABS.get(modality)
+    if vocab is None:
+        return label
+    key = _key(label)
+    for name in vocab:
+        if _key(name) == key:
+            return name
+    if modality == "skin_dermoscopy":
+        return _SKIN_ALIASES.get(key, label)
+    return label
+
 _NEGATORS = re.compile(
     r"\b(?:no|without|negative for|absence of|absent|free of|denies|not|nor|resolved|clear of|"
     r"no evidence of|no signs? of|no features? of|rules? out)\b",
