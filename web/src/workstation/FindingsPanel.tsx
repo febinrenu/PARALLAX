@@ -106,7 +106,7 @@ export function FindingsPanel() {
               {showWithheld ? "Hide" : "Show"} {withheld.length} withheld {withheld.length === 1 ? "finding" : "findings"}
               <span className="mt-0.5 block text-ink-dim/80">
                 {reportable.length === 0 && !streaming
-                  ? "None of them has verified evidence yet. The live pipeline does not run the faithfulness and stability checks until those stages ship (plan P1.9, P1.11)."
+                  ? "None of them has verified evidence: the region test failed or was not run (only the most probable findings are tested), and no note text supports them."
                   : "No verified image or note evidence."}
               </span>
             </button>

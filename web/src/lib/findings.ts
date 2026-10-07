@@ -92,7 +92,7 @@ export function chainFor(f: Finding, study: StudyResult | null, _stages: StageRe
       : { state: "fail", detail: "No image location" },
     Faithfulness: (() => {
       const ev = f.image_evidence?.find((e) => e.faithful !== null && e.faithful !== undefined);
-      if (!ev) return missing("Faithfulness test not run for this finding");
+      if (!ev) return missing("Not tested: only the most probable findings get the region test");
       const drop = ev.faithfulness_drop != null ? ` (confidence drop ${ev.faithfulness_drop.toFixed(2)})` : "";
       return ev.faithful ? { state: "pass" as const, detail: `Deleting the region lowers confidence${drop}` } : { state: "fail" as const, detail: `Deleting the region barely changes confidence${drop}` };
     })(),
