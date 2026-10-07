@@ -84,7 +84,7 @@ export function FindingsPanel() {
                 </div>
                 <div className="mt-2 flex items-center gap-3 pl-[30px]">
                   <ChainBar steps={steps} />
-                  <span className={`text-[12px] ${f.status === "verified" ? "text-ink" : f.status === "uncertain" ? "text-ink-dim" : "text-pencil-red"}`}>{strokeFor(f.status).label}</span>
+                  <span className={`text-[12px] ${f.status === "verified" ? "text-ink" : f.status === "uncertain" ? "text-ink-dim" : "text-pencil-red-ink"}`}>{strokeFor(f.status).label}</span>
                   {decision && <span className="ml-auto text-[12px] text-ink-dim">{decision === "accept" ? "Accepted" : "Rejected"}</span>}
                 </div>
                 {f.conformal_set.length > 0 && (

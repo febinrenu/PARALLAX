@@ -76,7 +76,7 @@ export function Validation() {
                       <td className="py-3 pr-4 text-ink-dim">{r.eval_set} <span className="font-mono">n={fmt.format(r.n)}</span></td>
                       <td className="py-3 pr-4 text-ink-dim">{r.metric}</td>
                       <td className="py-3 pr-4 text-right font-mono tabular text-ink">{r.value.toFixed(3)} <span className="text-ink-dim">[{r.ci95[0].toFixed(3)}, {r.ci95[1].toFixed(3)}]</span></td>
-                      <td className={`py-3 ${r.contaminated ? "text-pencil-red" : "text-ink-dim"}`}>{r.contaminated ? "contaminated, reference only" : r.external ? "external" : "held out"}</td>
+                      <td className={`py-3 ${r.contaminated ? "text-pencil-red-ink" : "text-ink-dim"}`}>{r.contaminated ? "contaminated, reference only" : r.external ? "external" : "held out"}</td>
                     </tr>
                   ))}
                 </tbody>
