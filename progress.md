@@ -681,8 +681,7 @@ Verified: `cd backend && python -m pytest -q` 1069 passed, 2 skipped. Env for a 
 Next: P4 to warm the mask models at start-up (first MedSAM call loads about 375 MB); P4 to check the UI shows the Mask layer and the `heatmap_off_target` flag.
 Decisions: none new. Contract change requests: none. Files outside P1's area touched at the team's request: `backend/medproof/pipeline.py` (stage wiring, router flag fix, ood score) and a new `backend/tests/test_pipeline_masks.py`.
 
-### 2026-10-07 · P4 · Deliveries checked and wired
-### 2026-10-07 · P3 · Sonnet 5.5 · voice check
+### 2026-10-07 · P3 · voice check
 Did: checked the whisper and voice path at every layer; fixed an extraction gap found by it (spelled-out history statements were dropped).
 State: the voice library works; the API and the website have no voice input yet (P4's to add).
 Verified: voice unit tests 34 passed; live Whisper run on two synthesized dictations (clean and with a spoken attack): transcripts correct, attack flagged, facts correct including history after the fix; `cd backend && python -m pytest -q` 1139 passed, 4 skipped; held-out extraction F1 0.922 exact, 0.985 lenient.
@@ -690,7 +689,7 @@ Not run: a microphone recording in a browser (there is no recording code), and r
 Next: P4 adds the transcribe route and the record button.
 Decisions: see the two entries above. Contract change requests: none.
 
-### 2026-10-07 · P4 · Opus 5.5 · Deliveries checked and wired
+### 2026-10-07 · P4 · Deliveries checked and wired
 Did: checked every assigned item on `main`; applied P3-2 in `core/status_rule.py` (+4 tests); added `POST /transcribe` (P3's `dictation_to_note`, 25 MB limit, audio not stored) and a Dictate button in the notes box; added the "similar confirmed cases" panel (thumbnails only where P3's licence gate supplied one); fixed stage caching so verify results are keyed on their input findings; labelled an off-target heatmap as such instead of blaming the lesion box; `start.bat` points at local MedSAM/MedSigLIP folders; installed `segmentation-models-pytorch` and `sentencepiece`, fetched MedSAM.
 State: live on this laptop: brain glioma uncertain (heatmap off the U-Net lesion, note supports it, mask drawn), skin nevus withheld (mask drawn), bone fracture verified by its box (mask drawn), chest 3 verified with region-naming sentences. Not testable here until files are copied: router/OOD and precedents (MedSigLIP refused for this token's account; probe files and retrieval pack are with P1 and P3). P1 edited `pipeline.py` directly for P1-A/P1-D; reviewed and kept.
 Verified: full backend suite 1129 passed, 7 skipped, 1 failed (`test_real_architectures.py::test_bone_reader_loads_a_real_yolo_checkpoint...`: needs a newer `ultralytics` than this laptop's 8.3.221 to build `yolo26n.yaml`; the trained bone reader itself loads and runs); `cd web && npx vitest run` 34 passed, `npx playwright test` 17 passed; browser checks of brain and bone with masks.
@@ -698,8 +697,7 @@ Next: copy MedSigLIP, the two router files and the retrieval pack to this laptop
 Decisions: see Decisions (cache key digest, P3-2 applied).
 Contract change requests: P3-2 acked and applied.
 
-### 2026-10-07 · P4 · WP P4.10 (README for the submission)
-### 2026-10-07 · P3 · Sonnet 5.5 · P4's open items
+### 2026-10-07 · P3 · P4's open items
 Did: found that P4 had already delivered the transcribe route, the Dictate button, the similar-cases panel and the P3-2 status cap, so verified them with real audio instead of rebuilding them; then closed P4's known gap 0 (cold start) with a startup warm-up that also wakes the MedGemma service.
 State: voice works end to end in the API and the browser; cold start fixed; nothing of P4's listed items is left that I can do without their files.
 Verified: `cd backend && python -m pytest -q` 1164 passed, 4 skipped; API tests 44 passed; /transcribe with real speech; Dictate button in Edge with a fake microphone; a never-seen chest film 109 s to 50 s after a cold restart.
@@ -707,7 +705,7 @@ Not run: real human speech; the warm-up on a machine with less memory.
 Next: P4 may want warm-up status in the UI; the team still has to pick one demo laptop.
 Decisions: see the two entries above. Contract change requests: none.
 
-### 2026-10-07 · P4 · Opus 5.5 · WP P4.10 (README for the submission)
+### 2026-10-07 · P4 · WP P4.10 (README for the submission)
 Did: wrote `README.md` against the submission guidelines: what Parallax does, the data pipeline (stage table, status rule, API routes, diagram), core models with ids, evidence and where the doctor sees it, a real sample input and output (`demo/sample_output/`: input, StudyResult, stage trace with ledger hashes and timestamps, FHIR bundle from a live chest run), validation headline with 95% CIs from `reports/metrics.json`, scope note (MVP vs stretch vs partial), technologies, install, model files, configuration, run (start.bat and manual), reproduction commands, demo order, layout, licences, limitations, team roles. Six screenshots in `docs/screenshots/` (CC0, CC BY and public-domain images only).
 State: P4.10 done. Every number is from `reports/metrics.json`, the committed sample run, or the code.
 Verified: all paths the README references exist; sample output has no local filesystem paths.
