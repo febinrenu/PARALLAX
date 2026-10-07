@@ -1,6 +1,6 @@
-import { Check, FileText, Scroll, X } from "@phosphor-icons/react";
+import { Check, FileText, Play, Scroll, X } from "@phosphor-icons/react";
 import { Link } from "react-router";
-import { decide, useSession } from "./store";
+import { decide, runSampleLive, useSession } from "./store";
 import { toast } from "./Toasts";
 
 export async function runDecision(decision: "accept" | "reject") {
@@ -35,6 +35,16 @@ export function ActionBar() {
       >
         <X size={14} weight="bold" /> Reject finding
       </button>
+      {mode === "sample" && (
+        <button
+          type="button"
+          onClick={() => void runSampleLive().then((m) => m && toast(m))}
+          title="Send this image and its note through the live pipeline"
+          className="flex items-center gap-1.5 rounded-[var(--radius-control)] border border-pencil-yellow/60 px-3 py-1.5 text-[13px] text-ink transition-transform duration-100 hover:border-pencil-yellow active:scale-[0.98]"
+        >
+          <Play size={14} weight="bold" /> Run live analysis
+        </button>
+      )}
       <span className="ml-auto flex items-center gap-3 text-[13px]">
         {reportId && (
           <Link to={`/report/${reportId}`} className="flex items-center gap-1 text-ink-dim hover:text-ink">

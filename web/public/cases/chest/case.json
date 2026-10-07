@@ -287,7 +287,7 @@
     "findings": "Real output: TorchXRayVision DenseNet121 with Grad-CAM++ and PSPNet anatomy zones.",
     "faithfulness": "Real: deletion test per plan.md D1, computed by scripts/bake_web_assets.py until P1.9 ships.",
     "stability": "Real: P1's eight perturbations at severity 3.",
-    "text_evidence": "Illustrative: the note is synthetic and spans are placed by hand until the context engine (P3.5) ships.",
+    "text_evidence": "Illustrative: the note is synthetic and the spans in this sample view are placed by hand. Run live analysis to have the context engine find them.",
     "calibration": "Not yet calibrated (P2.8): prob_calibrated equals prob_raw."
   },
   "warnings": []

@@ -8,7 +8,9 @@
     "height": 512
   },
   "credit": "brain",
-  "notes": {},
+  "notes": {
+    "n1": "58-year-old with three weeks of worsening morning headaches and a first seizure two days ago. MRI requested to look for an intracranial mass."
+  },
   "annotations": [],
   "anatomy": null,
   "study": {
@@ -38,8 +40,9 @@
     "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
   },
   "provenance": {
-    "findings": "No specialist reader for this modality yet, so the pipeline reports none.",
-    "annotations": "No mask yet: the tumour segmenter arrives with P2.4 weights."
+    "findings": "Sample view: dataset annotation only. Run live analysis to read this image with the trained reader.",
+    "annotations": "No mask yet: the tumour segmenter arrives with P2.4 weights.",
+    "text_evidence": "Synthetic clinical note, written for this demo."
   },
   "warnings": []
 }

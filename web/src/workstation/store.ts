@@ -97,6 +97,26 @@ export async function openSample(id: string) {
   }
 }
 
+/**
+ * Sends the open sample case (its exact image bytes, modality and note) through the live pipeline.
+ * Same bytes means the demo second read applies and the cached faithfulness and stability checks
+ * are reused, so a rehearsed demo runs in seconds.
+ */
+export async function runSampleLive(): Promise<string | null> {
+  const { mode, caseId, image, modality, notes, title } = state;
+  if (mode !== "sample" || !caseId || !image) return null;
+  try {
+    const res = await fetch(image.url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const file = new File([await res.blob()], `${caseId}.webp`, { type: "image/webp" });
+    await uploadStudy(file, modality ?? "", notes.n1 ?? "");
+    if (state.mode === "live") set({ title: `${title}, live` });
+    return null;
+  } catch (e) {
+    return `Could not start the live analysis: ${(e as Error).message}`;
+  }
+}
+
 export async function uploadStudy(file: File, modalityHint: Modality | "", notes: string) {
   closeStream?.();
   const token = ++loadToken;
