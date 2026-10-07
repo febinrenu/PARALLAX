@@ -34,7 +34,7 @@ from medproof.verify.concordance import apply as apply_concordance
 
 NOTE_ID = "n1"  # the single uploaded note; P4's fixtures and notes panel use the same id
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PRECEDENT_DATASET = {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri"}
+PRECEDENT_DATASET = {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri", "cxr": "rsna"}
 PRECEDENT_EMBEDDER = "medsiglip-448"
 PRECEDENT_K = 5
 
@@ -269,7 +269,7 @@ def stage_specs(services: Services | None = None) -> list[Any]:
         ("second_read", second_read_step, 130.0),  # a live MedGemma read is ~6-11 s on a laptop GPU; the client allows 120 s
         ("context", context_step, 25.0),
         ("report", report_step, 45.0),
-        ("precedents", precedents_step, 30.0),
+        ("precedents", precedents_step, 90.0),  # the first call loads MedSigLIP (10-35 s on a CPU); a startup warm-up would remove that
     ]
     return [
         StageSpec(name=name, run=functools.partial(fn, services=services), timeout_s=timeout, cache_version="v1", cacheable=False)

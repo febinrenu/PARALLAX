@@ -74,3 +74,13 @@ def test_evaluate_includes_the_fixed_central_box_baseline():
 
 def test_evaluate_with_no_images_is_not_an_error():
     assert evaluate([], size=1000, n_boot=10)["opacity_images"]["n"] == 0
+
+
+def test_there_are_two_prompt_variants_one_that_may_decline_and_one_that_must_commit():
+    from ml.eval_p3.eval_medgemma_boxes import PROMPTS
+
+    assert set(PROMPTS) == {"optout", "forced"}
+    assert "reply []" in PROMPTS["optout"]  # detection: the model may say there is nothing
+    assert "[]" not in PROMPTS["forced"] and "at least one" in PROMPTS["forced"]  # localisation: it must name a region
+    for text in PROMPTS.values():
+        assert "box_2d" in text and "0-1000" in text

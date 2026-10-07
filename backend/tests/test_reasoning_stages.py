@@ -287,4 +287,10 @@ def test_malformed_ctx_findings_are_ignored():
 def test_every_modality_with_a_built_index_has_a_precedent_dataset():
     from medproof.reasoning_stages import PRECEDENT_DATASET
 
-    assert PRECEDENT_DATASET == {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri"}
+    assert PRECEDENT_DATASET == {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri", "cxr": "rsna"}
+
+
+def test_the_precedents_stage_allows_for_a_cold_start_of_the_embedder():
+    # the first call loads MedSigLIP (10-35 s on a CPU, measured on the trained brain, skin and bone demo cases); later calls reuse it
+    timeouts = {s.name: s.timeout_s for s in stage_specs(services())}
+    assert timeouts["precedents"] >= 90.0
