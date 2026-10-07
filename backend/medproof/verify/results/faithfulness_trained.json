@@ -1,0 +1,222 @@
+{
+ "brain_cls": {
+  "model_id": "brain_cls@d351f062",
+  "images": 11,
+  "findings": 12,
+  "faithful_rate": 0.25,
+  "unstable_rate": 0.083,
+  "mean_drop": 0.489,
+  "rows": [
+   {
+    "image": "1.png",
+    "label": "meningioma",
+    "prob": 0.774,
+    "faithful": false,
+    "drop": 0.666,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "481.png",
+    "label": "meningioma",
+    "prob": 0.925,
+    "faithful": false,
+    "drop": 0.812,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "260.png",
+    "label": "meningioma",
+    "prob": 0.816,
+    "faithful": false,
+    "drop": 0.438,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "286.png",
+    "label": "meningioma",
+    "prob": 0.597,
+    "faithful": false,
+    "drop": 0.127,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "286.png",
+    "label": "pituitary",
+    "prob": 0.385,
+    "faithful": false,
+    "drop": -0.044,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "533.png",
+    "label": "glioma",
+    "prob": 0.796,
+    "faithful": false,
+    "drop": 0.296,
+    "flip_rate": 0.625
+   },
+   {
+    "image": "325.png",
+    "label": "meningioma",
+    "prob": 0.928,
+    "faithful": false,
+    "drop": 0.38,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "338.png",
+    "label": "meningioma",
+    "prob": 0.963,
+    "faithful": false,
+    "drop": 0.035,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "364.png",
+    "label": "meningioma",
+    "prob": 0.964,
+    "faithful": true,
+    "drop": 0.897,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "623.png",
+    "label": "meningioma",
+    "prob": 0.903,
+    "faithful": true,
+    "drop": 0.855,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "403.png",
+    "label": "meningioma",
+    "prob": 0.9,
+    "faithful": true,
+    "drop": 0.883,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "675.png",
+    "label": "meningioma",
+    "prob": 0.86,
+    "faithful": false,
+    "drop": 0.524,
+    "flip_rate": 0.0
+   }
+  ]
+ },
+ "skin_cls": {
+  "model_id": "skin_cls@a217517b",
+  "images": 12,
+  "findings": 13,
+  "faithful_rate": 0.538,
+  "unstable_rate": 0.231,
+  "mean_drop": 0.302,
+  "rows": [
+   {
+    "image": "ISIC_0034524.jpg",
+    "label": "nv",
+    "prob": 0.919,
+    "faithful": false,
+    "drop": 0.016,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034648.jpg",
+    "label": "nv",
+    "prob": 0.926,
+    "faithful": false,
+    "drop": 0.025,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034771.jpg",
+    "label": "mel",
+    "prob": 0.798,
+    "faithful": true,
+    "drop": 0.783,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0034896.jpg",
+    "label": "vasc",
+    "prob": 0.755,
+    "faithful": false,
+    "drop": 0.006,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "ISIC_0035022.jpg",
+    "label": "nv",
+    "prob": 0.91,
+    "faithful": false,
+    "drop": 0.005,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035147.jpg",
+    "label": "df",
+    "prob": 0.863,
+    "faithful": true,
+    "drop": 0.845,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035277.jpg",
+    "label": "akiec",
+    "prob": 0.514,
+    "faithful": true,
+    "drop": 0.471,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "ISIC_0035277.jpg",
+    "label": "bkl",
+    "prob": 0.334,
+    "faithful": false,
+    "drop": 0.088,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0035401.jpg",
+    "label": "nv",
+    "prob": 0.902,
+    "faithful": false,
+    "drop": 0.046,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035527.jpg",
+    "label": "akiec",
+    "prob": 0.597,
+    "faithful": true,
+    "drop": 0.501,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "ISIC_0035652.jpg",
+    "label": "nv",
+    "prob": 0.916,
+    "faithful": true,
+    "drop": 0.314,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035774.jpg",
+    "label": "mel",
+    "prob": 0.764,
+    "faithful": true,
+    "drop": 0.753,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0035896.jpg",
+    "label": "nv",
+    "prob": 0.898,
+    "faithful": true,
+    "drop": 0.073,
+    "flip_rate": 0.0
+   }
+  ]
+ }
+}
