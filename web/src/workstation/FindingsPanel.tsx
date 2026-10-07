@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Finding } from "../api/types";
-import { chainFor, displayLabel, leadMarker, regionOf, strokeFor, TIER_WORD } from "../lib/findings";
+import { chainFor, displayLabel, flagNotes, leadMarker, regionOf, strokeFor, TIER_WORD } from "../lib/findings";
 import { ChainBar, ChainDetail } from "./VerificationChain";
 import { selectFinding, useSession } from "./store";
 
@@ -40,6 +40,10 @@ export function FindingsPanel() {
   }, [selected]);
 
   const warnings = stages.flatMap((s) => s.warnings ?? []);
+  // The quality gate's reasons, each with the fix it suggests (P1.3); intake streams them first.
+  type Reason = { code: string; level: string; message: string; fix: string };
+  const quality = ((study?.quality ?? stages.find((s) => s.stage === "intake")?.payload?.quality) ?? {}) as { reasons?: Reason[] };
+  const qualityReasons = quality.reasons ?? [];
 
   return (
     <aside aria-label="Findings" className="flex min-h-0 flex-col border-l border-film-line/60 bg-film-panel">
@@ -53,6 +57,19 @@ export function FindingsPanel() {
       </div>
 
       {error && <p className="mx-4 mb-3 rounded-[var(--radius-control)] bg-pencil-red/10 px-3 py-2 text-[13px] text-ink">{error}</p>}
+      {qualityReasons.length > 0 && (
+        <div className="mx-4 mb-3 rounded-[var(--radius-control)] border border-film-line px-3 py-2 text-[12.5px] leading-snug">
+          <p className="text-ink">Image quality</p>
+          <ul className="mt-1 space-y-1 text-ink-dim">
+            {qualityReasons.map((r) => (
+              <li key={r.code}>
+                <span className={r.level === "fail" ? "text-pencil-red-ink" : "text-ink"}>{r.message}</span>
+                {r.fix ? ` ${r.fix}` : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <ol ref={listRef} className="min-h-0 flex-1 overflow-y-auto px-2 pb-3" data-lenis-prevent>
         {[...reportable, ...(showWithheld ? withheld : [])].map((f, i) => {
@@ -94,7 +111,18 @@ export function FindingsPanel() {
                     ))}
                   </div>
                 )}
-                {isSel && <div className="pl-[30px]"><ChainDetail steps={steps} /></div>}
+                {isSel && (
+                  <div className="pl-[30px]">
+                    <ChainDetail steps={steps} />
+                    {flagNotes(f).length > 0 && (
+                      <ul className="mt-2 space-y-0.5 text-[12.5px] leading-snug text-ink-dim">
+                        {flagNotes(f).map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </button>
             </li>
           );
