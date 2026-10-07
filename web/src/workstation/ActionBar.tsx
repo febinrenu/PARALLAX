@@ -2,6 +2,7 @@ import { Check, FileText, Play, Scroll, X } from "@phosphor-icons/react";
 import { Link } from "react-router";
 import { decide, runSampleLive, useSession } from "./store";
 import { toast } from "./Toasts";
+import { NO_API_NOTE, useApiAvailable } from "./useApi";
 
 export async function runDecision(decision: "accept" | "reject") {
   const message = await decide(decision);
@@ -14,6 +15,7 @@ export function ActionBar() {
   const studyId = useSession((s) => s.studyId);
   const caseId = useSession((s) => s.caseId);
   const reportId = mode === "live" ? studyId : caseId ? `sample-${caseId}` : null;
+  const api = useApiAvailable();
 
   return (
     <div className="flex flex-wrap items-center gap-2 border-t border-film-line/60 bg-film-panel px-4 py-3">
@@ -35,15 +37,21 @@ export function ActionBar() {
       >
         <X size={14} weight="bold" /> Reject finding
       </button>
-      {mode === "sample" && (
+      {mode === "sample" && api !== false && (
         <button
           type="button"
+          disabled={api === null}
           onClick={() => void runSampleLive().then((m) => m && toast(m))}
           title="Send this image and its note through the live pipeline"
           className="flex items-center gap-1.5 rounded-[var(--radius-control)] border border-pencil-yellow/60 px-3 py-1.5 text-[13px] text-ink transition-transform duration-100 hover:border-pencil-yellow active:scale-[0.98]"
         >
           <Play size={14} weight="bold" /> Run live analysis
         </button>
+      )}
+      {mode === "sample" && api === false && (
+        <span className="max-w-[46ch] text-[12px] leading-snug text-ink-dim" title={NO_API_NOTE}>
+          Showing the recorded sample result. Live analysis runs when the analysis server is attached.
+        </span>
       )}
       <span className="ml-auto flex items-center gap-3 text-[13px]">
         {reportId && (

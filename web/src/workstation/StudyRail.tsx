@@ -3,6 +3,7 @@ import { Microphone, Stop, UploadSimple } from "@phosphor-icons/react";
 import { loadCaseIndex, transcribe } from "../api/client";
 import type { CaseIndexEntry, Modality } from "../api/types";
 import { openSample, uploadStudy, useSession } from "./store";
+import { NO_API_NOTE, useApiAvailable } from "./useApi";
 
 const MODALITIES: { value: Modality | ""; label: string }[] = [
   { value: "cxr", label: "Chest X-ray" },
@@ -64,6 +65,7 @@ export function StudyRail({ pendingFile, setPendingFile }: { pendingFile: File |
   const streaming = useSession((s) => s.streaming);
   const fileInput = useRef<HTMLInputElement>(null);
   const dictation = useDictation(notes, setNotes);
+  const api = useApiAvailable();
   const ids = { file: useId(), modality: useId(), notes: useId(), help: useId() };
 
   useEffect(() => {
@@ -137,7 +139,7 @@ export function StudyRail({ pendingFile, setPendingFile }: { pendingFile: File |
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label htmlFor={ids.notes} className="block text-[12.5px] text-ink">Clinical notes (optional)</label>
-              {dictation.supported && (
+              {dictation.supported && api !== false && (
                 <button
                   type="button"
                   onClick={() => (dictation.state.phase === "recording" ? dictation.stop() : void dictation.start())}
@@ -164,10 +166,11 @@ export function StudyRail({ pendingFile, setPendingFile }: { pendingFile: File |
             )}
           </div>
 
+          {api === false && <p className="text-[12px] leading-snug text-ink-dim">{NO_API_NOTE}</p>}
           <button
             type="button"
             onClick={submit}
-            disabled={streaming}
+            disabled={streaming || api === false}
             className="w-full rounded-[var(--radius-control)] bg-pencil-yellow px-3 py-2 text-[13px] font-medium text-lightbox-ink transition-transform duration-100 active:scale-[0.98] disabled:opacity-60"
           >
             {streaming ? "Analysing…" : pendingFile ? "Analyse study" : "Choose a file"}

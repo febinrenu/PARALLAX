@@ -83,12 +83,41 @@ export async function verifyLedger() {
   return json<{ ok: boolean; entries: number; head?: string; broken_at?: number; reason?: string }>(await fetch(`${API}/ledger/verify`));
 }
 
-export async function getMetrics() {
-  return json<Record<string, unknown>>(await fetch(`${API}/metrics`));
+let apiCheck: Promise<boolean> | null = null;
+
+/**
+ * Whether an analysis server answers behind `/api`. The static hosted site has none: it serves the
+ * sample cases, and live analysis needs the API running (start.bat or uvicorn).
+ */
+export function apiAvailable(): Promise<boolean> {
+  apiCheck ??= (async () => {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 2500);
+      const res = await fetch(`${API}/ledger/verify`, { signal: ctrl.signal });
+      clearTimeout(timer);
+      return res.ok && (res.headers.get("content-type") ?? "").includes("json");
+    } catch {
+      return false;
+    }
+  })();
+  return apiCheck;
 }
 
+/** Validation numbers: the API's copy, or the committed reports/metrics.json when no API is attached. */
+export async function getMetrics() {
+  if (await apiAvailable()) return json<Record<string, unknown>>(await fetch(`${API}/metrics`));
+  return (await import("../../../reports/metrics.json")).default as Record<string, unknown>;
+}
+
+const STATIC_CARDS = import.meta.glob("../../../docs/model_cards/*.json", { import: "default" });
+
+/** Model cards: from the API, or the committed docs/model_cards/*.json when no API is attached. */
 export async function getModelCards() {
-  return json<{ cards: Record<string, unknown>[]; note?: string }>(await fetch(`${API}/model-cards`));
+  if (await apiAvailable()) return json<{ cards: Record<string, unknown>[]; note?: string }>(await fetch(`${API}/model-cards`));
+  const entries = Object.keys(STATIC_CARDS).sort();
+  const cards = (await Promise.all(entries.map((k) => STATIC_CARDS[k]()))) as Record<string, unknown>[];
+  return { cards };
 }
 
 export interface StudyEventHandlers {
