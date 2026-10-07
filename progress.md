@@ -102,8 +102,8 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P4.3 | Pipeline orchestrator | done | main | 2026-10-07 | `pipeline.py` + `core/{context,config,cache}.py`; only intake + CXR reader stages exist today, new ones append to `PIPELINE` |
 | P4.4 | API + SSE | done | main | 2026-10-07 | `api/{app,studies,system}.py`; FastAPI + sse-starlette; in-memory `core/store.py` (not persisted) |
 | P4.5 | Evidence ledger | done | main | 2026-10-07 | `core/ledger.py`; single global hash-chained JSONL; `GET /ledger/verify`; doctor feedback logged |
-| P4.6 | Web app pages | todo | | | |
-| P4.7 | WebGL viewer | todo | | | |
+| P4.6 | Web app pages | done | main | 2026-10-07 | Scrollytelling landing (prerendered, two Vite entries) + `/read` workstation + validation, models, audit, report, 404; Playwright + axe e2e green |
+| P4.7 | WebGL viewer | done | main | 2026-10-07 | Own WebGL2 engine `web/src/gl/`; R16F full-depth path, W/L, overlays, keyboard map. 60 fps on 2048² not measured on a real GPU yet (see role section) |
 | P4.8 | Docker + CI + e2e + a11y | todo | | | |
 | P4.9 | Offline demo pack | todo | | | |
 | P4.10 | README | todo | | | |
@@ -154,7 +154,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 **MedGemma endpoint:** (where it runs, current URL, last health check)
 
 ### P4 — Experience & Platform
-**Now:** P4.1 to P4.5 done. P4.3 added the orchestrator (`pipeline.run_study`, `core/{context,config,cache}.py`) — see the shared log for that pass's detail. P4.4+P4.5 add:
+**Now:** P4.1 to P4.7 done. P4.3 added the orchestrator (`pipeline.run_study`, `core/{context,config,cache}.py`) — see the shared log for that pass's detail. P4.4+P4.5 add:
 - `core/ledger.py` (`Ledger`): one global, append-only, hash-chained JSONL (not per-study — matches the single `GET /ledger/verify` endpoint). `append()` hashes `prev_hash + event + payload_hash + ts + actor + study_id`, so tampering any of those fields alone (not just the payload) is caught. `verify()` replays the whole chain.
 - `core/store.py` (`StudyStore`): in-memory, per-study bookkeeping for the API — status, accumulated `StageResult`s, final `StudyResult`, an `asyncio.Queue` for live SSE subscribers. **Not persisted**: a server restart loses every in-flight/completed study. That's a known, stated limitation, not an oversight — plan.md's P4.4 Done-when doesn't ask for persistence, and the ledger is the durable record.
 - `api/{app,studies,system}.py` (FastAPI + `sse-starlette`): `POST /studies` (multipart upload, runs the pipeline on an executor thread, returns 202 immediately), `GET /studies/{id}/events` (SSE: one `stage` event per `StageResult`, a final `done` with the full `StudyResult`), `GET /studies/{id}`, `POST /studies/{id}/feedback` (the only place a doctor's accept/reject reaches the ledger — D17), `GET /studies/{id}/fhir` / `GET /metrics` / `GET /model-cards` (honest "not available yet" bodies — P3.13/P2.14/P2.13 aren't built, so these never fabricate data), `GET /ledger/verify`.
@@ -162,7 +162,16 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 - Verified end to end with a real running server (not just `TestClient`): started `uvicorn medproof.api.app:app`, uploaded a real phantom PNG, confirmed `GET /studies/{id}`, `POST /studies/{id}/feedback`, and `GET /ledger/verify` all behave correctly over real HTTP (ledger `entries` went 2 → 3 after feedback, `ok: true` throughout).
 
 **Honesty note carried over from P4.3**, now doubly true: the generalist/MedGemma stage still doesn't exist (P3.1 `todo`), so "kill MedGemma mid-run" is still unverified as literally stated — proven instead via the same stand-ins (synthetic stages, real brain/skin/bone degradation), now exercised through the HTTP API too, not just `run_study()` directly.
-**Next:** P4.6 (web app pages) and P4.7 (WebGL viewer) — first real UI, built against `contracts.ts` and this API.
+**P4.6 + P4.7 (UI), added the same day:**
+- Landing `/` ("Two lines of sight"): ten chapters, each a real verification stage, around one persistent WebGL2 radiograph. Prerendered HTML (readable with JS off), hydrated, then the story engine (GSAP 3.15 ScrollTrigger + SplitText, Lenis, own GL renderer) loads after `load`/idle. Phones, reduced motion and devices without WebGL2 get an article layout with the same copy.
+- Workstation `/read`: study rail (four sample cases, upload), WebGL viewport, findings panel, verification chain, notes with two-way span linking, action bar, command palette, shortcut sheet. Live mode = `POST /studies` + SSE; sample mode = static `web/public/cases/*` (works without the backend).
+- Pages: `/validation` (real `reports/leakage.json`; "publishes at gate G3" where P2 data is pending), `/models` (declared resources with licences; `/model-cards` when P2.13 lands), `/audit/:id` (server verify + in-browser entry-hash recompute), `/report/:id` (A4 print), 404.
+- Backend additions (additive): `GET /studies/{id}/image|pixels|artifacts/{name}|ledger`; refs rewritten to URLs before storing; artifacts content-addressed by input sha256; intake no longer cached and failed stages never cached (both were real bugs found while driving the UI live; regression tests added).
+- Media is all CC0 / CC BY / public domain and listed in `web/public/media/credits.json`: Häggström chest PA (CC0), FracAtlas wrist (CC BY 4.0), ISIC_0015552 + Task 1 mask (CC-0), AFIP glioblastoma MRI (public domain). `scripts/bake_web_assets.py` ran the real CXR reader, anatomy segmenter, deletion test, eight perturbations and quality gate on the chest film; landing numbers come from that bake.
+- Measured: critical landing JS 83.9 KB gz (React 69.3 + landing 10.3 + shared 4.3); story engine 64.7 KB gz, deferred; CSS 11.1 KB gz. Landing HTML 22.4 KB prerendered.
+
+**Known gaps (P4-owned):** (1) live findings all come back `rejected` because faithfulness/stability stages (P1.9/P1.11) don't exist yet, so the workstation withholds them in a collapsed, explained group; sample cases show the full chain. (2) First SSE stage: ~720 ms cold, ~180 ms warm, against the 500 ms target; needs a startup model warm-up. (3) Viewer 60 fps on 2048² is untested on a real GPU; this machine's headless runs use SwiftShader, which can't measure it meaningfully. (4) Lighthouse not run yet. (5) View Transition handoff landing → workstation not verified in a supporting browser.
+**Next:** P4.8 (Docker + CI wiring for the existing pytest/vitest/Playwright suites), startup warm-up for the 500 ms first-stage target, then P4.9 demo pack and P4.10 README.
 **Blockers:** none. Known gaps to flag, not blockers: in-memory `StudyStore` isn't persisted (above); the SSE queue fans out to at most one live drainer per study (fine for today's single-viewer-per-study UI, would need rework for multi-viewer); no `make`/`pnpm` binary on this machine so `make setup`/`make dev` are untested end-to-end here (the pieces run fine individually — `uvicorn` was started and curled directly); `ml/` still has no dependency declarations of its own.
 
 ## Decisions
@@ -211,6 +220,15 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P4 · Ledger/store are constructor-injected onto `app.state` in `api/app.py`, not module-level singletons like `readers/cxr.py`'s `get_reader()` · the API specifically needs per-test isolation since many pytest tests share one process; a global would leak state between them. `cxr.py`'s singleton pattern is for an expensive model load, a different concern.
 - 2026-10-07 · P4 · `GET /studies/{id}/fhir`, `GET /metrics`, `GET /model-cards` return an honest `{"available": false, ...}`/empty body rather than fabricated data, since P3.13/P2.14/P2.13 don't exist yet · consistent with the no-fabrication stance already applied to `pipeline.py`'s placeholders (`ood_score=0.0`, `claims=[]`).
 - 2026-10-07 · P4 · The per-study SSE queue fans out to at most one live drainer at a time (a second concurrent subscriber only gets the terminal state once the first drains it) · matches today's single-viewer-per-study UI; true multi-viewer broadcast would need a pub/sub fan-out, not asked for yet.
+- 2026-10-07 · P4 · Landing expands plan §10.5's "boldness in one place" into a full scrollytelling narrative at the owner's request; every chapter is a real verification stage with a provenance caption (real output, dataset annotation, or illustrative), and the app stays quiet · owner request for an awwwards-level landing.
+- 2026-10-07 · P4 · GSAP 3.15 (ScrollTrigger, SplitText) under its Standard no-charge licence, approved by the P4 owner; Motion, DrawSVG and twgl.js dropped (a small own WebGL2 helper shared by story and viewer) · one animation engine per tree; fewer dependencies.
+- 2026-10-07 · P4 · Two Vite entries: `index.html` (landing, no router, prerendered with `renderToString` then hydrated) and `app.html` (React Router lazy routes); a Vite plugin rewrites `/read|validation|models|audit|report` to `app.html` in dev/preview, P4.8's server must do the same · keeps the landing light and readable without JS.
+- 2026-10-07 · P4 · Scroll story uses sticky stages and treats the scene as a pure function of scroll position, not ScrollTrigger pins or a master timeline · React-safe (no pin-spacers), identical layout to the prerendered HTML, End key/anchor jumps can't leave stale state.
+- 2026-10-07 · P4 · Phones (< 1024 px), reduced motion and no-WebGL2 get an article layout (same copy, still images), predicted in an inline head script before paint · no layout jump; story engine never downloads there.
+- 2026-10-07 · P4 · Brain sample is a public-domain AFIP glioblastoma MRI (Wikimedia), not the Kaggle repackage or figshare · licence verifiable on its own page; brain mask layer stays empty until P2.4.
+- 2026-10-07 · P4 · Wax red gets a text shade `--color-pencil-red-ink: #e8695e`; strokes keep plan §10.2's `#e2574c` · `#e2574c` text measures 4.48:1 on film-base and 3.97:1 on panel (below WCAG AA 4.5:1); found by the axe suite.
+- 2026-10-07 · P4 · Browser ledger verification recomputes the entry-hash chain (string-only material) for real entries; payload re-hashing in JS uses Python-compatible canonical JSON and refuses floats (Python prints `1.0`, JS `1`), so float payloads are verified server-side · parity test pins JS output to a Python-generated fixture.
+- 2026-10-07 · P4 · Pipeline caches are keyed by content: artifacts live under `artifact_root/<input sha256>`, intake is uncacheable (it must set the decoded image), failed stages are never cached; reader `cache_version` bumped to v3 · three real bugs found driving the UI against a live server.
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -276,3 +294,11 @@ Verified: `cd backend && python -m pytest tests/core/test_ledger.py tests/api -v
 Next: P4.6 (web app pages) and P4.7 (WebGL viewer), the first real UI, built against `web/src/contracts.ts` and this API.
 Decisions: see Decisions, entries dated 2026-10-07 for P4.
 Contract change requests: none (additive only).
+
+### 2026-10-07 · P4 · Opus 5.5 · WP P4.6, P4.7
+Did: scrollytelling landing (ten chapters on one WebGL2 radiograph, prerendered + hydrated, story engine deferred); `/read` workstation with live (SSE) and sample modes, WebGL2 viewer (R8/RGBA8/R16F, highp window/level, cividis heatmap + iso-contour, hatched mask, anatomy contours, SDF boxes, zoom about cursor, keyboard map), two-way finding/note linking; validation, models, audit, report and 404 pages; additive API routes (image, float16 pixels, artifacts with traversal guard, per-study ledger); `scripts/bake_web_assets.py` (real reader outputs on a CC0 chest film); Playwright + axe e2e suite (`cd web && pnpm run e2e`).
+State: P4.6 and P4.7 done, with the gaps in the P4 role section stated plainly: live findings withheld until P1.9/P1.11 exist, first SSE stage ~720 ms cold (target 500), viewer 60 fps and Lighthouse not measured on real hardware yet.
+Verified: `cd backend && python -m pytest -q` → 266 passed. `cd web && npx vitest run` → 22 passed; `npx tsc -b` clean; `npx eslint .` 0 errors; `npx playwright test` → 17 passed (no-JS article, zero em/en dashes, axe zero serious/critical on landing, prerendered markup, workstation, validation and models; story boots without console errors; ledger tamper detected in the browser; phone and reduced-motion layouts; keyboard map; span highlight under 100 ms).
+Next: P4.8 Docker + CI around these suites; model warm-up at startup for the first-stage target; P4.9, P4.10.
+Decisions: see Decisions, entries dated 2026-10-07 for P4 (landing scope, GSAP licence, two entries, sticky stages, article mode, brain image source, red text shade, browser ledger caveat, content-addressed caches).
+Contract change requests: none (API routes additive; `schemas.py` untouched).
