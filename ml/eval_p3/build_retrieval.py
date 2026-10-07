@@ -7,7 +7,7 @@ The index holds training images only, so a precedent can never be a test image. 
 its own id and its own lesion/patient group. Metrics: precision@5 (share of the 5 precedents whose
 true label equals the query's), how that compares with picking 5 images by chance, and the accuracy
 of a majority vote over the 5 (a kNN classifier built from the same index), with cluster-bootstrap
-intervals. Writes reports/retrieval.json and a few demo precedents with thumbnails.
+intervals. Writes reports/retrieval_<dataset>_<embedder>.json and a few demo precedents with thumbnails.
 """
 
 from __future__ import annotations
@@ -113,7 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         "majority_vote_balanced_accuracy": fmt(ci({"t": y, "p": vote}, bal_acc, groups=g, strata=y, B=1000)),
         "precision_at_5_by_class": {c: round(float(per_query[y == c].mean()), 4) for c in classes},
         "train_label_counts": dict(prior),
-        "note": "embedder is BiomedCLIP, the ungated fallback; MedSigLIP (gated) was not accessible to this account",
+        "note": ("BiomedCLIP, the ungated fallback embedder" if emb.name == "biomedclip" else "MedSigLIP, the plan's preferred embedder"),
     }
     demo = []
     for i, hits in list(zip(qids, neighbours, strict=True))[:5]:
@@ -127,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         demo.append({"query": i, "query_label": qlabel[i], "precedents": [p.model_dump() for p in precedents]})
     report["demo"] = demo
     (ROOT / "reports").mkdir(exist_ok=True)
-    path = ROOT / "reports" / f"retrieval_{args.dataset}.json"
+    path = ROOT / "reports" / f"retrieval_{args.dataset}_{emb.name}.json"
     path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps({k: v for k, v in report.items() if k != "demo"}, indent=1))
     return 0

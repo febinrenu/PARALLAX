@@ -1,8 +1,7 @@
 """Image embedders for retrieval. The index records which embedder built it and refuses another.
 
 BiomedCLIP (open_clip, ungated, MIT) is the working default. MedSigLIP (`google/medsiglip-448`) is the
-plan's preferred model and shares the same interface; it is gated, and was not accessible when this
-was written, so MedSigLipEmbedder is untested.
+plan's preferred model and shares the same interface; it is gated and needs accepted terms.
 """
 
 from __future__ import annotations
@@ -76,24 +75,25 @@ class OpenClipEmbedder:
 
 
 class MedSigLipEmbedder:
-    """google/medsiglip-448 through transformers. Gated: needs accepted terms and HF_TOKEN. Untested."""
+    """google/medsiglip-448 through transformers (image tower only). Gated: needs accepted terms and HF_TOKEN."""
 
     name = "medsiglip-448"
     MODEL = "google/medsiglip-448"
 
     def __init__(self, device: str | None = None) -> None:
         import torch
-        from transformers import AutoModel, AutoProcessor
+        from transformers import AutoImageProcessor, AutoModel
 
         self._torch = torch
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.processor = AutoProcessor.from_pretrained(self.MODEL)
+        self.processor = AutoImageProcessor.from_pretrained(self.MODEL)  # images only: no text tokenizer needed
         self.model = AutoModel.from_pretrained(self.MODEL).to(self.device).eval()
 
     def embed(self, images: Sequence[Image.Image]) -> np.ndarray:
         inputs = self.processor(images=list(images), return_tensors="pt").to(self.device)
         with self._torch.inference_mode():
             feats = self.model.get_image_features(**inputs)
+            feats = feats if hasattr(feats, "detach") else feats.pooler_output  # transformers 5 returns an output object
             feats = feats / feats.norm(dim=-1, keepdim=True)
         out: np.ndarray = feats.float().cpu().numpy()
         return out
