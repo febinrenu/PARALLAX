@@ -21,6 +21,11 @@
         ],
         "heatmap": "/cases/chest/heatmap_f1.png",
         "faithfulness": {
+          "region_threshold": 0.5142,
+          "random_example_shift": [
+            -0.4891,
+            0.3713
+          ],
           "drop": 0.3846,
           "random_threshold_p90": 0.3277,
           "random_median_drop": 0.0193,
@@ -91,6 +96,11 @@
         ],
         "heatmap": "/cases/chest/heatmap_f2.png",
         "faithfulness": {
+          "region_threshold": 0.4884,
+          "random_example_shift": [
+            0.395,
+            0.4317
+          ],
           "drop": 0.552,
           "random_threshold_p90": 0.2466,
           "random_median_drop": 0.0476,
@@ -161,6 +171,11 @@
         ],
         "heatmap": "/cases/chest/heatmap_f3.png",
         "faithfulness": {
+          "region_threshold": 0.5754,
+          "random_example_shift": [
+            -0.3069,
+            0.3287
+          ],
           "drop": 0.1735,
           "random_threshold_p90": 0.0297,
           "random_median_drop": -0.0016,
@@ -231,6 +246,11 @@
         ],
         "heatmap": "/cases/chest/heatmap_f4.png",
         "faithfulness": {
+          "region_threshold": 0.6119,
+          "random_example_shift": [
+            0.2426,
+            -0.4851
+          ],
           "drop": 0.397,
           "random_threshold_p90": 0.1965,
           "random_median_drop": 0.0029,
@@ -301,6 +321,11 @@
         ],
         "heatmap": "/cases/chest/heatmap_f5.png",
         "faithfulness": {
+          "region_threshold": 0.5642,
+          "random_example_shift": [
+            0.0792,
+            0.3327
+          ],
           "drop": 0.0137,
           "random_threshold_p90": 0.0117,
           "random_median_drop": -0.0095,

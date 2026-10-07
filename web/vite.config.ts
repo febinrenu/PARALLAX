@@ -52,6 +52,10 @@ export default defineConfig({
         landing: resolve(__dirname, "index.html"),
         app: resolve(__dirname, "app.html"),
       },
+      output: {
+        // React is shared by both entries; name its chunk for what it is.
+        manualChunks: (id) => (/node_modules[\/](react|react-dom|scheduler)[\/]/.test(id) ? "react" : undefined),
+      },
     },
   },
 });

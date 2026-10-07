@@ -211,15 +211,23 @@ def top_fraction_mask(heat: np.ndarray, frac: float = 0.10) -> np.ndarray:
 
 def faithfulness(reader, img01, heat, label_idx, base, rng, n_random: int = 30) -> dict:
     mask = top_fraction_mask(heat)
+    region_threshold = float(heat[mask].min()) if mask.any() else 1.0
     drop = deletion_drop(reader, img01, mask, label_idx, base)
     h, w = mask.shape
-    randoms = []
+    randoms, shifts = [], []
     for _ in range(n_random):
-        shifted = np.roll(mask, (int(rng.integers(-h // 2, h // 2)), int(rng.integers(-w // 2, w // 2))), axis=(0, 1))
+        dy, dx = int(rng.integers(-h // 2, h // 2)), int(rng.integers(-w // 2, w // 2))
+        shifted = np.roll(mask, (dy, dx), axis=(0, 1))
         randoms.append(deletion_drop(reader, img01, shifted, label_idx, base))
+        shifts.append((dx / w, dy / h))
     threshold = float(np.quantile(randoms, 0.9))
-    example = randoms[int(np.argsort(randoms)[len(randoms) // 2])]  # a median random region
+    ex = int(np.argsort(randoms)[len(randoms) // 2])  # a median random region
+    example = randoms[ex]
     return {
+        # The landing redraws exactly these two regions: heat >= region_threshold, and the same
+        # mask rolled by random_example_shift (normalised x, y; np.roll wraps around the edges).
+        "region_threshold": round(region_threshold, 4),
+        "random_example_shift": [round(shifts[ex][0], 4), round(shifts[ex][1], 4)],
         "drop": round(drop, 4),
         "random_threshold_p90": round(threshold, 4),
         "random_median_drop": round(float(np.median(randoms)), 4),

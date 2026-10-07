@@ -2,11 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parallax</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#162029" />
+    <title>Parallax: every finding, proven before a doctor sees it</title>
+    <meta name="description" content="A second reader for medical images that shows its evidence for every claim, and withholds what it cannot prove." />
+    <meta property="og:title" content="Parallax" />
+    <meta property="og:description" content="Every finding, proven before a doctor sees it." />
+    <meta property="og:image" content="/media/hero-still.webp" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="image" href="/media/hero-wrist.webp" fetchpriority="high" />
+    <!-- Hidden animation start states apply only when JavaScript runs; without it the page reads as an article. -->
+    <script>
+      (function () {
+        var c = document.documentElement.classList;
+        c.add("js");
+        var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) c.add("reduce-motion");
+        // Predict the scrollytelling layout before first paint so it never jumps in later.
+        var gl = false;
+        try { gl = !!document.createElement("canvas").getContext("webgl2"); } catch (e) {}
+        var weak = (navigator.hardwareConcurrency || 8) <= 4 && (navigator.deviceMemory || 8) <= 4;
+        if (!reduce && gl && !weak && innerWidth >= 1024) c.add("scrolly");
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root"><!--ssr-outlet--></div>
+    <script type="module" src="/src/landing/main.tsx"></script>
   </body>
 </html>
