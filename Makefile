@@ -27,8 +27,5 @@ smoke:
 dev: ## run the API with autoreload (the website: `cd web && pnpm dev`, or start.bat for both)
 	cd backend && $(PYTHON) -m uvicorn medproof.api.app:app --reload
 
-eval: ## not yet implemented: see P2.14
-	@echo "make eval: not yet implemented, see P2.14"
-
 demo: ## not yet implemented: see P4.9
 	@echo "make demo: not yet implemented, see P4.9"
