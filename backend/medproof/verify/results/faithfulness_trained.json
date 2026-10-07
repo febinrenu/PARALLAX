@@ -1426,5 +1426,71 @@
     "flip_rate": 0.375
    }
   ]
+ },
+ "bone_det": {
+  "model_id": "bone_det@8539baf9",
+  "images": 7,
+  "findings": 7,
+  "faithful_rate": 0.857,
+  "unstable_rate": 0.143,
+  "mean_drop": 0.426,
+  "rows": [
+   {
+    "image": "IMG0002126.jpg",
+    "label": "fracture",
+    "prob": 0.582,
+    "faithful": true,
+    "drop": 0.579,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "IMG0002380.jpg",
+    "label": "fracture",
+    "prob": 0.735,
+    "faithful": false,
+    "drop": 0.046,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "IMG0002583.jpg",
+    "label": "fracture",
+    "prob": 0.374,
+    "faithful": true,
+    "drop": 0.089,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "IMG0003165.jpg",
+    "label": "fracture",
+    "prob": 0.44,
+    "faithful": true,
+    "drop": 0.438,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "IMG0004376.jpg",
+    "label": "fracture",
+    "prob": 0.682,
+    "faithful": true,
+    "drop": 0.68,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "IMG0002608.jpg",
+    "label": "fracture",
+    "prob": 0.616,
+    "faithful": true,
+    "drop": 0.59,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "IMG0003147.jpg",
+    "label": "fracture",
+    "prob": 0.567,
+    "faithful": true,
+    "drop": 0.559,
+    "flip_rate": 0.25
+   }
+  ]
  }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getModelCards, loadCredits } from "../api/client";
 import type { Credit } from "../api/types";
+import datasheets from "../../../docs/datasheets_index.json";
 import { RESOURCES } from "../lib/resources";
 import { Page, Pending, Section } from "./Page";
 
@@ -75,6 +76,20 @@ export function Models() {
         ) : (
           <Pending>Model cards and datasheets publish with the trained weights (plan P2.13). The declared resources below are complete today.</Pending>
         )}
+      </Section>
+
+      <Section title="Datasheets" aside="docs/datasheets">
+        <p className="mb-4 max-w-[65ch] text-[15px] leading-relaxed text-ink-dim">One datasheet per dataset used for training or evaluation: where it comes from, how it was split, and the licence that limits what the weights may be used for.</p>
+        <dl className="grid gap-x-10 gap-y-3 md:grid-cols-2">
+          {datasheets.map((d) => (
+            <div key={d.id}>
+              <dt className="text-[14.5px] text-ink">{d.title}</dt>
+              <dd className="mt-0.5 text-[13px] text-ink-dim">
+                Licence: <span className={d.license === "unconfirmed" ? "text-pencil-red-ink" : "text-ink"}>{d.license}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </Section>
 
       <Section title="Declared resources">

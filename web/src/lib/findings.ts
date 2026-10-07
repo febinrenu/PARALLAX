@@ -9,6 +9,30 @@ export interface Stroke {
   label: string;
 }
 
+/**
+ * Plain words for the flags stages put on a finding. Flags the verification chain already explains
+ * (uncalibrated, unfaithful, unstable, second_reader_disagrees) are left out to avoid saying it twice.
+ */
+export const FLAG_TEXT: Record<string, string> = {
+  laterality_conflict: "The notes name the other side of the body.",
+  laterality_uncertain: "Image orientation is unclear, so left and right may be swapped.",
+  history_conflict: "The notes' history conflicts with this finding.",
+  symptom_finding_incoherent: "The symptoms in the notes do not fit this finding.",
+  ood: "The image looks unlike the data the model was trained on.",
+  router_uncertain: "The modality was not recognised with confidence.",
+  partial_view: "The model read only the central square of this image.",
+  no_localization: "The model's attention map is flat, so it gives no location.",
+  anatomy_unavailable: "Anatomy outlines were unavailable, so the region is unnamed.",
+  mask_empty: "The segmentation mask came back empty.",
+  mask_too_small: "The segmentation mask is too small to trust.",
+  second_box_mismatch: "The second reader's box does not overlap this one.",
+  low_quality: "The image failed part of the quality gate.",
+};
+
+export function flagNotes(f: Finding): string[] {
+  return (f.flags ?? []).map((k) => FLAG_TEXT[k]).filter((t): t is string => Boolean(t));
+}
+
 /** The finding's own image region failed the deletion test: where the model looked is not why it decided. */
 export function regionFailed(f: Finding): boolean {
   return f.image_evidence?.[0]?.faithful === false;
@@ -130,11 +154,14 @@ export function chainFor(f: Finding, study: StudyResult | null, _stages: StageRe
           ? { state: "pass", detail: "Notes support this finding" }
           : { state: "unavailable", detail: "Notes are neutral" }
       : missing("No supporting note text"),
-    Calibration: f.flags?.includes("uncalibrated")
-      ? { state: "unavailable", detail: "Not calibrated yet" }
-      : f.conformal_set.length > 2
-        ? { state: "fail", detail: `Conformal set has ${f.conformal_set.length} labels` }
-        : { state: "pass", detail: "Calibrated, conformal set is small" },
+    Calibration: (() => {
+      if (f.flags?.includes("uncalibrated")) return { state: "unavailable" as const, detail: "Not calibrated for this model" };
+      const p = `calibrated probability ${f.prob_calibrated.toFixed(2)}`;
+      if (f.tier === "abstain") return { state: "fail" as const, detail: `The model abstains at this confidence (${p})` };
+      if (f.conformal_set.length > 2) return { state: "fail" as const, detail: `Conformal set has ${f.conformal_set.length} labels (${p})` };
+      if (!f.conformal_set.length) return { state: "pass" as const, detail: `Platt-scaled, ${p}` };
+      return { state: "pass" as const, detail: `Plausible set: ${f.conformal_set.map(displayLabel).join(", ")} (${p})` };
+    })(),
     Firewall: (() => {
       const claims = study?.claims ?? [];
       if (!claims.length) return missing("Report not generated yet");

@@ -1,27 +1,16 @@
 import { Fragment, useMemo } from "react";
-import type { Finding, TextEvidence } from "../api/types";
+import type { StageResult } from "../api/types";
 import { displayLabel } from "../lib/findings";
+import { segments, type Span } from "../lib/notes";
 import { hoverFinding, selectFinding, useSession } from "./store";
 
-interface Span {
-  te: TextEvidence;
-  finding: Finding;
-}
-
-/** Split note text into plain runs and evidence spans. Notes render as text, never as HTML. */
-function segments(text: string, spans: Span[]) {
-  const sorted = [...spans].sort((a, b) => a.te.span[0] - b.te.span[0]);
-  const out: ({ kind: "text"; text: string } | { kind: "span"; text: string; span: Span })[] = [];
-  let at = 0;
-  for (const s of sorted) {
-    const [a, b] = s.te.span;
-    if (a < at || b > text.length) continue; // overlapping or out-of-range spans are skipped, not mangled
-    if (a > at) out.push({ kind: "text", text: text.slice(at, a) });
-    out.push({ kind: "span", text: text.slice(a, b), span: s });
-    at = b;
-  }
-  if (at < text.length) out.push({ kind: "text", text: text.slice(at) });
-  return out;
+/** What P3's context stage reported for this study: quarantined spans per note and history prompts. */
+function contextOutput(stages: StageResult[]) {
+  const payload = (stages.find((s) => s.stage === "context")?.payload ?? {}) as {
+    flagged_spans?: Record<string, [number, number][]>;
+    missing_context?: string[];
+  };
+  return { flagged: payload.flagged_spans ?? {}, missing: payload.missing_context ?? [] };
 }
 
 export function NotesPanel() {
@@ -30,28 +19,36 @@ export function NotesPanel() {
   const selected = useSession((s) => s.selected);
   const provenance = useSession((s) => s.provenance);
   const mode = useSession((s) => s.mode);
+  const stages = useSession((s) => s.stages);
 
   const byNote = useMemo(() => {
     const m = new Map<string, Span[]>();
-    for (const f of findings) for (const te of f.text_evidence ?? []) m.set(te.note_id, [...(m.get(te.note_id) ?? []), { te, finding: f }]);
+    const ordered = [...findings].sort((a, b) => Number(b.finding_id === selected) - Number(a.finding_id === selected));
+    for (const f of ordered) for (const te of f.text_evidence ?? []) m.set(te.note_id, [...(m.get(te.note_id) ?? []), { te, finding: f }]);
     return m;
-  }, [findings]);
+  }, [findings, selected]);
+  const { flagged, missing } = useMemo(() => contextOutput(stages), [stages]);
 
   const ids = Object.keys(notes);
+  const quarantinedCount = Object.values(flagged).reduce((n, spans) => n + spans.length, 0);
   return (
     <section aria-label="Clinical notes" className="min-h-0 overflow-y-auto border-t border-film-line/60 bg-film-panel px-4 py-3" data-lenis-prevent>
       <div className="flex items-baseline gap-3">
         <h2 className="text-[13px] font-medium text-ink">Notes</h2>
-        {provenance.text_evidence && <p className="truncate text-[12px] text-ink-dim">{provenance.text_evidence}</p>}
+        {provenance.text_evidence && mode === "sample" && <p className="truncate text-[12px] text-ink-dim">{provenance.text_evidence}</p>}
       </div>
       {ids.length === 0 && (
         <p className="mt-2 text-[13px] text-ink-dim">{mode === "empty" ? "Notes you add with an upload appear here, with the facts that support each finding underlined." : "No notes were provided for this study."}</p>
       )}
       {ids.map((id) => (
         <p key={id} className="mt-2 max-w-[75ch] text-[15px] leading-relaxed text-ink">
-          {segments(notes[id], byNote.get(id) ?? []).map((seg, i) =>
+          {segments(notes[id], byNote.get(id) ?? [], flagged[id] ?? []).map((seg, i) =>
             seg.kind === "text" ? (
               <Fragment key={i}>{seg.text}</Fragment>
+            ) : seg.kind === "quarantine" ? (
+              <mark key={i} title="Quarantined: read as data, never followed" className="rounded-[2px] bg-transparent text-ink-dim line-through decoration-pencil-red decoration-2 outline outline-1 outline-pencil-red/70">
+                {seg.text}
+              </mark>
             ) : (
               <button
                 key={i}
@@ -72,6 +69,18 @@ export function NotesPanel() {
           )}
         </p>
       ))}
+      {quarantinedCount > 0 && (
+        <p className="mt-2 text-[12.5px] text-pencil-red-ink">
+          Quarantined: {quarantinedCount === 1 ? "an instruction was" : `${quarantinedCount} instructions were`} found in the notes. It is read as data and never followed.
+        </p>
+      )}
+      {missing.length > 0 && (
+        <ul className="mt-3 space-y-1 border-t border-film-line/50 pt-2 text-[13px] text-ink-dim">
+          {missing.map((m) => (
+            <li key={m}>{m}</li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

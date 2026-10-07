@@ -227,6 +227,6 @@ def test_merge_matches_the_reasoning_module_helper(tmp_path):
 def test_reasoning_stages_are_registered_after_verification_and_never_cached():
     pytest.importorskip("medproof.reasoning_stages")
     names = [s.name for s in PIPELINE]
-    start = names.index("stability") + 1  # after P1's verify stages, which they build on
+    start = names.index("calibration") + 1  # after verification and calibration, which they build on
     assert names[start:start + 4] == ["second_read", "context", "report", "precedents"]
     assert not any(s.cacheable for s in PIPELINE[start:start + 4])

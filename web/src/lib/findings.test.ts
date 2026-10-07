@@ -94,3 +94,21 @@ describe("failed and untestable regions", () => {
     expect(step.detail).toMatch(/^Not assessable/);
   });
 });
+
+describe("calibration step", () => {
+  const base = study.findings.find((f) => f.label === "Pneumonia")!;
+  const cal = (patch: Partial<typeof base>) => chainFor({ ...base, flags: [], ...patch }, study, [], false).find((s) => s.stage === "Calibration")!;
+
+  it("fails when the calibrated model abstains", () => {
+    expect(cal({ tier: "abstain", conformal_set: ["Pneumonia"] }).state).toBe("fail");
+  });
+
+  it("names the plausible set for multi-class models and says Platt for binary ones", () => {
+    expect(cal({ conformal_set: ["glioma"], prob_calibrated: 0.95 }).detail).toBe("Plausible set: Glioma (calibrated probability 0.95)");
+    expect(cal({ conformal_set: [], prob_calibrated: 0.89 }).detail).toBe("Platt-scaled, calibrated probability 0.89");
+  });
+
+  it("says so when the model is not calibrated", () => {
+    expect(cal({ flags: ["uncalibrated"] }).state).toBe("unavailable");
+  });
+});

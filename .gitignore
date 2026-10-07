@@ -67,3 +67,6 @@ ml/artifacts/_logs/
 ml/artifacts/medgemma_reads/
 .venv-gpu/
 ml/artifacts/retrieval/
+
+# local model folders from scripts/fetch_models.py
+backend/models/
