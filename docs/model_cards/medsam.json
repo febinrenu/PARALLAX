@@ -1,0 +1,11 @@
+{
+ "id": "medsam",
+ "title": "MedSAM (box-prompted segmentation)",
+ "path": "docs/model_cards/medsam.md",
+ "type": "third_party_model",
+ "registry_id": "medsam",
+ "license": "see text",
+ "contamination": "unverified",
+ "headline": {},
+ "markdown": "# Model card: MedSAM (box-prompted segmentation)\n\n> Decision support only. Not a medical device and not for clinical use. Output is phrased for a doctor to consider; it never states a diagnosis.\n\nflaviagiammarino/medsam-vit-base, Apache-2.0. Gives a lesion mask from a box for skin images. Zero-shot evaluation on ISIC 2018 Task 1 (Jaccard) belongs to P1.12 and has not run. Its training corpus included public skin-lesion data; the overlap with ISIC 2018 Task 1 is **unverified**.\n\n## Contamination status\nunverified: see the contamination ledger in reports/metrics.json.\n"
+}
