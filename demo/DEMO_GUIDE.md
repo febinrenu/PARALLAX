@@ -49,6 +49,10 @@ start.bat preview
 
 Check: `http://localhost:4173` shows the landing page, and `http://localhost:8000/docs` opens.
 
+**The API warms its models by itself** right after it starts (chest, bone, skin and brain readers, the precedent model, the language-model pool,
+and it wakes the MedGemma window), so the first study is not the slow one. Give it about 40 seconds after start before the first upload. It holds about 4.4 GB of memory
+once warm. On a laptop short of memory set `set MEDPROOF_WARMUP=cxr,second_read` before `start.bat` to warm only the chest path (`0` turns it off).
+
 ## 3. Warm up and smoke-test (10 minutes before, once)
 
 In a third window:
@@ -157,13 +161,18 @@ Honest points for P1 (say them if asked):
 4. **The sentence that cannot lie.** Click **Report**. Each claim lists its evidence ids (`ie_1`, `te_2`). Read the line at the bottom of the claims:
    "The language model wrote templates only; code filled every value from the evidence ids shown." The model cannot type a number, a label or a quote.
 5. **Audit trail.** Click **Audit trail**, then **Verify chain**: "Server recomputed the whole ledger: N entries, chain intact" and the browser recomputes this study's hashes.
-6. Terminal (optional, 5 seconds): `cd backend` then `..\.venv\Scripts\python -m tests.redteam.run_redteam` prints 97 of 97 red-team cases passed:
+6. **Dictation.** In the notes box click **Dictate**, allow the microphone (it works on `localhost`), say for example
+   "Sixty two year old with fever and productive cough for four days. Crackles over the right chest.", click **Stop**. After a few seconds the transcript appears below
+   whatever was typed, with the message "Transcript added below your notes. Review it before analysing." The doctor reads and can correct it; only the text is analysed,
+   never the audio, and a spoken "ignore previous instructions" is quarantined like a typed one. Needs the internet (Whisper runs on Groq).
+7. Terminal (optional, 5 seconds): `cd backend` then `..\.venv\Scripts\python -m tests.redteam.run_redteam` prints 97 of 97 red-team cases passed:
    odd notes, contradictions, injection, planted bad claims, service outages. Say these are offline tests of our own code.
 
 Honest points for P3:
 - Chest precedents (5 similar confirmed cases per finding) are computed and returned with every study, but **the website does not display them**; do not claim it does.
 - Calibration (P2's) is applied for skin, brain and bone, so those tiers come from calibrated probabilities. **Chest is not calibrated**: step 7 reads "Not calibrated for this model"
   because the chest weights saw the RSNA data. Say so if asked about confidence on chest.
+- Dictation was tested with synthesized speech and a fake microphone, not with a person speaking in a noisy room: try it once before presenting.
 - Second-read agreement is shown only for the pre-recorded sample images and for live uploads while the MedGemma window (A) is running.
 
 ### P2: the numbers (2 min)
@@ -236,6 +245,8 @@ These inputs were chosen to show both outcomes (proven and withheld). They are n
 | Step 5 says "Second read not available" on an upload | Window A (MedGemma) is not running, or is still loading (first request about 30 s). The rest still works. |
 | Findings missing or "failed" | Is Window B open? Open `http://localhost:8000/docs`. Restart `start.bat preview`. |
 | No internet | Everything runs offline except the written report: without the language model the report falls back to plain template sentences, still evidence-linked. |
+| A brand-new image takes about 50 s | Normal: the faithfulness test alone is about 20 s on a CPU. The demo files are already checked and take 5 to 16 s. |
+| Dictate does nothing or says "Not transcribed" | The browser blocked the microphone (click the padlock, allow it), or there is no internet for Whisper. Type the note instead. |
 | A stage fails live | Say so: a failed stage never stops the study; the audit trail shows it. Then show the sample case or `demo_shots\`. |
 
 Stop everything: close the three windows.
