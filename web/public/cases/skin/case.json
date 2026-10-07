@@ -8,7 +8,9 @@
     "height": 852
   },
   "credit": "skin",
-  "notes": {},
+  "notes": {
+    "n1": "Pigmented lesion on the upper back, present for many years and unchanged according to the patient. No itching, bleeding or recent growth."
+  },
   "annotations": [
     {
       "kind": "mask",
@@ -45,8 +47,9 @@
     "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
   },
   "provenance": {
-    "findings": "No specialist reader for this modality yet, so the pipeline reports none.",
-    "annotations": "Dataset annotation: ISIC 2018 Task 1 lesion boundary, not model output. The skin reader arrives with P2.5 weights."
+    "findings": "Sample view: dataset annotation only. Run live analysis to read this image with the trained reader.",
+    "annotations": "Dataset annotation: ISIC 2018 Task 1 lesion boundary, not model output. The skin reader arrives with P2.5 weights.",
+    "text_evidence": "Synthetic clinical note, written for this demo."
   },
   "warnings": []
 }

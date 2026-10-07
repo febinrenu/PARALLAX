@@ -67,10 +67,12 @@ def test_no_modality_hint_completes_with_warning(tmp_path):
     assert reader_result.ok is False and reader_result.warnings
 
 
-def test_unsupported_modality_completes_with_warning(tmp_path):
-    study, stage_results = run_study(_cxr_bytes(), modality_hint="brain_mri", config=_config(tmp_path))
+def test_a_modality_without_weights_completes_with_warning(tmp_path):
+    # An empty models folder, so the result doesn't depend on whose laptop has the brain weights.
+    config = PipelineConfig(cache_dir=tmp_path / "cache", artifact_root=tmp_path / "artifacts", models_root=tmp_path / "no_models")
+    study, stage_results = run_study(_cxr_bytes(), modality_hint="brain_mri", config=config)
     assert study.findings == []
-    reader_result = stage_results[1]
+    reader_result = next(sr for sr in stage_results if sr.stage == "reader")
     assert reader_result.ok is False
     assert "brain_mri" in reader_result.warnings[0]
 
@@ -222,9 +224,9 @@ def test_merge_matches_the_reasoning_module_helper(tmp_path):
     assert _collect_claims(results) == reasoning.collect_claims(results)
 
 
-def test_reasoning_stages_are_registered_after_the_reader_and_never_cached():
+def test_reasoning_stages_are_registered_after_verification_and_never_cached():
     pytest.importorskip("medproof.reasoning_stages")
     names = [s.name for s in PIPELINE]
-    assert names[:2] == ["intake", "reader"]
-    assert names[2:6] == ["second_read", "context", "report", "precedents"]
-    assert not any(s.cacheable for s in PIPELINE[2:6])
+    start = names.index("stability") + 1  # after P1's verify stages, which they build on
+    assert names[start:start + 4] == ["second_read", "context", "report", "precedents"]
+    assert not any(s.cacheable for s in PIPELINE[start:start + 4])

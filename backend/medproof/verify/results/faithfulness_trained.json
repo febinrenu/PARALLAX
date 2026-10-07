@@ -1,11 +1,11 @@
 {
  "brain_cls": {
   "model_id": "brain_cls@d351f062",
-  "images": 11,
-  "findings": 12,
-  "faithful_rate": 0.25,
-  "unstable_rate": 0.083,
-  "mean_drop": 0.489,
+  "images": 59,
+  "findings": 69,
+  "faithful_rate": 0.42,
+  "unstable_rate": 0.203,
+  "mean_drop": 0.404,
   "rows": [
    {
     "image": "1.png",
@@ -16,11 +16,139 @@
     "flip_rate": 0.125
    },
    {
+    "image": "442.png",
+    "label": "pituitary",
+    "prob": 0.52,
+    "faithful": false,
+    "drop": 0.471,
+    "flip_rate": 1.0
+   },
+   {
+    "image": "442.png",
+    "label": "meningioma",
+    "prob": 0.319,
+    "faithful": true,
+    "drop": 0.305,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "14.png",
+    "label": "meningioma",
+    "prob": 0.989,
+    "faithful": true,
+    "drop": 0.874,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "221.png",
+    "label": "meningioma",
+    "prob": 0.947,
+    "faithful": false,
+    "drop": 0.216,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "455.png",
+    "label": "meningioma",
+    "prob": 0.606,
+    "faithful": true,
+    "drop": 0.538,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "753.png",
+    "label": "glioma",
+    "prob": 0.594,
+    "faithful": false,
+    "drop": 0.153,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "753.png",
+    "label": "meningioma",
+    "prob": 0.377,
+    "faithful": true,
+    "drop": 0.365,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "234.png",
+    "label": "meningioma",
+    "prob": 0.978,
+    "faithful": true,
+    "drop": 0.954,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "468.png",
+    "label": "meningioma",
+    "prob": 0.829,
+    "faithful": false,
+    "drop": 0.46,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "27.png",
+    "label": "meningioma",
+    "prob": 0.73,
+    "faithful": false,
+    "drop": 0.265,
+    "flip_rate": 0.0
+   },
+   {
     "image": "481.png",
     "label": "meningioma",
     "prob": 0.925,
     "faithful": false,
     "drop": 0.812,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "247.png",
+    "label": "meningioma",
+    "prob": 0.516,
+    "faithful": false,
+    "drop": -0.064,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "247.png",
+    "label": "pituitary",
+    "prob": 0.423,
+    "faithful": false,
+    "drop": 0.016,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "494.png",
+    "label": "meningioma",
+    "prob": 0.51,
+    "faithful": false,
+    "drop": 0.001,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "494.png",
+    "label": "glioma",
+    "prob": 0.384,
+    "faithful": false,
+    "drop": 0.191,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "727.png",
+    "label": "glioma",
+    "prob": 0.962,
+    "faithful": false,
+    "drop": 0.387,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "766.png",
+    "label": "glioma",
+    "prob": 0.96,
+    "faithful": true,
+    "drop": 0.496,
     "flip_rate": 0.0
    },
    {
@@ -30,6 +158,30 @@
     "faithful": false,
     "drop": 0.438,
     "flip_rate": 0.125
+   },
+   {
+    "image": "40.png",
+    "label": "pituitary",
+    "prob": 0.735,
+    "faithful": true,
+    "drop": 0.675,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "273.png",
+    "label": "meningioma",
+    "prob": 0.992,
+    "faithful": true,
+    "drop": 0.276,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "507.png",
+    "label": "meningioma",
+    "prob": 0.981,
+    "faithful": true,
+    "drop": 0.716,
+    "flip_rate": 0.0
    },
    {
     "image": "286.png",
@@ -48,6 +200,38 @@
     "flip_rate": 0.125
    },
    {
+    "image": "520.png",
+    "label": "meningioma",
+    "prob": 0.966,
+    "faithful": true,
+    "drop": 0.926,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "714.png",
+    "label": "pituitary",
+    "prob": 0.794,
+    "faithful": false,
+    "drop": 0.073,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "66.png",
+    "label": "meningioma",
+    "prob": 0.934,
+    "faithful": true,
+    "drop": 0.627,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "299.png",
+    "label": "meningioma",
+    "prob": 0.864,
+    "faithful": true,
+    "drop": 0.814,
+    "flip_rate": 0.0
+   },
+   {
     "image": "533.png",
     "label": "glioma",
     "prob": 0.796,
@@ -56,11 +240,99 @@
     "flip_rate": 0.625
    },
    {
+    "image": "79.png",
+    "label": "meningioma",
+    "prob": 0.825,
+    "faithful": false,
+    "drop": 0.272,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "312.png",
+    "label": "meningioma",
+    "prob": 0.73,
+    "faithful": false,
+    "drop": 0.421,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "546.png",
+    "label": "glioma",
+    "prob": 0.523,
+    "faithful": false,
+    "drop": -0.303,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "546.png",
+    "label": "meningioma",
+    "prob": 0.424,
+    "faithful": true,
+    "drop": 0.405,
+    "flip_rate": 0.625
+   },
+   {
+    "image": "92.png",
+    "label": "meningioma",
+    "prob": 0.973,
+    "faithful": false,
+    "drop": 0.441,
+    "flip_rate": 0.0
+   },
+   {
     "image": "325.png",
     "label": "meningioma",
     "prob": 0.928,
     "faithful": false,
     "drop": 0.38,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "559.png",
+    "label": "pituitary",
+    "prob": 0.449,
+    "faithful": false,
+    "drop": 0.051,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "559.png",
+    "label": "meningioma",
+    "prob": 0.33,
+    "faithful": false,
+    "drop": 0.248,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "105.png",
+    "label": "meningioma",
+    "prob": 0.621,
+    "faithful": true,
+    "drop": 0.603,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "105.png",
+    "label": "glioma",
+    "prob": 0.339,
+    "faithful": false,
+    "drop": -0.583,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "572.png",
+    "label": "meningioma",
+    "prob": 0.508,
+    "faithful": false,
+    "drop": 0.281,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "118.png",
+    "label": "meningioma",
+    "prob": 0.886,
+    "faithful": false,
+    "drop": 0.045,
     "flip_rate": 0.0
    },
    {
@@ -72,12 +344,76 @@
     "flip_rate": 0.0
    },
    {
+    "image": "584.png",
+    "label": "meningioma",
+    "prob": 0.974,
+    "faithful": false,
+    "drop": 0.177,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "351.png",
+    "label": "meningioma",
+    "prob": 0.993,
+    "faithful": true,
+    "drop": 0.826,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "131.png",
+    "label": "glioma",
+    "prob": 0.446,
+    "faithful": false,
+    "drop": 0.308,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "597.png",
+    "label": "meningioma",
+    "prob": 0.663,
+    "faithful": true,
+    "drop": 0.647,
+    "flip_rate": 0.5
+   },
+   {
     "image": "364.png",
     "label": "meningioma",
     "prob": 0.964,
     "faithful": true,
     "drop": 0.897,
     "flip_rate": 0.125
+   },
+   {
+    "image": "740.png",
+    "label": "glioma",
+    "prob": 0.939,
+    "faithful": false,
+    "drop": 0.061,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "144.png",
+    "label": "meningioma",
+    "prob": 0.376,
+    "faithful": false,
+    "drop": 0.3,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "377.png",
+    "label": "meningioma",
+    "prob": 0.946,
+    "faithful": false,
+    "drop": 0.579,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "610.png",
+    "label": "meningioma",
+    "prob": 0.921,
+    "faithful": true,
+    "drop": 0.902,
+    "flip_rate": 0.0
    },
    {
     "image": "623.png",
@@ -88,11 +424,83 @@
     "flip_rate": 0.0
    },
    {
+    "image": "157.png",
+    "label": "meningioma",
+    "prob": 0.512,
+    "faithful": false,
+    "drop": 0.093,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "390.png",
+    "label": "meningioma",
+    "prob": 0.736,
+    "faithful": false,
+    "drop": 0.301,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "636.png",
+    "label": "meningioma",
+    "prob": 0.947,
+    "faithful": true,
+    "drop": 0.867,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "170.png",
+    "label": "glioma",
+    "prob": 0.602,
+    "faithful": false,
+    "drop": -0.084,
+    "flip_rate": 0.625
+   },
+   {
+    "image": "170.png",
+    "label": "meningioma",
+    "prob": 0.36,
+    "faithful": true,
+    "drop": 0.248,
+    "flip_rate": 0.5
+   },
+   {
     "image": "403.png",
     "label": "meningioma",
     "prob": 0.9,
     "faithful": true,
     "drop": 0.883,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "649.png",
+    "label": "meningioma",
+    "prob": 0.893,
+    "faithful": true,
+    "drop": 0.362,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "662.png",
+    "label": "meningioma",
+    "prob": 0.888,
+    "faithful": true,
+    "drop": 0.466,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "183.png",
+    "label": "meningioma",
+    "prob": 0.968,
+    "faithful": true,
+    "drop": 0.822,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "416.png",
+    "label": "meningioma",
+    "prob": 0.986,
+    "faithful": true,
+    "drop": 0.683,
     "flip_rate": 0.125
    },
    {
@@ -102,16 +510,64 @@
     "faithful": false,
     "drop": 0.524,
     "flip_rate": 0.0
+   },
+   {
+    "image": "195.png",
+    "label": "meningioma",
+    "prob": 0.931,
+    "faithful": true,
+    "drop": 0.642,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "429.png",
+    "label": "meningioma",
+    "prob": 0.775,
+    "faithful": false,
+    "drop": 0.353,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "688.png",
+    "label": "meningioma",
+    "prob": 0.533,
+    "faithful": false,
+    "drop": 0.372,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "688.png",
+    "label": "pituitary",
+    "prob": 0.44,
+    "faithful": false,
+    "drop": 0.144,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "208.png",
+    "label": "meningioma",
+    "prob": 0.896,
+    "faithful": true,
+    "drop": 0.605,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "701.png",
+    "label": "meningioma",
+    "prob": 0.963,
+    "faithful": true,
+    "drop": 0.749,
+    "flip_rate": 0.0
    }
   ]
  },
  "skin_cls": {
   "model_id": "skin_cls@a217517b",
-  "images": 12,
-  "findings": 13,
-  "faithful_rate": 0.538,
-  "unstable_rate": 0.231,
-  "mean_drop": 0.302,
+  "images": 100,
+  "findings": 107,
+  "faithful_rate": 0.439,
+  "unstable_rate": 0.131,
+  "mean_drop": 0.175,
   "rows": [
    {
     "image": "ISIC_0034524.jpg",
@@ -122,11 +578,123 @@
     "flip_rate": 0.0
    },
    {
+    "image": "ISIC_0034539.jpg",
+    "label": "nv",
+    "prob": 0.717,
+    "faithful": false,
+    "drop": -0.115,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0034556.jpg",
+    "label": "nv",
+    "prob": 0.909,
+    "faithful": false,
+    "drop": 0.017,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034571.jpg",
+    "label": "bkl",
+    "prob": 0.912,
+    "faithful": false,
+    "drop": -0.012,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034586.jpg",
+    "label": "nv",
+    "prob": 0.908,
+    "faithful": false,
+    "drop": 0.013,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034601.jpg",
+    "label": "nv",
+    "prob": 0.914,
+    "faithful": false,
+    "drop": -0.005,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034617.jpg",
+    "label": "nv",
+    "prob": 0.761,
+    "faithful": true,
+    "drop": 0.088,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034632.jpg",
+    "label": "bkl",
+    "prob": 0.896,
+    "faithful": true,
+    "drop": 0.507,
+    "flip_rate": 0.375
+   },
+   {
     "image": "ISIC_0034648.jpg",
     "label": "nv",
     "prob": 0.926,
     "faithful": false,
     "drop": 0.025,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034663.jpg",
+    "label": "nv",
+    "prob": 0.797,
+    "faithful": false,
+    "drop": 0.612,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0034680.jpg",
+    "label": "nv",
+    "prob": 0.656,
+    "faithful": false,
+    "drop": -0.094,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "ISIC_0034695.jpg",
+    "label": "bcc",
+    "prob": 0.906,
+    "faithful": true,
+    "drop": 0.469,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034710.jpg",
+    "label": "bkl",
+    "prob": 0.957,
+    "faithful": true,
+    "drop": 0.199,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034725.jpg",
+    "label": "nv",
+    "prob": 0.878,
+    "faithful": true,
+    "drop": 0.173,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0034741.jpg",
+    "label": "nv",
+    "prob": 0.925,
+    "faithful": false,
+    "drop": 0.039,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034756.jpg",
+    "label": "nv",
+    "prob": 0.902,
+    "faithful": true,
+    "drop": 0.13,
     "flip_rate": 0.0
    },
    {
@@ -138,12 +706,124 @@
     "flip_rate": 0.125
    },
    {
+    "image": "ISIC_0034787.jpg",
+    "label": "nv",
+    "prob": 0.917,
+    "faithful": false,
+    "drop": -0.003,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034805.jpg",
+    "label": "vasc",
+    "prob": 0.861,
+    "faithful": true,
+    "drop": 0.191,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034820.jpg",
+    "label": "df",
+    "prob": 0.869,
+    "faithful": true,
+    "drop": 0.853,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034835.jpg",
+    "label": "nv",
+    "prob": 0.914,
+    "faithful": false,
+    "drop": 0.006,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034851.jpg",
+    "label": "nv",
+    "prob": 0.913,
+    "faithful": true,
+    "drop": 0.152,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034866.jpg",
+    "label": "nv",
+    "prob": 0.927,
+    "faithful": true,
+    "drop": 0.067,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034881.jpg",
+    "label": "nv",
+    "prob": 0.922,
+    "faithful": false,
+    "drop": 0.007,
+    "flip_rate": 0.0
+   },
+   {
     "image": "ISIC_0034896.jpg",
     "label": "vasc",
     "prob": 0.755,
     "faithful": false,
     "drop": 0.006,
     "flip_rate": 0.375
+   },
+   {
+    "image": "ISIC_0034912.jpg",
+    "label": "nv",
+    "prob": 0.904,
+    "faithful": false,
+    "drop": -0.002,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034927.jpg",
+    "label": "mel",
+    "prob": 0.897,
+    "faithful": true,
+    "drop": 0.813,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034943.jpg",
+    "label": "nv",
+    "prob": 0.918,
+    "faithful": false,
+    "drop": 0.002,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034958.jpg",
+    "label": "mel",
+    "prob": 0.918,
+    "faithful": true,
+    "drop": 0.731,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034976.jpg",
+    "label": "nv",
+    "prob": 0.922,
+    "faithful": false,
+    "drop": 0.028,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0034992.jpg",
+    "label": "nv",
+    "prob": 0.93,
+    "faithful": false,
+    "drop": 0.011,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035007.jpg",
+    "label": "nv",
+    "prob": 0.9,
+    "faithful": false,
+    "drop": 0.06,
+    "flip_rate": 0.0
    },
    {
     "image": "ISIC_0035022.jpg",
@@ -154,11 +834,147 @@
     "flip_rate": 0.0
    },
    {
+    "image": "ISIC_0035038.jpg",
+    "label": "nv",
+    "prob": 0.593,
+    "faithful": false,
+    "drop": -0.283,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "ISIC_0035038.jpg",
+    "label": "mel",
+    "prob": 0.342,
+    "faithful": true,
+    "drop": 0.317,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "ISIC_0035053.jpg",
+    "label": "nv",
+    "prob": 0.917,
+    "faithful": false,
+    "drop": 0.022,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035068.jpg",
+    "label": "nv",
+    "prob": 0.401,
+    "faithful": true,
+    "drop": 0.115,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035084.jpg",
+    "label": "nv",
+    "prob": 0.918,
+    "faithful": false,
+    "drop": 0.004,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035100.jpg",
+    "label": "nv",
+    "prob": 0.895,
+    "faithful": true,
+    "drop": 0.119,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035115.jpg",
+    "label": "bkl",
+    "prob": 0.509,
+    "faithful": false,
+    "drop": 0.107,
+    "flip_rate": 0.375
+   },
+   {
+    "image": "ISIC_0035115.jpg",
+    "label": "nv",
+    "prob": 0.39,
+    "faithful": false,
+    "drop": 0.292,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035130.jpg",
+    "label": "nv",
+    "prob": 0.603,
+    "faithful": false,
+    "drop": -0.278,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "ISIC_0035130.jpg",
+    "label": "mel",
+    "prob": 0.312,
+    "faithful": true,
+    "drop": 0.266,
+    "flip_rate": 0.375
+   },
+   {
     "image": "ISIC_0035147.jpg",
     "label": "df",
     "prob": 0.863,
     "faithful": true,
     "drop": 0.845,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035163.jpg",
+    "label": "nv",
+    "prob": 0.922,
+    "faithful": true,
+    "drop": 0.137,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035179.jpg",
+    "label": "bkl",
+    "prob": 0.937,
+    "faithful": true,
+    "drop": 0.054,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035195.jpg",
+    "label": "nv",
+    "prob": 0.909,
+    "faithful": false,
+    "drop": -0.012,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035212.jpg",
+    "label": "bkl",
+    "prob": 0.898,
+    "faithful": true,
+    "drop": 0.472,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035227.jpg",
+    "label": "nv",
+    "prob": 0.908,
+    "faithful": false,
+    "drop": 0.037,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035242.jpg",
+    "label": "nv",
+    "prob": 0.921,
+    "faithful": false,
+    "drop": 0.011,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035260.jpg",
+    "label": "nv",
+    "prob": 0.908,
+    "faithful": false,
+    "drop": -0.009,
     "flip_rate": 0.0
    },
    {
@@ -178,12 +994,132 @@
     "flip_rate": 0.125
    },
    {
+    "image": "ISIC_0035293.jpg",
+    "label": "bkl",
+    "prob": 0.955,
+    "faithful": true,
+    "drop": 0.629,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035308.jpg",
+    "label": "bcc",
+    "prob": 0.911,
+    "faithful": true,
+    "drop": 0.537,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035323.jpg",
+    "label": "nv",
+    "prob": 0.917,
+    "faithful": false,
+    "drop": 0.006,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035339.jpg",
+    "label": "nv",
+    "prob": 0.917,
+    "faithful": false,
+    "drop": 0.024,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035354.jpg",
+    "label": "nv",
+    "prob": 0.914,
+    "faithful": false,
+    "drop": -0.005,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035369.jpg",
+    "label": "nv",
+    "prob": 0.907,
+    "faithful": false,
+    "drop": 0.011,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035385.jpg",
+    "label": "nv",
+    "prob": 0.931,
+    "faithful": false,
+    "drop": 0.027,
+    "flip_rate": 0.0
+   },
+   {
     "image": "ISIC_0035401.jpg",
     "label": "nv",
     "prob": 0.902,
     "faithful": false,
     "drop": 0.046,
     "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035416.jpg",
+    "label": "bkl",
+    "prob": 0.942,
+    "faithful": false,
+    "drop": 0.009,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035433.jpg",
+    "label": "nv",
+    "prob": 0.337,
+    "faithful": false,
+    "drop": -0.326,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035448.jpg",
+    "label": "nv",
+    "prob": 0.924,
+    "faithful": false,
+    "drop": 0.043,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035464.jpg",
+    "label": "bkl",
+    "prob": 0.876,
+    "faithful": true,
+    "drop": 0.069,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035479.jpg",
+    "label": "nv",
+    "prob": 0.912,
+    "faithful": false,
+    "drop": 0.021,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035494.jpg",
+    "label": "nv",
+    "prob": 0.901,
+    "faithful": true,
+    "drop": 0.061,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035511.jpg",
+    "label": "nv",
+    "prob": 0.343,
+    "faithful": false,
+    "drop": 0.135,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035511.jpg",
+    "label": "mel",
+    "prob": 0.324,
+    "faithful": true,
+    "drop": 0.302,
+    "flip_rate": 0.25
    },
    {
     "image": "ISIC_0035527.jpg",
@@ -194,11 +1130,131 @@
     "flip_rate": 0.75
    },
    {
+    "image": "ISIC_0035542.jpg",
+    "label": "nv",
+    "prob": 0.913,
+    "faithful": false,
+    "drop": 0.021,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035558.jpg",
+    "label": "nv",
+    "prob": 0.856,
+    "faithful": false,
+    "drop": 0.043,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0035574.jpg",
+    "label": "nv",
+    "prob": 0.877,
+    "faithful": false,
+    "drop": -0.019,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035589.jpg",
+    "label": "bkl",
+    "prob": 0.887,
+    "faithful": true,
+    "drop": 0.856,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035605.jpg",
+    "label": "nv",
+    "prob": 0.734,
+    "faithful": false,
+    "drop": -0.121,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035621.jpg",
+    "label": "nv",
+    "prob": 0.91,
+    "faithful": false,
+    "drop": -0.016,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035637.jpg",
+    "label": "mel",
+    "prob": 0.9,
+    "faithful": true,
+    "drop": 0.716,
+    "flip_rate": 0.0
+   },
+   {
     "image": "ISIC_0035652.jpg",
     "label": "nv",
     "prob": 0.916,
     "faithful": true,
     "drop": 0.314,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035667.jpg",
+    "label": "bcc",
+    "prob": 0.924,
+    "faithful": false,
+    "drop": 0.001,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035682.jpg",
+    "label": "mel",
+    "prob": 0.816,
+    "faithful": true,
+    "drop": 0.789,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0035698.jpg",
+    "label": "nv",
+    "prob": 0.46,
+    "faithful": true,
+    "drop": 0.358,
+    "flip_rate": 0.5
+   },
+   {
+    "image": "ISIC_0035698.jpg",
+    "label": "mel",
+    "prob": 0.306,
+    "faithful": false,
+    "drop": 0.243,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035713.jpg",
+    "label": "nv",
+    "prob": 0.907,
+    "faithful": true,
+    "drop": 0.07,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035728.jpg",
+    "label": "nv",
+    "prob": 0.899,
+    "faithful": true,
+    "drop": 0.184,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035743.jpg",
+    "label": "nv",
+    "prob": 0.87,
+    "faithful": false,
+    "drop": -0.023,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035759.jpg",
+    "label": "df",
+    "prob": 0.855,
+    "faithful": true,
+    "drop": 0.787,
     "flip_rate": 0.0
    },
    {
@@ -210,12 +1266,164 @@
     "flip_rate": 0.125
    },
    {
+    "image": "ISIC_0035789.jpg",
+    "label": "mel",
+    "prob": 0.693,
+    "faithful": true,
+    "drop": 0.609,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035805.jpg",
+    "label": "nv",
+    "prob": 0.936,
+    "faithful": true,
+    "drop": 0.07,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035820.jpg",
+    "label": "nv",
+    "prob": 0.87,
+    "faithful": false,
+    "drop": 0.022,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035835.jpg",
+    "label": "nv",
+    "prob": 0.877,
+    "faithful": true,
+    "drop": 0.713,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035850.jpg",
+    "label": "nv",
+    "prob": 0.91,
+    "faithful": false,
+    "drop": 0.015,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035866.jpg",
+    "label": "bkl",
+    "prob": 0.895,
+    "faithful": false,
+    "drop": -0.005,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035881.jpg",
+    "label": "bkl",
+    "prob": 0.917,
+    "faithful": false,
+    "drop": -0.019,
+    "flip_rate": 0.0
+   },
+   {
     "image": "ISIC_0035896.jpg",
     "label": "nv",
     "prob": 0.898,
     "faithful": true,
     "drop": 0.073,
     "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035911.jpg",
+    "label": "bcc",
+    "prob": 0.567,
+    "faithful": true,
+    "drop": 0.46,
+    "flip_rate": 0.75
+   },
+   {
+    "image": "ISIC_0035911.jpg",
+    "label": "mel",
+    "prob": 0.373,
+    "faithful": false,
+    "drop": -0.261,
+    "flip_rate": 0.625
+   },
+   {
+    "image": "ISIC_0035927.jpg",
+    "label": "nv",
+    "prob": 0.922,
+    "faithful": false,
+    "drop": 0.025,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0035942.jpg",
+    "label": "mel",
+    "prob": 0.564,
+    "faithful": true,
+    "drop": 0.341,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035957.jpg",
+    "label": "bcc",
+    "prob": 0.882,
+    "faithful": false,
+    "drop": 0.108,
+    "flip_rate": 0.25
+   },
+   {
+    "image": "ISIC_0035972.jpg",
+    "label": "nv",
+    "prob": 0.773,
+    "faithful": false,
+    "drop": -0.033,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0035988.jpg",
+    "label": "nv",
+    "prob": 0.72,
+    "faithful": false,
+    "drop": -0.176,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0036003.jpg",
+    "label": "bkl",
+    "prob": 0.938,
+    "faithful": true,
+    "drop": 0.054,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0036018.jpg",
+    "label": "df",
+    "prob": 0.879,
+    "faithful": true,
+    "drop": 0.844,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0036033.jpg",
+    "label": "nv",
+    "prob": 0.842,
+    "faithful": false,
+    "drop": 0.005,
+    "flip_rate": 0.125
+   },
+   {
+    "image": "ISIC_0036049.jpg",
+    "label": "nv",
+    "prob": 0.929,
+    "faithful": true,
+    "drop": 0.094,
+    "flip_rate": 0.0
+   },
+   {
+    "image": "ISIC_0036064.jpg",
+    "label": "bkl",
+    "prob": 0.703,
+    "faithful": true,
+    "drop": 0.152,
+    "flip_rate": 0.375
    }
   ]
  }

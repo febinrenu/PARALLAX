@@ -86,7 +86,7 @@ export function StudyRail({ pendingFile, setPendingFile }: { pendingFile: File |
                 <option key={m.label} value={m.value}>{m.label}</option>
               ))}
             </select>
-            <p id={ids.help} className="text-[12px] leading-snug text-ink-dim">Automatic routing is not built yet, so pick the modality.</p>
+            <p id={ids.help} className="text-[12px] leading-snug text-ink-dim">Pick the modality. Automatic routing needs the router model, which is not installed on this machine.</p>
           </div>
 
           <div className="space-y-1.5">

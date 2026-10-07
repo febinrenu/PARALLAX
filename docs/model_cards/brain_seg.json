@@ -1,0 +1,22 @@
+{
+ "id": "brain_seg",
+ "title": "Brain tumour segmenter (U-Net)",
+ "path": "docs/model_cards/brain_seg.md",
+ "type": "model",
+ "registry_id": "brain_seg@d351f062",
+ "license": "smp U-Net resnet34 (MIT) fine-tuned on LGG MRI Segmentation (CC BY-NC-SA 4.0): non-commercial, share-alike",
+ "contamination": "clean (patient-level split)",
+ "headline": {
+  "headline.mean_patient_dice": {
+   "hi": 0.8908,
+   "lo": 0.705,
+   "point": 0.8314
+  },
+  "test.mean_patient_dice": {
+   "hi": 0.8908,
+   "lo": 0.705,
+   "point": 0.8314
+  }
+ },
+ "markdown": "# Model card: Brain tumour segmenter\n\n> Decision support only. Not a medical device and not for clinical use. Output is phrased for a doctor to consider; it never states a diagnosis.\n\n**Registry:** `brain_seg@d351f062` \u00b7 weights sha256 `90eba65ab2b7c2b6\u2026` \u00b7 split `8637d82d7d71\u2026` \u00b7 commit `d351f062`\n**Task:** tumour segmentation on brain MRI slices.\n**Architecture:** U-Net with a ResNet34 encoder (segmentation_models_pytorch), 256 px, Dice + BCE loss, 20 epochs, fold 0 of a patient-level 10-fold split (shipped model).\n**Licence:** MIT code; trained on LGG MRI Segmentation (CC BY-NC-SA 4.0): non-commercial, share-alike.\n\n## Intended use and out-of-scope use\nOutlining the extent of an already-detected tumour on a slice. It is trained on lower-grade glioma only; it must not be used to decide whether a tumour exists or on other tumour types.\n\n## Training data\nLGG MRI Segmentation (TCGA, 110 patients, 3,929 slices, 3 channels: pre-contrast, FLAIR, post-contrast). Patients are never split across sets; two patients are merged into one group only when tumour-bearing slices are near-duplicates (28 patients merged). Channel-replication augmentation lets the network accept one-channel input, but this does not remove the domain gap to single-channel T1-CE uploads.\n\n## Evaluation (held-out patient groups, n = 9)\n- **Mean per-patient Dice 0.831 (95% CI 0.716 to 0.890)** (BCa bootstrap over patients); pooled Dice 0.882\n- per-patient Dice ranges 0.50 to 0.93\n- mean HD95 9.3 (95% CI 6.5 to 15.1) pixels (the dataset gives no pixel spacing)\n- slice-level tumour detection AUROC 0.976\nNine test groups is a small sample, so the interval is wide.\n\n## Robustness (photometric perturbations only; a rotation or crop would also move the ground-truth mask)\n- pooled Dice on 372 test images: 0.882 clean; mean over perturbations 0.875 at severity 1 and 0.834 at severity 3\n- three worst cells: noise/5 = 0.275, noise/4 = 0.470, blur/5 = 0.629\n\n## Known failure modes\n- Out of domain for meningioma, pituitary tumours and single-channel T1-CE slices (the classifier's data). Masks on those inputs are unvalidated.\n- Weakest patients have few tumour slices; Dice is lowest when the tumour is small.\n- Heavy noise reduces Dice sharply.\n\n## Contamination status\nClean: patient-level split, trained and tested on TCGA-LGG only. The reference model `mateuszbuda/brain-segmentation-pytorch` was trained on the same data and is never reported as our result.\n"
+}

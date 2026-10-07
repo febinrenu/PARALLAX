@@ -105,6 +105,14 @@ SYNTHETIC_CHEST_NOTE = (
     "No prior chest surgery. No devices."
 )
 
+# Synthetic notes for the other samples: a live demo reads image and note together, and a finding
+# whose heatmap fails the region test can still be supported by the note.
+SAMPLE_NOTES = {
+    "bone": "34-year-old fell on an outstretched hand yesterday. Pain and swelling over the wrist, tender over the distal radius. No previous injury to this wrist.",
+    "brain": "58-year-old with three weeks of worsening morning headaches and a first seizure two days ago. MRI requested to look for an intracranial mass.",
+    "skin": "Pigmented lesion on the upper back, present for many years and unchanged according to the patient. No itching, bleeding or recent growth.",
+}
+
 
 # -- fetching --------------------------------------------------------------------------------------
 def _get(url: str) -> bytes:
@@ -373,7 +381,7 @@ def bake_chest(reader: CxrReader, anatomy_fn) -> dict:
             "findings": "Real output: TorchXRayVision DenseNet121 with Grad-CAM++ and PSPNet anatomy zones.",
             "faithfulness": "Real: deletion test per plan.md D1, computed by scripts/bake_web_assets.py until P1.9 ships.",
             "stability": "Real: P1's eight perturbations at severity 3.",
-            "text_evidence": "Illustrative: the note is synthetic and spans are placed by hand until the context engine (P3.5) ships.",
+            "text_evidence": "Illustrative: the note is synthetic and the spans in this sample view are placed by hand. Run live analysis to have the context engine find them.",
             "calibration": "Not yet calibrated (P2.8): prob_calibrated equals prob_raw.",
         },
         "warnings": warnings,
@@ -409,11 +417,15 @@ def _sample_case(case_id: str, title: str, modality: str, raw_png: bytes, annota
         "modality": modality,
         "image": {"src": f"/cases/{case_id}/image.webp", "width": img.shape[1], "height": img.shape[0]},
         "credit": case_id if case_id != "bone" else "wrist",
-        "notes": {},
+        "notes": {"n1": SAMPLE_NOTES[case_id]} if case_id in SAMPLE_NOTES else {},
         "annotations": annotations,
         "anatomy": None,
         "study": json.loads(study.model_dump_json()),
-        "provenance": {"findings": "No specialist reader for this modality yet, so the pipeline reports none.", **extra_provenance},
+        "provenance": {
+            "findings": "Sample view: dataset annotation only. Run live analysis to read this image with the trained reader.",
+            "text_evidence": "Synthetic clinical note, written for this demo.",
+            **extra_provenance,
+        },
         "warnings": [],
     }
 

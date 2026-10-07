@@ -11,8 +11,10 @@ genuinely hung CPU-bound stage. `signal.alarm` isn't available on Windows (this 
 on Windows laptops and Kaggle/Colab Linux alike); multiprocessing was rejected as the pickling
 and model-reload cost per call is worse than the problem it solves.
 
-Stage registry: `intake`, the CXR `reader`, then P3's `second_read`, `context`, `report` and
-`precedents` (`medproof.reasoning_stages`). New stages append to `PIPELINE`. Each stage sees every
+Stage registry: `intake`, `router` (only when the uploader gave no modality), the modality's
+`reader` (chest, brain, skin or bone), `faithfulness` and `stability` (P1), then P3's
+`second_read`, `context`, `report` and `precedents` (`medproof.reasoning_stages`). New stages
+append to `PIPELINE`. Each stage sees every
 earlier result on `ctx.stage_results`; a stage that updates findings returns the full list under
 `payload["findings"]`, and the study keeps one finding per id with the latest stage winning.
 """
@@ -22,13 +24,16 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import threading
 import time
 import uuid
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeoutError
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Any
 
 from medproof.core.cache import StageCache, cache_key
 from medproof.core.config import PipelineConfig
@@ -75,17 +80,154 @@ def _intake_step(ctx: StudyContext) -> StageResult:
     return result
 
 
-def _reader_step(ctx: StudyContext) -> StageResult:
-    modality = ctx.modality_hint
-    if modality == "cxr":
-        from medproof.readers import cxr  # torch-free at import time; failures degrade inside run()
+def _failed(stage: str, msg: str, t0: float | None = None) -> StageResult:
+    ms = int((time.perf_counter() - t0) * 1000) if t0 is not None else 0
+    return StageResult(stage=stage, ok=False, ms=ms, payload={"error": msg}, warnings=[msg])
 
-        return cxr.run(ctx)
-    if modality is None:
-        msg = "no modality hint and no router available yet (P1.4): reader stage skipped"
+
+def _router_step(ctx: StudyContext, router: Any = None) -> StageResult:
+    """P1.4. Runs only when the uploader gave no modality. The routed modality is trusted at or above
+    `RouterConfig().trust_confidence`; below it the study stays unrouted and the reader is skipped.
+    The router's flags (`ood`, `router_uncertain`) are kept for the reader step to copy onto every
+    finding, since the status rule downgrades `ood`."""
+    if ctx.modality_hint is not None:
+        return StageResult(stage="router", ok=True, ms=0, payload={"skipped": "modality given at upload", "modality": ctx.modality_hint})
+    from medproof.intake import router as router_mod
+    from medproof.intake.router_config import RouterConfig
+
+    result = router_mod.run(ctx, router=router)
+    if not result.ok:
+        return result
+    payload = result.payload
+    ctx.router_flags = [f for f in payload.get("flags", []) or [] if isinstance(f, str)]
+    if payload.get("ood") and "ood" not in ctx.router_flags:
+        ctx.router_flags.append("ood")
+    confidence = float(payload.get("confidence") or 0.0)
+    trusted = confidence >= RouterConfig().trust_confidence and payload.get("modality") in READER_STEPS
+    warnings = list(result.warnings)
+    if trusted:
+        ctx.modality_hint = payload["modality"]
+        ctx.body_part = payload.get("body_part")
     else:
-        msg = f"no reader available for modality {modality!r} yet"
-    return StageResult(stage="reader", ok=False, ms=0, payload={"error": msg}, warnings=[msg])
+        warnings.append(f"router not confident enough ({confidence:.2f}); choose the modality at upload")
+    return result.model_copy(update={"payload": {**payload, "trusted": trusted}, "warnings": warnings})
+
+
+# P2's model bundle for each non-chest reader, under `PipelineConfig.models_root`.
+READER_BUNDLES: dict[str, str] = {"brain_mri": "brain_cls", "skin_dermoscopy": "skin_cls", "bone_xray": "bone_det"}
+_READERS: dict[str, Any] = {}
+_READERS_LOCK = threading.Lock()
+
+
+def _load_reader(modality: str, config: PipelineConfig) -> Any:
+    """The shared reader for a modality, loaded once per process. Raises (e.g. `ModelBundleError`
+    with the missing-weights reason) when it can't load; failures aren't remembered, so weights
+    copied in later are picked up without a restart."""
+    if modality == "cxr":
+        from medproof.readers.cxr import get_reader
+
+        return get_reader()
+    key = f"{modality}:{config.models_root}"
+    with _READERS_LOCK:
+        if key not in _READERS:
+            bundle = config.models_root / READER_BUNDLES[modality]
+            if modality == "bone_xray":
+                from medproof.readers.bone import BoneReader
+
+                _READERS[key] = BoneReader.from_dir(bundle)
+            else:
+                from medproof.readers.classifier import ImageClassifierReader
+
+                _READERS[key] = ImageClassifierReader.from_dir(bundle, modality=modality)
+        return _READERS[key]
+
+
+def _run_cxr(ctx: StudyContext, reader: Any) -> StageResult:
+    from medproof.readers import cxr
+
+    return cxr.run(ctx, reader=reader)
+
+
+def _run_classifier(ctx: StudyContext, reader: Any) -> StageResult:
+    from medproof.readers import classifier
+
+    return classifier.run(ctx, reader=reader)
+
+
+def _run_bone(ctx: StudyContext, reader: Any) -> StageResult:
+    from medproof.readers import bone
+
+    return bone.run(ctx, reader=reader)
+
+
+READER_STEPS: dict[str, Callable[[StudyContext, Any], StageResult]] = {
+    "cxr": _run_cxr,
+    "brain_mri": _run_classifier,
+    "skin_dermoscopy": _run_classifier,
+    "bone_xray": _run_bone,
+}
+
+
+def _reader_step(ctx: StudyContext, load: Callable[[str, PipelineConfig], Any] | None = None) -> StageResult:
+    """Dispatches on the (given or routed) modality. Every reader leaves `ctx.reader`,
+    `ctx.reader_output` and `ctx.findings` for the verify stages; router flags go onto each finding."""
+    t0 = time.perf_counter()
+    modality = ctx.modality_hint
+    if modality is None:
+        return _failed("reader", "no modality: none given at upload and the router could not decide")
+    step = READER_STEPS.get(modality)
+    if step is None:
+        return _failed("reader", f"no reader available for modality {modality!r}")
+    try:
+        reader = (load or _load_reader)(modality, ctx.config or PipelineConfig())
+    except Exception as exc:  # missing or corrupt weights, missing torch/timm/ultralytics
+        return _failed("reader", f"{modality} reader unavailable: {exc}", t0)
+    result = step(ctx, reader)
+    if ctx.router_flags and result.payload.get("findings"):
+        result = _tag_findings(result, ctx, ctx.router_flags)
+    return result
+
+
+def _tag_findings(result: StageResult, ctx: StudyContext, flags: list[str]) -> StageResult:
+    def add(existing: list[str]) -> list[str]:
+        return [*existing, *(f for f in flags if f not in existing)]
+
+    findings = [{**f, "flags": add(list(f.get("flags", [])))} for f in result.payload["findings"]]
+    if ctx.findings:
+        ctx.findings = [f.model_copy(update={"flags": add(list(f.flags))}) for f in ctx.findings]
+    return result.model_copy(update={"payload": {**result.payload, "findings": findings}})
+
+
+def _verify_view(ctx: StudyContext, top_k: int | None = None) -> SimpleNamespace | None:
+    """What P1's verify stages read, built from the latest merged findings rather than the reader's
+    snapshot: otherwise stability would start from pre-faithfulness findings and, as the later
+    stage, overwrite the faithfulness result when findings merge."""
+    if ctx.reader_output is None or ctx.decoded is None:
+        return None
+    out = ctx.reader_output
+    if top_k is not None and len(out.findings) > top_k:
+        out = replace(out, findings=sorted(out.findings, key=lambda rf: rf.prob_raw, reverse=True)[:top_k])
+    return SimpleNamespace(decoded=ctx.decoded, reader_output=out, findings=_merged_findings(ctx.stage_results))
+
+
+def _faithfulness_step(ctx: StudyContext, cfg: Any = None) -> StageResult:
+    """P1.9 deletion test on the `faithfulness_top_k` most probable findings."""
+    from medproof.verify import faithfulness
+
+    view = _verify_view(ctx, (ctx.config or PipelineConfig()).faithfulness_top_k)
+    if view is None or ctx.reader is None:
+        return _failed("faithfulness", "faithfulness skipped: no reader output for this study")
+    return faithfulness.run(view, reader=ctx.reader, cfg=cfg)
+
+
+def _stability_step(ctx: StudyContext, cfg: Any = None) -> StageResult:
+    """P1.11: eight perturbations, flip rate per finding (eight forward passes in total)."""
+    from medproof.verify import stability
+
+    view = _verify_view(ctx)
+    if view is None or ctx.reader is None:
+        return _failed("stability", "stability skipped: no reader output for this study")
+    return stability.run(view, reader=ctx.reader, cfg=cfg)
 
 
 def _reasoning_specs() -> list[StageSpec]:
@@ -103,9 +245,14 @@ def _reasoning_specs() -> list[StageSpec]:
 
 PIPELINE: list[StageSpec] = [
     StageSpec(name="intake", run=_intake_step, timeout_s=5.0, required=True, cacheable=False),
-    # v3: artifacts are content-addressed and failures are no longer cached; older entries may
-    # point at old artifact paths or replay a failure.
-    StageSpec(name="reader", run=_reader_step, timeout_s=20.0, cache_version="v3"),
+    # The router sets the modality and the reader leaves the live model on ctx for the verify
+    # stages; a cache hit would skip both side effects, so neither is cached. The expensive,
+    # deterministic part (faithfulness, stability) is cached instead, keyed by image and modality.
+    StageSpec(name="router", run=_router_step, timeout_s=30.0, cacheable=False),
+    # 45 s: the first chest read in a process loads the DenseNet and anatomy models (~17 s cold).
+    StageSpec(name="reader", run=_reader_step, timeout_s=45.0, cacheable=False),
+    StageSpec(name="faithfulness", run=_faithfulness_step, timeout_s=120.0, cache_version="v1"),
+    StageSpec(name="stability", run=_stability_step, timeout_s=60.0, cache_version="v1"),
 ]
 PIPELINE.extend(_reasoning_specs())
 
@@ -113,7 +260,8 @@ PIPELINE.extend(_reasoning_specs())
 def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, config: PipelineConfig) -> StageResult:
     key = None
     if cache is not None and ctx.input_sha256 and spec.cacheable:
-        key = cache_key(ctx.input_sha256, spec.name, spec.cache_version)
+        # The modality is part of the key: the same bytes read as another modality is another result.
+        key = cache_key(ctx.input_sha256, spec.name, f"{spec.cache_version}:{ctx.modality_hint}")
         cached = cache.get(key)
         if cached is not None:
             return cached
@@ -151,6 +299,13 @@ def _collect_findings(stage_results: list[StageResult]) -> list[Finding]:
     semantics as `reasoning_stages.merge_findings`, pinned by a parity test, but defined here so
     the orchestrator never depends on that module's optional imports. Status is then recomputed
     by the real rule: readers hand findings out as "uncertain", and this is where it's decided."""
+    findings = _merged_findings(stage_results)
+    for finding in findings:
+        finding.status = compute_status(finding)
+    return findings
+
+
+def _merged_findings(stage_results: list[StageResult]) -> list[Finding]:
     by_id: dict[str, Finding] = {}
     for sr in stage_results:
         for raw in sr.payload.get("findings", []) or []:
@@ -159,10 +314,7 @@ def _collect_findings(stage_results: list[StageResult]) -> list[Finding]:
             except ValueError:
                 continue  # one malformed entry must not lose the rest of the study
             by_id[finding.finding_id] = finding
-    findings = list(by_id.values())
-    for finding in findings:
-        finding.status = compute_status(finding)
-    return findings
+    return list(by_id.values())
 
 
 def _collect_claims(stage_results: list[StageResult]) -> list[Claim]:
@@ -242,6 +394,7 @@ def _run(
         # Content-addressed, like the stage cache: a cached stage result refers to artifacts
         # written by an earlier study of the same image, so both must live under the input hash.
         artifact_dir=config.artifact_root / input_sha256,
+        config=config,
     )
 
     stage_results = ctx.stage_results  # later stages read earlier results from the context
@@ -260,7 +413,7 @@ def _run(
     study = StudyResult(
         study_id=ctx.study_id,
         input_sha256=ctx.input_sha256,
-        modality=modality_hint or "other",
+        modality=ctx.modality_hint or "other",  # the router may have set it
         ood_score=0.0,  # placeholder: P1.5 OOD score isn't built yet
         quality=quality,
         findings=_collect_findings(stage_results),
