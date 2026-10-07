@@ -31,7 +31,7 @@ export function ChainDetail({ steps }: { steps: ChainStep[] }) {
       {steps.map((s, i) => (
         <li key={s.stage} className="grid grid-cols-[18px_96px_1fr] items-baseline gap-2 text-[12.5px] leading-snug">
           <span className="font-mono text-[11px] tabular text-ink-dim">{i + 1}</span>
-          <span className={s.state === "fail" ? "text-pencil-red" : s.state === "pass" ? "text-ink" : "text-ink-dim"}>{s.stage}</span>
+          <span className={s.state === "fail" ? "text-pencil-red-ink" : s.state === "pass" ? "text-ink" : "text-ink-dim"}>{s.stage}</span>
           <span className="text-ink-dim">{s.detail}</span>
         </li>
       ))}

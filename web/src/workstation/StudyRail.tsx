@@ -58,6 +58,8 @@ export function StudyRail({ pendingFile, setPendingFile }: { pendingFile: File |
           <input
             ref={fileInput}
             type="file"
+            aria-label="Choose a study file"
+            tabIndex={-1}
             accept=".png,.jpg,.jpeg,.dcm,image/png,image/jpeg,application/dicom"
             className="sr-only"
             onChange={(e) => setPendingFile(e.target.files?.[0] ?? null)}

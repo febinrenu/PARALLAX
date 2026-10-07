@@ -63,12 +63,12 @@ export function Audit() {
         >
           <div aria-live="polite" className="mb-6 space-y-1 text-[14px]">
             {server && (
-              <p className={server.ok ? "text-ink" : "text-pencil-red"}>
+              <p className={server.ok ? "text-ink" : "text-pencil-red-ink"}>
                 {server.ok ? `Server recomputed the whole ledger: ${server.entries} entries, chain intact.` : `Server verification failed at entry ${server.broken_at}: ${server.reason}.`}
               </p>
             )}
             {local && (
-              <p className={local.ok ? "text-ink" : "text-pencil-red"}>
+              <p className={local.ok ? "text-ink" : "text-pencil-red-ink"}>
                 {local.ok
                   ? `This browser recomputed this study's ${entries.length} entry hashes with WebCrypto: all match.${local.payloadSkipped.length ? ` ${local.payloadSkipped.length} payloads contain decimals and were checked by the server only.` : ""}`
                   : `This browser found a mismatch at entry ${local.brokenAt}: ${local.reason}.`}
@@ -102,7 +102,7 @@ export function Audit() {
             {blocked.map((c) => (
               <li key={c.claim_id}>
                 <p className="text-[15px] text-ink-dim line-through decoration-pencil-red decoration-2">{c.rendered ?? c.template}</p>
-                <p className="mt-1 text-[13px] text-pencil-red">Blocked: {c.blocked_reason}</p>
+                <p className="mt-1 text-[13px] text-pencil-red-ink">Blocked: {c.blocked_reason}</p>
               </li>
             ))}
           </ul>

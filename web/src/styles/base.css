@@ -19,6 +19,8 @@
   --color-ink-dim: #8fa1af;
   --color-pencil-yellow: #f3c846;
   --color-pencil-red: #e2574c;
+  /* Wax red for text: the stroke red is 4.48:1 on film-base, this clears 4.5:1 on base and panel. */
+  --color-pencil-red-ink: #e8695e;
 
   --font-sans: "Atkinson Hyperlegible Next Variable", "Atkinson Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, "SFMono-Regular", monospace;

@@ -182,7 +182,7 @@
   background: var(--color-pencil-yellow);
 }
 .verdict.is-red {
-  color: var(--color-pencil-red);
+  color: var(--color-pencil-red-ink);
 }
 .verdict.is-red .verdict-mark {
   background: repeating-linear-gradient(90deg, var(--color-pencil-red) 0 5px, transparent 5px 9px);
@@ -517,7 +517,7 @@
   color: var(--color-ink-dim);
 }
 .flipped .tile-label {
-  color: var(--color-pencil-red);
+  color: var(--color-pencil-red-ink);
 }
 
 .note-card {
@@ -625,7 +625,7 @@
 .sentence-blocked .blocked-note {
   margin-top: 10px;
   font-size: 15px;
-  color: var(--color-pencil-red);
+  color: var(--color-pencil-red-ink);
   opacity: var(--strike, 1);
 }
 
@@ -716,7 +716,7 @@
   background: color-mix(in srgb, var(--color-pencil-red) 14%, var(--color-film-panel));
 }
 .strip-frame[data-state="broken"] .frame-hash {
-  color: var(--color-pencil-red);
+  color: var(--color-pencil-red-ink);
 }
 
 .ledger-try {

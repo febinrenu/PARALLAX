@@ -50,7 +50,7 @@ export function LedgerSection() {
             <h2 className="display-md">Every step leaves a&nbsp;receipt.</h2>
             <p className="lede mt-5">Stages and doctor decisions join a hash chain. Change one character and verification fails. Try it below.</p>
           </div>
-          <div className="film-strip" data-strip>
+          <div className="film-strip" data-strip tabIndex={0} role="region" aria-label="Ledger entries">
             <ol className="film-strip-track" data-strip-track>
               {LEDGER_FRAMES.map((f, i) => (
                 <li key={f.title} className="strip-frame" data-state={frameState(i)}>
@@ -80,7 +80,7 @@ export function LedgerSection() {
               <input id={ids.decision} value={decision} onChange={(e) => setDecision(e.target.value)} spellCheck={false} className="ledger-input" />
             </div>
           </div>
-          <p id={ids.status} role="status" aria-live="polite" className={`mt-6 text-[16px] ${brokenAt === null ? "text-ink" : "text-pencil-red"}`}>
+          <p id={ids.status} role="status" aria-live="polite" className={`mt-6 text-[16px] ${brokenAt === null ? "text-ink" : "text-pencil-red-ink"}`}>
             {!chain
               ? "Computing hashes…"
               : brokenAt === null

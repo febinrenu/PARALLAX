@@ -54,7 +54,7 @@ export default defineConfig({
       },
       output: {
         // React is shared by both entries; name its chunk for what it is.
-        manualChunks: (id) => (/node_modules[\/](react|react-dom|scheduler)[\/]/.test(id) ? "react" : undefined),
+        manualChunks: (id) => (/node_modules[/\\](react|react-dom|scheduler)[/\\]/.test(id) ? "react" : undefined),
       },
     },
   },

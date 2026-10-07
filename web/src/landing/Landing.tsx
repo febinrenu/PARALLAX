@@ -130,7 +130,7 @@ function Reader() {
                 .filter((r) => r.code !== "clipped")
                 .map((r) => (
                   <li key={`${b.variant}-${r.code}`} data-quality={b.variant}>
-                    <span className={r.level === "fail" ? "text-pencil-red" : "text-pencil-yellow"}>{r.message}</span>
+                    <span className={r.level === "fail" ? "text-pencil-red-ink" : "text-pencil-yellow"}>{r.message}</span>
                     <span className="block text-ink-dim">{r.fix}</span>
                   </li>
                 )),
@@ -270,7 +270,7 @@ function Context() {
           <ul className="note-checks mt-5">
             <li data-check="support">Supports pneumonia: symptom</li>
             <li data-check="side">Side matches the finding: right</li>
-            <li data-check="inject" className="text-pencil-red">Quarantined: instruction found in notes</li>
+            <li data-check="inject" className="text-pencil-red-ink">Quarantined: instruction found in notes</li>
           </ul>
         </div>
         <div className="relative col-span-12 h-[80svh] lg:col-span-6 lg:col-start-7">
@@ -295,7 +295,8 @@ function Firewall() {
       <div className="mx-auto flex h-full max-w-[1200px] flex-col justify-center px-[var(--gutter)]">
         <h2 className="display-md max-w-[16ch]" data-split>A sentence that cannot&nbsp;lie.</h2>
         <p className="lede mt-5">The model writes templates only. Code fills every label, location and confidence from evidence. Unsupported claims are struck.</p>
-        <p className="sentence mt-12" aria-label={`Doctor, consider ${label} in the ${primary.region} (${tier}).`}>
+        <p className="sentence mt-12">
+          <span className="sr-only">{`Doctor, consider ${label} in the ${primary.region} (${tier}).`}</span>
           <span aria-hidden="true">
             Doctor, consider{" "}
             <span className="slot-chip" data-slot-chip="label">
