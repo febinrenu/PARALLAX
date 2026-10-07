@@ -195,5 +195,8 @@ def run(ctx, reader=None) -> StageResult:
     except Exception as exc:
         msg = f"reader unavailable ({type(exc).__name__})"
         return done(False, {"error": msg}, [msg])
+    from medproof.readers.cxr import _share
+
+    _share(ctx, reader, out, findings)
     payload = {"model_id": out.model_id, "labels": out.labels, "probs": [round(float(p), 5) for p in out.probs], "findings": [f.model_dump() for f in findings]}
     return done(True, payload, warnings)
