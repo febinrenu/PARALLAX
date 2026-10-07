@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable
+from dataclasses import replace
 from pathlib import Path
 
 import cv2
@@ -19,7 +20,7 @@ from medproof.readers.base import ReaderOutput
 from medproof.readers.classifier import ModelBundleError, _sha256, spec_from_meta
 from medproof.segment.medsam import box_from_mask
 
-__all__ = ["ModelBundleError", "UNetSegmenter", "attach_medsam_masks", "attach_unet_masks", "encoder_from_arch", "spec_from_meta"]
+__all__ = ["ModelBundleError", "UNetSegmenter", "attach_masks", "attach_medsam_masks", "attach_unet_masks", "encoder_from_arch", "spec_from_meta"]
 
 
 def encoder_from_arch(arch: str) -> str:
@@ -73,6 +74,18 @@ class UNetSegmenter:
         return cls(model, spec_from_meta(meta["preproc_spec"]), threshold=float(meta.get("threshold", 0.5)), model_id=meta["model_id"], device=device)
 
 
+OFF_TARGET_SHARE = 0.20  # provisional: below this, the heatmap's salient pixels are mostly outside the tumour mask
+
+
+def heat_share_in_mask(heat: np.ndarray, mask: np.ndarray, rel: float = 0.5) -> float | None:
+    """Share of the heatmap's salient pixels (at least `rel` of its peak) that lie inside `mask`; None for a flat map."""
+    hi = float(heat.max())
+    if hi - float(heat.min()) <= 1e-6:
+        return None
+    salient = heat >= rel * hi
+    return float(np.logical_and(salient, mask).sum() / max(1, salient.sum()))
+
+
 def attach_unet_masks(out: ReaderOutput, img, seg: UNetSegmenter, negative: tuple = ()) -> None:
     """Give every positive finding the U-Net mask (one forward pass) and tighten its box to the mask."""
     skip = {n.lower() for n in negative}
@@ -86,6 +99,10 @@ def attach_unet_masks(out: ReaderOutput, img, seg: UNetSegmenter, negative: tupl
         return
     box = box_from_mask(mask)
     for f in targets:
+        if f.heatmap is not None and f.heatmap.shape == mask.shape:
+            share = heat_share_in_mask(f.heatmap, mask)
+            if share is not None and share < OFF_TARGET_SHARE and "heatmap_off_target" not in f.flags:
+                f.flags.append("heatmap_off_target")  # the model looked somewhere other than the segmented tumour
         f.mask, f.mask_source = mask, "unet"
         f.boxes_xyxy, f.box_scores = [box], [1.0]
 
@@ -101,3 +118,25 @@ def attach_medsam_masks(out: ReaderOutput, img, medsam) -> None:
             f.mask, f.mask_source = res.mask, "medsam"
         else:
             f.flags.append("mask_empty")
+
+
+def attach_masks(out: ReaderOutput, img, unet=None, medsam=None) -> list[str]:
+    """Attach whichever mask models are given: U-Net first, then MedSAM for findings still without a mask.
+
+    A failing mask model never loses the finding: it is reported as a generic warning and the finding keeps its
+    heatmap or box. Returns the warnings.
+    """
+    warnings: list[str] = []
+    if unet is not None and out.findings:
+        try:
+            attach_unet_masks(out, img, unet)
+        except Exception as exc:
+            warnings.append(f"tumour mask unavailable ({type(exc).__name__})")
+    if medsam is not None:
+        pending = [f for f in out.findings if not f.mask_source]  # a CAM-region mask has no source and is replaced
+        if pending:
+            try:
+                attach_medsam_masks(replace(out, findings=pending), img, medsam)
+            except Exception as exc:
+                warnings.append(f"lesion mask unavailable ({type(exc).__name__})")
+    return warnings

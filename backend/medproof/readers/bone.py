@@ -102,7 +102,7 @@ def _ultralytics_detector(weights: Path, imgsz: int) -> Detector:
     return detect
 
 
-def run(ctx, reader: BoneReader | None = None) -> StageResult:
+def run(ctx, reader: BoneReader | None = None, unet=None, medsam=None) -> StageResult:
     """Reader stage. `ctx` needs `.decoded`; `.body_part`, `.artifact_dir` and id offsets are optional."""
     t0 = time.perf_counter()
 
@@ -114,12 +114,17 @@ def run(ctx, reader: BoneReader | None = None) -> StageResult:
         return done(False, {"error": "no decoded image or reader"}, ["reader skipped: missing inputs"])
     try:
         out = reader.predict(img, getattr(ctx, "body_part", None))
+        from medproof.readers.segmenter import attach_masks
+
+        mask_warnings = attach_masks(out, img, unet, medsam)
         findings, warnings = to_findings(out, reader.cfg, finding_start=getattr(ctx, "finding_start", 1),
                                          evidence_start=getattr(ctx, "evidence_start", 1), artifact_dir=getattr(ctx, "artifact_dir", None))
     except Exception as exc:
         msg = f"bone reader unavailable ({type(exc).__name__})"
         return done(False, {"error": msg}, [msg])
     from medproof.readers.cxr import _share
+
+    warnings = [*mask_warnings, *warnings]
 
     _share(ctx, reader, out, findings)
     return done(True, {"model_id": out.model_id, "probs": [round(float(p), 5) for p in out.probs], "findings": [f.model_dump() for f in findings]}, warnings)
