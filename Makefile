@@ -24,7 +24,7 @@ test: ## everything: backend unit tests + ml unit/synthetic tests
 smoke:
 	cd backend && $(PYTHON) -m pytest -q
 
-dev: ## run the API with autoreload (web/'s dev server is still a separate `cd web && pnpm dev` until P4.6)
+dev: ## run the API with autoreload (the website: `cd web && pnpm dev`, or start.bat for both)
 	cd backend && $(PYTHON) -m uvicorn medproof.api.app:app --reload
 
 eval: ## not yet implemented: see P2.14
