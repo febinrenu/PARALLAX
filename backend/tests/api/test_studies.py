@@ -9,6 +9,7 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
+from medproof.api import system
 from medproof.api.app import create_app
 from medproof.core.config import PipelineConfig
 from medproof.core.ledger import Ledger
@@ -109,7 +110,11 @@ def test_unknown_study_id_is_404_on_every_route(tmp_path):
     assert client.post("/studies/nope/feedback", json={"finding_id": "f1", "decision": "accept"}).status_code == 404
 
 
-def test_fhir_metrics_and_model_cards_are_honest_placeholders(tmp_path):
+def test_fhir_metrics_and_model_cards_are_honest_placeholders(tmp_path, monkeypatch):
+    # Point at paths that don't exist: P2 publishes the real files, and once it has, the routes
+    # serve them instead (covered by the next test).
+    monkeypatch.setattr(system, "METRICS_PATH", tmp_path / "missing" / "metrics.json")
+    monkeypatch.setattr(system, "MODEL_CARDS_DIR", tmp_path / "missing" / "model_cards")
     client = _client(tmp_path, stages=_stub_stages())
     study_id = _upload(client).json()["study_id"]
     _poll_until_done(client, study_id)
@@ -122,6 +127,14 @@ def test_fhir_metrics_and_model_cards_are_honest_placeholders(tmp_path):
 
     cards = client.get("/model-cards").json()
     assert cards["cards"] == []
+
+
+def test_metrics_serves_the_published_report(tmp_path, monkeypatch):
+    report = tmp_path / "metrics.json"
+    report.write_text('{"bootstrap_resamples": 1000}', encoding="utf-8")
+    monkeypatch.setattr(system, "METRICS_PATH", report)
+    client = _client(tmp_path, stages=_stub_stages())
+    assert client.get("/metrics").json() == {"bootstrap_resamples": 1000}
 
 
 def test_feedback_is_logged_and_ledger_still_verifies(tmp_path):

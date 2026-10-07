@@ -1,7 +1,7 @@
 """System-level routes (P4.4): metrics, model cards, ledger verification.
 
-`reports/metrics.json` (P2.14) and `docs/model_cards/*.json` (P2.13) don't exist yet — these
-routes report that honestly instead of fabricating numbers or cards.
+Each route serves `reports/metrics.json` (P2.14) or `docs/model_cards/*.json` (P2.13) when present;
+when absent they say so instead of fabricating numbers or cards.
 """
 
 from __future__ import annotations
