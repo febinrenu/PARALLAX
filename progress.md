@@ -300,6 +300,7 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P1 · MedSAM runs on CPU through transformers (`flaviagiammarino/medsam-vit-base`, Apache-2.0, from `pytorch_model.bin`); results cached by image hash, box and model id in memory and optionally on disk.
 - 2026-10-07 · P1 · Brain and skin readers are one generic `ImageClassifierReader` built from P2's `model_meta.json` (arch, classes, `preproc_spec` name or dict, weights hash); layer paths `bn2` (EfficientNet) and `stages.3` (ConvNeXt) were checked on the real timm models. Brain `notumor` is not reported as a finding. Bone image score is the highest box confidence, positive cut-off 0.25 until P2.8 calibrates it.
 - 2026-10-07 · P1 · Tests never download model weights: real-model tests run only when the weights are already on disk and otherwise skip with a reason; `MEDPROOF_ROUTER=0` is set in `tests/conftest.py` so a locally trained router does not change test behaviour.
+- 2026-10-07 · P2 · SECURITY: a `.env` containing the P2 Kaggle API token was uploaded to the public repo through the GitHub web UI (commit 73b4105, 08:28) and untracked in d7c8f71, but it stays in git history · rotate that Kaggle token (kaggle.com > Settings > API > expire and create a new one) and the same file in any other role's keys if they were uploaded the same way; never upload `.env`, use the private channel. Removing the file from history needs a force-push that P4 must coordinate.
 
 ## Contract change requests
 

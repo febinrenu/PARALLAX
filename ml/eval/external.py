@@ -71,7 +71,7 @@ def score_skin() -> Path:
     lg = pr.logits(model, X)
     out = ART / "skin_cls" / "predictions" / "milk10k.npz"
     np.savez_compressed(out, ids=df.image_id.to_numpy().astype(str), logits=lg.astype(np.float32), y=df.label.map({c: i for i, c in enumerate(classes)}).to_numpy(), group=df.group.to_numpy().astype(str),
-                        age=df.age.fillna(-1).to_numpy(float), sex=df.sex.fillna("unknown").to_numpy().astype(str), site=df.site_general.fillna("unknown").to_numpy().astype(str), skin_tone=df.skin_tone.astype(str).to_numpy())
+                        age=df.age.fillna(-1).to_numpy(float), sex=df.sex.fillna("unknown").to_numpy().astype(str), site=df.site_general.fillna("unknown").to_numpy().astype(str), skin_tone=df.skin_tone.astype(str).to_numpy().astype(str))
     return out
 
 

@@ -20,6 +20,7 @@ Official ISIC 2018 Task 3 test set (1,512 images, never used in training, valida
 - melanoma: AUROC 0.924 (95% CI 0.898 to 0.949); sensitivity (recall) 0.637 (95% CI 0.544 to 0.728)
 - per-class recall: akiec 0.42, bcc 0.65, bkl 0.79, df 0.75, mel 0.64, nv 0.92, vasc 0.60
 A second identical run scored 0.689, so run-to-run GPU nondeterminism is about 0.01.
+- **External (MILK10k, 4,566 dermoscopic images, CC BY-NC, outside HAM10000; 94 duplicates of HAM10000 images and 576 images of classes the model does not cover were removed): balanced accuracy 0.571 (95% CI 0.543 to 0.602)**, accuracy 0.566 (95% CI 0.553 to 0.580), melanoma sensitivity 0.449 (95% CI 0.405 to 0.493), melanoma AUROC 0.874 (95% CI 0.855 to 0.893). Performance falls about 11 points of balanced accuracy outside the training distribution (basal cell carcinoma dominates MILK10k: 2,504 of 4,566 images).
 
 ## Calibration and abstention
 - temperature T = 0.923 (fitted on the validation split); ECE 0.075 → 0.062 on the test split
@@ -27,6 +28,7 @@ A second identical run scored 0.689, so run-to-run GPU nondeterminism is about 0
 - confidence tiers: high ≥ 0.8977406564656913, moderate ≥ 0.5, abstain below 0.5 or when the conformal set has more than 2 labels
 - selective prediction: AURC 0.059 (95% CI 0.043 to 0.078); coverage at 5% error 0.72
 The calibration split is drawn from the HAM10000 training release while the official test images were released separately, so a coverage gap between the two is a distribution-shift signal, not a bug.
+**Under dataset shift the guarantee breaks:** on MILK10k the conformal sets cover only 0.733 of true labels (target 0.90), with mean set size 1.69. Conformal prediction assumes the deployment data look like the calibration data; outside the training distribution the stated coverage must not be trusted, which is one more reason the out-of-distribution warning matters.
 
 ## Robustness (corruption benchmark, 8 perturbations × 5 severities)
 - balanced accuracy on 1000 test images: 0.685 clean; mean over perturbations 0.691 at severity 1 and 0.644 at severity 3
@@ -42,7 +44,14 @@ The calibration split is drawn from the HAM10000 training release while the offi
 - site, accuracy: worst subgroup **Head and neck** at 0.738 against 0.826 overall (confidence interval entirely worse than overall)
 - site, balanced accuracy: worst subgroup **Trunk** at 0.601 against 0.680 overall
 - site, melanoma sensitivity: worst subgroup **Lower extremity** at 0.393 against 0.637 overall
-Skin-tone labels do not exist in HAM10000, so performance by skin tone cannot be audited; the data skews to lighter skin and the model should be assumed weaker on darker skin.
+
+**Skin tone** (MILK10k grades 0 very dark to 5 very light; grades 0 and 1 merged because only 6 lesions have grade 0; external data, so differences mix skin tone with dataset shift and class mix):
+- grade 0-1 (darkest): n = 98, accuracy 0.561 (CI 0.469 to 0.653), balanced accuracy 0.615 (CI 0.546 to 0.675)
+- grade 2: n = 454, accuracy 0.727 (CI 0.683 to 0.769), balanced accuracy 0.695 (CI 0.625 to 0.762)
+- grade 3: n = 2,794, accuracy 0.554 (CI 0.535 to 0.573), balanced accuracy 0.550 (CI 0.508 to 0.590)
+- grade 4: n = 892, accuracy 0.557 (CI 0.526 to 0.594), balanced accuracy 0.513 (CI 0.437 to 0.582)
+- grade 5 (lightest): n = 328, accuracy 0.473 (CI 0.414 to 0.526), balanced accuracy 0.490 (CI 0.396 to 0.590)
+HAM10000 itself has no skin-tone labels and skews to lighter skin. The darkest groups are small (about 100 images), so the audit cannot rule out a gap there; the interval for those groups is wide.
 
 ## Trust signals measured on this model
 - `unstable`: error 0.614 when raised (n=101) against 0.129 when not; difference +0.485 (CI +0.390 to +0.581). **flagged cases are wrong more often (difference CI excludes 0): the signal is usable**
@@ -57,4 +66,4 @@ Skin-tone labels do not exist in HAM10000, so performance by skin tone cannot be
 - Energy-score out-of-distribution detection separates other modalities with AUROC 0.86 to 0.98, below the 0.95 target; the router and MedSigLIP-based detector (P1) are the intended guard.
 
 ## Contamination status
-Clean on the official ISIC test set. MedSAM and MedGemma, used alongside this model, have unverified training overlap.
+Clean on the official ISIC test set and on MILK10k (external; duplicates of HAM10000 removed). MedSAM and MedGemma, used alongside this model, have unverified training overlap.

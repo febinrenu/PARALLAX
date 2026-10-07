@@ -7,6 +7,7 @@
 | Model | Evaluation set | n | Metric | Value [95% CI] | Status |
 |---|---|---|---|---|---|
 | skin_cls | ISIC 2018 Task 3 official test | 1,512 | balanced multiclass accuracy | 0.680 [0.634, 0.726] | held out |
+| skin_cls | MILK10k dermoscopic images (external) | 4,566 | balanced multiclass accuracy | 0.571 [0.543, 0.602] | external |
 | brain_cls | leakage-free test split | 563 | accuracy | 0.940 [0.921, 0.958] | held out |
 | brain_cls | BDNeuro-MRI, non-duplicate images (external) | 1,644 | accuracy | 0.755 [0.735, 0.775] | external |
 | brain_cls (diagnostic model A) | original Kaggle Testing folder | 1,600 | accuracy | 0.942 [0.928, 0.954] | contaminated, reference only |
@@ -19,6 +20,7 @@
 What the numbers say, in plain terms:
 
 - **The popular brain benchmark is inflated, and we can measure how much.** The model trained on the original Kaggle split scores 0.942 [0.928, 0.954] on the original Testing folder. Remove the 727 test images that have a near-duplicate in Training and the same model scores 0.903 [0.878, 0.925]; remove also the same-scan neighbours and it scores 0.865 [0.835, 0.894]. On a completely independent set (non-duplicate BDNeuro-MRI images) our leakage-free model scores 0.755 [0.735, 0.775], and pituitary recall is only 0.43.
+- **The skin model loses about 11 points outside its training data.** Balanced accuracy is 0.571 [0.543, 0.602] on the external MILK10k set, against 0.680 [0.634, 0.726] on the official test, and the conformal sets cover only 0.73 of true labels there (target 0.90). MILK10k is also the only dataset with skin-tone grades, so it gives a skin-tone audit (section 8).
 - **A contaminated model looks much better.** On RSNA the chest model that saw RSNA in training scores AUROC 0.875 [0.869, 0.881]; the two models that never saw it score 0.785 [0.777, 0.793] and 0.749 [0.741, 0.757].
 - **Our warnings mean something, with two exceptions.** Instability, abstention and an energy-based out-of-distribution flag all flag cases that are wrong several times as often (section 7). The image-quality gate, with its provisional thresholds, does not predict errors and flags 43% to 91% of clean images; it needs refitting.
 - **Calibration works, and conformal sets reach their target** on the official skin test set and the bone and chest false-negative controls; the brain classifier over-covers because its test split is easier than its calibration split (section 5).
@@ -40,6 +42,7 @@ What the numbers say, in plain terms:
 | fracatlas | 4,083 | 341 | 16 | 281 | 59 truncated source files flagged; 2 mis-filed positives |
 | ham10000 | 11,527 | 520 | 79 | 296 | 115 training copies of official test images removed; official test untouched |
 | lgg_seg | 3,929 | 3,079 | 0 | 0 | slices kept; patients merge only on near-duplicate tumour slices |
+| milk10k | 5,240 | 8 | 0 | 674 |  |
 | rsna | 26,684 | 1,851 | 0 | 1,278 | patient ids unique per image |
 
 Figure: `reports/figures/brain_leakage.png`.
@@ -50,6 +53,7 @@ Figure: `reports/figures/brain_leakage.png`.
 |---|---|---|---|
 | skin_cls | ISIC 2018 Task 3 official test | clean | never used for training, validation or calibration; 115 training copies of test images were removed by the audit |
 | skin_cls | HAM10000 internal test split | clean | lesion-grouped split |
+| skin_cls | MILK10k dermoscopic images | clean (external) | 94 images that duplicate HAM10000 images and 576 images of classes the model does not cover are excluded |
 | brain_cls | leakage-free test split | clean | similarity-grouped split; no duplicate crosses splits |
 | brain_cls | original Kaggle Testing folder | contaminated | 727 of 1,600 images have a near-duplicate in the Kaggle Training folder; shown only to measure inflation |
 | brain_cls | BDNeuro-MRI non-duplicate images | clean (external) | 71% of BDNeuro duplicates the Kaggle training source and is excluded; the remaining 1,644 images are independent |
@@ -71,6 +75,7 @@ Figures: `reports/figures/cxr_contamination.png`.
 |---|---|---|---|---|---|
 | skin_cls | official_test | 0.075 → 0.062 | 0.898 [0.882, 0.913] | 1.26 | yes |
 | skin_cls | test | 0.057 → 0.036 | 0.925 [0.907, 0.941] | 1.23 | yes |
+| skin_cls | milk10k | 0.152 → 0.179 | 0.733 [0.719, 0.745] | 1.69 | no (under-covers) |
 | brain_cls | test | 0.079 → 0.019 | 0.940 [0.917, 0.958] | 1.00 | no (over-covers) |
 | chest reader (chex), FNR control | RSNA test | ECE 0.220 → 0.018 | miss rate 0.103 (target 0.10) [0.094, 0.112] | n/a | yes |
 | bone detector, FNR control | FracAtlas test | ECE 0.061 → 0.035 | miss rate 0.078 (target 0.10) [0.034, 0.147] | n/a | yes |
@@ -152,6 +157,20 @@ Worst subgroup per metric (groups with fewer than 30 images are not reported; mi
 - site / balanced accuracy: worst **Trunk** 0.601 vs 0.680 overall
 - site / melanoma sensitivity: worst **Lower extremity** 0.393 vs 0.637 overall
 
+**skin_cls_milk10k** (MILK10k external dermoscopic images, n = 4,566)
+- skin_tone / accuracy: worst **5 (lightest)** 0.473 vs 0.566 overall — confidence interval entirely worse than overall
+- skin_tone / balanced accuracy: worst **5 (lightest)** 0.490 vs 0.571 overall
+- skin_tone / melanoma sensitivity: worst **3** 0.395 vs 0.449 overall
+- age_band / accuracy: worst **50-69** 0.536 vs 0.566 overall — confidence interval entirely worse than overall
+- age_band / balanced accuracy: worst **<30** 0.512 vs 0.571 overall
+- age_band / melanoma sensitivity: worst **30-49** 0.366 vs 0.449 overall
+- sex / accuracy: worst **male** 0.551 vs 0.566 overall
+- sex / balanced accuracy: worst **female** 0.561 vs 0.571 overall
+- sex / melanoma sensitivity: worst **female** 0.442 vs 0.449 overall
+- site / accuracy: worst **Head and neck** 0.506 vs 0.566 overall — confidence interval entirely worse than overall
+- site / balanced accuracy: worst **Lower extremity** 0.510 vs 0.571 overall
+- site / melanoma sensitivity: worst **Lower extremity** 0.400 vs 0.449 overall
+
 **brain_cls** (Brain Tumor MRI Dataset, leakage-free test split, n = 563)
 - class / recall: worst **meningioma** 0.905 vs 0.940 overall
 
@@ -175,7 +194,7 @@ Worst subgroup per metric (groups with fewer than 30 images are not reported; mi
 - view / false negative rate at control threshold: worst **PA** 0.250 vs 0.103 overall — confidence interval entirely worse than overall
 
 
-Skin-tone labels do not exist in HAM10000 and the brain dataset has no demographic metadata, so those audits are not possible.
+Skin tone is audited on MILK10k only (grades 0 very dark to 5 very light; 0 and 1 merged, about 100 images): accuracy by grade is 0-1 (darkest) 0.56, 2 0.73, 3 0.55, 4 0.56, 5 (lightest) 0.47, with no monotone trend; differences mix skin tone with class mix and dataset shift, and the darkest groups are too small to rule out a gap. HAM10000 has no skin-tone labels and the brain dataset no demographic metadata, so no other skin-tone audit is possible.
 
 ## 9. Corruption robustness
 
@@ -194,7 +213,7 @@ Figure: `reports/figures/corruption.png`. Segmentation uses photometric perturba
 - Bone: no patient identifiers, so another view of a test patient may be in training; the bone model has a single dataset and no external test.
 - Brain segmentation: one fold of ten (nine test groups), so its interval is wide; the product's single-channel T1-CE inputs are out of the training domain.
 - Brain classification: external accuracy (0.755) is far below in-source accuracy; do not present in-source numbers as general performance.
-- Skin: no skin-tone audit possible; run-to-run GPU nondeterminism is about 0.01 balanced accuracy.
+- Skin: skin-tone coverage is thin at the dark end (about 100 images in grades 0 and 1); run-to-run GPU nondeterminism is about 0.01 balanced accuracy; conformal coverage fails under dataset shift (MILK10k).
 - Pending: `discordant` and `unfaithful` signal validation (P3, P1.9); zero-shot MedSAM on ISIC 2018 Task 1 (P1.12); MedSigLIP out-of-distribution detector (P1.5); BDNeuro-MRI licence is unconfirmed; overlap of MedGemma and MedSAM training data with our test sets is unverified.
 - Reliability and risk-coverage curves for the segmenter are not defined (no per-case probability), so none is reported.
 

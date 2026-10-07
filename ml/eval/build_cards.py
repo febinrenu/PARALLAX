@@ -61,6 +61,16 @@ def signal_lines(model: str) -> str:
     return "\n".join(out)
 
 
+def skin_tone_lines() -> str:
+    blk = M["subgroups"]["datasets"]["skin_cls_milk10k"]["by"]["skin_tone"]
+    out = []
+    for k, r in blk["subgroups"].items():
+        a, b = r.get("accuracy"), r.get("balanced_accuracy")
+        if isinstance(a, dict) and "point" in a:
+            out.append(f"- grade {k}: n = {r['n']:,}, accuracy {a['point']:.3f} (CI {a['lo']:.3f} to {a['hi']:.3f}), balanced accuracy {b['point']:.3f} (CI {b['lo']:.3f} to {b['hi']:.3f})")
+    return "\n".join(out)
+
+
 def corruption_lines(model: str) -> str:
     c = M["corruption"]["models"].get(model)
     if not c:
@@ -93,6 +103,8 @@ def build_models() -> dict[str, tuple[str, dict]]:
     out = {}
     # ---- skin
     sk, sk_t = M["models"]["skin_cls"], M["models"]["skin_cls"]["splits"]["official_test"]
+    mk = sk["external_milk10k"]
+    mkc = M["calibration"]["models"]["skin_cls"]["splits"]["milk10k"]["conformal"]["alpha_0.1"]
     k = reg_key("skin_cls")
     lk = LEAK["ham10000"]
     body = f"""
@@ -114,17 +126,22 @@ Official ISIC 2018 Task 3 test set ({sk_t['n']:,} images, never used in training
 - melanoma: AUROC {f(sk_t['auroc_mel_vs_rest'])}; sensitivity (recall) {f(sk_t['per_class_recall']['mel'])}
 - per-class recall: {', '.join(f"{c} {v['point']:.2f}" for c, v in sk_t['per_class_recall'].items())}
 A second identical run scored 0.689, so run-to-run GPU nondeterminism is about 0.01.
+- **External (MILK10k, {mk['n']:,} dermoscopic images, CC BY-NC, outside HAM10000; 94 duplicates of HAM10000 images and 576 images of classes the model does not cover were removed): balanced accuracy {f(mk['balanced_accuracy'])}**, accuracy {f(mk['accuracy'])}, melanoma sensitivity {f(mk['per_class_recall']['mel'])}, melanoma AUROC {f(mk['auroc_mel_vs_rest'])}. Performance falls about 11 points of balanced accuracy outside the training distribution (basal cell carcinoma dominates MILK10k: {mk['class_counts']['bcc']:,} of {mk['n']:,} images).
 
 ## Calibration and abstention
 {cal_lines('skin_cls', 'official_test')}
 The calibration split is drawn from the HAM10000 training release while the official test images were released separately, so a coverage gap between the two is a distribution-shift signal, not a bug.
+**Under dataset shift the guarantee breaks:** on MILK10k the conformal sets cover only {mkc['coverage']:.3f} of true labels (target 0.90), with mean set size {mkc['mean_set_size']:.2f}. Conformal prediction assumes the deployment data look like the calibration data; outside the training distribution the stated coverage must not be trusted, which is one more reason the out-of-distribution warning matters.
 
 ## Robustness (corruption benchmark, 8 perturbations × 5 severities)
 {corruption_lines('skin_cls')}
 
 ## Subgroup audit (official test, metadata from the ISIC API)
 {worst_lines('skin_cls')}
-Skin-tone labels do not exist in HAM10000, so performance by skin tone cannot be audited; the data skews to lighter skin and the model should be assumed weaker on darker skin.
+
+**Skin tone** (MILK10k grades 0 very dark to 5 very light; grades 0 and 1 merged because only 6 lesions have grade 0; external data, so differences mix skin tone with dataset shift and class mix):
+{skin_tone_lines()}
+HAM10000 itself has no skin-tone labels and skews to lighter skin. The darkest groups are small (about 100 images), so the audit cannot rule out a gap there; the interval for those groups is wide.
 
 ## Trust signals measured on this model
 {signal_lines('skin_cls')}
@@ -136,7 +153,7 @@ Skin-tone labels do not exist in HAM10000, so performance by skin tone cannot be
 - Energy-score out-of-distribution detection separates other modalities with AUROC 0.86 to 0.98, below the 0.95 target; the router and MedSigLIP-based detector (P1) are the intended guard.
 
 ## Contamination status
-Clean on the official ISIC test set. MedSAM and MedGemma, used alongside this model, have unverified training overlap.
+Clean on the official ISIC test set and on MILK10k (external; duplicates of HAM10000 removed). MedSAM and MedGemma, used alongside this model, have unverified training overlap.
 """
     out["skin_cls"] = ("Skin lesion classifier (ConvNeXt-Tiny)", card("Skin lesion classifier", "skin_cls", body)[1], {"type": "model", "registry_id": k, "license": REG[k]["license"], "contamination": "clean on the official test set", "headline": REG[k]["headline"]})
 
@@ -399,6 +416,14 @@ def build_datasheets() -> dict[str, tuple[str, str, dict]]:
 **Contamination:** TorchXRayVision `all` weights were trained on it; `chex` and `mimic_ch` were not. NIH ChestX-ray14 is the source of RSNA's images and is part of the `all` training mix.
 **Known issues:** "Lung Opacity" is not pneumonia; labels are from radiologist consensus on a single frontal view; mix of AP and PA films with different case mix.
 """), {"type": "dataset", "license": "Kaggle competition rules"})
+    mk = LEAK["milk10k"]
+    out["milk10k"] = ("MILK10k (paired clinical and dermoscopic skin images)", sheet("MILK10k", f"""
+**Licence:** CC BY-NC 4.0 (non-commercial). **Source:** ISIC Archive, doi:10.34970/648456 (MILK study team).
+**Contents:** 5,240 lesions, each with a clinical close-up and a dermoscopic image (10,480 images), 11 diagnostic classes (7 shared with HAM10000 plus squamous cell carcinoma / keratoacanthoma, other benign, other malignant and inflammatory), age in 5-year bands, sex, anatomic site and a 6-level skin-tone grade (0 very dark to 5 very light, distinct from Fitzpatrick types). 95.7% of lesions have histopathology.
+**How we use it:** external test of the skin classifier (dermoscopic images only) and the only skin-tone audit. Never trained on.
+**Audit:** {mk['overlap_with_ham10000_images']} images are near-duplicates of HAM10000 images (the metadata notes that some lesions were previously in ISIC) and are excluded; {sum(mk['classes_not_modelled'].values())} images of classes the model does not cover are excluded ({', '.join(f"{k.lower()} {v}" for k, v in mk['classes_not_modelled'].items())}); {mk['split_counts']['external_test']:,} images remain.
+**Known issues:** basal cell carcinoma is over half of the remaining images; skin-tone grade 0 has only 6 lesions (grades 0 and 1 are merged); a different clinical mix from HAM10000, so accuracy differences mix skin tone with dataset shift.
+"""), {"type": "dataset", "license": "CC BY-NC 4.0"})
     out["cifar10_test"] = ("CIFAR-10 test set (natural images)", sheet("CIFAR-10 (test split)", """
 **Licence:** MIT-style (Krizhevsky). **Source:** cs.toronto.edu/~kriz/cifar.html, archive md5 verified.
 **Use:** natural-image out-of-distribution negatives for the OOD study; 300 images are scored per model. Never used for training.
