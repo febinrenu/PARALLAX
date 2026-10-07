@@ -49,10 +49,10 @@ _SUPPORTING: dict[str, tuple[str, ...]] = {
     **dict.fromkeys(("Consolidation", "Pneumonia", "Infiltration", "Lung Opacity"), ("fever", "cough", "sputum", "dyspnea", "chills")),
     "Effusion": ("dyspnea", "pleuritic", "chest pain", "orthopnea"),
     "Pneumothorax": ("chest pain", "dyspnea"),
-    **dict.fromkeys(("Nodule", "Mass", "Lung Lesion"), ("weight loss", "hemoptysis", "cough")),
+    **dict.fromkeys(("Nodule", "Mass", "Lung Lesion"), ("weight loss", "hemoptysis")),  # a cough alone does not point to a mass
     **dict.fromkeys(("Edema", "Cardiomegaly"), ("orthopnea", "dyspnea", "swelling")),
     "Atelectasis": ("cough", "dyspnea", "post-operative"),
-    "fracture": ("pain", "swelling", "deformity", "bruising", "fall", "weight"),
+    "fracture": ("pain", "swelling", "deformity", "bruising", "fall", "bear weight", "weight-bearing", "weight bearing"),
     **dict.fromkeys(("mel", "nv", "bkl", "bcc", "akiec", "df", "vasc"), ("itching", "bleeding", "growth", "colour change", "changing", "tenderness")),
     **dict.fromkeys(("glioma", "meningioma", "pituitary"), ("headache", "seizure", "weakness", "vision", "vomiting")),
 }

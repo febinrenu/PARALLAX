@@ -62,7 +62,7 @@ def test_template_claims_all_pass_the_firewall(view):
 def test_to_claim_builds_a_slot_template_with_the_findings_evidence(view):
     c = to_claim(ClaimDraft(frame="supported_by_note", finding="f1", note_ref="te_1"), 3, view)
     assert c.claim_id == "c3"
-    assert c.template == "Doctor, consider {f1.label} ({f1.tier}); the note states {te_1.quote}."
+    assert c.template == "Doctor, consider {f1.label} in the {f1.region} ({f1.tier}); the note states {te_1.quote}."
     assert c.evidence_ids == ["ie_1", "te_1"]
     plain = to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)
     assert plain.template == "Doctor, consider {f1.label} in the {f1.region} ({f1.tier})." and plain.evidence_ids == ["ie_1"]
@@ -219,3 +219,36 @@ def test_a_finding_without_a_conflict_is_unchanged():
     view = StudyView.build([f], {}, {})
     claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
     assert "high confidence" in (claims[0].rendered or "")
+
+
+# ---- P3-E: the sentence that cites the note must still say where the finding is
+
+def test_the_note_citing_sentence_keeps_the_region():
+    from medproof.core.schemas import TextEvidence
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import NOTE, NOTE_ID, finding, ie
+
+    fever = TextEvidence(evidence_id="te_2", note_id=NOTE_ID, span=(NOTE.index("fever"), NOTE.index("fever") + 5), quote="fever",
+                         fact_type="symptom", polarity="supports")
+    f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True)], [fever])
+    view = StudyView.build([f], {NOTE_ID: NOTE}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="supported_by_note", finding="f1", note_ref="te_2"), 1, view)], view)
+    assert claims[0].blocked_reason is None, claims[0].blocked_reason
+    assert claims[0].rendered == 'Doctor, consider Pneumonia in the right lower zone (moderate confidence); the note states "fever".'
+
+
+def test_the_note_citing_sentence_drops_an_unnamed_region():
+    from medproof.core.schemas import TextEvidence
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import NOTE, NOTE_ID, finding, ie
+
+    fever = TextEvidence(evidence_id="te_2", note_id=NOTE_ID, span=(NOTE.index("fever"), NOTE.index("fever") + 5), quote="fever",
+                         fact_type="symptom", polarity="supports")
+    f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True, region=None)], [fever])
+    view = StudyView.build([f], {NOTE_ID: NOTE}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="supported_by_note", finding="f1", note_ref="te_2"), 1, view)], view)
+    assert claims[0].rendered == 'Doctor, consider Pneumonia (moderate confidence); the note states "fever".'

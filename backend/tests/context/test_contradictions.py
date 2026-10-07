@@ -251,3 +251,24 @@ def test_a_contradiction_still_counts_when_the_heatmap_failed():
     res = check([_with_faithful(False, label="Consolidation")], [fact("Asymptomatic", "symptom", "asymptomatic", polarity="absent")],
                 Demographics(), note_text="Asymptomatic.", note_id="n1")
     assert "symptom_finding_incoherent" in flags(res)
+
+
+# ---- P3-E: a symptom supports a finding only when it genuinely points to it
+
+@pytest.mark.parametrize("label,quote,expected", [
+    ("Mass", "productive cough", "neutral"),  # a cough does not point to a mass
+    ("Mass", "cough", "neutral"),
+    ("Mass", "hemoptysis", "supports"),
+    ("Nodule", "weight loss", "supports"),
+    ("Lung Lesion", "cough", "neutral"),
+    ("Pneumonia", "productive cough", "supports"),
+    ("Consolidation", "fever", "supports"),
+    ("fracture", "weight loss", "neutral"),  # "weight" once matched here by accident
+    ("fracture", "unable to bear weight", "supports"),
+    ("fracture", "pain", "supports"),
+])
+def test_only_symptoms_that_point_to_the_finding_support_it(label, quote, expected):
+    modality = "bone_xray" if label == "fracture" else "cxr"
+    f = finding(label=label, modality=modality)
+    res = check([f], [fact(quote, "symptom", quote)], Demographics())
+    assert polarities(res) == {quote: expected}

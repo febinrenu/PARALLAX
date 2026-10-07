@@ -25,12 +25,11 @@ MAX_DRAFTS = 12
 
 FRAMES: dict[str, str] = {
     "consider": "Doctor, consider {F.label} in the {F.region} ({F.tier}).",
-    "supported_by_note": "Doctor, consider {F.label} ({F.tier}); the note states {N.quote}.",
+    "supported_by_note": "Doctor, consider {F.label} in the {F.region} ({F.tier}); the note states {N.quote}.",
     "discordant_review": "Doctor, the two readers disagree on {F.label}; please review the image directly.",
     "abstain_note": "Doctor, there is no confident reading for {F.label}; clinical correlation is needed.",
     "context_missing": "Doctor, the notes do not mention history relevant to {F.label}; please add context.",
 }
-FRAME_NO_REGION = "Doctor, consider {F.label} ({F.tier})."
 # Chosen by code, never by the model: when the note and the image name different sides, saying the finding at its
 # model tier would hide the conflict, so the sentence asks for a review and states no confidence.
 FRAME_LATERALITY = "Doctor, the note and the image disagree about the side for {F.label}; please review the image directly."
@@ -64,8 +63,8 @@ def to_claim(draft: ClaimDraft, n: int, view: StudyView) -> Claim:
     found = view.findings.get(draft.finding)
     if found is not None and "laterality_conflict" in found.flags and draft.frame in ("consider", "supported_by_note"):
         return Claim(claim_id=f"c{n}", template=FRAME_LATERALITY.replace("{F.", "{" + draft.finding + "."), evidence_ids=_first_evidence(view, draft.finding) or ["ie_missing"])
-    if draft.frame == "consider" and found is not None and not has_region(found):
-        frame = FRAME_NO_REGION  # nobody named a region, so do not write a phrase about one
+    if draft.frame in ("consider", "supported_by_note") and found is not None and not has_region(found):
+        frame = frame.replace(" in the {F.region}", "")  # nobody named a region, so do not write a phrase about one
     template = frame.replace("{F.", "{" + draft.finding + ".")
     ids = _first_evidence(view, draft.finding)
     if draft.frame == "supported_by_note":
