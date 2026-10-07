@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import chest from "../../public/cases/chest/case.json";
 import type { CaseFile } from "../api/types";
 import type { Claim } from "../contracts";
-import { chainFor, displayLabel, leadMarker, strokeFor } from "./findings";
+import { chainFor, displayLabel, leadMarker, regionFailed, strokeFor } from "./findings";
 
 const study = (chest as unknown as CaseFile).study;
 
@@ -72,5 +72,25 @@ describe("second read and firewall steps from P3's stages", () => {
     const claim = (id: string, blocked: string | null): Claim => ({ claim_id: id, template: "t", evidence_ids: ["e1"], rendered: "r", entailed: null, blocked_reason: blocked });
     expect(step(base, { ...study, claims: [claim("c1", null), claim("c2", "no evidence id")] }, "Firewall")).toMatchObject({ state: "pass", detail: "1 report claim passed, 1 blocked" });
     expect(step(base, { ...study, claims: [claim("c1", "diagnostic phrasing")] }, "Firewall").state).toBe("fail");
+  });
+});
+
+describe("failed and untestable regions", () => {
+  const base = study.findings.find((f) => f.label === "Pneumonia")!;
+  const withEvidence = (patch: Partial<NonNullable<typeof base.image_evidence>[number]>) => ({
+    ...base,
+    image_evidence: [{ ...base.image_evidence![0], ...patch }, ...base.image_evidence!.slice(1)],
+  });
+
+  it("flags a region that failed the deletion test, even on a finding the notes support", () => {
+    expect(regionFailed(withEvidence({ faithful: false }))).toBe(true);
+    expect(regionFailed(withEvidence({ faithful: true }))).toBe(false);
+    expect(regionFailed(withEvidence({ faithful: null }))).toBe(false);
+  });
+
+  it("explains that a box-only finding cannot take the region test", () => {
+    const f = withEvidence({ faithful: null, faithfulness_drop: null, kind: "bbox" });
+    const step = chainFor(f, study, [], false).find((s) => s.stage === "Faithfulness")!;
+    expect(step.detail).toMatch(/^Not assessable/);
   });
 });

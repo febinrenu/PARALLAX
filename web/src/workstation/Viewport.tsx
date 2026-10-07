@@ -5,7 +5,7 @@ import { loadBitmap } from "../gl/core";
 import { Viewer, type Layers, type ViewerBox } from "../gl/viewer";
 import { attachViewerInput } from "../gl/viewerInput";
 import { formatWindow } from "../gl/windowing";
-import { boxOf, displayLabel, heatmapOf, leadMarker, maskOf, regionOf, strokeFor } from "../lib/findings";
+import { boxOf, displayLabel, heatmapOf, leadMarker, maskOf, regionFailed, regionOf, strokeFor } from "../lib/findings";
 import { gl as tokens } from "../design/tokens";
 import { selectFinding, useSession } from "./store";
 
@@ -144,7 +144,9 @@ export function Viewport({ viewerRef, onDropFile }: { viewerRef: MutableRefObjec
       const uv = boxOf(f, imageSize);
       if (!uv) continue;
       if (f.status === "rejected" && f.finding_id !== active) continue; // withheld boxes only when inspected
-      const s = strokeFor(f.status);
+      // A region that failed the deletion test is drawn as failed evidence, whatever the finding's
+      // status: a note can support the finding, but it does not make this box the reason.
+      const s = regionFailed(f) ? strokeFor("rejected") : strokeFor(f.status);
       const isActive = f.finding_id === active;
       if (isActive) hi = boxes.length;
       boxes.push({ uv, color: s.color, dashed: s.dashed, alpha: isActive || !active ? 1 : 0.28 });
@@ -205,7 +207,7 @@ export function Viewport({ viewerRef, onDropFile }: { viewerRef: MutableRefObjec
   const marker = leadMarker(region);
   const annotationOnly = !sel && annotations.find((a) => a.kind === "bbox");
   const summary = sel
-    ? `${displayLabel(sel.label)}${region ? ` in the ${region}` : ""}, ${strokeFor(sel.status).label.toLowerCase()}`
+    ? `${displayLabel(sel.label)}${region ? ` in the ${region}` : ""}, ${strokeFor(sel.status).label.toLowerCase()}${regionFailed(sel) ? "; its marked region failed the deletion test" : ""}`
     : mode === "empty"
       ? "No study open"
       : `${title}, no findings selected`;
@@ -241,6 +243,7 @@ export function Viewport({ viewerRef, onDropFile }: { viewerRef: MutableRefObjec
           <div className="flex items-center gap-1.5 rounded-[var(--radius-control)] bg-film-base/85 px-1.5 py-1 text-[12px] leading-none text-ink">
             {marker && <span className="grid size-[18px] place-items-center rounded-[3px] border border-ink/70 font-mono text-[11px] font-medium">{marker}</span>}
             <span>{sel ? (region ?? displayLabel(sel.label)) : annotationOnly && annotationOnly.label}</span>
+            {sel && regionFailed(sel) && <span className="text-pencil-red-ink">region failed the test</span>}
           </div>
         )}
       </div>

@@ -9,6 +9,11 @@ export interface Stroke {
   label: string;
 }
 
+/** The finding's own image region failed the deletion test: where the model looked is not why it decided. */
+export function regionFailed(f: Finding): boolean {
+  return f.image_evidence?.[0]?.faithful === false;
+}
+
 export function strokeFor(status: Status): Stroke {
   switch (status) {
     case "verified":
@@ -92,9 +97,15 @@ export function chainFor(f: Finding, study: StudyResult | null, _stages: StageRe
       : { state: "fail", detail: "No image location" },
     Faithfulness: (() => {
       const ev = f.image_evidence?.find((e) => e.faithful !== null && e.faithful !== undefined);
-      if (!ev) return missing("Not tested: only the most probable findings get the region test");
+      if (!ev)
+        return f.image_evidence?.[0]?.kind === "bbox"
+          ? missing("Not assessable: a box has no heatmap to delete and re-score")
+          : missing("Not tested: only the most probable findings get the region test");
       const drop = ev.faithfulness_drop != null ? ` (confidence drop ${ev.faithfulness_drop.toFixed(2)})` : "";
-      return ev.faithful ? { state: "pass" as const, detail: `Deleting the region lowers confidence${drop}` } : { state: "fail" as const, detail: `Deleting the region barely changes confidence${drop}` };
+      if (ev.faithful) return { state: "pass" as const, detail: `Deleting the region lowers confidence${drop}` };
+      // P1's test fails a region whose drop is under 0.05, or no larger than deleting random regions.
+      const bigDrop = (ev.faithfulness_drop ?? 0) >= 0.05;
+      return { state: "fail" as const, detail: bigDrop ? `Deleting random regions lowers confidence just as much${drop}` : `Deleting the region barely changes confidence${drop}` };
     })(),
     Stability: f.stability
       ? f.stability.flip_rate <= 0.25
