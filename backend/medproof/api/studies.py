@@ -1,5 +1,5 @@
 """`/studies` routes (P4.4, P4.6): upload, SSE stage stream, fetch, feedback, pixels for the
-viewer, per-study artifacts and ledger, FHIR export."""
+viewer, per-study artifacts and ledger, FHIR export, dictation."""
 
 from __future__ import annotations
 
@@ -26,6 +26,7 @@ router = APIRouter()
 
 _ARTIFACT_NAME = re.compile(r"^[A-Za-z0-9_.-]+\.png$")
 MAX_PIXEL_EDGE = 2048
+MAX_AUDIO_BYTES = 25 * 1024 * 1024  # Groq's Whisper upload limit
 _LUMA = np.array([0.299, 0.587, 0.114], np.float32)
 
 
@@ -142,6 +143,37 @@ async def create_study(
         events_url=f"/studies/{study_id}/events",
         status_url=f"/studies/{study_id}",
     )
+
+
+class TranscribeOut(BaseModel):
+    ok: bool
+    note: str
+    transcript: str = ""
+    language: str = ""
+    duration_s: float | None = None
+    warnings: list[str] = []
+
+
+@router.post("/transcribe", response_model=TranscribeOut)
+async def transcribe(
+    request: Request,
+    audio: UploadFile = File(...),  # noqa: B008
+    typed: str | None = Form(None),
+) -> TranscribeOut:
+    """Dictation in, the typed note with the transcript appended out (P3's `dictation_to_note`). The
+    audio is not stored and is not part of any study: the doctor reviews the merged text, and only
+    what they then submit with a study is analysed, injection guard included."""
+    data = await audio.read()
+    if not data:
+        raise HTTPException(status_code=422, detail="empty audio")
+    if len(data) > MAX_AUDIO_BYTES:
+        raise HTTPException(status_code=413, detail="audio longer than the 25 MB transcription limit")
+    from medproof.context.voice import dictation_to_note
+
+    pool = request.app.state.audio_pool()
+    out = await asyncio.to_thread(dictation_to_note, data, audio.filename or "dictation.webm", typed, pool)
+    return TranscribeOut(ok=out.ok, note=out.note, transcript=out.transcript or "", language=out.language or "",
+                         duration_s=out.duration_s, warnings=list(out.warnings))
 
 
 @router.get("/studies/{study_id}/events")

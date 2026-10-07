@@ -8,6 +8,9 @@ state between them.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import Any
+
 from fastapi import FastAPI
 
 from medproof.api import studies, system
@@ -22,6 +25,7 @@ def create_app(
     ledger: Ledger | None = None,
     store: StudyStore | None = None,
     stages: list[StageSpec] | None = None,
+    audio_pool: Callable[[], Any] | None = None,
 ) -> FastAPI:
     config = config or PipelineConfig()
     app = FastAPI(title="Parallax / MedProof API")
@@ -29,9 +33,19 @@ def create_app(
     app.state.ledger = ledger or Ledger(config.ledger_path)
     app.state.store = store or StudyStore()
     app.state.stages = stages if stages is not None else PIPELINE
+    app.state.audio_pool = audio_pool or _default_audio_pool
     app.include_router(studies.router)
     app.include_router(system.router)
     return app
+
+
+def _default_audio_pool() -> Any:
+    """The shared Groq pool (it serves Whisper too), or None without keys or without P3's module."""
+    try:
+        from medproof.reasoning_stages import _default_llm_pool
+    except ImportError:
+        return None
+    return _default_llm_pool()
 
 
 app = create_app()
