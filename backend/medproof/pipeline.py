@@ -12,7 +12,8 @@ on Windows laptops and Kaggle/Colab Linux alike); multiprocessing was rejected a
 and model-reload cost per call is worse than the problem it solves.
 
 Stage registry: `intake`, `router` (only when the uploader gave no modality), the modality's
-`reader` (chest, brain, skin or bone), `faithfulness` and `stability` (P1), then P3's
+`reader` (chest, brain, skin or bone), `faithfulness` and `stability` (P1), `calibration` (P2),
+then P3's
 `second_read`, `context`, `report` and `precedents` (`medproof.reasoning_stages`). New stages
 append to `PIPELINE`. Each stage sees every
 earlier result on `ctx.stage_results`; a stage that updates findings returns the full list under
@@ -230,6 +231,95 @@ def _stability_step(ctx: StudyContext, cfg: Any = None) -> StageResult:
     return stability.run(view, reader=ctx.reader, cfg=cfg)
 
 
+# P2's serving-time calibrators, under `PipelineConfig.models_root`. Chest has none on purpose: the
+# product reads the all-data weights, which saw RSNA, and P2 fitted the chest calibrator for the
+# external `chex` weights, so applying it would claim a calibration that was never measured.
+CALIBRATION_FILES: dict[str, str] = {
+    "brain_mri": "brain_cls/calibration.json",
+    "skin_dermoscopy": "skin_cls/calibration.json",
+    "bone_xray": "bone_det/calibration.json",
+}
+_CALIBRATORS: dict[str, Any] = {}
+
+
+def _load_calibrator(modality: str, config: PipelineConfig) -> Any:
+    path = config.models_root / CALIBRATION_FILES[modality]
+    key = str(path)
+    if key not in _CALIBRATORS:
+        if modality == "bone_xray":
+            from medproof.calibrate.binary import BinaryCalibrator
+
+            _CALIBRATORS[key] = BinaryCalibrator.load(path)
+        else:
+            from medproof.calibrate.calibrator import Calibrator
+
+            _CALIBRATORS[key] = Calibrator.load(path)
+    return _CALIBRATORS[key]
+
+
+def _calibrated(f: Finding, prob: float, tier: str, conformal_set: list[str] | None, coverage: float | None) -> Finding:
+    update: dict[str, Any] = {"prob_calibrated": float(prob), "tier": tier, "flags": [x for x in f.flags if x != "uncalibrated"]}
+    if conformal_set is not None:
+        update["conformal_set"] = list(conformal_set)
+    if coverage is not None:
+        update["coverage_target"] = float(coverage)
+    return f.model_copy(update=update)
+
+
+def _calibration_step(ctx: StudyContext) -> StageResult:
+    """P2.7 to P2.9 at serving time: calibrated probability, conformal set and tier per finding.
+    Multi-class readers (brain, skin) use temperature scaling and an APS conformal set; the bone
+    detector uses Platt scaling with an abstention band. Findings stay as they are when no
+    calibrator applies, and the stage says why."""
+    t0 = time.perf_counter()
+    modality = ctx.modality_hint
+    findings = _merged_findings(ctx.stage_results)
+    if not findings:
+        return StageResult(stage="calibration", ok=True, ms=0, payload={"calibrated": 0})
+    if modality == "cxr":
+        return _failed("calibration", "chest findings stay uncalibrated: the product's chest weights saw RSNA, and the fitted calibrator belongs to the external chex weights")
+    if modality not in CALIBRATION_FILES:
+        return _failed("calibration", f"no calibrator for modality {modality!r}")
+    try:
+        cal = _load_calibrator(modality, ctx.config or PipelineConfig())
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        return _failed("calibration", f"calibration file unavailable for {modality} ({type(exc).__name__})", t0)
+
+    if modality == "bone_xray":
+        import numpy as np
+
+        from medproof.readers.cxr_config import CxrConfig  # the readers' own tier thresholds
+
+        updated = []
+        for f in findings:
+            p = float(cal.prob(np.array([f.prob_raw]))[0])
+            abstain = cal.abstain_low <= p <= cal.abstain_high
+            updated.append(_calibrated(f, p, "abstain" if abstain else CxrConfig().tier(p), None, 1 - cal.alpha))
+        payload = {"method": "platt", "calibrated": len(updated)}
+    else:
+        out = ctx.reader_output
+        if out is None or getattr(out, "logits", None) is None:
+            return _failed("calibration", "calibration skipped: no reader logits for this study", t0)
+        if list(out.labels) != list(cal.classes):
+            return _failed("calibration", "calibration refused: the reader's class order does not match the calibrator's", t0)
+        from medproof.calibrate import abstain
+
+        res = cal.calibrate(out.logits)
+        probs, cset = res.probs[0], res.conformal_sets[0]
+        top = int(probs.argmax())
+        updated = []
+        for f in findings:
+            i = cal.classes.index(f.label) if f.label in cal.classes else None
+            if i is None:
+                updated.append(f)
+                continue
+            tier = res.tiers[0] if i == top else abstain.tier(float(probs[i]), len(cset), cal.tier_rule)
+            updated.append(_calibrated(f, float(probs[i]), tier, cset, 1 - cal.alpha))
+        payload = {"method": cal.method, "temperature": cal.temperature, "conformal_set": cset, "calibrated": len(updated)}
+    return StageResult(stage="calibration", ok=True, ms=int((time.perf_counter() - t0) * 1000),
+                       payload={**payload, "findings": [f.model_dump() for f in updated]})
+
+
 def _reasoning_specs() -> list[StageSpec]:
     """P3's stages (second read, context, report, precedents). They set their own timeouts and are
     never cached: the notes change their output and the cache key is the image hash alone. Their
@@ -253,6 +343,8 @@ PIPELINE: list[StageSpec] = [
     StageSpec(name="reader", run=_reader_step, timeout_s=45.0, cacheable=False),
     StageSpec(name="faithfulness", run=_faithfulness_step, timeout_s=120.0, cache_version="v1"),
     StageSpec(name="stability", run=_stability_step, timeout_s=60.0, cache_version="v1"),
+    # Cheap and reads the merged findings, so it always runs (not cached).
+    StageSpec(name="calibration", run=_calibration_step, timeout_s=10.0, cacheable=False),
 ]
 PIPELINE.extend(_reasoning_specs())
 

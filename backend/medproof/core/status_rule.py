@@ -37,7 +37,8 @@ def _is_uncertain(finding: Finding) -> bool:
         return True
     if len(finding.conformal_set) > CONFORMAL_SET_LIMIT:
         return True
-    return finding.tier == "low"
+    # "abstain" (P2's calibrated tier below "low") is weaker than "low", so it is uncertain too.
+    return finding.tier in ("low", "abstain")
 
 
 def compute_status(finding: Finding) -> Status:
