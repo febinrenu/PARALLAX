@@ -1,0 +1,252 @@
+{
+  "dataset": "ham10000",
+  "embedder": "biomedclip",
+  "k": 5,
+  "index_size": 6803,
+  "queries": 1000,
+  "skipped_unreadable": 0,
+  "train_only": true,
+  "excludes_query_id_and_group": true,
+  "precision_at_5": {
+    "point": 0.6188,
+    "lo": 0.5933,
+    "hi": 0.6432
+  },
+  "precision_at_5_if_chosen_by_chance": 0.4685,
+  "majority_vote_accuracy": {
+    "point": 0.655,
+    "lo": 0.6235,
+    "hi": 0.689
+  },
+  "majority_vote_balanced_accuracy": {
+    "point": 0.3623,
+    "lo": 0.3148,
+    "hi": 0.4116
+  },
+  "precision_at_5_by_class": {
+    "akiec": 0.2929,
+    "bcc": 0.2516,
+    "bkl": 0.2694,
+    "df": 0.0966,
+    "mel": 0.3204,
+    "nv": 0.8481,
+    "vasc": 0.368
+  },
+  "train_label_counts": {
+    "nv": 4507,
+    "mel": 767,
+    "bkl": 763,
+    "df": 79,
+    "akiec": 230,
+    "bcc": 359,
+    "vasc": 98
+  },
+  "note": "embedder is BiomedCLIP, the ungated fallback; MedSigLIP (gated) was not accessible to this account",
+  "demo": [
+    {
+      "query": "ISIC_0034524",
+      "query_label": "nv",
+      "precedents": [
+        {
+          "case_id": "ISIC_0028817",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9691222906112671,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0028817.jpg"
+        },
+        {
+          "case_id": "ISIC_0029622",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9667518138885498,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0029622.jpg"
+        },
+        {
+          "case_id": "ISIC_0028904",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9664439558982849,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0028904.jpg"
+        },
+        {
+          "case_id": "ISIC_0024619",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9662704467773438,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0024619.jpg"
+        },
+        {
+          "case_id": "ISIC_0027347",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9648637771606445,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0027347.jpg"
+        }
+      ]
+    },
+    {
+      "query": "ISIC_0034526",
+      "query_label": "bkl",
+      "precedents": [
+        {
+          "case_id": "ISIC_0025350",
+          "dataset": "ham10000",
+          "label": "akiec",
+          "similarity": 0.9548594355583191,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0025350.jpg"
+        },
+        {
+          "case_id": "ISIC_0026327",
+          "dataset": "ham10000",
+          "label": "akiec",
+          "similarity": 0.9548507928848267,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0026327.jpg"
+        },
+        {
+          "case_id": "ISIC_0027335",
+          "dataset": "ham10000",
+          "label": "bkl",
+          "similarity": 0.9526408314704895,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0027335.jpg"
+        },
+        {
+          "case_id": "ISIC_0031542",
+          "dataset": "ham10000",
+          "label": "bkl",
+          "similarity": 0.9520557522773743,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0031542.jpg"
+        },
+        {
+          "case_id": "ISIC_0025411",
+          "dataset": "ham10000",
+          "label": "akiec",
+          "similarity": 0.9498889446258545,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0025411.jpg"
+        }
+      ]
+    },
+    {
+      "query": "ISIC_0034527",
+      "query_label": "nv",
+      "precedents": [
+        {
+          "case_id": "ISIC_0025988",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9551608562469482,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0025988.jpg"
+        },
+        {
+          "case_id": "ISIC_0026455",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9550396203994751,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0026455.jpg"
+        },
+        {
+          "case_id": "ISIC_0024777",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9547713398933411,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0024777.jpg"
+        },
+        {
+          "case_id": "ISIC_0027246",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9536474943161011,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0027246.jpg"
+        },
+        {
+          "case_id": "ISIC_0026015",
+          "dataset": "ham10000",
+          "label": "bkl",
+          "similarity": 0.9526572227478027,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0026015.jpg"
+        }
+      ]
+    },
+    {
+      "query": "ISIC_0034528",
+      "query_label": "nv",
+      "precedents": [
+        {
+          "case_id": "ISIC_0024919",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9862027168273926,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0024919.jpg"
+        },
+        {
+          "case_id": "ISIC_0029116",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9852228164672852,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0029116.jpg"
+        },
+        {
+          "case_id": "ISIC_0030001",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9839729070663452,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0030001.jpg"
+        },
+        {
+          "case_id": "ISIC_0032387",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9834150671958923,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0032387.jpg"
+        },
+        {
+          "case_id": "ISIC_0031715",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.983115017414093,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0031715.jpg"
+        }
+      ]
+    },
+    {
+      "query": "ISIC_0034529",
+      "query_label": "mel",
+      "precedents": [
+        {
+          "case_id": "ISIC_0028898",
+          "dataset": "ham10000",
+          "label": "mel",
+          "similarity": 0.971362292766571,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0028898.jpg"
+        },
+        {
+          "case_id": "ISIC_0033774",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9669175148010254,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0033774.jpg"
+        },
+        {
+          "case_id": "ISIC_0033420",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.966911792755127,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0033420.jpg"
+        },
+        {
+          "case_id": "ISIC_0030246",
+          "dataset": "ham10000",
+          "label": "mel",
+          "similarity": 0.9647750854492188,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0030246.jpg"
+        },
+        {
+          "case_id": "ISIC_0029347",
+          "dataset": "ham10000",
+          "label": "nv",
+          "similarity": 0.9642019271850586,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/ham10000/ISIC_0029347.jpg"
+        }
+      ]
+    }
+  ]
+}
