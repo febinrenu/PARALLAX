@@ -324,8 +324,11 @@ def bake_chest(reader: CxrReader, anatomy_fn) -> dict:
     # Anatomy masks packed as RGB: R = right lung, G = left lung, B = heart (patient sides).
     anat = anatomy_fn(decoded)
     if anat is not None:
-        rgb = np.stack([anat.right_lung, anat.left_lung, anat.heart], axis=-1).astype(np.uint8) * 255
-        save_png(cv2.resize(rgb, (512, 512), interpolation=cv2.INTER_NEAREST), MEDIA / "chest-anatomy.png")
+        rgb = np.stack([anat.right_lung, anat.left_lung, anat.heart], axis=-1).astype(np.float32)
+        rgb = cv2.resize(rgb, (512, 512), interpolation=cv2.INTER_AREA)
+        # Soft edges so the shader's 0.5 iso-contour is smooth instead of stair-stepped.
+        rgb = cv2.GaussianBlur(rgb, (0, 0), 1.2)
+        save_png(np.clip(rgb * 255, 0, 255).astype(np.uint8), MEDIA / "chest-anatomy.png")
 
     # Quality gate on degraded copies: real reasons and fix text for the intake beat.
     dark = (np.clip(film.astype(np.float32) / 255.0, 0, 1) ** 2.6 * 255 * 0.45).astype(np.uint8)
@@ -441,7 +444,8 @@ def bake_skin() -> dict:
     rgb = np.asarray(Image.open(io.BytesIO(image_raw)).convert("RGB"))
     rgb = resize_long(rgb, 1280)
     mask = np.asarray(Image.open(io.BytesIO(mask_raw)).convert("L"))
-    mask = cv2.resize(mask, (rgb.shape[1], rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
+    mask = cv2.resize(mask, (rgb.shape[1], rgb.shape[0]), interpolation=cv2.INTER_AREA)
+    mask = cv2.GaussianBlur(mask, (0, 0), 1.5)  # smooth iso-contour at 0.5 when magnified
     out_dir = CASES / "skin"
     save_webp(rgb, out_dir / "image.webp", 86)
     save_png(mask, out_dir / "mask.png")
@@ -488,12 +492,18 @@ def main() -> None:
 
     STORY.mkdir(parents=True, exist_ok=True)
     (STORY / "chest.json").write_text(json.dumps({"chest": chest, "wrist": wrist}, indent=2), encoding="utf-8")
-    (CASES / "index.json").write_text(json.dumps([
+    index = [
         {"id": "chest", "title": "Chest radiograph, posteroanterior", "modality": "cxr"},
         {"id": "bone", "title": "Wrist radiograph, posteroanterior", "modality": "bone_xray"},
         {"id": "skin", "title": "Dermoscopy, pigmented lesion", "modality": "skin_dermoscopy"},
         {"id": "brain", "title": "Brain MRI, axial, contrast-enhanced", "modality": "brain_mri"},
-    ], indent=2), encoding="utf-8")
+    ]
+    for entry in index:  # small thumbnails so the study rail never downloads full films
+        full = Image.open(CASES / entry["id"] / "image.webp")
+        full.thumbnail((240, 240), Image.LANCZOS)
+        full.save(CASES / entry["id"] / "thumb.webp", format="WEBP", quality=78, method=6)
+        entry["thumb"] = f"/cases/{entry['id']}/thumb.webp"
+    (CASES / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
 
     p = next(f for f in chest["findings"] if f["id"] == chest["primary"])
     print(f"primary finding: {p['label']} p={p['prob']} region={p['region']} faithfulness={p['faithfulness']} stability={p['stability']}")
