@@ -269,7 +269,7 @@ def stage_specs(services: Services | None = None) -> list[Any]:
         ("second_read", second_read_step, 130.0),  # a live MedGemma read is ~6-11 s on a laptop GPU; the client allows 120 s
         ("context", context_step, 25.0),
         ("report", report_step, 45.0),
-        ("precedents", precedents_step, 30.0),
+        ("precedents", precedents_step, 90.0),  # the first call loads MedSigLIP (10-35 s on a CPU); a startup warm-up would remove that
     ]
     return [
         StageSpec(name=name, run=functools.partial(fn, services=services), timeout_s=timeout, cache_version="v1", cacheable=False)
