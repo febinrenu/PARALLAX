@@ -667,3 +667,9 @@ Not run: the browser after these changes (the API and website were stopped by th
 Next: P4 ack on P3-2, the /transcribe route and the notes-box flow, and showing bone and brain thumbnails.
 Decisions: see the three entries above. Contract change requests: P3-2.
 
+### 2026-10-07 · P1 · WP P1-A, P1-D (P4's side of the wiring, done by P1 at the team's request)
+Did: `pipeline.py` now passes the mask models to the reader stages (brain gets the U-Net, skin and bone get MedSAM; loaded once per process, a failed load is remembered for five minutes, `MEDPROOF_MASKS=0` switches masks off); `StudyResult.ood_score` now carries the router's score instead of the 0.0 placeholder; fixed `_router_step`, which flagged every routed study `ood` because the router's `ood` is a dict that is always truthy: only `is_ood: true` flags now.
+State: P1-A and P1-D done end to end. Through the live API with the router on and no modality given: brain, skin and bone uploads were routed correctly, each got a Mask layer (served as `image/png` from `/studies/{id}/artifacts/`), and the brain finding carries `heatmap_off_target`. The bone finding gets `faithful=true` from the new box test.
+Verified: `cd backend && python -m pytest -q` 1069 passed, 2 skipped. Env for a laptop that runs it: `MEDPROOF_ROUTER=1`, `MEDPROOF_ROUTER_MODEL=<medsiglip folder>`, `MEDPROOF_MEDSAM_MODEL=<medsam folder>`, plus `router_probe.npz` and `ood.npz` in `backend/artifacts/` (see the P1 section for hashes). MedSAM on CPU is slow; the live runs took 4 to 9 s per study here because the first calls were warm.
+Next: P4 to warm the mask models at start-up (first MedSAM call loads about 375 MB); P4 to check the UI shows the Mask layer and the `heatmap_off_target` flag.
+Decisions: none new. Contract change requests: none. Files outside P1's area touched at the team's request: `backend/medproof/pipeline.py` (stage wiring, router flag fix, ood score) and a new `backend/tests/test_pipeline_masks.py`.
