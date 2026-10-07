@@ -1,5 +1,6 @@
 import json
 
+import numpy as np
 import pytest
 
 pytest.importorskip("scipy")
@@ -175,3 +176,91 @@ def test_comparison_needs_enough_pairs_and_a_missing_file_is_not_an_error(tmp_pa
     _make_npz(npz)
     assert "note" in skin_specialist_comparison(_skin_rows(10), npz)
     assert "note" in skin_specialist_comparison(_skin_rows(), tmp_path / "missing.npz")
+
+
+def _make_bone_npz(path, n=100, misses=6, false_alarms=6):
+    import numpy as np
+
+    ids = np.array([f"IMG{i:07d}" for i in range(n)])
+    truth = np.array([i % 4 == 0 for i in range(n)])
+    det, off, gt, goff = [], [0], [], [0]
+    pos_seen = neg_seen = 0
+    for i in range(n):
+        if truth[i]:
+            pos_seen += 1
+            score = 0.1 if pos_seen <= misses else 0.9
+            gt.append([10, 10, 50, 50])
+        else:
+            neg_seen += 1
+            score = 0.9 if neg_seen <= false_alarms else 0.1
+        det.append([[10, 10, 50, 50, score]])
+        off.append(off[-1] + 1)
+        goff.append(goff[-1] + int(truth[i]))
+    np.savez(path, ids=ids, groups=np.array([f"p{i}" for i in range(n)]), body_part=np.array(["hand"] * n),
+             det_rows=np.array(det, dtype=float).reshape(-1, 5), det_offsets=np.array(off),
+             gt_rows=np.array(gt, dtype=float).reshape(-1, 4), gt_offsets=np.array(goff))
+
+
+def _bone_calibration(path):
+    from medproof.calibrate.binary import BinaryCalibrator
+
+    BinaryCalibrator("fracture", 1.0, 0.0, 0.1, 0.5, 0.4, 0.6).save(path)
+
+
+def _bone_rows(n=100):
+    rows = []
+    for i in range(n):
+        truth = i % 4 == 0  # MedGemma says the truth, so it disagrees with the specialist exactly where that errs
+        said = truth and i not in (0, 4)  # except two misses it shares with the specialist, so unflagged cases also err
+        rows.append(row(f"IMG{i:07d}", "fracture" if truth else "no_fracture", "Transverse fracture." if said else "No acute fracture."))
+    return rows
+
+
+def test_bone_discordance_predicts_specialist_errors_when_the_second_reader_is_independent(tmp_path):
+    pytest.importorskip("pandas")
+    from ml.eval_p3.eval_second_reader import bone_specialist_comparison
+
+    _make_bone_npz(tmp_path / "test.npz")
+    _bone_calibration(tmp_path / "cal.json")
+    out = bone_specialist_comparison(_bone_rows(), tmp_path / "test.npz", tmp_path / "cal.json")
+    assert out["n_paired"] == 100
+    assert out["n_disagree"] == 10 and out["n_agree"] == 90
+    assert out["specialist_accuracy_when_agree"]["point"] == pytest.approx(88 / 90, abs=1e-3)
+    assert out["specialist_accuracy_when_disagree"]["point"] == pytest.approx(0.0)
+    sig = out["discordant_signal"]
+    assert sig["n_flagged"] == 10 and sig["predicts_errors"] is True
+    hit = out["correct_positive_reports_flagged"]
+    assert hit["n_correct_positive_reports"] == 19 and hit["share_flagged_discordant"] == 0.0
+
+
+def test_bone_comparison_degrades_to_a_note(tmp_path):
+    from ml.eval_p3.eval_second_reader import bone_specialist_comparison
+
+    assert "note" in bone_specialist_comparison(_bone_rows(), tmp_path / "missing.npz", tmp_path / "cal.json")
+    _make_bone_npz(tmp_path / "test.npz")
+    _bone_calibration(tmp_path / "cal.json")
+    assert "note" in bone_specialist_comparison(_bone_rows(10), tmp_path / "test.npz", tmp_path / "cal.json")
+
+
+def test_skin_comparison_reports_the_discordant_signal(tmp_path):
+    pytest.importorskip("pandas")
+    from ml.eval_p3.eval_second_reader import skin_specialist_comparison
+
+    npz = tmp_path / "official_test.npz"
+    _make_npz(npz, n=300)
+    rows = _skin_rows(300)
+    classes = ["akiec", "bcc", "bkl", "df", "mel", "nv", "vasc"]
+    texts = {"akiec": "Actinic keratosis.", "bcc": "Basal cell carcinoma.", "bkl": "Seborrheic keratosis.", "df": "Dermatofibroma.",
+             "mel": "Melanoma.", "nv": "Benign nevus.", "vasc": "Cherry hemangioma."}
+    for i, r in enumerate(rows):
+        r["findings_text"] = texts[classes[i % 7]] if i not in (0, 5, 10) else texts[classes[(i % 7 + 1) % 7]]  # three shared errors
+    out = skin_specialist_comparison(rows, npz)
+    assert out["discordant_signal"]["n_flagged"] == 57 and out["discordant_signal"]["predicts_errors"] is True
+
+
+def test_signal_check_survives_data_with_no_unflagged_errors():
+    from ml.eval_p3.eval_second_reader import discordant_signal
+
+    err = np.array([True] * 12 + [False] * 88)
+    out = discordant_signal(err, err)  # flagged exactly where wrong: no errors outside the flag
+    assert "n_flagged" in out and ("note" in out or "predicts_errors" in out)

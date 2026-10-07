@@ -125,11 +125,33 @@ def eval_skin(rows: list[dict]) -> dict:
 
 
 SKIN_NPZ = ROOT / "ml" / "artifacts" / "skin_cls" / "predictions" / "official_test.npz"
+BONE_NPZ = ROOT / "ml" / "artifacts" / "bone_det" / "predictions" / "test.npz"
+BONE_CAL = ROOT / "ml" / "artifacts" / "bone_det" / "calibration.json"
 MIN_PAIRS = 50
 
 
 def _mean_or_nan(x: np.ndarray) -> float:
     return float(x.mean()) if len(x) else float("nan")
+
+
+def discordant_signal(error: np.ndarray, discordant: np.ndarray) -> dict:
+    """Plan 9.4 / D13: is the specialist wrong more often on images where the second reader disagrees?
+
+    Uses P2's `signals.compare` so the verdict and its wording match the validation page. The
+    bootstrap there resamples images, not groups, which is slightly optimistic for grouped data.
+    """
+    try:
+        import pandas as pd
+
+        from ml.eval.signals import compare
+    except ImportError as exc:
+        return {"note": f"signal check needs pandas and the P2 eval package ({type(exc).__name__})"}
+    frame = pd.DataFrame({"error": np.asarray(error, dtype=bool), "discordant": np.asarray(discordant, dtype=bool)})
+    try:
+        return compare(frame, "discordant")
+    except (IndexError, ValueError):  # the risk-ratio bootstrap is undefined when no unflagged case is wrong
+        return {"n_flagged": int(frame.discordant.sum()), "n_unflagged": int((~frame.discordant).sum()),
+                "note": "bootstrap undefined: no errors among unflagged cases, or no flagged cases"}
 
 
 def skin_specialist_comparison(rows: list[dict], npz_path: Path = SKIN_NPZ) -> dict:
@@ -173,6 +195,52 @@ def skin_specialist_comparison(rows: list[dict], npz_path: Path = SKIN_NPZ) -> d
         out["accuracy_gap_agree_minus_disagree"] = ci_of(lambda c, a: _mean_or_nan(c[a]) - _mean_or_nan(c[~a]), c=correct, a=agree)
     else:
         out["specialist_accuracy_when_disagree"] = {"note": "fewer than 5 disagreements"}
+    out["discordant_signal"] = discordant_signal(~correct, ~agree)
+    return out
+
+
+def bone_specialist_comparison(rows: list[dict], npz_path: Path = BONE_NPZ, cal_path: Path = BONE_CAL) -> dict:
+    """The same comparison for bone: P2's detector (image score = top box, reported at the calibrated
+    FNR-controlled threshold) against MedGemma, plus the discordant-signal check."""
+    if not Path(npz_path).is_file() or not Path(cal_path).is_file():
+        return {"note": f"specialist predictions or calibration not found ({npz_path.name}, {cal_path.name})"}
+    from medproof.calibrate.binary import BinaryCalibrator
+
+    z = np.load(npz_path, allow_pickle=False)
+    index = {str(i): k for k, i in enumerate(z["ids"])}
+    pairs = [(r, index[r["image"]]) for r in rows if r.get("ok") and r["image"] in index]
+    if len(pairs) < MIN_PAIRS:
+        return {"n_paired": len(pairs), "note": f"need at least {MIN_PAIRS} paired reads for statistics"}
+    det, doff, goff = z["det_rows"], z["det_offsets"], z["gt_offsets"]
+    score = np.array([float(det[doff[k] : doff[k + 1], 4].max()) if doff[k + 1] > doff[k] else 0.0 for _, k in pairs])
+    truth = np.array([goff[k + 1] > goff[k] for _, k in pairs])
+    spec = np.asarray(BinaryCalibrator.load(cal_path).decide(score)["report"], dtype=bool)
+    mg = np.array([bool(bone_prediction(r, False)) for r, _ in pairs])
+    groups = np.array([str(z["groups"][k]) for _, k in pairs], dtype=object)
+
+    def ci_of(fn, **arrays) -> dict:
+        c = ci(arrays, fn, groups=groups, strata=truth.astype(int), B=1000)
+        return {k: round(c[k], 4) for k in ("point", "lo", "hi")}
+
+    agree, correct = spec == mg, spec == truth
+    out: dict = {"n_paired": len(pairs), "specialist_positive_rate": round(float(spec.mean()), 4), "medgemma_positive_rate": round(float(mg.mean()), 4)}
+    out["agreement_rate"] = ci_of(lambda s, m: float((s == m).mean()), s=spec, m=mg)
+    out["kappa"] = ci_of(lambda s, m: float(cohen_kappa(list(s), list(m))), s=spec, m=mg)
+    out["n_agree"], out["n_disagree"] = int(agree.sum()), int((~agree).sum())
+    out["specialist_accuracy_when_agree"] = ci_of(lambda c, a: _mean_or_nan(c[a]), c=correct, a=agree)
+    if (~agree).sum() >= 5:
+        out["specialist_accuracy_when_disagree"] = ci_of(lambda c, a: _mean_or_nan(c[~a]), c=correct, a=agree)
+    else:
+        out["specialist_accuracy_when_disagree"] = {"note": "fewer than 5 disagreements"}
+    out["discordant_signal"] = discordant_signal(~correct, ~agree)
+    # A flag can predict errors and still be unusable: if the second reader rarely says "fracture", the flag
+    # mostly means "the specialist reported one", and downgrading on it would demote correct findings too.
+    hit = spec & truth
+    out["correct_positive_reports_flagged"] = {
+        "n_correct_positive_reports": int(hit.sum()),
+        "share_flagged_discordant": round(float((~agree)[hit].mean()), 4) if hit.any() else None,
+        "note": "share of the specialist's correct fracture reports that a discordant-downgrade rule would also demote",
+    }
     return out
 
 
@@ -194,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     report: dict = {
         "what": "MedGemma 1.5 4B (4-bit) as second reader, scored against ground truth on P2's eval batches",
-        "specialist_vs_medgemma": "skin: from P2's saved official-test predictions (see datasets.ham10000); bone: pending P2's detector predictions",
+        "specialist_vs_medgemma": "from P2's saved test predictions: see datasets.<name>.specialist_vs_medgemma (skin official test, bone FracAtlas test)",
         "datasets": {},
     }
     for name, fn in (("fracatlas", eval_bone), ("ham10000", eval_skin)):
@@ -204,6 +272,8 @@ def main(argv: list[str] | None = None) -> int:
             report["datasets"][name] = fn(rows)
             if name == "ham10000":
                 report["datasets"][name]["specialist_vs_medgemma"] = skin_specialist_comparison(rows)
+            else:
+                report["datasets"][name]["specialist_vs_medgemma"] = bone_specialist_comparison(rows)
             planned = json.loads((ROOT / "ml" / "data" / "eval_index.json").read_text(encoding="utf-8"))["datasets"][name]["n_batch"]
             report["datasets"][name]["progress"] = {
                 "reads": len(rows), "planned": planned,
