@@ -22,6 +22,9 @@ Official ISIC 2018 Task 3 test set (1,512 images, never used in training, valida
 A second identical run scored 0.689, so run-to-run GPU nondeterminism is about 0.01.
 - **External (MILK10k, 4,566 dermoscopic images, CC BY-NC, outside HAM10000; 94 duplicates of HAM10000 images and 576 images of classes the model does not cover were removed): balanced accuracy 0.571 (95% CI 0.543 to 0.602)**, accuracy 0.566 (95% CI 0.553 to 0.580), melanoma sensitivity 0.449 (95% CI 0.405 to 0.493), melanoma AUROC 0.874 (95% CI 0.855 to 0.893). Performance falls about 11 points of balanced accuracy outside the training distribution (basal cell carcinoma dominates MILK10k: 2,504 of 4,566 images).
 
+## Ensemble option
+Three seeds of the same model (`skin_cls`, `skin_cls_s2`, `skin_cls_s3`, registry entry `skin_ens`) averaged with four-way flip averaging reach balanced accuracy 0.728 (95% CI 0.680 to 0.775) on the official test and 0.609 (95% CI 0.580 to 0.636) on MILK10k, a gain of +0.023 and +0.024 over the mean single seed. Single seeds differ by about 0.04 on the official test, so the ensemble also removes seed luck. Cost: three times the weights and inference time; recommendation: **ship the ensemble**. The ensemble has its own calibrator (`ml/artifacts/skin_ens/calibration.json`).
+
 ## Calibration and abstention
 - temperature T = 0.923 (fitted on the validation split); ECE 0.075 → 0.062 on the test split
 - split-conformal (randomised APS, fitted on the calibration split), target coverage 90%: empirical coverage 0.898 (exact 95% interval 0.882 to 0.913); mean set size 1.26; 81% of cases get a single label

@@ -84,8 +84,8 @@ def evaluate(B: int = 1000) -> dict:
             assert (ids == z["ids"]).all(), "member predictions must be in the same image order"
         L = {m: _load(m, key)[1] for m in have}  # (4, N, 7) each
         variants = {
-            "single (seed 1)": L["skin_cls"][0],
-            "single + flip TTA": L["skin_cls"].mean(0),
+            **{f"single, {m.replace('skin_cls_s', 'seed ').replace('skin_cls', 'seed 1')}": L[m][0] for m in have},
+            "single (seed 1) + flip TTA": L["skin_cls"].mean(0),
             f"ensemble of {len(have)}": np.mean([L[m][0] for m in have], 0),
             f"ensemble of {len(have)} + flip TTA": np.mean([L[m].mean(0) for m in have], 0),
         }
@@ -98,10 +98,14 @@ def evaluate(B: int = 1000) -> dict:
                 "ece_15": bs.ci({"y": y, "p": p}, lambda y, p: mt.ece(y, p, 15), groups=groups, strata=y, B=B),
             }
     best = f"ensemble of {len(have)} + flip TTA"
-    d_off = out["variants"][best]["official_test"]["balanced_accuracy"]["point"] - out["variants"]["single (seed 1)"]["official_test"]["balanced_accuracy"]["point"]
-    d_ext = out["variants"][best]["milk10k"]["balanced_accuracy"]["point"] - out["variants"]["single (seed 1)"]["milk10k"]["balanced_accuracy"]["point"]
-    out["gain_over_single"] = {"official_test": d_off, "milk10k": d_ext}
-    out["recommendation"] = ("ship the ensemble" if d_off >= 0.015 and d_ext >= 0.01 else "keep the single model: the ensemble does not improve both the official and the external set by a margin worth three times the weights and inference time")
+    singles = [f"single, {m.replace('skin_cls_s', 'seed ').replace('skin_cls', 'seed 1')}" for m in have]
+    mean_single = {k: float(np.mean([out["variants"][n][k]["balanced_accuracy"]["point"] for n in singles])) for k in ("official_test", "milk10k")}
+    out["mean_of_single_seeds"] = mean_single
+    out["gain_over_mean_single_seed"] = {k: out["variants"][best][k]["balanced_accuracy"]["point"] - mean_single[k] for k in mean_single}
+    out["gain_over_seed_1"] = {k: out["variants"][best][k]["balanced_accuracy"]["point"] - out["variants"][singles[0]][k]["balanced_accuracy"]["point"] for k in mean_single}
+    g = out["gain_over_mean_single_seed"]
+    out["recommendation"] = ("ship the ensemble" if g["official_test"] >= 0.015 and g["milk10k"] >= 0.01 else "keep a single model: the ensemble does not beat the average single seed by a margin worth three times the weights and inference time")
+    out["note"] = "seeds differ by about 0.04 balanced accuracy on the official test (seed 1 was the weakest), so part of the gain over seed 1 is seed luck; the fair baseline is the mean of the single seeds. Swapping the shipped weights for the best single seed costs nothing but is selection on the test set, so it is not recommended as evidence of better generalisation"
     # calibrate the ensemble on the validation and calibration splits (members' own cached predictions, plain average, no TTA to match serving cost)
     vals = {s: [np.load(ART / m / "predictions" / f"{s}.npz", allow_pickle=False) for m in have] for s in ("val", "cal")}
     if all(len(v) == len(have) for v in vals.values()) and len(have) > 1:
@@ -127,7 +131,7 @@ def main() -> int:
     (REPO / "reports" / "skin_ensemble.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
     for name, v in res["variants"].items():
         print(f"{name:34s} official {v['official_test']['balanced_accuracy']['point']:.3f}  milk10k {v['milk10k']['balanced_accuracy']['point']:.3f}")
-    print(res["gain_over_single"], "->", res["recommendation"])
+    print("gain over mean single seed", res["gain_over_mean_single_seed"], "->", res["recommendation"])
     return 0
 
 

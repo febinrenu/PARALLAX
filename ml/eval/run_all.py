@@ -119,6 +119,12 @@ def task_corruption(name: str) -> tuple:
     return ("corruption", name, co.evaluate(name))
 
 
+def task_ensemble() -> tuple:
+    from ml.eval import skin_ensemble as se
+
+    return ("ensemble", se.evaluate(B=500))
+
+
 def task_signals() -> tuple:
     from ml.eval import signals as si
 
@@ -201,6 +207,8 @@ def run() -> dict:
         p2 = [ex.submit(task_split, "skin_cls", s_, B if s_ in ("official_test", "test") else B_LIGHT) for s_ in ("official_test", "test", "val", "cal")]
         p2 += [ex.submit(task_split, "brain_cls", s_, B if s_ == "test" else B_LIGHT) for s_ in ("test", "val", "cal")]
         p2 += [ex.submit(task_rest)]
+        if (ART / "skin_cls_s2" / "predictions" / "tta_milk10k.npz").is_file():
+            p2 += [ex.submit(task_ensemble)]
         p2 += [ex.submit(task_subgroup, n) for n in ("skin_cls", "skin_cls_milk10k", "brain_cls", "bone_det")]
         p2 += [ex.submit(task_corruption, m) for m in co.MODELS if (ART / m / "predictions" / "corruption.npz").is_file()]
         for f in writers:
@@ -220,6 +228,8 @@ def run() -> dict:
                 rest = r[1]
             elif r[0] == "signals":
                 got["signals"] = r[1]
+            elif r[0] == "ensemble":
+                got["ensemble"] = r[1]
             else:
                 got[r[0]][r[1]] = r[2]
     order = ["official_test", "test", "val", "cal"]
@@ -230,6 +240,8 @@ def run() -> dict:
         got["models"]["brain_cls"]["external_bdneuro"] = rest["brain_external"]
     if "skin_external" in rest:
         got["models"]["skin_cls"]["external_milk10k"] = rest["skin_external"]
+    if "ensemble" in got:
+        got["models"]["skin_cls"]["ensemble"] = got["ensemble"]
     got["models"]["bone_det"] = rest["bone_det"]
     got["models"]["brain_seg"] = rest["brain_seg"]
     s = {
@@ -246,7 +258,7 @@ def run() -> dict:
         "headline": headline(s), "contamination_ledger": contamination_ledger(),
         "models": s["models"], "calibration": s["calibration"], "chest_reader": s["cxr"], "subgroups": s["subgroups"], "corruption": s["corruption"], "trust_signals": s["signals"],
         "leakage": _j("leakage.json"), "ood": _j("ood.json"), "second_reader": _j("concordance.json"),
-        "registry": {k: {x: v[x] for x in ("task", "arch", "classes", "weights_sha256", "split_hash", "git_commit", "license", "contamination", "headline")} for k, v in reg["models"].items()},
+        "registry": {k: {x: v.get(x) for x in ("task", "arch", "classes", "weights_sha256", "split_hash", "git_commit", "license", "contamination", "headline", "members", "recommendation")} for k, v in reg["models"].items()},
     }
 
 

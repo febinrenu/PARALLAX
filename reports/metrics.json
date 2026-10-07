@@ -1551,6 +1551,694 @@
      "nv": 708,
      "vasc": 43
     }
+   },
+   "ensemble": {
+    "members": [
+     "skin_cls",
+     "skin_cls_s2",
+     "skin_cls_s3"
+    ],
+    "variants": {
+     "single, seed 1": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.6800004792082587,
+        "lo": 0.6334325318358079,
+        "hi": 0.7248300287863152,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.826058201058201,
+        "lo": 0.8054918242978248,
+        "hi": 0.8448619763797585,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.6374269005847953,
+        "lo": 0.5441374269005848,
+        "hi": 0.7184790101330392,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.07639015453351773,
+        "lo": 0.06322245340776626,
+        "hi": 0.09274272813404333,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.5707211951501342,
+        "lo": 0.5442472752672618,
+        "hi": 0.6001707651336358,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.5663600525624178,
+        "lo": 0.5517437819609582,
+        "hi": 0.5795599209070077,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.44883720930232557,
+        "lo": 0.4046511627906977,
+        "hi": 0.4942441860465116,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.15216139568710813,
+        "lo": 0.13936903080547877,
+        "hi": 0.16501991260716375,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     },
+     "single, seed 2": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.7188543238884045,
+        "lo": 0.6727903592488759,
+        "hi": 0.7666963400356237,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.8359788359788359,
+        "lo": 0.8152711844053957,
+        "hi": 0.8555764253389396,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.6081871345029239,
+        "lo": 0.5194758152089602,
+        "hi": 0.6916918755401901,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.062233720968385864,
+        "lo": 0.05210552403828819,
+        "hi": 0.08298937375206313,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.5898616831150711,
+        "lo": 0.5592610034361766,
+        "hi": 0.6170585577232375,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.6473937801138853,
+        "lo": 0.6338463249898503,
+        "hi": 0.6609761009921407,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.4069767441860465,
+        "lo": 0.36511627906976746,
+        "hi": 0.45348837209302323,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.0887255422818758,
+        "lo": 0.07816286764348186,
+        "hi": 0.1022621910037061,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     },
+     "single, seed 3": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.715947719267605,
+        "lo": 0.6652482968162419,
+        "hi": 0.7605556781798483,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.78505291005291,
+        "lo": 0.7620310566212871,
+        "hi": 0.8086239321149902,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.8070175438596491,
+        "lo": 0.7343034861338846,
+        "hi": 0.8739204545454545,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.047870333487964746,
+        "lo": 0.03947441381145638,
+        "hi": 0.06940634433538471,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.594082181674143,
+        "lo": 0.5670831151344886,
+        "hi": 0.6242884872731687,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.6311870346035917,
+        "lo": 0.6179627601314348,
+        "hi": 0.6450736370400968,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.6325581395348837,
+        "lo": 0.5906976744186047,
+        "hi": 0.6802906976744185,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.052596388744824175,
+        "lo": 0.0420632335881571,
+        "hi": 0.06655265621844093,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     },
+     "single (seed 1) + flip TTA": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.6840111737493084,
+        "lo": 0.6386397122894645,
+        "hi": 0.730190800579989,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.8306878306878307,
+        "lo": 0.8097206403685634,
+        "hi": 0.8500865362713409,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.6666666666666666,
+        "lo": 0.5696649645494288,
+        "hi": 0.7465335925039871,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.06431628017179684,
+        "lo": 0.05195189504321691,
+        "hi": 0.0842539372022696,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.5738420005405166,
+        "lo": 0.5462140909821925,
+        "hi": 0.6026822104206047,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.5667980727113447,
+        "lo": 0.5546424178310471,
+        "hi": 0.5793300106814767,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.43488372093023253,
+        "lo": 0.3930232558139535,
+        "hi": 0.48029069767441857,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.1452999564240634,
+        "lo": 0.13260063219337956,
+        "hi": 0.15709451488845827,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     },
+     "ensemble of 3": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.7253295560647672,
+        "lo": 0.6790821785197475,
+        "hi": 0.7722934894341159,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.8452380952380952,
+        "lo": 0.8247744117113974,
+        "hi": 0.8658874416165662,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.7017543859649122,
+        "lo": 0.6110943775100401,
+        "hi": 0.7784630106874858,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.053354649517311926,
+        "lo": 0.05009327133765031,
+        "hi": 0.07444385563084391,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.6068028674174398,
+        "lo": 0.5792183953923364,
+        "hi": 0.6354943675285253,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.6480508103372755,
+        "lo": 0.6353993431616802,
+        "hi": 0.6603153745072273,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.48604651162790696,
+        "lo": 0.4441860465116279,
+        "hi": 0.532674418604651,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.04743100455887586,
+        "lo": 0.03867989843810417,
+        "hi": 0.06157142677869908,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     },
+     "ensemble of 3 + flip TTA": {
+      "official_test": {
+       "balanced_accuracy": {
+        "point": 0.7282322986102528,
+        "lo": 0.680421691562389,
+        "hi": 0.7753617969317469,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.8465608465608465,
+        "lo": 0.8267778989095141,
+        "hi": 0.8674359246109551,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.7017543859649122,
+        "lo": 0.609061857184837,
+        "hi": 0.7834439943642126,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.05452296874009163,
+        "lo": 0.05054591665706378,
+        "hi": 0.07540508588429216,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 1208,
+        "n": 1512,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      },
+      "milk10k": {
+       "balanced_accuracy": {
+        "point": 0.6085278276416443,
+        "lo": 0.5798016031141167,
+        "hi": 0.636076463704547,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "accuracy": {
+        "point": 0.6515549715286904,
+        "lo": 0.6385542168674698,
+        "hi": 0.6634928187379773,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "melanoma_recall": {
+        "point": 0.4790697674418605,
+        "lo": 0.43488372093023253,
+        "hi": 0.5268023255813953,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       },
+       "ece_15": {
+        "point": 0.04367974970456327,
+        "lo": 0.035961380865103566,
+        "hi": 0.05895989129844102,
+        "level": 0.95,
+        "B": 500,
+        "method": "percentile",
+        "n_groups": 4565,
+        "n": 4566,
+        "stratified": true,
+        "seed": 20261006,
+        "n_valid": 500
+       }
+      }
+     }
+    },
+    "mean_of_single_seeds": {
+     "official_test": 0.7049341741214228,
+     "milk10k": 0.5848883533131161
+    },
+    "gain_over_mean_single_seed": {
+     "official_test": 0.023298124488830063,
+     "milk10k": 0.0236394743285282
+    },
+    "gain_over_seed_1": {
+     "official_test": 0.04823181940199417,
+     "milk10k": 0.03780663249151006
+    },
+    "recommendation": "ship the ensemble",
+    "note": "seeds differ by about 0.04 balanced accuracy on the official test (seed 1 was the weakest), so part of the gain over seed 1 is seed luck; the fair baseline is the mean of the single seeds. Swapping the shipped weights for the best single seed costs nothing but is selection on the test set, so it is not recommended as evidence of better generalisation",
+    "ensemble_calibration": {
+     "temperature": 0.8297362069141598,
+     "official_test_coverage_at_90": 0.9067460317460317,
+     "mean_set_size": 1.2380952380952381
+    }
    }
   },
   "brain_cls": {
@@ -16804,7 +17492,9 @@
      "lo": 0.3669,
      "point": 0.4534
     }
-   }
+   },
+   "members": null,
+   "recommendation": null
   },
   "brain_cls@d351f062": {
    "task": "classification",
@@ -16851,7 +17541,9 @@
      "lo": 0.9139,
      "point": 0.9364
     }
-   }
+   },
+   "members": null,
+   "recommendation": null
   },
   "brain_seg@d351f062": {
    "task": "segmentation",
@@ -16876,7 +17568,9 @@
      "lo": 0.705,
      "point": 0.8314
     }
-   }
+   },
+   "members": null,
+   "recommendation": null
   },
   "skin_cls@a217517b": {
    "task": "classification",
@@ -16941,7 +17635,179 @@
      "lo": 0.7123,
      "point": 0.7838
     }
-   }
+   },
+   "members": null,
+   "recommendation": null
+  },
+  "skin_cls_s2@6198c549": {
+   "task": "classification",
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "weights_sha256": "da6b46a68e67edd96f73a5ddbc73fb42a3e82dbf990e6780fc430b84e2c37fdb",
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "git_commit": "6198c5491ef9311889da2ae52a6617a3c8d9829e",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8565,
+     "lo": 0.8142,
+     "point": 0.836
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7655,
+     "lo": 0.6694,
+     "point": 0.7189
+    },
+    "headline.macro_f1": {
+     "hi": 0.7875,
+     "lo": 0.7046,
+     "point": 0.7477
+    },
+    "official_test.accuracy": {
+     "hi": 0.8565,
+     "lo": 0.8142,
+     "point": 0.836
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7655,
+     "lo": 0.6694,
+     "point": 0.7189
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7875,
+     "lo": 0.7046,
+     "point": 0.7477
+    },
+    "test.accuracy": {
+     "hi": 0.8943,
+     "lo": 0.844,
+     "point": 0.8705
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8278,
+     "lo": 0.6994,
+     "point": 0.7685
+    },
+    "test.macro_f1": {
+     "hi": 0.8202,
+     "lo": 0.7076,
+     "point": 0.7711
+    }
+   },
+   "members": null,
+   "recommendation": null
+  },
+  "skin_cls_s3@6198c549": {
+   "task": "classification",
+   "arch": "convnext_tiny.fb_in22k_ft_in1k",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "weights_sha256": "fa77ade97f89bf9a1c565eb3819670099664b7fd9d49f56cbc117227d44f0f61",
+   "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+   "git_commit": "6198c5491ef9311889da2ae52a6617a3c8d9829e",
+   "license": "Weights derived from timm ImageNet checkpoints (Apache-2.0) fine-tuned on HAM10000 (CC BY-NC 4.0): non-commercial use only",
+   "contamination": "ISIC 2018 Task 3 test set is held out; MedSAM and MedGemma are not involved",
+   "headline": {
+    "headline.accuracy": {
+     "hi": 0.8077,
+     "lo": 0.7617,
+     "point": 0.7851
+    },
+    "headline.balanced_accuracy": {
+     "hi": 0.7615,
+     "lo": 0.6671,
+     "point": 0.7159
+    },
+    "headline.macro_f1": {
+     "hi": 0.7647,
+     "lo": 0.6829,
+     "point": 0.7262
+    },
+    "official_test.accuracy": {
+     "hi": 0.8077,
+     "lo": 0.7617,
+     "point": 0.7851
+    },
+    "official_test.balanced_accuracy": {
+     "hi": 0.7615,
+     "lo": 0.6671,
+     "point": 0.7159
+    },
+    "official_test.macro_f1": {
+     "hi": 0.7647,
+     "lo": 0.6829,
+     "point": 0.7262
+    },
+    "test.accuracy": {
+     "hi": 0.8439,
+     "lo": 0.7818,
+     "point": 0.814
+    },
+    "test.balanced_accuracy": {
+     "hi": 0.8129,
+     "lo": 0.6429,
+     "point": 0.7283
+    },
+    "test.macro_f1": {
+     "hi": 0.784,
+     "lo": 0.6396,
+     "point": 0.7198
+    }
+   },
+   "members": null,
+   "recommendation": null
+  },
+  "skin_ens": {
+   "task": "classification (ensemble)",
+   "arch": "mean of 3 x convnext_tiny.fb_in22k_ft_in1k logits (seeds 1,2,3)",
+   "classes": [
+    "akiec",
+    "bcc",
+    "bkl",
+    "df",
+    "mel",
+    "nv",
+    "vasc"
+   ],
+   "weights_sha256": null,
+   "split_hash": null,
+   "git_commit": null,
+   "license": "non-commercial (CC BY-NC training data)",
+   "contamination": "clean on the official test; see model card",
+   "headline": {
+    "ensemble_tta.milk10k.balanced_accuracy": {
+     "hi": 0.6386,
+     "lo": 0.5801,
+     "point": 0.6085
+    },
+    "ensemble_tta.official_test.balanced_accuracy": {
+     "hi": 0.7746,
+     "lo": 0.6815,
+     "point": 0.7282
+    }
+   },
+   "members": [
+    "skin_cls@a217517b",
+    "skin_cls_s2@6198c549",
+    "skin_cls_s3@6198c549"
+   ],
+   "recommendation": "ship the ensemble"
   }
  }
 }

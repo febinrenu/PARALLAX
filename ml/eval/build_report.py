@@ -126,6 +126,32 @@ def contamination_table() -> str:
     return "\n".join(rows)
 
 
+def ensemble_table() -> str:
+    e = M["models"]["skin_cls"].get("ensemble")
+    if not e:
+        return "not run"
+    rows = ["| Variant | Official test balanced accuracy [95% CI] | MILK10k (external) balanced accuracy [95% CI] |", "|---|---|---|"]
+    for name, v in e["variants"].items():
+        rows.append(f"| {name} | {ci(v['official_test']['balanced_accuracy'])} | {ci(v['milk10k']['balanced_accuracy'])} |")
+    g = e["gain_over_mean_single_seed"]
+    rows.append("")
+    rows.append(f"Gain of the 3-model ensemble with flip averaging over the mean single seed: {g['official_test']:+.3f} on the official test and {g['milk10k']:+.3f} on MILK10k. Recommendation: **{e['recommendation']}**. {e['note']}.")
+    return "\n".join(rows)
+
+
+def variants_table() -> str:
+    p = REPO / "reports" / "conformal_variants.json"
+    if not p.is_file():
+        return "not run"
+    d = json.loads(p.read_text())
+    rows = ["| Model | Set | Variant | Coverage (target 0.90) | Lowest class coverage | Mean set size |", "|---|---|---|---|---|---|"]
+    for m, sp in d["models"].items():
+        for s_, blk in sp.items():
+            for v, r in blk.items():
+                rows.append(f"| {m} | {s_} | {v} | {r['coverage']:.3f} | {r['min_class_coverage']:.2f} ({r['worst_class']}) | {r['mean_set_size']:.2f} |")
+    return "\n".join(rows)
+
+
 def main() -> int:
     inf = M["models"]["brain_cls"]["benchmark_inflation"]
     ext = M["models"]["brain_cls"]["external_bdneuro"]
@@ -227,7 +253,17 @@ Figure: `reports/figures/corruption.png`. Segmentation uses photometric perturba
 - Pending: `discordant` and `unfaithful` signal validation (P3, P1.9); zero-shot MedSAM on ISIC 2018 Task 1 (P1.12); MedSigLIP out-of-distribution detector (P1.5); BDNeuro-MRI licence is unconfirmed; overlap of MedGemma and MedSAM training data with our test sets is unverified.
 - Reliability and risk-coverage curves for the segmenter are not defined (no per-case probability), so none is reported.
 
-## 11. Reproduce
+## 11. Optional extras
+
+**Skin ensemble.** Three ConvNeXt-Tiny models trained with different seeds, logits averaged, with optional four-way flip averaging at test time.
+
+{ensemble_table()}
+
+**Conformal variants.** The shipped randomised APS against class-conditional (Mondrian) APS and RAPS, all fitted on the same calibration split. Mondrian protects the weakest class at the price of larger sets; RAPS over-covers on in-distribution data but is the most robust under shift (MILK10k, BDNeuro). None restores the 90% guarantee outside the training distribution.
+
+{variants_table()}
+
+## 12. Reproduce
 
 ```
 python ml/eval/run_all.py --check     # recompute every number from cached predictions (about 100 s, CPU only)
