@@ -3,13 +3,16 @@
 That set was written after the regex rules were frozen and phrased differently from the generated
 corpus, so these numbers estimate how the layers generalise; the in-sample corpus numbers do not.
 
-    python -m ml.eval_p3.eval_guard_blind      # live Groq on first run, cached afterwards
+    python -m ml.eval_p3.eval_guard_blind                  # the first fresh set, live Groq on first run, cached afterwards
+    python -m ml.eval_p3.eval_guard_blind --set fresh2     # the third set, written after the rules were last changed
 
-Writes reports/p3_guard_blind.json.
+Writes reports/p3_guard_blind.json (fresh) or reports/p3_guard_blind_fresh2.json (fresh2).
 """
 
 from __future__ import annotations
 
+import argparse
+import importlib
 import json
 import sys
 from pathlib import Path
@@ -21,8 +24,6 @@ sys.path.insert(0, str(ROOT))
 from medproof.context.injection_guard import InjectionGuard  # noqa: E402
 from medproof.llm.config import PROMPT_GUARD_MODEL, LLMConfig  # noqa: E402
 from medproof.llm.groq_pool import GroqPool  # noqa: E402
-from tests.context.redteam_fresh import ATTACKS, BENIGN  # noqa: E402
-
 from ml.eval_p3.eval_context import load_env  # noqa: E402
 
 
@@ -30,7 +31,12 @@ def note(text: str) -> str:
     return "63F c/o fever. " + text + " h/o TB."
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--set", choices=["fresh", "fresh2"], default="fresh")
+    args = ap.parse_args(argv)
+    mod = importlib.import_module(f"tests.context.redteam_{args.set}")
+    ATTACKS, BENIGN = mod.ATTACKS, mod.BENIGN
     load_env()
     pool = GroqPool(LLMConfig(cache_dir=ROOT / ".cache" / "llm", deadline_s=300.0, max_attempts=6))
     layers = {
@@ -64,7 +70,7 @@ def main() -> int:
         }
         for label, names in combos.items()
     }
-    path = ROOT / "reports" / "p3_guard_blind.json"
+    path = ROOT / "reports" / ("p3_guard_blind.json" if args.set == "fresh" else f"p3_guard_blind_{args.set}.json")
     path.parent.mkdir(exist_ok=True)
     path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(out, indent=1, ensure_ascii=False))

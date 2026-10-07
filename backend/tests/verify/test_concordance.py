@@ -7,8 +7,8 @@ from hypothesis import given
 from hypothesis import strategies as st
 
 from medproof.core.schemas import Finding, ImageEvidence
-from medproof.readers.generalist import GeneralistRead
 from medproof.core.status_rule import compute_status
+from medproof.readers.generalist import GeneralistRead
 from medproof.verify.concordance import DOWNGRADE_VALIDATED, box_iou, cohen_kappa
 from medproof.verify.concordance import apply as _apply
 from medproof.verify.report_labels import labels_from_report
