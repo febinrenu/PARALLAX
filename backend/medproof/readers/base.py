@@ -24,6 +24,7 @@ class ReaderFinding:
     box_scores: list[float] = field(default_factory=list)
     method: str = ""  # "gradcam++", "unet", "yolo", "medsam"
     region_name: str | None = None  # patient-side, e.g. "right lower zone"
+    mask_source: str = ""  # "unet" or "medsam" when `mask` is a segmentation, not just a CAM region
     flags: list[str] = field(default_factory=list)
 
 

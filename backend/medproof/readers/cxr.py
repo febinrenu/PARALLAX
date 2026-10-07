@@ -62,6 +62,9 @@ class CxrReader:
         output_kind: str = "probability",
     ):
         self.cfg = cfg or CxrConfig()
+        import torch
+
+        torch.set_num_threads(max(1, self.cfg.threads))
         self.model = model.eval()
         self.anatomy_fn = anatomy_fn
         self.model_id = model_id or f"{self.cfg.model_name}@unknown"
@@ -84,6 +87,17 @@ class CxrReader:
 
     def _probs(self, raw: np.ndarray) -> np.ndarray:
         return raw if self.output_kind == "probability" else _sigmoid(raw)
+
+    def raw_logits(self, img: DecodedImage | np.ndarray) -> np.ndarray:
+        """Pre-sigmoid logits of every label (classifier on the pooled features), used by the energy score.
+
+        The library's forward() applies sigmoid and operating-point scaling, which hides the logit scale.
+        """
+        import torch
+
+        with torch.no_grad():
+            z = self.model.classifier(self.model.features2(self._tensor(img)))
+        return z[0].detach().cpu().numpy().astype(np.float32)
 
     def score(self, img: DecodedImage | np.ndarray) -> np.ndarray:
         """Probabilities for every label, without localisation. Used by faithfulness and stability."""

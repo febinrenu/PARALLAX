@@ -66,8 +66,13 @@ def logits(model, X: torch.Tensor, bs: int = 128) -> np.ndarray:
     dev = next(model.parameters()).device
     out = []
     for i in range(0, len(X), bs):
+        xb = X[i : i + bs].to(dev).float()
         with torch.autocast(device_type=dev.type, dtype=torch.float16, enabled=dev.type == "cuda"):
-            out.append(model(X[i : i + bs].to(dev).float()).float().cpu())
+            o = model(xb).float().cpu()
+        bad = ~torch.isfinite(o).all(dim=1)
+        if bad.any():  # fp16 overflow on an unusual input: redo those rows in full precision
+            o[bad] = model(xb[bad.to(dev)]).float().cpu()
+        out.append(o)
     return torch.cat(out).numpy()
 
 

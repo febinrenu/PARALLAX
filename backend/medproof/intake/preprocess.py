@@ -40,6 +40,9 @@ SPECS: dict[str, PreprocSpec] = {
     "cxr_anatomy": PreprocSpec(
         "cxr_anatomy", 512, 1, (0.0,), (1.0,), resize="center_crop", value_range=(-1024.0, 1024.0)
     ),
+    # MedSigLIP: 448 px RGB scaled to [-1, 1] (mean and std 0.5). Verify against the model's own
+    # processor config once the gated repo is accessible.
+    "router_medsiglip": PreprocSpec("router_medsiglip", 448, 3, (0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     "brain_effnet": PreprocSpec("brain_effnet", 224, 3, IMAGENET_MEAN, IMAGENET_STD),
     "skin_cls": PreprocSpec("skin_cls", 224, 3, IMAGENET_MEAN, IMAGENET_STD),
     "bone_yolo": PreprocSpec("bone_yolo", 640, 3, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0), resize="pad"),

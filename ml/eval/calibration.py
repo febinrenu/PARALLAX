@@ -110,6 +110,45 @@ def calibrate_classifier(name: str, test_splits: list[str], B: int = 1000) -> di
     return report
 
 
+def calibrate_bone(B: int = 1000) -> dict:
+    """Image-level fracture probability for the detector: Platt on the max box confidence (validation split), FNR threshold and abstention band on the calibration split."""
+    from medproof.calibrate.binary import BinaryCalibrator
+    from ml.eval import detection as det
+    from ml.train import bone as bn
+
+    mdir = ART / "bone_det"
+    meta = json.loads((mdir / "model_meta.json").read_text())
+
+    def arrays(split):
+        z = np.load(mdir / "predictions" / f"{split}.npz", allow_pickle=False)
+        dets = bn.unpack_dets(z["det_rows"], z["det_offsets"])
+        gts = [z["gt_rows"][z["gt_offsets"][i] : z["gt_offsets"][i + 1]] for i in range(len(z["gt_offsets"]) - 1)]
+        return det.image_scores(dets), np.array([len(g) > 0 for g in gts]).astype(int), z["groups"]
+
+    (sv, yv, _), (sc, yc, _), (st, yt, gt) = arrays("val"), arrays("cal"), arrays("test")
+    bc = BinaryCalibrator.fit("fracture", sv, yv, sc, yc, alpha=0.1)
+    bc.meta.update({"model_id": meta["model_id"], "fit": "Platt on val, FNR threshold on cal"})
+    bc.save(mdir / "calibration.json")
+    p = bc.prob(st)
+    kw = dict(groups=gt, strata=yt, B=B)
+    ece = lambda y, p: mt.ece(y, np.stack([1 - p, p], 1), 15)  # noqa: E731
+    pos = yt == 1
+    miss = ~(p >= bc.thr_fnr)
+    k, n = int(miss[pos].sum()), int(pos.sum())
+    conf, correct = np.maximum(p, 1 - p), ((p >= 0.5) == pos).astype(float)
+    inband = (p >= bc.abstain_low) & (p <= bc.abstain_high)
+    return {
+        "model_id": meta["model_id"], "n_test": int(len(yt)), "n_positives_test": n, "method": "Platt scaling on logit(max box confidence); the raw score is not a probability",
+        "ece_raw": bs.ci({"y": yt, "p": st}, ece, **kw), "ece_platt": bs.ci({"y": yt, "p": p}, ece, **kw), "platt": {"a": bc.a, "b": bc.b},
+        "reliability_raw": reliability_bins(yt, np.stack([1 - st, st], 1), 10), "reliability_platt": reliability_bins(yt, np.stack([1 - p, p], 1), 10),
+        "fnr_control": {"target_fnr": 0.1, "threshold_calibrated_prob": bc.thr_fnr, "fnr_test": k / n, "fnr_ci95_clopper_pearson": list(conformal.clopper_pearson(k, n)), "within_3_points_of_target": bool(abs(k / n - 0.1) <= 0.03),
+                        "fpr_test": float(np.mean(~miss[~pos])), "fraction_reported": float(np.mean(~miss)), "n_positives_in_calibration_B": int(bc.meta["positives_b"])},
+        "abstention": {"band": [bc.abstain_low, bc.abstain_high], "fraction_abstained": float(inband.mean()), "accuracy_outside_band": float(correct[~inband].mean()), "accuracy_inside_band": float(correct[inband].mean()) if inband.any() else None},
+        "selective": {"aurc": bs.ci({"c": conf, "k": correct}, lambda c, k: selective.aurc(c, k), groups=gt, B=B), "oracle_aurc": selective.oracle_aurc(correct),
+                      "coverage_at_5pct_error": selective.coverage_at_risk(conf, correct, 0.05), "coverage_at_10pct_error": selective.coverage_at_risk(conf, correct, 0.10)},
+    }
+
+
 def main() -> int:
     out = {"generated_by": "ml/eval/calibration.py", "seed": bs.SEED, "models": {}}
     for name, splits in MODELS.items():
@@ -120,6 +159,10 @@ def main() -> int:
         for s, b in out["models"][name]["splits"].items():
             c = b["conformal"]["alpha_0.1"]
             print(f"{name}/{s}: T={out['models'][name]['temperature']:.3f} ECE {b['ece_raw']['point']:.3f}->{b['ece_calibrated']['point']:.3f}  coverage@90 {c['coverage']:.3f} {c['coverage_ci95']} set size {c['mean_set_size']:.2f}")
+    if (ART / "bone_det" / "model_meta.json").is_file():
+        out["models"]["bone_det"] = calibrate_bone()
+        b = out["models"]["bone_det"]
+        print(f"bone_det: ECE {b['ece_raw']['point']:.3f}->{b['ece_platt']['point']:.3f}  FNR at control {b['fnr_control']['fnr_test']:.3f} (target 0.10)  abstained {b['abstention']['fraction_abstained']:.2f}")
     p = REPO / "reports" / "calibration.json"
     old = json.loads(p.read_text()) if p.is_file() else {"models": {}}
     old["models"].update(out["models"])

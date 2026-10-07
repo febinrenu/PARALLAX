@@ -1,0 +1,2442 @@
+{
+ "dataset": "RSNA Pneumonia Detection Challenge (stage 2 train images), patient-level split",
+ "target": "RSNA class Lung_Opacity vs the other two classes",
+ "models": {
+  "chex": {
+   "model_id": "xrv-densenet121-chex",
+   "trained_on_rsna": false,
+   "contamination": "CheXpert; never saw RSNA",
+   "n_cal": 7621,
+   "n_test": 17785,
+   "prevalence_test": 0.23216193421422546,
+   "labels": {
+    "Lung Opacity": {
+     "auroc": {
+      "point": 0.7849619434911282,
+      "lo": 0.7770559478764382,
+      "hi": 0.792799133032152,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.4723555929671281,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 0.6713291722919715,
+      "b": -1.9136441642878244,
+      "temperature_only_T": 4.500398364995134,
+      "ece_raw": {
+       "point": 0.22020355413762377,
+       "lo": 0.2134833013731905,
+       "hi": 0.22724177367601875,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.01781459275927197
+      },
+      "ece_platt": {
+       "point": 0.017841288798985007,
+       "lo": 0.014174381476520214,
+       "hi": 0.023190128249923843,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.289649261558061,
+      "brier_platt": 0.14708780626678197,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 1816,
+        "mean_predicted": 0.062364764511585236,
+        "observed": 0.021475770925110133
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 2084,
+        "mean_predicted": 0.14720478653907776,
+        "observed": 0.0345489443378119
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1270,
+        "mean_predicted": 0.24584263563156128,
+        "observed": 0.05511811023622047
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 958,
+        "mean_predicted": 0.3479613959789276,
+        "observed": 0.081419624217119
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 786,
+        "mean_predicted": 0.4458179473876953,
+        "observed": 0.09923664122137404
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 1310,
+        "mean_predicted": 0.5492005348205566,
+        "observed": 0.1534351145038168
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 1349,
+        "mean_predicted": 0.6525070071220398,
+        "observed": 0.19718309859154928
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 1652,
+        "mean_predicted": 0.7532029151916504,
+        "observed": 0.2857142857142857
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 2828,
+        "mean_predicted": 0.855231523513794,
+        "observed": 0.35572842998585574
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 3732,
+        "mean_predicted": 0.9444692730903625,
+        "observed": 0.49490889603429794
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 6090,
+        "mean_predicted": 0.04852380128411694,
+        "observed": 0.042036124794745486
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 3277,
+        "mean_predicted": 0.1492210615027991,
+        "observed": 0.15318889227952395
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 2548,
+        "mean_predicted": 0.24891561632226958,
+        "observed": 0.28885400313971743
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 2275,
+        "mean_predicted": 0.3484512832971281,
+        "observed": 0.36835164835164835
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1761,
+        "mean_predicted": 0.4476820536705163,
+        "observed": 0.45883021010789327
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 1135,
+        "mean_predicted": 0.5459652176933357,
+        "observed": 0.5224669603524229
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 536,
+        "mean_predicted": 0.6411445818144942,
+        "observed": 0.5578358208955224
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 151,
+        "mean_predicted": 0.7366080913316978,
+        "observed": 0.5894039735099338
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 12,
+        "mean_predicted": 0.8249779173359704,
+        "observed": 0.6666666666666666
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.14164871417776892,
+      "fnr_test": 0.10268830225236135,
+      "fnr_ci95_clopper_pearson": [
+       0.09359185181852354,
+       0.11235115905171207
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.48242530755711777,
+      "ppv_test": 0.35995336636549113,
+      "fraction_reported": 0.5787461343829069,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.16283384874894574,
+      "accuracy_outside_band": 0.8230237087782927,
+      "accuracy_inside_band": 0.5338397790055248,
+      "accuracy_overall": 0.7759347764970481
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.09247534998511936,
+       "lo": 0.08848274674793194,
+       "hi": 0.09677421558717948,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.027227101913671073,
+      "coverage_at_5pct_error": 0.39285915096991847,
+      "coverage_at_10pct_error": 0.5868428450941805
+     }
+    },
+    "Pneumonia": {
+     "auroc": {
+      "point": 0.7620411099822182,
+      "lo": 0.7539580197594711,
+      "hi": 0.7703869860417154,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.43255959151234924,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 0.7053994779378979,
+      "b": -0.8477069237981485,
+      "temperature_only_T": 1.263890167394272,
+      "ece_raw": {
+       "point": 0.08811695985590302,
+       "lo": 0.08238772298685341,
+       "hi": 0.09432910479388375,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.0719279834101801
+      },
+      "ece_platt": {
+       "point": 0.0207520942339273,
+       "lo": 0.015807551950722126,
+       "hi": 0.02660829025621934,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.18044615767063996,
+      "brier_platt": 0.1523821755812774,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 5343,
+        "mean_predicted": 0.03950297832489014,
+        "observed": 0.05015908665543702
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1820,
+        "mean_predicted": 0.14424347877502441,
+        "observed": 0.09505494505494505
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1023,
+        "mean_predicted": 0.2466215044260025,
+        "observed": 0.1710654936461388
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 740,
+        "mean_predicted": 0.34908315539360046,
+        "observed": 0.17297297297297298
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 583,
+        "mean_predicted": 0.44767141342163086,
+        "observed": 0.2521440823327616
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 4105,
+        "mean_predicted": 0.5445153117179871,
+        "observed": 0.32009744214372715
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 2410,
+        "mean_predicted": 0.6458569765090942,
+        "observed": 0.4352697095435685
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 1208,
+        "mean_predicted": 0.7436583638191223,
+        "observed": 0.5057947019867549
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 499,
+        "mean_predicted": 0.8405457139015198,
+        "observed": 0.4749498997995992
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 54,
+        "mean_predicted": 0.9228370189666748,
+        "observed": 0.5
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 6004,
+        "mean_predicted": 0.04649459349296387,
+        "observed": 0.05329780146568954
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 2320,
+        "mean_predicted": 0.14243744655654858,
+        "observed": 0.13793103448275862
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1193,
+        "mean_predicted": 0.2455164824915121,
+        "observed": 0.2112321877619447
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 5500,
+        "mean_predicted": 0.34100827268223316,
+        "observed": 0.3401818181818182
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1929,
+        "mean_predicted": 0.4403225679726891,
+        "observed": 0.4997407983411094
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 638,
+        "mean_predicted": 0.541704808110806,
+        "observed": 0.48746081504702193
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 172,
+        "mean_predicted": 0.6377396216710316,
+        "observed": 0.47093023255813954
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 24,
+        "mean_predicted": 0.7250410925877891,
+        "observed": 0.3333333333333333
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 5,
+        "mean_predicted": 0.8254304920425041,
+        "observed": 0.4
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.12868745525324912,
+      "fnr_test": 0.09978202954710584,
+      "fnr_ci95_clopper_pearson": [
+       0.09080480243664417,
+       0.1093299290496497
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.5248242530755711,
+      "ppv_test": 0.3415104740904079,
+      "fraction_reported": 0.6119763845937588,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.14433511385999437,
+      "accuracy_outside_band": 0.8112104087265081,
+      "accuracy_inside_band": 0.4970783015192832,
+      "accuracy_overall": 0.7658701152656733
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.10224843969706052,
+       "lo": 0.09776585004557563,
+       "hi": 0.10706325668667555,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.029846215197603165,
+      "coverage_at_5pct_error": 0.30149001967950523,
+      "coverage_at_10pct_error": 0.5573798144503795
+     }
+    },
+    "max(Lung Opacity, Pneumonia)": {
+     "auroc": {
+      "point": 0.7849466204364431,
+      "lo": 0.7770426884708362,
+      "hi": 0.7927858561749054,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.47234922498059784,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 0.6713310020755275,
+      "b": -1.9138306271105883,
+      "temperature_only_T": 4.504585271383951,
+      "ece_raw": {
+       "point": 0.22077282059886394,
+       "lo": 0.21404131028728476,
+       "hi": 0.22771245430061285,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.018335394594722613
+      },
+      "ece_platt": {
+       "point": 0.017795223251567304,
+       "lo": 0.014223810124225685,
+       "hi": 0.023150240899085458,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.289700194717305,
+      "brier_platt": 0.14709171827091103,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 1816,
+        "mean_predicted": 0.062364764511585236,
+        "observed": 0.021475770925110133
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 2084,
+        "mean_predicted": 0.1472146362066269,
+        "observed": 0.0345489443378119
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1270,
+        "mean_predicted": 0.24586546421051025,
+        "observed": 0.05511811023622047
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 957,
+        "mean_predicted": 0.3479505181312561,
+        "observed": 0.08150470219435736
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 776,
+        "mean_predicted": 0.44609203934669495,
+        "observed": 0.10051546391752578
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 1321,
+        "mean_predicted": 0.5488439202308655,
+        "observed": 0.15215745647236942
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 1349,
+        "mean_predicted": 0.6525070071220398,
+        "observed": 0.19718309859154928
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 1652,
+        "mean_predicted": 0.7532029151916504,
+        "observed": 0.2857142857142857
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 2828,
+        "mean_predicted": 0.855231523513794,
+        "observed": 0.35572842998585574
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 3732,
+        "mean_predicted": 0.9444692730903625,
+        "observed": 0.49490889603429794
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 6089,
+        "mean_predicted": 0.04850999855856984,
+        "observed": 0.042043028411890296
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 3279,
+        "mean_predicted": 0.14927765414866478,
+        "observed": 0.1530954559316865
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 2548,
+        "mean_predicted": 0.2489205856878324,
+        "observed": 0.28885400313971743
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 2274,
+        "mean_predicted": 0.3484311843172916,
+        "observed": 0.3685136323658751
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1762,
+        "mean_predicted": 0.44766695208657103,
+        "observed": 0.4585698070374574
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 1135,
+        "mean_predicted": 0.54600867132099,
+        "observed": 0.5224669603524229
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 535,
+        "mean_predicted": 0.641180235802737,
+        "observed": 0.5588785046728972
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 151,
+        "mean_predicted": 0.7365735980259411,
+        "observed": 0.5894039735099338
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 12,
+        "mean_predicted": 0.8249524362508353,
+        "observed": 0.6666666666666666
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.1416260818349747,
+      "fnr_test": 0.10268830225236135,
+      "fnr_ci95_clopper_pearson": [
+       0.09359185181852354,
+       0.11235115905171207
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.48242530755711777,
+      "ppv_test": 0.35995336636549113,
+      "fraction_reported": 0.5787461343829069,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.1628900759066629,
+      "accuracy_outside_band": 0.8230789897904353,
+      "accuracy_inside_band": 0.5340006903693476,
+      "accuracy_overall": 0.7759910036547653
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.09248241665664485,
+       "lo": 0.08849011836911021,
+       "hi": 0.09677881667364478,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.027212838281671856,
+      "coverage_at_5pct_error": 0.39257801518133256,
+      "coverage_at_10pct_error": 0.5868428450941805
+     }
+    }
+   },
+   "auroc_lung_opacity_vs_each_class": {
+    "No_Lung_Opacity_Not_Normal": 0.6707611693193051,
+    "Normal": 0.9435486054029881
+   },
+   "localization": {
+    "Lung Opacity": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.299,
+      "lo": 0.271,
+      "hi": 0.326,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.15398081415709186,
+      "lo": 0.14640693058099558,
+      "hi": 0.16100935250439277,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.597,
+     "iou_at_least_0.3": 0.124,
+     "iou_at_least_0.5": 0.019,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    },
+    "Pneumonia": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.318,
+      "lo": 0.288975,
+      "hi": 0.347,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.17075036165430577,
+      "lo": 0.16294928813856563,
+      "hi": 0.17841809939631106,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.651,
+     "iou_at_least_0.3": 0.157,
+     "iou_at_least_0.5": 0.019,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    }
+   }
+  },
+  "mimic_ch": {
+   "model_id": "xrv-densenet121-mimic_ch",
+   "trained_on_rsna": false,
+   "contamination": "MIMIC-CXR with CheXpert labels; never saw RSNA",
+   "n_cal": 7621,
+   "n_test": 17785,
+   "prevalence_test": 0.23216193421422546,
+   "labels": {
+    "Lung Opacity": {
+     "auroc": {
+      "point": 0.7488521630974591,
+      "lo": 0.7410656871332779,
+      "hi": 0.7567543237000213,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.4137062277637892,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 1.0369944136809748,
+      "b": -1.6368941188209358,
+      "temperature_only_T": 2.4326641060166443,
+      "ece_raw": {
+       "point": 0.21978207042721973,
+       "lo": 0.21418001864705405,
+       "hi": 0.2250748016323901,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.1684034546914471
+      },
+      "ece_platt": {
+       "point": 0.02491109377535278,
+       "lo": 0.02153376283861072,
+       "hi": 0.03061912704067196,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.25680461461369525,
+      "brier_platt": 0.15604615551757334,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 1894,
+        "mean_predicted": 0.052763111889362335,
+        "observed": 0.014255543822597676
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1135,
+        "mean_predicted": 0.14501813054084778,
+        "observed": 0.01762114537444934
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 761,
+        "mean_predicted": 0.24706429243087769,
+        "observed": 0.05781865965834428
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 590,
+        "mean_predicted": 0.35008344054222107,
+        "observed": 0.09322033898305085
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 601,
+        "mean_predicted": 0.45096367597579956,
+        "observed": 0.08485856905158069
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 3783,
+        "mean_predicted": 0.5500096678733826,
+        "observed": 0.16785619878403382
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 4283,
+        "mean_predicted": 0.6515464782714844,
+        "observed": 0.2972215736633201
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 3586,
+        "mean_predicted": 0.7453916072845459,
+        "observed": 0.41522587841606245
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 1031,
+        "mean_predicted": 0.8356377482414246,
+        "observed": 0.45586808923375366
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 121,
+        "mean_predicted": 0.9214677810668945,
+        "observed": 0.5371900826446281
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 4186,
+        "mean_predicted": 0.03137024648311103,
+        "observed": 0.029861442904921164
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 3073,
+        "mean_predicted": 0.1676109376290302,
+        "observed": 0.1262609827530101
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 4923,
+        "mean_predicted": 0.24832164785804264,
+        "observed": 0.2626447288238879
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 3459,
+        "mean_predicted": 0.3441630865691842,
+        "observed": 0.3876843018213356
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1490,
+        "mean_predicted": 0.4392949734754589,
+        "observed": 0.45167785234899327
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 431,
+        "mean_predicted": 0.5397466114431448,
+        "observed": 0.46403712296983757
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 159,
+        "mean_predicted": 0.6426047701781183,
+        "observed": 0.4716981132075472
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 53,
+        "mean_predicted": 0.7384363282823481,
+        "observed": 0.5283018867924528
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 11,
+        "mean_predicted": 0.823253912197729,
+        "observed": 0.5454545454545454
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.18604584527509158,
+      "fnr_test": 0.09227415839186244,
+      "fnr_ci95_clopper_pearson": [
+       0.0836162406865263,
+       0.10151380563800971
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.5556531927357938,
+      "ppv_test": 0.33062808750882144,
+      "fraction_reported": 0.637391059881923,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.10801236997469778,
+      "accuracy_outside_band": 0.7944402420574886,
+      "accuracy_inside_band": 0.5294117647058824,
+      "accuracy_overall": 0.7658138881079561
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.10313781699143197,
+       "lo": 0.09880786136783885,
+       "hi": 0.10777247665662866,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.0298612170254201,
+      "coverage_at_5pct_error": 0.3263424233904976,
+      "coverage_at_10pct_error": 0.5096991847062131
+     }
+    },
+    "Pneumonia": {
+     "auroc": {
+      "point": 0.7009527020575316,
+      "lo": 0.6920113098356714,
+      "hi": 0.7094407746207599,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.3642779295019584,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 0.8578766527811928,
+      "b": -0.9739547979815707,
+      "temperature_only_T": 0.9512485826568188,
+      "ece_raw": {
+       "point": 0.13755818559173655,
+       "lo": 0.1330513119389053,
+       "hi": 0.14231209132164482,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.13647116120081867
+      },
+      "ece_platt": {
+       "point": 0.01074646109906117,
+       "lo": 0.008052150718088,
+       "hi": 0.015400197159433113,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.20362767797776274,
+      "brier_platt": 0.16443901286023757,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 2377,
+        "mean_predicted": 0.05059197545051575,
+        "observed": 0.040387042490534285
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1388,
+        "mean_predicted": 0.14649111032485962,
+        "observed": 0.07204610951008646
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1094,
+        "mean_predicted": 0.2479003369808197,
+        "observed": 0.1170018281535649
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 959,
+        "mean_predicted": 0.34751197695732117,
+        "observed": 0.15119916579770595
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 838,
+        "mean_predicted": 0.450101763010025,
+        "observed": 0.18496420047732698
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 10197,
+        "mean_predicted": 0.5350581407546997,
+        "observed": 0.30783563793272534
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 837,
+        "mean_predicted": 0.6308821439743042,
+        "observed": 0.3823178016726404
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 91,
+        "mean_predicted": 0.7307649254798889,
+        "observed": 0.4945054945054945
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 4,
+        "mean_predicted": 0.8136762380599976,
+        "observed": 0.25
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 3702,
+        "mean_predicted": 0.04587407594076803,
+        "observed": 0.05159373311723393
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1961,
+        "mean_predicted": 0.146389842307123,
+        "observed": 0.13054563997960225
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 6997,
+        "mean_predicted": 0.2787592833555882,
+        "observed": 0.25010718879519794
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 4908,
+        "mean_predicted": 0.3253535311369268,
+        "observed": 0.373879380603097
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 197,
+        "mean_predicted": 0.43271841555855967,
+        "observed": 0.4517766497461929
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 19,
+        "mean_predicted": 0.5297714797534322,
+        "observed": 0.42105263157894735
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 1,
+        "mean_predicted": 0.6082116723805847,
+        "observed": 0.0
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.18363279485460027,
+      "fnr_test": 0.09736013562605958,
+      "fnr_ci95_clopper_pearson": [
+       0.08848408550678777,
+       0.1068104189383772
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.6333479789103691,
+      "ppv_test": 0.30114738202973496,
+      "fraction_reported": 0.6958673039077875,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.012145066066910317,
+      "accuracy_outside_band": 0.7704479480903865,
+      "accuracy_inside_band": 0.5370370370370371,
+      "accuracy_overall": 0.7676131571549059
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.12285526313162715,
+       "lo": 0.11801705421699243,
+       "hi": 0.1283013776291907,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.029383204509783458,
+      "coverage_at_5pct_error": 0.20629744166432387,
+      "coverage_at_10pct_error": 0.40775934776497047
+     }
+    },
+    "max(Lung Opacity, Pneumonia)": {
+     "auroc": {
+      "point": 0.7488540784792946,
+      "lo": 0.7410373152015542,
+      "hi": 0.756770245740353,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.413703571502825,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 1.0507143206337592,
+      "b": -1.6531241038771713,
+      "temperature_only_T": 2.508174800246607,
+      "ece_raw": {
+       "point": 0.22140687475855977,
+       "lo": 0.2159199498937293,
+       "hi": 0.2265738299362892,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.1671939805951413
+      },
+      "ece_platt": {
+       "point": 0.02599036613431225,
+       "lo": 0.02208306566690001,
+       "hi": 0.031464042792475694,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.2582299375793515,
+      "brier_platt": 0.15611204262469336,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 1766,
+        "mean_predicted": 0.0544542595744133,
+        "observed": 0.011325028312570781
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1135,
+        "mean_predicted": 0.1449120044708252,
+        "observed": 0.02026431718061674
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 764,
+        "mean_predicted": 0.24699969589710236,
+        "observed": 0.04842931937172775
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 594,
+        "mean_predicted": 0.35039761662483215,
+        "observed": 0.09932659932659933
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 611,
+        "mean_predicted": 0.45158278942108154,
+        "observed": 0.08019639934533551
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 3894,
+        "mean_predicted": 0.548819899559021,
+        "observed": 0.16538263995891114
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 4283,
+        "mean_predicted": 0.6515464782714844,
+        "observed": 0.2972215736633201
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 3586,
+        "mean_predicted": 0.7453916072845459,
+        "observed": 0.41522587841606245
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 1031,
+        "mean_predicted": 0.8356377482414246,
+        "observed": 0.45586808923375366
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 121,
+        "mean_predicted": 0.9214677810668945,
+        "observed": 0.5371900826446281
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 4102,
+        "mean_predicted": 0.03183989710578753,
+        "observed": 0.02998537298878596
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 3257,
+        "mean_predicted": 0.16719329103131575,
+        "observed": 0.12680380718452564
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 4873,
+        "mean_predicted": 0.2481459188707696,
+        "observed": 0.26472398932895547
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 3409,
+        "mean_predicted": 0.3441190310997487,
+        "observed": 0.38750366676444703
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1479,
+        "mean_predicted": 0.4393852865814719,
+        "observed": 0.45233265720081134
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 432,
+        "mean_predicted": 0.5391810404994527,
+        "observed": 0.46296296296296297
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 162,
+        "mean_predicted": 0.6404502413703398,
+        "observed": 0.4691358024691358
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 59,
+        "mean_predicted": 0.7363036226617127,
+        "observed": 0.5084745762711864
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 12,
+        "mean_predicted": 0.824856147280058,
+        "observed": 0.5833333333333334
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 0,
+        "mean_predicted": null,
+        "observed": null
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.1839200727284071,
+      "fnr_test": 0.09203196899975781,
+      "fnr_ci95_clopper_pearson": [
+       0.08338463692242418,
+       0.10126138826092608
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.5557264206209724,
+      "ppv_test": 0.33065796436761336,
+      "fraction_reported": 0.6375035141973573,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.107450098397526,
+      "accuracy_outside_band": 0.7941917601108731,
+      "accuracy_inside_band": 0.5285190999476713,
+      "accuracy_overall": 0.7656452066348046
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.10319130870863058,
+       "lo": 0.09885974646440392,
+       "hi": 0.10783637627943841,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.029906247279756454,
+      "coverage_at_5pct_error": 0.32628619623278043,
+      "coverage_at_10pct_error": 0.5096991847062131
+     }
+    }
+   },
+   "auroc_lung_opacity_vs_each_class": {
+    "No_Lung_Opacity_Not_Normal": 0.6321758140624881,
+    "Normal": 0.910876570127131
+   },
+   "localization": {
+    "Lung Opacity": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.196,
+      "lo": 0.171,
+      "hi": 0.22002499999999997,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.09950765439856088,
+      "lo": 0.09425496831570195,
+      "hi": 0.10471662426816504,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.389,
+     "iou_at_least_0.3": 0.028,
+     "iou_at_least_0.5": 0.002,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    },
+    "Pneumonia": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.222,
+      "lo": 0.196,
+      "hi": 0.251,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.11480600807991391,
+      "lo": 0.10794133867083754,
+      "hi": 0.12179517945181308,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.456,
+     "iou_at_least_0.3": 0.073,
+     "iou_at_least_0.5": 0.008,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    }
+   }
+  },
+  "all": {
+   "model_id": "xrv-densenet121-all",
+   "trained_on_rsna": true,
+   "contamination": "NIH, PadChest, CheXpert, MIMIC-CXR, Google, OpenI and RSNA: CONTAMINATED on RSNA, reference only",
+   "n_cal": 7621,
+   "n_test": 17785,
+   "prevalence_test": 0.23216193421422546,
+   "labels": {
+    "Lung Opacity": {
+     "auroc": {
+      "point": 0.8746552756071301,
+      "lo": 0.868814315486918,
+      "hi": 0.8806267930469559,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.6888588287748179,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 1.1127652062970255,
+      "b": -1.8431776418881112,
+      "temperature_only_T": 1.4719809679807014,
+      "ece_raw": {
+       "point": 0.12655127182213283,
+       "lo": 0.12081075969171946,
+       "hi": 0.13244210724147823,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.09571864397387199
+      },
+      "ece_platt": {
+       "point": 0.011839127871043678,
+       "lo": 0.00849174608195176,
+       "hi": 0.017416779331329204,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.1933870059018762,
+      "brier_platt": 0.11499021109050335,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 3863,
+        "mean_predicted": 0.04662628471851349,
+        "observed": 0.008801449650530676
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1687,
+        "mean_predicted": 0.14405320584774017,
+        "observed": 0.023710729104919975
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1025,
+        "mean_predicted": 0.24790367484092712,
+        "observed": 0.0448780487804878
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 776,
+        "mean_predicted": 0.349334716796875,
+        "observed": 0.07731958762886598
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 711,
+        "mean_predicted": 0.4496205151081085,
+        "observed": 0.10267229254571027
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 2280,
+        "mean_predicted": 0.548748791217804,
+        "observed": 0.13771929824561405
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 2058,
+        "mean_predicted": 0.6495628356933594,
+        "observed": 0.250242954324587
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 1963,
+        "mean_predicted": 0.7492896318435669,
+        "observed": 0.3886907794192562
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 1706,
+        "mean_predicted": 0.8492889404296875,
+        "observed": 0.5433763188745604
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 1716,
+        "mean_predicted": 0.952228844165802,
+        "observed": 0.7907925407925408
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 7502,
+        "mean_predicted": 0.02338764894559102,
+        "observed": 0.026259664089576112
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 2866,
+        "mean_predicted": 0.1562748180852628,
+        "observed": 0.13049546406140963
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 2231,
+        "mean_predicted": 0.2460370558223947,
+        "observed": 0.25683549977588527
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 1469,
+        "mean_predicted": 0.34649983946550716,
+        "observed": 0.3948264125255276
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 989,
+        "mean_predicted": 0.44664698636361544,
+        "observed": 0.4448938321536906
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 732,
+        "mean_predicted": 0.5482258521332937,
+        "observed": 0.5778688524590164
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 576,
+        "mean_predicted": 0.648520267708498,
+        "observed": 0.6579861111111112
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 463,
+        "mean_predicted": 0.750231844500382,
+        "observed": 0.7386609071274298
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 447,
+        "mean_predicted": 0.8480432164453984,
+        "observed": 0.7986577181208053
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 510,
+        "mean_predicted": 0.949403973346703,
+        "observed": 0.9098039215686274
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.15305347719878853,
+      "fnr_test": 0.0796803100024219,
+      "fnr_ci95_clopper_pearson": [
+       0.07159898843009307,
+       0.0883620542585886
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.3812975981253661,
+      "ppv_test": 0.42189408238037085,
+      "fraction_reported": 0.5064380095586168,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.0967669384312623,
+      "accuracy_outside_band": 0.8644173306772909,
+      "accuracy_inside_band": 0.5647879140034864,
+      "accuracy_overall": 0.8354231093618217
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.053540874865253774,
+       "lo": 0.05086925457396907,
+       "hi": 0.05644518115584965,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.014358269647023759,
+      "coverage_at_5pct_error": 0.5817261737419174,
+      "coverage_at_10pct_error": 0.7884734326679786
+     }
+    },
+    "Pneumonia": {
+     "auroc": {
+      "point": 0.8356956553322883,
+      "lo": 0.8285142556366142,
+      "hi": 0.8423671201098034,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.635012449788094,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 0.7281255216618482,
+      "b": -0.6702772947873621,
+      "temperature_only_T": 1.223652658692705,
+      "ece_raw": {
+       "point": 0.05070160847552077,
+       "lo": 0.04525590364862797,
+       "hi": 0.056104266731690264,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.03699629164836725
+      },
+      "ece_platt": {
+       "point": 0.01867161803091512,
+       "lo": 0.014486985099703422,
+       "hi": 0.024295977509424752,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.14087133487736286,
+      "brier_platt": 0.12775730047063258,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 7330,
+        "mean_predicted": 0.032068751752376556,
+        "observed": 0.048021828103683495
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1801,
+        "mean_predicted": 0.14397096633911133,
+        "observed": 0.1249305941143809
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1050,
+        "mean_predicted": 0.24713733792304993,
+        "observed": 0.1676190476190476
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 704,
+        "mean_predicted": 0.34679341316223145,
+        "observed": 0.19176136363636365
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 503,
+        "mean_predicted": 0.44831377267837524,
+        "observed": 0.2504970178926441
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 3081,
+        "mean_predicted": 0.5362698435783386,
+        "observed": 0.3291139240506329
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 1187,
+        "mean_predicted": 0.6448833346366882,
+        "observed": 0.4995787700084246
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 757,
+        "mean_predicted": 0.7474560141563416,
+        "observed": 0.5772787318361955
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 618,
+        "mean_predicted": 0.8475409150123596,
+        "observed": 0.6893203883495146
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 754,
+        "mean_predicted": 0.9534403681755066,
+        "observed": 0.8554376657824934
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 7550,
+        "mean_predicted": 0.03965749253427452,
+        "observed": 0.049271523178807945
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 2377,
+        "mean_predicted": 0.14320598393971606,
+        "observed": 0.14135464871687
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1174,
+        "mean_predicted": 0.24427059060353432,
+        "observed": 0.19931856899488926
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 3235,
+        "mean_predicted": 0.35727226246665134,
+        "observed": 0.321483771251932
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 1445,
+        "mean_predicted": 0.44274121362240315,
+        "observed": 0.4885813148788927
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 729,
+        "mean_predicted": 0.5455876285477625,
+        "observed": 0.6008230452674898
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 467,
+        "mean_predicted": 0.6457029832695202,
+        "observed": 0.6895074946466809
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 355,
+        "mean_predicted": 0.7510431675140901,
+        "observed": 0.7661971830985915
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 280,
+        "mean_predicted": 0.8496339629585469,
+        "observed": 0.875
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 173,
+        "mean_predicted": 0.9355903062526536,
+        "observed": 0.9479768786127167
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.10370942475348424,
+      "fnr_test": 0.09300072656817632,
+      "fnr_ci95_clopper_pearson": [
+       0.08431116244718256,
+       0.10227094768270885
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.4655096660808436,
+      "ppv_test": 0.3707186695703821,
+      "fraction_reported": 0.5680067472589261,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.12223784087714366,
+      "accuracy_outside_band": 0.8556146307091154,
+      "accuracy_inside_band": 0.5413983440662373,
+      "accuracy_overall": 0.8172055102614563
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.07253544470615608,
+       "lo": 0.06884150336148293,
+       "hi": 0.07630601177682515,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.017834705367705993,
+      "coverage_at_5pct_error": 0.4403148720832162,
+      "coverage_at_10pct_error": 0.7124543154343548
+     }
+    },
+    "max(Lung Opacity, Pneumonia)": {
+     "auroc": {
+      "point": 0.8744518106246373,
+      "lo": 0.8684680374803697,
+      "hi": 0.8801018762648832,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 17492,
+      "n": 17785,
+      "stratified": true,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "auprc": {
+      "point": 0.6886379794176019,
+      "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"
+     },
+     "calibration": {
+      "method": "Platt on logit(score)",
+      "a": 1.13214010312532,
+      "b": -1.8885667297247026,
+      "temperature_only_T": 1.494368882555479,
+      "ece_raw": {
+       "point": 0.13463917764546263,
+       "lo": 0.12881424189814164,
+       "hi": 0.14070868487155216,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "ece_temperature_only": {
+       "point": 0.10302747479101736
+      },
+      "ece_platt": {
+       "point": 0.011658812033751614,
+       "lo": 0.008450608252916688,
+       "hi": 0.017489555280241632,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": true,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "brier_raw": 0.1972214691187043,
+      "brier_platt": 0.1150902754136343,
+      "reliability_raw": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 3637,
+        "mean_predicted": 0.04870572313666344,
+        "observed": 0.008523508386032445
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 1699,
+        "mean_predicted": 0.14360599219799042,
+        "observed": 0.020600353148911125
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 1009,
+        "mean_predicted": 0.24802452325820923,
+        "observed": 0.03865213082259663
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 766,
+        "mean_predicted": 0.34869855642318726,
+        "observed": 0.07180156657963446
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 652,
+        "mean_predicted": 0.4489572048187256,
+        "observed": 0.09049079754601227
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 2501,
+        "mean_predicted": 0.546271026134491,
+        "observed": 0.13314674130347862
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 2094,
+        "mean_predicted": 0.6495324969291687,
+        "observed": 0.2454632282712512
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 1979,
+        "mean_predicted": 0.7495353817939758,
+        "observed": 0.3880747852450733
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 1715,
+        "mean_predicted": 0.8494374752044678,
+        "observed": 0.5387755102040817
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 1733,
+        "mean_predicted": 0.9522828459739685,
+        "observed": 0.7911136757068667
+       }
+      ],
+      "reliability_platt": [
+       {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 7330,
+        "mean_predicted": 0.0231047308130827,
+        "observed": 0.024147339699863574
+       },
+       {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 3121,
+        "mean_predicted": 0.1544844610339239,
+        "observed": 0.13072733098365907
+       },
+       {
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 2210,
+        "mean_predicted": 0.24577218993369376,
+        "observed": 0.26289592760180996
+       },
+       {
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 1427,
+        "mean_predicted": 0.34654663314321277,
+        "observed": 0.3945339873861247
+       },
+       {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 966,
+        "mean_predicted": 0.44620978401180184,
+        "observed": 0.4523809523809524
+       },
+       {
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 729,
+        "mean_predicted": 0.5480868001045341,
+        "observed": 0.5775034293552812
+       },
+       {
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 562,
+        "mean_predicted": 0.6484971856809207,
+        "observed": 0.6512455516014235
+       },
+       {
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 465,
+        "mean_predicted": 0.7497048163321393,
+        "observed": 0.7333333333333333
+       },
+       {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 451,
+        "mean_predicted": 0.8484841798979412,
+        "observed": 0.7960088691796009
+       },
+       {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 524,
+        "mean_predicted": 0.9506578310292542,
+        "observed": 0.9083969465648855
+       }
+      ]
+     },
+     "fnr_control": {
+      "target_fnr": 0.1,
+      "threshold_calibrated_prob": 0.15336314482738028,
+      "fnr_test": 0.08210220392346815,
+      "fnr_ci95_clopper_pearson": [
+       0.07390563752491655,
+       0.09089558152404752
+      ],
+      "within_3_points_of_target": true,
+      "fpr_test": 0.37448740480374926,
+      "ppv_test": 0.4256513926325247,
+      "fraction_reported": 0.5006466123137475,
+      "n_positives_in_calibration_B": 886
+     },
+     "abstention": {
+      "band": [
+       0.4,
+       0.6
+      ],
+      "fraction_abstained": 0.09530503233061569,
+      "accuracy_outside_band": 0.863952765692977,
+      "accuracy_inside_band": 0.56047197640118,
+      "accuracy_overall": 0.8350295192578016
+     },
+     "selective": {
+      "aurc": {
+       "point": 0.053750936141288265,
+       "lo": 0.05109285729755312,
+       "hi": 0.056692373772497175,
+       "level": 0.95,
+       "B": 1000,
+       "method": "percentile",
+       "n_groups": 17492,
+       "n": 17785,
+       "stratified": false,
+       "seed": 20261006,
+       "n_valid": 1000
+      },
+      "oracle_aurc": 0.01442914761978759,
+      "coverage_at_5pct_error": 0.5807140849030081,
+      "coverage_at_10pct_error": 0.7897104301377565
+     }
+    }
+   },
+   "auroc_lung_opacity_vs_each_class": {
+    "No_Lung_Opacity_Not_Normal": 0.7966100715094762,
+    "Normal": 0.9830339489202788
+   },
+   "localization": {
+    "Lung Opacity": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.639,
+      "lo": 0.609,
+      "hi": 0.669,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.23138001774417946,
+      "lo": 0.22371157482860873,
+      "hi": 0.23948494454107108,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.833,
+     "iou_at_least_0.3": 0.298,
+     "iou_at_least_0.5": 0.028,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    },
+    "Pneumonia": {
+     "n_positives_with_boxes": 1000,
+     "pointing_game": {
+      "point": 0.637,
+      "lo": 0.606,
+      "hi": 0.665,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "pointing_game_chance_if_random_point": 0.11430523586273193,
+     "pointing_game_image_centre_baseline": 0.098,
+     "mean_best_iou": {
+      "point": 0.2580881003921528,
+      "lo": 0.24850791311628653,
+      "hi": 0.2676694710808918,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "iou_at_least_0.1": 0.853,
+     "iou_at_least_0.3": 0.377,
+     "iou_at_least_0.5": 0.068,
+     "method": "Grad-CAM++ on DenseNet features, region = connected area >= 50% of the peak, original 1024 px grid"
+    }
+   }
+  }
+ }
+}

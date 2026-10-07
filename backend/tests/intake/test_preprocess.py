@@ -56,3 +56,11 @@ def test_cxr_spec_crops_instead_of_stretching():
     wide[:, 100:400] = 1.0  # exactly the central square
     out = prepare(wide, "cxr_xrv")
     assert out.min() > 1000  # every pixel the model sees is the bright centre
+
+
+def test_router_spec_is_448_rgb_in_minus1_to_1(phantom):
+    out = prepare(phantom, "router_medsiglip")
+    assert out.shape == (3, 448, 448) and out.dtype == np.float32
+    assert out.min() >= -1.0001 and out.max() <= 1.0001
+    assert np.array_equal(out[0], out[1])  # grayscale replicated to three channels
+    assert get_spec("router_medsiglip").mean == (0.5, 0.5, 0.5)

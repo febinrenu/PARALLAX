@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 
 import cv2
 import numpy as np
@@ -13,6 +14,9 @@ from pydicom.dataset import FileDataset, FileMetaDataset
 from pydicom.uid import ExplicitVRLittleEndian, generate_uid
 
 PHI_SENTINEL = "PHI_SENTINEL"
+
+# Tests must not pick up a locally trained router artifact and try to load the real model.
+os.environ["MEDPROOF_ROUTER"] = "0"
 
 
 def make_phantom(size: int = 512, seed: int = 7) -> np.ndarray:

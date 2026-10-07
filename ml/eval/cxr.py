@@ -115,14 +115,14 @@ def evaluate(tag: str) -> dict:
         blk["auroc"] = bs.ci({"y": y_t, "s": s_t}, lambda y, s: mt.auroc_binary(y, s), **kw)
         from sklearn.metrics import average_precision_score
 
-        blk["auprc"] = bs.ci({"y": y_t, "s": s_t}, lambda y, s: float(average_precision_score(y, s)), **kw)
+        blk["auprc"] = {"point": float(average_precision_score(y_t, s_t)), "note": "point estimate only (a bootstrap of AUPRC on 17,785 images dominates the run time)"}
         bc = BinaryCalibrator.fit(label, s_c[half], y_c[half], s_c[~half], y_c[~half], alpha=0.1)
         p_t = bc.prob(s_t)
         z_c = temperature.logit(s_c[half])
         T = temperature.fit_temperature_binary(z_c, y_c[half])
         p_temp = temperature.sigmoid(temperature.logit(s_t) / T)
         blk["calibration"] = {"method": "Platt on logit(score)", "a": bc.a, "b": bc.b, "temperature_only_T": T,
-                              "ece_raw": bs.ci({"y": y_t, "p": s_t}, lambda y, p: _ece_binary(y, p), **kw), "ece_temperature_only": bs.ci({"y": y_t, "p": p_temp}, lambda y, p: _ece_binary(y, p), **kw),
+                              "ece_raw": bs.ci({"y": y_t, "p": s_t}, lambda y, p: _ece_binary(y, p), **kw), "ece_temperature_only": {"point": _ece_binary(y_t, p_temp)},
                               "ece_platt": bs.ci({"y": y_t, "p": p_t}, lambda y, p: _ece_binary(y, p), **kw), "brier_raw": float(np.mean((s_t - y_t) ** 2)), "brier_platt": float(np.mean((p_t - y_t) ** 2)),
                               "reliability_raw": _reliability(y_t, s_t), "reliability_platt": _reliability(y_t, p_t)}
         pos = y_t == 1

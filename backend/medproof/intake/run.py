@@ -7,10 +7,19 @@ from pathlib import Path
 
 from medproof.core.schemas import StageResult
 from medproof.intake import decode, phi, quality
+from medproof.intake.router_config import RouterConfig
+
+_TRUST_CONFIDENCE = RouterConfig().trust_confidence
 
 
-def run_bytes(raw: bytes, modality_hint: str | None = None) -> tuple[StageResult, decode.DecodedImage | None]:
-    """Process an upload. The decoded image is returned alongside the StageResult for later stages."""
+def run_bytes(
+    raw: bytes, modality_hint: str | None = None, router=None
+) -> tuple[StageResult, decode.DecodedImage | None]:
+    """Process an upload. The decoded image is returned alongside the StageResult for later stages.
+
+    Without a `modality_hint`, an optional `router` (anything with `.predict(DecodedImage)`) decides
+    the modality, which switches modality-specific quality checks. A router failure never fails intake.
+    """
     t0 = time.perf_counter()
 
     def ms() -> int:
@@ -33,7 +42,20 @@ def run_bytes(raw: bytes, modality_hint: str | None = None) -> tuple[StageResult
             warnings.append(f"PHI scrub failed: {type(exc).__name__}")
             payload["phi_scrub"] = {"error": "scrub_failed"}
 
-    report = quality.assess(img, modality_hint)
+    modality = modality_hint
+    if modality_hint is None and router is not None:
+        try:
+            routed = router.predict(img)
+            payload["router"] = routed.to_dict()
+            warnings.extend(routed.warnings)
+            if routed.confidence >= _TRUST_CONFIDENCE:
+                modality = routed.modality
+            else:
+                warnings.append(f"low router confidence ({routed.confidence:.2f}): modality-specific checks skipped")
+        except Exception as exc:  # the router must never take intake down with it
+            payload["router"] = {"error": "router_failed"}
+            warnings.append(f"router failed ({type(exc).__name__}): modality unknown")
+    report = quality.assess(img, modality)
     payload["quality"] = report.to_dict()
     for r in report.reasons:
         warnings.append(f"{r.code}: {r.fix}")
@@ -48,5 +70,11 @@ def run(ctx) -> StageResult:
         if path is None:
             return StageResult(stage="intake", ok=False, ms=0, payload={"error": "no input"}, warnings=["no input"])
         raw = Path(path).read_bytes()
-    result, _ = run_bytes(raw, getattr(ctx, "modality_hint", None))
+    hint = getattr(ctx, "modality_hint", None)
+    router = getattr(ctx, "router", None)
+    if router is None and hint is None:
+        from medproof.intake.router import get_default_router
+
+        router = get_default_router()
+    result, _ = run_bytes(raw, hint, router)
     return result

@@ -1,0 +1,39 @@
+{
+ "n": 320,
+ "zero_shot_accuracy": 0.95625,
+ "ci95": [
+  0.9279122574121115,
+  0.973763129567202
+ ],
+ "per_class_recall": {
+  "cxr": 1.0,
+  "brain_mri": 1.0,
+  "skin_dermoscopy": 1.0,
+  "bone_xray": 0.9152542372881356,
+  "other": 0.85
+ },
+ "confusion": {
+  "cxr": {
+   "cxr": 40
+  },
+  "brain_mri": {
+   "brain_mri": 61
+  },
+  "skin_dermoscopy": {
+   "skin_dermoscopy": 100
+  },
+  "bone_xray": {
+   "cxr": 5,
+   "bone_xray": 54
+  },
+  "other": {
+   "brain_mri": 6,
+   "skin_dermoscopy": 2,
+   "bone_xray": 1,
+   "other": 51
+  }
+ },
+ "mean_conf_correct": 0.7529578804969788,
+ "mean_conf_wrong": 0.4498324692249298,
+ "below_floor_0.5": 0.190625
+}

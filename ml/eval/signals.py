@@ -34,7 +34,7 @@ from medproof.calibrate.calibrator import Calibrator  # noqa: E402
 from medproof.intake.decode import load_image  # noqa: E402
 from medproof.intake.quality import assess  # noqa: E402
 
-from ml.data.common import CACHE_DIR, data_root, image_path, load_split  # noqa: E402
+from ml.data.common import data_root, image_path, load_split  # noqa: E402
 from ml.eval import bootstrap as bs  # noqa: E402
 from ml.eval import metrics as mt  # noqa: E402
 
@@ -49,7 +49,7 @@ SPLIT_OF = {"skin_cls": "ham10000", "brain_cls": "brain_mri", "cxr_chex": "rsna"
 
 def quality_frame(name: str) -> pd.DataFrame:
     """P1's quality gate on every image of the model's corruption subset. Cached, since it decodes each file."""
-    cache = CACHE_DIR / f"quality_{name}.csv"
+    cache = ART / name / "predictions" / "quality.csv"  # committed: the flags need the images, which a fresh clone does not have
     z = np.load(ART / name / "predictions" / "corruption.npz", allow_pickle=False)
     ids = z["ids"].astype(str)
     if cache.is_file():
@@ -114,6 +114,22 @@ def cxr_frame(tag: str = "chex") -> pd.DataFrame:
     return df
 
 
+def bone_frame() -> pd.DataFrame:
+    z = np.load(ART / "bone_det" / "predictions" / "corruption.npz", allow_pickle=False)
+    y, clean, cells = z["y"], z["clean"].astype(np.float64), z["cells"]  # image-level score = highest box confidence
+    bc = BinaryCalibrator.load(ART / "bone_det" / "calibration.json")
+    p = bc.prob(clean)
+    flips = np.stack([(bc.prob(cells[pi, 1]) >= 0.5) != (p >= 0.5) for pi in range(cells.shape[0])], 1)
+    q = quality_frame("bone_det")
+    df = pd.DataFrame({"image_id": z["ids"].astype(str), "y": y, "pred": (p >= 0.5).astype(int), "confidence": np.maximum(p, 1 - p), "flip_rate": flips.mean(1)})
+    df["error"] = (df.pred != df.y).astype(int)
+    df["unstable"] = df.flip_rate > 0.25
+    df["low_quality"] = (q.n_warn + q.n_fail).to_numpy() > 0
+    df["quality_fail"] = q.n_fail.to_numpy() > 0
+    df["abstain"] = (p >= bc.abstain_low) & (p <= bc.abstain_high)
+    return df
+
+
 # ----------------------------------------------------------------------------- the comparison
 
 
@@ -144,7 +160,17 @@ def compare(df: pd.DataFrame, flag: str) -> dict:
 def _cifar_images(n: int = 300) -> list[np.ndarray]:
     import pickle
 
-    p = next(data_root().joinpath("cifar10_test").rglob("test_batch"))
+    import tarfile
+
+    root = data_root() / "cifar10_test"
+    hit = next(root.rglob("test_batch"), None)
+    if hit is None:  # extract the one member we need, by exact name, from the md5-verified archive
+        with tarfile.open(root / "cifar-10-python.tar.gz") as t:
+            m = t.getmember("cifar-10-batches-py/test_batch")
+            m.name = "test_batch"
+            t.extract(m, root)
+        hit = root / "test_batch"
+    p = hit
     d = pickle.load(open(p, "rb"), encoding="bytes")  # tarball md5 verified by the downloader
     x = d[b"data"][:n].reshape(-1, 3, 32, 32).transpose(0, 2, 3, 1).astype(np.float32) / 255.0
     return [a for a in x]
@@ -163,7 +189,10 @@ def _other_images(name: str, n: int = 300) -> list[np.ndarray]:
 
     out = []
     for _, r in t.iterrows():
-        a = load_image(image_path(r, data_root())).analysis
+        try:
+            a = load_image(image_path(r, data_root())).analysis
+        except Exception:  # the product decoder rejects the truncated FracAtlas JPEGs; they are skipped here and counted in the report note
+            continue
         s = 512 / max(a.shape[:2])
         out.append(cv2.resize(a, (int(a.shape[1] * s), int(a.shape[0] * s)), interpolation=cv2.INTER_AREA) if s < 1 else a)
     return out
@@ -205,6 +234,7 @@ def ood_auroc(name: str) -> dict:
 
 def quality_summary(name: str) -> dict:
     q = quality_frame(name)
+    q["codes"] = q["codes"].fillna("").astype(str)
     mcols = [c for c in q.columns if c.startswith("m_")]
     return {"n": int(len(q)), "share_with_any_warning_or_failure": float(((q.n_warn + q.n_fail) > 0).mean()), "share_failing": float((q.n_fail > 0).mean()),
             "target_share_flagged_on_clean_images": 0.05, "reasons": {c: int(q.codes.str.contains(c).sum()) for c in sorted({c for s in q.codes for c in s.split(";") if c})},
@@ -212,14 +242,12 @@ def quality_summary(name: str) -> dict:
 
 
 def evaluate() -> dict:
-    res: dict = {"definition": "error = top-1 wrong (classifiers) or decision at calibrated probability 0.5 wrong (chest reader); the evaluation images are each model's corruption-benchmark subset, clean images only",
+    res: dict = {"definition": "error = top-1 wrong (classifiers) or decision at calibrated probability 0.5 wrong (chest reader and bone detector, image level); the evaluation images are each model's corruption-benchmark subset, clean images only",
                  "models": {}, "pending": {"discordant": "needs the complete MedGemma batch from P3 for the same images; harness: compare(df, 'discordant')", "unfaithful": "needs P1.9 faithfulness; harness: compare(df, 'unfaithful')"}}
     for name in ("skin_cls", "brain_cls", "cxr_chex", "bone_det"):
         if not (ART / name / "predictions" / "corruption.npz").is_file():
             continue
-        if name == "bone_det":
-            continue  # frame builder for the detector is added with its calibration (see evaluate_bone)
-        df = cxr_frame() if name.startswith("cxr") else classifier_frame(name)
+        df = cxr_frame() if name.startswith("cxr") else bone_frame() if name == "bone_det" else classifier_frame(name)
         blk = {"n": int(len(df)), "error_rate_overall": float(df.error.mean()), "signals": {}, "quality_gate": quality_summary(name)}
         for flag in ("unstable", "low_quality", "abstain") + (("ood_energy",) if "ood_energy" in df else ()):
             blk["signals"][flag] = compare(df, flag)

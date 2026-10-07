@@ -1,0 +1,73 @@
+{
+  "per_modality": {
+    "cxr": {
+      "n_fit": 34,
+      "n_groups": 34,
+      "shrinkage": 0.3063,
+      "threshold": 1845.5151073192255,
+      "oof_below_threshold": 0.9411764705882353
+    },
+    "brain_mri": {
+      "n_fit": 50,
+      "n_groups": 35,
+      "shrinkage": 0.3116,
+      "threshold": 1836.5034573448334,
+      "oof_below_threshold": 0.94
+    },
+    "skin_dermoscopy": {
+      "n_fit": 85,
+      "n_groups": 85,
+      "shrinkage": 0.2277,
+      "threshold": 2397.291407328125,
+      "oof_below_threshold": 0.9411764705882353
+    },
+    "bone_xray": {
+      "n_fit": 50,
+      "n_groups": 50,
+      "shrinkage": 0.1116,
+      "threshold": 5737.385414215963,
+      "oof_below_threshold": 0.94
+    }
+  },
+  "seed": 0,
+  "percentile": 95.0,
+  "modalities": [
+    "cxr",
+    "brain_mri",
+    "skin_dermoscopy",
+    "bone_xray"
+  ],
+  "threshold_method": "cross-fitted by group",
+  "test": {
+    "cxr": {
+      "n_in": 6,
+      "n_out": 44,
+      "auroc": 1.0,
+      "in_flagged": 0.16666666666666666,
+      "out_flagged": 1.0
+    },
+    "brain_mri": {
+      "n_in": 11,
+      "n_out": 39,
+      "auroc": 1.0,
+      "in_flagged": 0.09090909090909091,
+      "out_flagged": 1.0
+    },
+    "skin_dermoscopy": {
+      "n_in": 15,
+      "n_out": 35,
+      "auroc": 1.0,
+      "in_flagged": 0.2,
+      "out_flagged": 1.0
+    },
+    "bone_xray": {
+      "n_in": 9,
+      "n_out": 41,
+      "auroc": 1.0,
+      "in_flagged": 0.0,
+      "out_flagged": 1.0
+    }
+  },
+  "skipped_unreadable": 0,
+  "note": "Each class comes from its own source dataset, so distances partly measure the dataset; thresholds are provisional and rest on a few dozen images per modality."
+}

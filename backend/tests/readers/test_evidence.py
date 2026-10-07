@@ -106,3 +106,36 @@ def test_finding_without_any_location_is_dropped_not_invented(tmp_path):
     findings, warnings = to_findings(out, CxrConfig(), artifact_dir=tmp_path)
     assert [f.label for f in findings] == ["Pneumonia"]
     assert any("Effusion" in w for w in warnings)
+
+
+def test_box_only_finding_uses_bbox_kind():
+    out = _out()
+    for f in out.findings:
+        f.heatmap = None
+    findings, _ = to_findings(out, CxrConfig())
+    assert findings[0].image_evidence[0].kind == "bbox" and findings[0].image_evidence[0].heatmap_ref is None
+
+
+def test_segmentation_mask_adds_a_second_evidence_with_its_own_id(tmp_path):
+    from PIL import Image
+
+    out = _out()
+    m = np.zeros(HW, bool)
+    m[70:110, 360:440] = True
+    out.findings[0].mask, out.findings[0].mask_source = m, "unet"
+    findings, _ = to_findings(out, CxrConfig(), artifact_dir=tmp_path)
+    ev = findings[0].image_evidence
+    assert [e.kind for e in ev] == ["heatmap", "mask"] and [e.evidence_id for e in ev] == ["ie_1", "ie_2"]
+    assert ev[1].method == "unet" and ev[1].bbox_xyxy == ev[0].bbox_xyxy
+    im = np.asarray(Image.open(tmp_path / "mask_f1.png"))
+    assert im.shape == HW and im[90, 400] == 255 and im[0, 0] == 0
+    assert findings[1].image_evidence[0].evidence_id == "ie_3"  # later findings continue the counter
+    for f in findings:
+        Finding.model_validate(f.model_dump())
+
+
+def test_a_cam_region_mask_alone_does_not_become_mask_evidence(tmp_path):
+    out = _out()
+    out.findings[0].mask = np.ones(HW, bool)  # CAM region only: no mask_source
+    findings, _ = to_findings(out, CxrConfig(), artifact_dir=tmp_path)
+    assert len(findings[0].image_evidence) == 1
