@@ -58,7 +58,7 @@ def thumbnail(src: Path, dst: Path, size: int = 160) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", choices=["fracatlas", "ham10000"], required=True)
+    ap.add_argument("--dataset", choices=["fracatlas", "ham10000", "brain_mri"], required=True)
     ap.add_argument("--embedder", choices=["biomedclip", "medsiglip"], default="biomedclip")
     ap.add_argument("--limit-train", type=int, default=None)
     ap.add_argument("--limit-test", type=int, default=None)
