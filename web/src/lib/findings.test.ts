@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import chest from "../../public/cases/chest/case.json";
 import type { CaseFile } from "../api/types";
+import type { Claim } from "../contracts";
 import { chainFor, displayLabel, leadMarker, strokeFor } from "./findings";
 
 const study = (chest as unknown as CaseFile).study;
@@ -45,5 +46,31 @@ describe("verification chain on the real baked chest case", () => {
   it("marks stages that do not exist yet as unavailable after the run, pending during it", () => {
     expect(chainFor(pneumonia, study, [], false).find((s) => s.stage === "Second read")!.state).toBe("unavailable");
     expect(chainFor(pneumonia, study, [], true).find((s) => s.stage === "Second read")!.state).toBe("pending");
+  });
+});
+
+describe("second read and firewall steps from P3's stages", () => {
+  const base = study.findings.find((f) => f.label === "Pneumonia")!;
+  const step = (f: typeof base, s: typeof study, name: string) => chainFor(f, s, [], false).find((x) => x.stage === name)!;
+  const read = (agrees: boolean | null, box_iou: number | null) => ({ agrees, box_iou, label: "pneumonia", model: "medgemma", raw_ref: "r" });
+
+  it("shows an unvalidated second read as inconclusive, never as agreement", () => {
+    const f = { ...base, second_read: read(null, null), flags: [...(base.flags ?? []), "second_reader_disagrees"] };
+    const s = step(f, study, "Second read");
+    expect(s.state).toBe("unavailable");
+    expect(s.detail).toMatch(/^Inconclusive/);
+    expect(s.detail).toMatch(/audit flag/);
+  });
+
+  it("passes on agreement and fails on disagreement or a box overlap under 0.1", () => {
+    expect(step({ ...base, second_read: read(true, 0.6) }, study, "Second read").state).toBe("pass");
+    expect(step({ ...base, second_read: read(false, null) }, study, "Second read").state).toBe("fail");
+    expect(step({ ...base, second_read: read(true, 0.05) }, study, "Second read").state).toBe("fail");
+  });
+
+  it("counts passed and blocked claims on the firewall step", () => {
+    const claim = (id: string, blocked: string | null): Claim => ({ claim_id: id, template: "t", evidence_ids: ["e1"], rendered: "r", entailed: null, blocked_reason: blocked });
+    expect(step(base, { ...study, claims: [claim("c1", null), claim("c2", "no evidence id")] }, "Firewall")).toMatchObject({ state: "pass", detail: "1 report claim passed, 1 blocked" });
+    expect(step(base, { ...study, claims: [claim("c1", "diagnostic phrasing")] }, "Firewall").state).toBe("fail");
   });
 });

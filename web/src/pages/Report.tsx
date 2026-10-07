@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { getStudy, loadCase } from "../api/client";
+import { API, getStudy, loadCase } from "../api/client";
 import type { Finding, StudyResult } from "../api/types";
 import { displayLabel, regionOf, strokeFor, TIER_WORD } from "../lib/findings";
 import { Mark } from "../design/Mark";
 
 /**
- * Deterministic sentence for one finding: a fixed template whose slots are filled from the
- * evidence. The language-model report (P3.9) will write the templates; it never fills a slot.
+ * Fallback sentence for one finding when the study has no report-stage claims: a fixed template
+ * whose slots are filled from the evidence.
  */
 function sentence(f: Finding): string {
   const region = regionOf(f);
@@ -30,6 +30,10 @@ export function Report() {
   if (!study) return <p className="mx-auto max-w-xl px-6 py-24 text-ink-dim">Loading the report…</p>;
 
   const reportable = study.findings.filter((f) => f.status !== "rejected");
+  // Only claims the firewall and entailment judge let through; blocked ones live in the audit view.
+  const claims = (study.claims ?? []).filter((c) => c.blocked_reason == null && c.rendered);
+  const blocked = (study.claims ?? []).length - claims.length;
+  const live = !id.startsWith("sample-");
   const generated = new Date().toLocaleString();
 
   return (
@@ -51,6 +55,24 @@ export function Report() {
         Modality {study.modality}. Input SHA-256 <span className="break-all font-mono text-[11.5px]">{study.input_sha256}</span>
       </p>
 
+      {claims.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-[14px] font-medium">Report</h2>
+          <ol className="mt-3 space-y-3">
+            {claims.map((c) => (
+              <li key={c.claim_id} className="break-inside-avoid text-[15px] leading-relaxed">
+                {c.rendered}
+                <span className="ml-2 font-mono text-[11.5px] text-lightbox-ink/60">{c.evidence_ids.join(", ")}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-4 text-[12px] leading-snug text-lightbox-ink/70">
+            The language model wrote templates only; code filled every value from the evidence ids shown.
+            {blocked > 0 ? ` ${blocked} unsupported ${blocked === 1 ? "claim was" : "claims were"} blocked and appear struck through in the audit view.` : ""}
+          </p>
+        </section>
+      )}
+
       <section className="mt-8">
         <h2 className="text-[14px] font-medium">Findings for review</h2>
         {reportable.length === 0 ? (
@@ -68,9 +90,11 @@ export function Report() {
             ))}
           </ol>
         )}
-        <p className="mt-6 text-[12px] leading-snug text-lightbox-ink/70">
-          Sentences are filled from the evidence by a fixed template. The language-model report arrives with plan P3.9; it will write templates only, never values.
-        </p>
+        {claims.length === 0 && (
+          <p className="mt-6 text-[12px] leading-snug text-lightbox-ink/70">
+            This study has no report-stage output, so each sentence comes from a fixed template filled from the evidence.
+          </p>
+        )}
       </section>
 
       <footer className="mt-12 border-t border-lightbox-ink/20 pt-4 text-[11.5px] leading-snug text-lightbox-ink/70">
@@ -84,9 +108,13 @@ export function Report() {
         <button type="button" onClick={() => window.print()} className="rounded-[var(--radius-control)] bg-lightbox-ink px-3 py-1.5 text-[13px] text-lightbox">
           Print report
         </button>
-        <button type="button" disabled title="FHIR export arrives with plan P3.13" className="rounded-[var(--radius-control)] border border-lightbox-ink/30 px-3 py-1.5 text-[13px] text-lightbox-ink/50">
-          Download FHIR (arrives with P3.13)
-        </button>
+        {live ? (
+          <a href={`${API}/studies/${id}/fhir`} download={`parallax-${id}.fhir.json`} className="rounded-[var(--radius-control)] border border-lightbox-ink/40 px-3 py-1.5 text-[13px] text-lightbox-ink">
+            Download FHIR bundle
+          </a>
+        ) : (
+          <span className="rounded-[var(--radius-control)] border border-lightbox-ink/20 px-3 py-1.5 text-[13px] text-lightbox-ink/60">FHIR export is available for uploaded studies</span>
+        )}
         <Link to="/read" className="px-1 py-1.5 text-[13px] text-lightbox-ink underline underline-offset-4">
           Back to the workstation
         </Link>
