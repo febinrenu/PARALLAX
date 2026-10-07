@@ -132,3 +132,17 @@ def test_auroc_ovr_perfect_and_chance():
 def test_dice_from_counts():
     assert mt.dice(10, 0, 0) == 1.0 and mt.dice(0, 0, 0) == 1.0 and mt.dice(0, 5, 5) == 0.0
     assert mt.dice(8, 2, 2) == pytest.approx(0.8)
+
+
+def test_ci_returns_nan_interval_when_statistic_is_undefined_everywhere():
+    c = bs.ci({"x": np.arange(10.0)}, lambda x: float("nan"), B=20)
+    assert c["n_valid"] == 0 and np.isnan(c["lo"]) and np.isnan(c["hi"])
+
+
+def test_signal_compare_survives_zero_errors_in_the_unflagged_group():
+    import pandas as pd
+    from ml.eval import signals as sg
+
+    df = pd.DataFrame({"error": [1] * 20 + [0] * 40, "flag": [True] * 20 + [False] * 40})
+    out = sg.compare(df, "flag")
+    assert out["predicts_errors"] is True and out["risk_ratio"]["n_valid"] == 0 and "risk_ratio_note" in out
