@@ -72,3 +72,35 @@ def process_dictation(
         return voice, GuardResult(text=""), ExtractionResult(ok=True, warnings=list(voice.warnings))
     guard = InjectionGuard(text_pool).check(voice.text)
     return voice, guard, extract(voice.text, note_id, text_pool, guard)
+
+
+def append_dictation(typed: str | None, transcript: str) -> str:
+    """The typed note with the transcript on a new line after it; either part may be empty.
+
+    One note, not two: the pipeline reads a single note, and the guard, the fact spans and the highlighting
+    all work on the merged text, so an instruction spoken into the microphone is caught exactly like a typed one."""
+    parts = [p.strip() for p in (typed or "", transcript or "") if p and p.strip()]
+    return "\n".join(parts)
+
+
+@dataclass
+class DictationNote:
+    ok: bool
+    note: str  # the merged text to put in the notes box; the typed note unchanged when transcription failed
+    transcript: str = ""
+    language: str = ""
+    duration_s: float | None = None
+    warnings: list[str] = field(default_factory=list)
+
+
+def dictation_to_note(audio: bytes, filename: str, typed: str | None, pool: _AudioPool | None) -> DictationNote:
+    """Audio plus any typed text in, the merged note out. Never raises.
+
+    The audio itself never enters the study: the doctor sees the merged text, can correct it, and only that text
+    is analysed. A failure leaves the typed note exactly as it was and says why."""
+    voice = transcribe_dictation(audio, filename, pool)
+    base = (typed or "").strip()
+    if not voice.ok:
+        return DictationNote(ok=False, note=base, warnings=list(voice.warnings))
+    return DictationNote(ok=True, note=append_dictation(typed, voice.text), transcript=voice.text, language=voice.language,
+                         duration_s=voice.duration_s, warnings=list(voice.warnings))
