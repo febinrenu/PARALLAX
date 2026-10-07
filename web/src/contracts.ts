@@ -1,4 +1,4 @@
-/* AUTO-GENERATED from contracts/study_result.schema.json by scripts/gen_contracts_ts.mjs.
+/* AUTO-GENERATED from contracts/*.schema.json by scripts/gen_contracts_ts.mjs.
  * Do not edit by hand — run `make contracts` after changing backend/medproof/core/schemas.py. */
 
 export interface StudyResult {
@@ -84,4 +84,14 @@ export interface TextEvidence {
    * @maxItems 2
    */
   span: [number, number];
+}
+
+export interface StageResult {
+  ms: number;
+  ok: boolean;
+  payload: {
+    [k: string]: unknown;
+  };
+  stage: string;
+  warnings?: string[];
 }

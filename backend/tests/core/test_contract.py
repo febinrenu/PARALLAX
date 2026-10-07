@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from medproof.core.schemas import Finding, StudyResult
+from medproof.core.schemas import Finding, StageResult, StudyResult
 from medproof.core.status_rule import compute_status
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -65,7 +65,11 @@ def _strip_titles(node):
 
 @pytest.mark.parametrize(
     "filename,model",
-    [("finding.schema.json", Finding), ("study_result.schema.json", StudyResult)],
+    [
+        ("finding.schema.json", Finding),
+        ("study_result.schema.json", StudyResult),
+        ("stage_result.schema.json", StageResult),
+    ],
 )
 def test_committed_schema_matches_model(filename: str, model):
     committed = json.loads((CONTRACTS_DIR / filename).read_text(encoding="utf-8"))

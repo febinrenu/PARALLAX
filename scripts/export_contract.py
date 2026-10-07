@@ -15,13 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
 
-from medproof.core.schemas import Finding, StudyResult  # noqa: E402
+from medproof.core.schemas import Finding, StageResult, StudyResult  # noqa: E402
 
 CONTRACTS_DIR = ROOT / "contracts"
 
 EXPORTS = {
     "finding.schema.json": Finding,
     "study_result.schema.json": StudyResult,
+    "stage_result.schema.json": StageResult,  # streamed over SSE, not nested in StudyResult
 }
 
 

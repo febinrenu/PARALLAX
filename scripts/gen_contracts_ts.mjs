@@ -30,13 +30,19 @@ function prefixItemsToTuple(node) {
   return node;
 }
 
-const schema = prefixItemsToTuple(JSON.parse(await readFile(schemaPath, "utf-8")));
-const ts = await compile(schema, "StudyResult", {
+const load = async (name) =>
+  prefixItemsToTuple(JSON.parse(await readFile(path.join(root, "contracts", name), "utf-8")));
+
+const study = await compile(await load("study_result.schema.json"), "StudyResult", {
   additionalProperties: false,
   bannerComment:
-    "/* AUTO-GENERATED from contracts/study_result.schema.json by scripts/gen_contracts_ts.mjs.\n" +
+    "/* AUTO-GENERATED from contracts/*.schema.json by scripts/gen_contracts_ts.mjs.\n" +
     " * Do not edit by hand — run `make contracts` after changing backend/medproof/core/schemas.py. */",
 });
+const stage = await compile(await load("stage_result.schema.json"), "StageResult", {
+  additionalProperties: false,
+  bannerComment: "",
+});
 
-await writeFile(outPath, ts, "utf-8");
+await writeFile(outPath, `${study}\n${stage}`, "utf-8");
 console.log(`wrote ${outPath}`);
