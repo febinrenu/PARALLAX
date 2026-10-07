@@ -1,7 +1,15 @@
 """Two-reader concordance (D3): compare a specialist finding with the MedGemma second read.
 
-This stage only records the second reader's opinion on each finding (`second_read`) and adds
-audit flags. Turning a disagreement into the `discordant` status is the status rule's job (P4).
+This stage records the second reader's opinion on each finding (`second_read`) and adds audit
+flags. P4's status rule turns `second_read.agrees is False` (or a box IoU below 0.1) into the
+`discordant` status, so this stage decides whether a disagreement may reach those fields at all:
+plan 9.4 says a flag must be shown to predict errors before it may downgrade anything.
+
+Measured on the cached batches (reports/concordance.json): on bone the flag predicts detector
+errors but 83% of the detector's correct fracture reports are flagged too (the second reader names
+a fracture on about 4% of images), and on skin the difference in error rate is not significant. No
+modality is validated, so a disagreement is recorded as an audit flag and `agrees` stays None.
+Add a modality to DOWNGRADE_VALIDATED only with a report showing the flag is usable.
 """
 
 from __future__ import annotations
@@ -16,6 +24,7 @@ from medproof.verify.report_labels import ReportLabel
 
 BoxXYXY = tuple[float, float, float, float]
 MIN_IOU = 0.1  # plan.md status rule: below this the two readers localise different things
+DOWNGRADE_VALIDATED: frozenset[str] = frozenset()  # modalities where second-reader disagreement may demote a finding
 
 
 def box_iou(a: BoxXYXY, b: BoxXYXY) -> float:
@@ -58,7 +67,11 @@ def _best_iou(finding: Finding, read: GeneralistRead) -> float | None:
     return max(box_iou(m, t) for m in mine for t in theirs)
 
 
-def apply(findings: list[Finding], read: GeneralistRead) -> tuple[list[Finding], StageResult]:
+def apply(
+    findings: list[Finding], read: GeneralistRead, *, downgrade_modalities: frozenset[str] | None = None
+) -> tuple[list[Finding], StageResult]:
+    """Attach the second read. `downgrade_modalities` defaults to DOWNGRADE_VALIDATED."""
+    validated = DOWNGRADE_VALIDATED if downgrade_modalities is None else downgrade_modalities
     t0 = time.perf_counter()
     out: list[Finding] = []
     counts: Counter[str] = Counter()
@@ -80,6 +93,10 @@ def apply(findings: list[Finding], read: GeneralistRead) -> tuple[list[Finding],
         if iou is not None and iou < MIN_IOU:
             flags.append("second_box_mismatch")
         counts["agree" if agrees else "disagree" if agrees is False else "inconclusive"] += 1
+        if f.modality not in validated:
+            # audit only: the status rule reads these two fields, so they must not carry the disagreement
+            agrees = True if agrees else None
+            iou = None
         sr = SecondRead(model=read.model, label=_matching_label(read, f.label), agrees=agrees, box_iou=iou, raw_ref=read.raw_ref)
         out.append(f.model_copy(update={"second_read": sr, "flags": list(dict.fromkeys(flags))}))
     stage = StageResult(

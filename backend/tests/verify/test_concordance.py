@@ -1,13 +1,21 @@
 from __future__ import annotations
 
+from functools import partial
+
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
 from medproof.core.schemas import Finding, ImageEvidence
 from medproof.readers.generalist import GeneralistRead
-from medproof.verify.concordance import apply, box_iou, cohen_kappa
+from medproof.core.status_rule import compute_status
+from medproof.verify.concordance import DOWNGRADE_VALIDATED, box_iou, cohen_kappa
+from medproof.verify.concordance import apply as _apply
 from medproof.verify.report_labels import labels_from_report
+
+ALL_MODALITIES = frozenset({"cxr", "skin_dermoscopy", "bone_xray", "brain_mri", "other"})
+# the existing tests exercise the mechanism, so every modality counts as validated there
+apply = partial(_apply, downgrade_modalities=ALL_MODALITIES)
 
 
 def finding(label="Effusion", box=(40.0, 40.0, 200.0, 160.0), modality="cxr", fid="f1") -> Finding:
@@ -118,3 +126,51 @@ def test_cohen_kappa_known_values():
     assert cohen_kappa([1, 1, 1], [1, 1, 1]) == 1.0  # single class everywhere: perfect agreement
     with pytest.raises(ValueError):
         cohen_kappa([1], [1, 0])
+
+
+# ---- policy: a disagreement may only demote a finding where the flag has been validated (plan 9.4)
+
+def faithful_finding(modality, label) -> Finding:
+    ev = ImageEvidence(evidence_id="ie_1", kind="bbox", bbox_xyxy=(1.0, 1.0, 9.0, 9.0), source_model="m@abcd1234", method="g", faithful=True)
+    return Finding(finding_id="f1", modality=modality, label=label, prob_raw=0.9, prob_calibrated=0.9, conformal_set=[], tier="high",
+                   status="uncertain", image_evidence=[ev])
+
+
+def test_no_modality_is_validated_to_downgrade_yet():
+    assert DOWNGRADE_VALIDATED == frozenset()  # reports/concordance.json: bone flags 83% of correct reports, skin not significant
+
+
+@pytest.mark.parametrize("modality,label,text", [
+    ("bone_xray", "fracture", "No acute fracture."),
+    ("skin_dermoscopy", "mel", "Consistent with a benign nevus."),
+    ("cxr", "Effusion", "No pleural effusion."),
+    ("brain_mri", "glioma", "No mass lesion."),
+])
+def test_disagreement_is_an_audit_flag_and_does_not_demote_by_default(modality, label, text):
+    f = faithful_finding(modality, label)
+    out, stage = _apply([f], read(text, modality))
+    assert stage.ok and out[0].second_read is not None
+    assert out[0].second_read.agrees is None  # the status rule reads this field, so it must not say False
+    assert "second_reader_disagrees" in out[0].flags
+    assert compute_status(out[0]) == "verified"
+
+
+def test_a_validated_modality_still_demotes():
+    f = faithful_finding("bone_xray", "fracture")
+    out, _ = _apply([f], read("No acute fracture.", "bone_xray"), downgrade_modalities=frozenset({"bone_xray"}))
+    assert out[0].second_read.agrees is False and compute_status(out[0]) == "discordant"
+
+
+def test_agreement_is_recorded_whatever_the_policy():
+    f = faithful_finding("bone_xray", "fracture")
+    out, _ = _apply([f], read("Transverse fracture of the radius.", "bone_xray"))
+    assert out[0].second_read.agrees is True
+
+
+def test_unvalidated_modalities_do_not_let_a_poor_box_demote_either():
+    boxes = [("Effusion", (300.0, 300.0, 350.0, 350.0))]
+    f = faithful_finding("cxr", "Effusion")
+    f = f.model_copy(update={"image_evidence": [f.image_evidence[0].model_copy(update={"bbox_xyxy": (40.0, 40.0, 200.0, 160.0)})]})
+    out, _ = _apply([f], read("Small right pleural effusion.", boxes=boxes))
+    assert out[0].second_read.box_iou is None and "second_box_mismatch" in out[0].flags
+    assert compute_status(out[0]) == "verified"
