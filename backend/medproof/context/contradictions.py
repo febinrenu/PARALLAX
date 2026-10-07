@@ -187,9 +187,13 @@ def check(
                     attach(fact, "contradicts")
 
         keys = _SUPPORTING.get(f.label, ())
+        # Plan D1: a region counts only if deleting it matters. When every image evidence item failed that test, a symptom
+        # that fits the label is consistent with the finding but must not verify it (headaches fit any brain tumour class).
+        image_failed = bool(f.image_evidence) and all(e.faithful is False for e in f.image_evidence)
         for fact in facts:
             if fact.fact_type == "symptom" and fact.polarity == "present":
-                attach(fact, "supports" if any(k in _text(fact) for k in keys) else "neutral")
+                fits = any(k in _text(fact) for k in keys)
+                attach(fact, "supports" if fits and not image_failed else "neutral")
             elif fact.fact_type == "negation":
                 attach(fact, "neutral")
 
