@@ -28,7 +28,7 @@ from ml.eval import metrics as mt  # noqa: E402
 ART = REPO / "ml" / "artifacts"
 ALPHAS = (0.10, 0.05)
 MODELS = {  # directory -> (class order source, test splits)
-    "skin_cls": ["official_test", "test"],
+    "skin_cls": ["official_test", "test", "milk10k"],
     "brain_cls": ["test"],
 }
 
