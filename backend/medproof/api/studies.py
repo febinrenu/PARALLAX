@@ -19,7 +19,7 @@ from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
 from medproof.core.schemas import StageResult, StudyResult
-from medproof.intake.decode import DecodedImage, DecodeError, load_image
+from medproof.intake.decode import DecodedImage, DecodeError, load_image, sha256_hex
 from medproof.pipeline import run_study
 
 router = APIRouter()
@@ -220,10 +220,11 @@ async def get_pixels(request: Request, study_id: str) -> Response:
 
 @router.get("/studies/{study_id}/artifacts/{name}")
 async def get_artifact(request: Request, study_id: str, name: str) -> FileResponse:
-    _require(request, study_id)
-    if not _ARTIFACT_NAME.fullmatch(name):
+    record = _require(request, study_id)
+    if not _ARTIFACT_NAME.fullmatch(name) or record.raw is None:
         raise HTTPException(status_code=404, detail="unknown artifact")
-    base = (request.app.state.config.artifact_root / study_id).resolve()
+    # Artifacts are stored by input hash (see pipeline.run_study), so repeat uploads share them.
+    base = (request.app.state.config.artifact_root / sha256_hex(record.raw)).resolve()
     path = (base / name).resolve()
     if not path.is_relative_to(base) or not path.is_file():
         raise HTTPException(status_code=404, detail="unknown artifact")

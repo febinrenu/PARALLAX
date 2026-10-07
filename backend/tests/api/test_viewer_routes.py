@@ -96,3 +96,14 @@ def test_events_are_not_gzip_encoded(tmp_path):
     client, study_id, _ = _done_study(tmp_path)
     with client.stream("GET", f"/studies/{study_id}/events") as resp:
         assert "gzip" not in resp.headers.get("content-encoding", "")
+
+
+def test_artifacts_resolve_for_a_repeat_upload_served_from_the_stage_cache(tmp_path):
+    """Second upload of the same image hits the stage cache; its heatmap refs must still resolve."""
+    client, _, _ = _done_study(tmp_path)
+    _, second, result = _done_study(tmp_path, client=client)
+    refs = [ev["heatmap_ref"] for f in result["findings"] for ev in f["image_evidence"] if ev["heatmap_ref"]]
+    assert refs
+    for ref in refs:
+        assert ref.startswith(f"/studies/{second}/artifacts/")
+        assert client.get(ref).status_code == 200

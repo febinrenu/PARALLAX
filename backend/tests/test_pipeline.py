@@ -120,3 +120,34 @@ def test_cache_serves_the_second_call_without_rerunning_the_stage(tmp_path):
     run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
     run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
     assert calls["n"] == 1
+
+
+def test_repeat_run_with_a_shared_cache_still_feeds_the_reader(tmp_path):
+    """Intake mutates ctx (it attaches the decoded image), so it must never be served from
+    cache; otherwise the second run's reader gets no image."""
+    cfg = _config(tmp_path)
+    cache = StageCache(cfg.cache_dir)
+    raw = _cxr_bytes()
+    stages = _cxr_stages()
+    first, _ = run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
+    second, results = run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
+    assert all(r.ok for r in results), [r.warnings for r in results]
+    assert [f.label for f in second.findings] == [f.label for f in first.findings]
+
+
+def test_a_failed_stage_is_not_cached(tmp_path):
+    calls = {"n": 0}
+
+    def flaky(ctx: StudyContext) -> StageResult:
+        calls["n"] += 1
+        ok = calls["n"] > 1  # fails the first time only
+        return StageResult(stage="flaky", ok=ok, ms=1, payload={}, warnings=[] if ok else ["transient"])
+
+    stages = [PIPELINE[0], StageSpec(name="flaky", run=flaky)]
+    cfg = _config(tmp_path)
+    cache = StageCache(cfg.cache_dir)
+    raw = _cxr_bytes()
+    _, first = run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
+    _, second = run_study(raw, modality_hint="cxr", stages=stages, config=cfg, cache=cache)
+    assert first[1].ok is False and second[1].ok is True
+    assert calls["n"] == 2

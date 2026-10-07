@@ -51,6 +51,9 @@ class StageSpec:
     timeout_s: float | None = None
     cache_version: str = "v1"
     required: bool = False  # if it fails, the pipeline stops (nothing downstream can proceed)
+    # A stage that hands state to later stages through ctx (intake sets ctx.decoded) must run
+    # every time: a cache hit would skip that side effect and starve the stages after it.
+    cacheable: bool = True
 
 
 def _intake_step(ctx: StudyContext) -> StageResult:
@@ -83,14 +86,16 @@ def _reader_step(ctx: StudyContext) -> StageResult:
 
 
 PIPELINE: list[StageSpec] = [
-    StageSpec(name="intake", run=_intake_step, timeout_s=5.0, required=True),
-    StageSpec(name="reader", run=_reader_step, timeout_s=20.0),
+    StageSpec(name="intake", run=_intake_step, timeout_s=5.0, required=True, cacheable=False),
+    # v3: artifacts are content-addressed and failures are no longer cached; older entries may
+    # point at old artifact paths or replay a failure.
+    StageSpec(name="reader", run=_reader_step, timeout_s=20.0, cache_version="v3"),
 ]
 
 
 def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, config: PipelineConfig) -> StageResult:
     key = None
-    if cache is not None and ctx.input_sha256:
+    if cache is not None and ctx.input_sha256 and spec.cacheable:
         key = cache_key(ctx.input_sha256, spec.name, spec.cache_version)
         cached = cache.get(key)
         if cached is not None:
@@ -117,7 +122,8 @@ def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, con
     finally:
         pool.shutdown(wait=False)
 
-    if cache is not None and key is not None:
+    # Only successes are cached: a timeout or a missing input is transient and must not stick.
+    if cache is not None and key is not None and result.ok:
         cache.set(key, result)
     return result
 
@@ -192,13 +198,16 @@ def _run(
 ) -> tuple[StudyResult, list[StageResult]]:
     stages = stages if stages is not None else PIPELINE
 
+    input_sha256 = sha256_hex(raw_bytes)
     ctx = StudyContext(
         study_id=study_id or str(uuid.uuid4()),
         raw_bytes=raw_bytes,
         modality_hint=modality_hint,
         notes=notes,
-        input_sha256=sha256_hex(raw_bytes),
-        artifact_dir=config.artifact_root / (study_id or "pending"),
+        input_sha256=input_sha256,
+        # Content-addressed, like the stage cache: a cached stage result refers to artifacts
+        # written by an earlier study of the same image, so both must live under the input hash.
+        artifact_dir=config.artifact_root / input_sha256,
     )
 
     stage_results: list[StageResult] = []
