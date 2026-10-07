@@ -55,7 +55,15 @@ if not exist "node_modules\.pnpm" (
 )
 
 rem ---- Servers, each in its own window so their logs stay readable
-start "MedProof API (port 8000)" /d "%CD%\backend" cmd /k ""%PY%" -m uvicorn medproof.api.app:app --port 8000"
+rem Keys (GROQ_KEY_*, MEDGEMMA_URL, HF_TOKEN) come from .env at the repo root. Without it the notes
+rem and report stages fall back to template-only output.
+set "ENVFILE="
+if exist ".env" (
+  set "ENVFILE=--env-file ..\.env"
+) else (
+  echo Note: no .env found, so notes analysis and the written report run without language models.
+)
+start "MedProof API (port 8000)" /d "%CD%\backend" cmd /k ""%PY%" -m uvicorn medproof.api.app:app --port 8000 %ENVFILE%"
 
 if /i "%MODE%"=="preview" (
   echo Building the website...
@@ -82,5 +90,8 @@ echo   Workstation   http://localhost:%PORT%/read
 echo   API           http://localhost:8000/docs
 echo.
 echo Close the two server windows to stop everything.
+rem Run the sample cases once so the same uploads during a demo hit the cached checks.
+start "MedProof warm-up" /min cmd /c ""%PY%" scripts\warm_demo.py"
+echo Warming the four sample cases in the background (about a minute the first time).
 if not "%MEDPROOF_NO_BROWSER%"=="1" start "" "http://localhost:%PORT%/"
 endlocal
