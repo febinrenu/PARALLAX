@@ -58,6 +58,42 @@ _SUPPORTING: dict[str, tuple[str, ...]] = {
 }
 
 
+# Closed-class cues read straight from the note text. The model tends to skip statements that look
+# odd (pregnancy in a man, "asymptomatic"), and those are exactly the ones the rules need, so the
+# phrases are also found deterministically, with exact spans and no model in the loop.
+_NEG_BEFORE = re.compile(r"\b(?:not|no|never|denies|denied|without)\W+(?:\w+\W+){0,2}$", re.IGNORECASE)
+_CUES: tuple[tuple[str, str, re.Pattern[str]], ...] = (
+    ("demographic", "pregnant", re.compile(
+        r"\b(?:(?:\d+\s*(?:weeks?|wks?)\s*(?:pregnant|gestation))|pregnant|primigravida|multigravida|gravid(?:a|ity)|G\d+\s*P\d+)\b", re.IGNORECASE)),
+    ("demographic", "post-menopausal", re.compile(r"\b(?:post|peri)?-?menopaus\w*\b", re.IGNORECASE)),
+    ("symptom", "asymptomatic", re.compile(r"\b(?:asymptomatic|symptom[- ]free|no symptoms?|(?:denies|reports no) (?:any )?(?:symptoms|complaints))\b", re.IGNORECASE)),
+    ("history", "pneumonectomy", re.compile(r"\b(?:(?:left|right|rt|lt)\s+)?(?:total\s+|complete\s+)?pneumonectomy\b", re.IGNORECASE)),
+)
+_ASYMPTOMATIC = re.compile(r"asymptomatic|symptom[- ]free|no symptoms?|(?:denies|reports no) (?:any )?(?:symptoms|complaints)", re.IGNORECASE)
+
+
+def scan_cues(text: str, note_id: str) -> list[ExtractedFact]:
+    out: list[ExtractedFact] = []
+    for ftype, value, pat in _CUES:
+        for m in pat.finditer(text):
+            if ftype == "demographic" and value == "pregnant" and _NEG_BEFORE.search(text[: m.start()]):
+                continue
+            polarity = "absent" if ftype == "symptom" else ("historical" if ftype == "history" else "present")
+            out.append(ExtractedFact(note_id, (m.start(), m.end()), m.group(0), ftype, value, polarity))
+    return sorted(out, key=lambda f: f.span)
+
+
+def _merge_cues(facts: list[ExtractedFact], cues: list[ExtractedFact]) -> list[ExtractedFact]:
+    """Cues win over any model fact they overlap (they carry the side word or the exact phrase)."""
+    kept = [f for f in facts if not any(f.span[0] < c.span[1] and c.span[0] < f.span[1] for c in cues)]
+    return sorted([*kept, *cues], key=lambda f: f.span)
+
+
+def facts_with_cues(facts: list[ExtractedFact], text: str, note_id: str) -> list[ExtractedFact]:
+    """The model's facts plus the closed-class cues found in the text itself (cues win where they overlap)."""
+    return _merge_cues(facts, scan_cues(text, note_id))
+
+
 def normalise_side(raw: str) -> Literal["left", "right"] | None:
     """'Rt', 'right-sided', "patient's left" -> a side; bilateral or no side -> None."""
     text = raw.replace("'s", "").replace("-sided", "")
@@ -85,13 +121,15 @@ def _text(fact: ExtractedFact) -> str:
 def _demographic_flags(facts: list[ExtractedFact], demo: Demographics) -> set[str]:
     flags: set[str] = set()
     for fact in facts:
+        t = _text(fact)
+        # the model may file pregnancy or menopause under history or symptom, so the type is not trusted
+        if fact.fact_type in ("demographic", "history", "symptom"):
+            if _PREGNANCY.search(t) and (demo.sex == "M" or (demo.age is not None and (demo.age < 10 or demo.age >= 60))):
+                flags.add("demographic_implausible")
+            if _MENOPAUSE.search(t) and (demo.sex == "M" or (demo.age is not None and demo.age < 35)):
+                flags.add("demographic_implausible")
         if fact.fact_type != "demographic":
             continue
-        t = _text(fact)
-        if _PREGNANCY.search(t) and (demo.sex == "M" or (demo.age is not None and (demo.age < 10 or demo.age >= 60))):
-            flags.add("demographic_implausible")
-        if _MENOPAUSE.search(t) and (demo.sex == "M" or (demo.age is not None and demo.age < 35)):
-            flags.add("demographic_implausible")
         m = _AGE_SEX.fullmatch(fact.quote.strip())
         if m:
             age, sex = int(m.group(1)), (m.group(2) or "").upper()
@@ -106,13 +144,17 @@ def check(
     demo: Demographics | None = None,
     *,
     evidence_start: int = 1,
+    note_text: str | None = None,
+    note_id: str = "n",
 ) -> ContextResult:
     t0 = time.perf_counter()
+    if note_text:
+        facts = _merge_cues(facts, scan_cues(note_text, note_id))
     demo = demo or Demographics()
     study_flags = _demographic_flags(facts, demo)
     lat_facts = [f for f in facts if f.fact_type == "laterality"]
     note_sides = {s for f in lat_facts if (s := normalise_side(f.value) or normalise_side(f.quote))}
-    asymptomatic = [f for f in facts if f.fact_type == "symptom" and f.polarity == "absent" and "asymptomatic" in _text(f)]
+    asymptomatic = [f for f in facts if f.fact_type in ("symptom", "negation") and _ASYMPTOMATIC.search(_text(f))]
     counts: Counter[str] = Counter()
     n = evidence_start
     out: list[Finding] = []
