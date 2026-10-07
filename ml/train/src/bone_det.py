@@ -22,7 +22,7 @@ if ON_KAGGLE:
         subprocess.run(["git", "clone", "--depth", "1", "--branch", BRANCH, REPO_URL, str(REPO)], check=True)
     ROOT, OUT, WORK = Path(os.environ.get("PARALLAX_DATA_ROOT", SCRATCH / "raw")), Path(f"/kaggle/working/{SLUG}"), SCRATCH / "yolo_work"
 else:
-    REPO = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "CLAUDE.md").exists())
+    REPO = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / "plan.md").exists())
     ROOT = Path(os.environ.get("PARALLAX_DATA_ROOT", REPO / "ml" / "data" / "raw"))
     OUT = Path(os.environ.get("PARALLAX_OUT", REPO / "ml" / "artifacts" / "_local" / SLUG))
     WORK = Path(os.environ.get("PARALLAX_WORK", OUT.parent / f"{SLUG}_work"))
