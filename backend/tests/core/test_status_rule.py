@@ -124,3 +124,27 @@ def test_discordant_beats_otherwise_clean_signals():
         second_read=SecondRead(model="medgemma", label="Atelectasis", agrees=False, box_iou=None, raw_ref="r1"),
     )
     assert compute_status(f) == "discordant"
+
+
+# P3-2: a note can lift a finding to uncertain, but only a region that passed the deletion test verifies it.
+_SUPPORT = TextEvidence(evidence_id="te_1", note_id="n1", span=(0, 5), quote="fever", fact_type="symptom", polarity="supports")
+
+
+def test_untested_region_with_supporting_note_is_capped_at_uncertain():
+    f = _finding(image_evidence=[_evidence(faithful=None)], text_evidence=[_SUPPORT])
+    assert compute_status(f) == "uncertain"
+
+
+def test_failed_region_with_supporting_note_is_capped_at_uncertain():
+    f = _finding(image_evidence=[_evidence(faithful=False)], text_evidence=[_SUPPORT])
+    assert compute_status(f) == "uncertain"
+
+
+def test_passed_region_with_supporting_note_is_verified():
+    f = _finding(image_evidence=[_evidence(faithful=True)], text_evidence=[_SUPPORT])
+    assert compute_status(f) == "verified"
+
+
+def test_one_passed_region_is_enough_among_several():
+    f = _finding(image_evidence=[_evidence(faithful=False), _evidence(evidence_id="ie_2", kind="mask", faithful=True)])
+    assert compute_status(f) == "verified"
