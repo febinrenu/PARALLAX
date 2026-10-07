@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -26,9 +27,9 @@ sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(ROOT))
 
 from medproof.intake.decode import load_image  # noqa: E402
+from medproof.reasoning_stages import THUMBNAIL_DATASETS  # noqa: E402
 from medproof.retrieval.embedder import embed_images  # noqa: E402
 from medproof.retrieval.index import PrecedentIndex, to_precedents  # noqa: E402
-
 from ml.data.common import image_path, load_eval_index, load_split  # noqa: E402
 from ml.eval.bootstrap import ci  # noqa: E402
 
@@ -60,21 +61,61 @@ def items_for(df) -> list:  # noqa: ANN001
     return [(str(r["image_id"]), (lambda p=image_path(r): open_image(p))) for _, r in df.iterrows()]
 
 
-def thumbnail(src: Path, dst: Path, size: int = 160) -> None:
+def safe_thumbnail_name(case_id: str) -> bool:
+    """Same rule the API applies to artifact names, so an id that fails it never becomes a file."""
+    return bool(re.fullmatch(r"[A-Za-z0-9_.-]+", case_id)) and ".." not in case_id
+
+
+def thumbnail_datasets() -> set[str]:
+    """Datasets whose licence lets the web app show the matched training image (see reasoning_stages.THUMBNAIL_DATASETS)."""
+    return set(THUMBNAIL_DATASETS)
+
+
+def thumbnail(src: Path, dst: Path, size: int = 128) -> None:
+    """A small grayscale PNG: these are X-ray and MRI slices, and PNG is what the API serves."""
     dst.parent.mkdir(parents=True, exist_ok=True)
-    im = open_image(src).convert("RGB")
+    im = open_image(src).convert("L")
     im.thumbnail((size, size))
-    im.save(dst, "JPEG", quality=80)
+    im.save(dst, "PNG", optimize=True)
+
+
+def write_thumbnails(dataset: str) -> tuple[int, int]:
+    """Thumbnails for every image in the saved index, without embedding anything. Returns (written, skipped)."""
+    if dataset not in thumbnail_datasets():
+        raise SystemExit(f"{dataset}: thumbnails are not allowed for this dataset (licence)")
+    index = PrecedentIndex.load(OUT / f"{dataset}_medsiglip-448", expect_embedder="medsiglip-448")
+    df = load_split(dataset)
+    paths = {str(r["image_id"]): image_path(r) for _, r in df.iterrows()}
+    written = skipped = 0
+    for case_id in index.ids:
+        dst = OUT / "thumbs" / dataset / f"{case_id}.png"
+        src = paths.get(case_id)
+        if dst.is_file():
+            continue
+        if src is None or not safe_thumbnail_name(case_id) or not src.is_file():
+            skipped += 1
+            continue
+        try:
+            thumbnail(src, dst)
+            written += 1
+        except (OSError, ValueError):
+            skipped += 1
+    return written, skipped
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", choices=["fracatlas", "ham10000", "brain_mri", "rsna"], required=True)
     ap.add_argument("--embedder", choices=["biomedclip", "medsiglip"], default="biomedclip")
+    ap.add_argument("--thumbs-only", action="store_true", help="write thumbnails for the saved index (cleared datasets only) and stop")
     ap.add_argument("--limit-train", type=int, default=None)
     ap.add_argument("--limit-test", type=int, default=None)
     ap.add_argument("--batch", type=int, default=32)
     args = ap.parse_args(argv)
+    if args.thumbs_only:
+        written, skipped = write_thumbnails(args.dataset)
+        print(f"{args.dataset}: {written} thumbnails written, {skipped} skipped")
+        return 0
 
     df = load_split(args.dataset)
     spec = load_eval_index()["datasets"][args.dataset]
@@ -128,13 +169,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     demo = []
     for i, hits in list(zip(qids, neighbours, strict=True))[:5]:
-        precedents = to_precedents(hits, args.dataset, lambda h: f"ml/artifacts/retrieval/thumbs/{args.dataset}/{h.id}.jpg")
-        for p, h in zip(precedents, hits, strict=True):
-            src = image_path(train[train["image_id"].astype(str) == h.id].iloc[0])
-            try:
-                thumbnail(src, ROOT / p.thumb_ref)
-            except OSError:
-                pass  # an unreadable image gets no thumbnail; the precedent is still listed
+        precedents = to_precedents(hits, args.dataset, lambda h: "")
         demo.append({"query": i, "query_label": qlabel[i], "precedents": [p.model_dump() for p in precedents]})
     report["demo"] = demo
     (ROOT / "reports").mkdir(exist_ok=True)

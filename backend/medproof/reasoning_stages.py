@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import functools
 import os
+import re
+import shutil
 import time
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
@@ -37,6 +39,11 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PRECEDENT_DATASET = {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri", "cxr": "rsna"}
 PRECEDENT_EMBEDDER = "medsiglip-448"
 PRECEDENT_K = 5
+# Thumbnails of the matched training images may be shown only where the dataset allows redistribution (the project rule is
+# CC0 or CC BY): FracAtlas is CC BY 4.0 and the brain MRI set states CC0. ISIC/HAM10000 is CC BY-NC and RSNA may not be
+# redistributed, so for those a precedent carries its label and similarity only.
+THUMBNAIL_DATASETS = frozenset({"fracatlas", "brain_mri"})
+_ARTIFACT_NAME = re.compile(r"^[A-Za-z0-9_.-]+\.png$")  # what the API serves from a study's artifact folder
 
 
 # ---------------------------------------------------------------- helpers the orchestrator can reuse
@@ -169,7 +176,7 @@ def _default_precedents(modality: str, image: DecodedImage) -> tuple[list[Preced
     pil = Image.fromarray(image.display).convert("RGB")
     vec = _embedder().embed([pil])[0]
     hits = index.search(vec, PRECEDENT_K)
-    return to_precedents(hits, dataset, lambda h: f"ml/artifacts/retrieval/thumbs/{dataset}/{h.id}.jpg"), ""
+    return to_precedents(hits, dataset, lambda h: ""), ""  # thumbnails are attached per study, where the licence allows
 
 
 @dataclass
@@ -177,6 +184,36 @@ class Services:
     llm_pool: Callable[[], Any] = _default_llm_pool
     generalist: Callable[[], Any] = _default_generalist
     precedents: Callable[[str, DecodedImage], tuple[list[Precedent], str]] = field(default=_default_precedents)
+    thumbnails_dir: Path | None = None  # <dir>/<dataset>/<case id>.png; default: MEDPROOF_RETRIEVAL_DIR/thumbs
+
+
+def _thumbnails_dir(services: Services) -> Path:
+    if services.thumbnails_dir is not None:
+        return services.thumbnails_dir
+    return Path(os.environ.get("MEDPROOF_RETRIEVAL_DIR") or REPO_ROOT / "ml" / "artifacts" / "retrieval") / "thumbs"
+
+
+def with_thumbnails(found: list[Precedent], ctx: Any, thumbs: Path) -> list[Precedent]:
+    """Copy each cleared precedent's thumbnail into the study's artifact folder and point `thumb_ref` at the API URL.
+
+    Anything else (an uncleared dataset, a missing file, no artifact folder, an id that is not a safe file name)
+    gets an empty `thumb_ref`, so the doctor still sees the label and the similarity."""
+    study_id = getattr(ctx, "study_id", None)
+    folder = getattr(ctx, "artifact_dir", None)
+    out: list[Precedent] = []
+    for p in found:
+        ref = ""
+        name = f"precedent_{p.dataset}_{p.case_id}.png"
+        source = thumbs / p.dataset / f"{p.case_id}.png"
+        if p.dataset in THUMBNAIL_DATASETS and study_id and folder is not None and _ARTIFACT_NAME.fullmatch(name) and source.is_file():
+            try:
+                Path(folder).mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, Path(folder) / name)
+                ref = f"/studies/{study_id}/artifacts/{name}"
+            except OSError:
+                ref = ""
+        out.append(p.model_copy(update={"thumb_ref": ref}))
+    return out
 
 
 # ---------------------------------------------------------------- the steps
@@ -252,6 +289,7 @@ def precedents_step(ctx: Any, services: Services | None = None) -> StageResult:
         return _crashed("precedents", t0, exc, findings)
     if not found:
         return _done("precedents", t0, False, {"findings": _dump(findings)}, [why or "no precedents found"])
+    found = with_thumbnails(found, ctx, _thumbnails_dir(services))
     updated = [f.model_copy(update={"precedents": list(found)}) if f.modality == modality else f for f in findings]
     return _done("precedents", t0, True, {"findings": _dump(updated), "precedents": len(found)})
 

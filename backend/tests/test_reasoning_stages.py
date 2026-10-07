@@ -294,3 +294,60 @@ def test_the_precedents_stage_allows_for_a_cold_start_of_the_embedder():
     # the first call loads MedSigLIP (10-35 s on a CPU, measured on the trained brain, skin and bone demo cases); later calls reuse it
     timeouts = {s.name: s.timeout_s for s in stage_specs(services())}
     assert timeouts["precedents"] >= 90.0
+
+
+# ---------------------------------------------------------------- P3-A: precedent thumbnails follow the dataset licences
+
+def _thumb_setup(tmp_path, dataset, case_id, make_file=True):
+    from PIL import Image as PILImage
+
+    from medproof.core.schemas import Precedent
+
+    thumbs = tmp_path / "thumbs"
+    if make_file:
+        (thumbs / dataset).mkdir(parents=True, exist_ok=True)
+        PILImage.fromarray(np.full((8, 8), 90, np.uint8)).save(thumbs / dataset / f"{case_id}.png")
+    hit = Precedent(case_id=case_id, dataset=dataset, label="fracture", similarity=0.9, thumb_ref="")
+    ctx_ = ctx(reader_result(finding("f1", "fracture", "bone_xray")), modality="bone_xray")
+    ctx_.artifact_dir = tmp_path / "artifacts"
+    ctx_.artifact_dir.mkdir()
+    s = Services(llm_pool=lambda: None, generalist=lambda: None, precedents=lambda modality, image: ([hit], ""), thumbnails_dir=thumbs)
+    return ctx_, s
+
+
+@pytest.mark.parametrize("dataset,case_id", [("fracatlas", "IMG0002239"), ("brain_mri", "Tr_glioma_Tr-gl_323")])
+def test_thumbnails_are_served_for_datasets_whose_licence_allows_it(tmp_path, dataset, case_id):
+    c, s = _thumb_setup(tmp_path, dataset, case_id)
+    out = precedents_step(c, s)
+    ref = Finding.model_validate(out.payload["findings"][0]).precedents[0].thumb_ref
+    assert ref == f"/studies/s1/artifacts/precedent_{dataset}_{case_id}.png"
+    assert (c.artifact_dir / f"precedent_{dataset}_{case_id}.png").is_file()
+
+
+@pytest.mark.parametrize("dataset", ["ham10000", "rsna"])
+def test_no_thumbnail_is_ever_served_for_non_redistributable_datasets_even_if_a_file_exists(tmp_path, dataset):
+    c, s = _thumb_setup(tmp_path, dataset, "X1")
+    out = precedents_step(c, s)
+    p = Finding.model_validate(out.payload["findings"][0]).precedents[0]
+    assert p.thumb_ref == "" and p.label == "fracture" and p.similarity == pytest.approx(0.9)  # label and similarity only
+    assert not list(c.artifact_dir.iterdir())
+
+
+def test_a_missing_thumbnail_or_artifact_folder_gives_label_and_similarity_only(tmp_path):
+    c, s = _thumb_setup(tmp_path, "fracatlas", "IMG1", make_file=False)
+    assert Finding.model_validate(precedents_step(c, s).payload["findings"][0]).precedents[0].thumb_ref == ""
+    c2, s2 = _thumb_setup(tmp_path / "again", "fracatlas", "IMG1")
+    c2.artifact_dir = None
+    assert Finding.model_validate(precedents_step(c2, s2).payload["findings"][0]).precedents[0].thumb_ref == ""
+
+
+@pytest.mark.parametrize("bad", ["../../etc/passwd", "a b", "x/y", "é"])
+def test_a_case_id_that_could_escape_the_folder_never_becomes_a_file_name(tmp_path, bad):
+    c, s = _thumb_setup(tmp_path, "fracatlas", bad, make_file=False)
+    assert Finding.model_validate(precedents_step(c, s).payload["findings"][0]).precedents[0].thumb_ref == ""
+
+
+def test_only_licence_cleared_datasets_may_show_thumbnails():
+    from medproof.reasoning_stages import THUMBNAIL_DATASETS
+
+    assert THUMBNAIL_DATASETS == frozenset({"fracatlas", "brain_mri"})  # CC BY 4.0 and CC0; ISIC is CC BY-NC and RSNA is not redistributable
