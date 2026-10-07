@@ -1,0 +1,364 @@
+{
+  "resourceType": "Bundle",
+  "id": "170b358f-19cf-4a11-97a5-8549e43bddcb",
+  "type": "collection",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:b9b6bd45-b38d-5e6b-a052-671c922a0ddb",
+      "resource": {
+        "resourceType": "DiagnosticReport",
+        "meta": {
+          "tag": [
+            {
+              "system": "urn:parallax:flags",
+              "code": "decision-support-only"
+            }
+          ]
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Doctor, consider Lung Opacity in the right upper zone (high confidence); the note states [note text omitted].</p><p>Doctor, consider Pneumonia in the right upper zone (moderate confidence); the note states [note text omitted].</p><p>Doctor, consider Consolidation in the right upper zone (moderate confidence); the note states [note text omitted].</p><p>Doctor, consider Infiltration in the right upper zone (low confidence); the note states [note text omitted].</p><p><b>Decision support only. Not a diagnosis and not a medical device; a clinician must review every finding.</b></p></div>"
+        },
+        "identifier": [
+          {
+            "system": "urn:parallax:study",
+            "value": "170b358f-19cf-4a11-97a5-8549e43bddcb"
+          },
+          {
+            "system": "urn:parallax:ledger-head",
+            "value": "68c23451bfb8651a01db4dc808cd5992a4291d2931741b082f2d66381460129a"
+          }
+        ],
+        "status": "preliminary",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+                "code": "RAD",
+                "display": "Radiology"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "18748-4",
+              "display": "Diagnostic imaging study"
+            }
+          ]
+        },
+        "subject": {
+          "display": "De-identified study"
+        },
+        "effectiveDateTime": "2026-10-07T12:02:03Z",
+        "issued": "2026-10-07T12:02:03Z",
+        "result": [
+          {
+            "reference": "urn:uuid:bab93f29-815a-52e0-bd55-4ad007c7f2e4"
+          },
+          {
+            "reference": "urn:uuid:0c4be18c-bebb-5b56-bdc4-5f56217de0d0"
+          },
+          {
+            "reference": "urn:uuid:9075726f-8ada-5fa2-a960-2c7affd51cfa"
+          },
+          {
+            "reference": "urn:uuid:37a9b158-d685-594f-9093-c7746f4c99c2"
+          }
+        ],
+        "conclusion": "Doctor, consider Lung Opacity in the right upper zone (high confidence); the note states [note text omitted]. Doctor, consider Pneumonia in the right upper zone (moderate confidence); the note states [note text omitted]. Doctor, consider Consolidation in the right upper zone (moderate confidence); the note states [note text omitted]. Doctor, consider Infiltration in the right upper zone (low confidence); the note states [note text omitted]."
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:bab93f29-815a-52e0-bd55-4ad007c7f2e4",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "preliminary",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "imaging",
+                "display": "Imaging"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "urn:parallax:finding",
+              "code": "lung-opacity",
+              "display": "Lung Opacity"
+            }
+          ],
+          "text": "Lung Opacity"
+        },
+        "valueString": "Doctor, consider Lung Opacity in the right upper zone (high confidence); the note states [note text omitted].",
+        "bodySite": {
+          "text": "right upper zone"
+        },
+        "method": {
+          "text": "gradcam++; xrv-densenet121-all@56524913"
+        },
+        "component": [
+          {
+            "code": {
+              "text": "calibrated probability"
+            },
+            "valueQuantity": {
+              "value": 0.883,
+              "unit": "1",
+              "system": "http://unitsofmeasure.org",
+              "code": "1"
+            }
+          },
+          {
+            "code": {
+              "text": "tier"
+            },
+            "valueString": "high"
+          },
+          {
+            "code": {
+              "text": "status"
+            },
+            "valueString": "verified"
+          },
+          {
+            "code": {
+              "text": "flags"
+            },
+            "valueString": "uncalibrated"
+          },
+          {
+            "code": {
+              "text": "second reader"
+            },
+            "valueString": "google/medgemma-1.5-4b-it: agrees"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:0c4be18c-bebb-5b56-bdc4-5f56217de0d0",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "preliminary",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "imaging",
+                "display": "Imaging"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "urn:parallax:finding",
+              "code": "pneumonia",
+              "display": "Pneumonia"
+            }
+          ],
+          "text": "Pneumonia"
+        },
+        "valueString": "Doctor, consider Pneumonia in the right upper zone (moderate confidence); the note states [note text omitted].",
+        "bodySite": {
+          "text": "right upper zone"
+        },
+        "method": {
+          "text": "gradcam++; xrv-densenet121-all@56524913"
+        },
+        "component": [
+          {
+            "code": {
+              "text": "calibrated probability"
+            },
+            "valueQuantity": {
+              "value": 0.731,
+              "unit": "1",
+              "system": "http://unitsofmeasure.org",
+              "code": "1"
+            }
+          },
+          {
+            "code": {
+              "text": "tier"
+            },
+            "valueString": "moderate"
+          },
+          {
+            "code": {
+              "text": "status"
+            },
+            "valueString": "verified"
+          },
+          {
+            "code": {
+              "text": "flags"
+            },
+            "valueString": "uncalibrated, second_reader_disagrees"
+          },
+          {
+            "code": {
+              "text": "second reader"
+            },
+            "valueString": "google/medgemma-1.5-4b-it: inconclusive"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:9075726f-8ada-5fa2-a960-2c7affd51cfa",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "preliminary",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "imaging",
+                "display": "Imaging"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "urn:parallax:finding",
+              "code": "consolidation",
+              "display": "Consolidation"
+            }
+          ],
+          "text": "Consolidation"
+        },
+        "valueString": "Doctor, consider Consolidation in the right upper zone (moderate confidence); the note states [note text omitted].",
+        "bodySite": {
+          "text": "right upper zone"
+        },
+        "method": {
+          "text": "gradcam++; xrv-densenet121-all@56524913"
+        },
+        "component": [
+          {
+            "code": {
+              "text": "calibrated probability"
+            },
+            "valueQuantity": {
+              "value": 0.698,
+              "unit": "1",
+              "system": "http://unitsofmeasure.org",
+              "code": "1"
+            }
+          },
+          {
+            "code": {
+              "text": "tier"
+            },
+            "valueString": "moderate"
+          },
+          {
+            "code": {
+              "text": "status"
+            },
+            "valueString": "verified"
+          },
+          {
+            "code": {
+              "text": "flags"
+            },
+            "valueString": "uncalibrated, second_reader_disagrees"
+          },
+          {
+            "code": {
+              "text": "second reader"
+            },
+            "valueString": "google/medgemma-1.5-4b-it: inconclusive"
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:37a9b158-d685-594f-9093-c7746f4c99c2",
+      "resource": {
+        "resourceType": "Observation",
+        "status": "preliminary",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "imaging",
+                "display": "Imaging"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "urn:parallax:finding",
+              "code": "infiltration",
+              "display": "Infiltration"
+            }
+          ],
+          "text": "Infiltration"
+        },
+        "valueString": "Doctor, consider Infiltration in the right upper zone (low confidence); the note states [note text omitted].",
+        "bodySite": {
+          "text": "right upper zone"
+        },
+        "method": {
+          "text": "gradcam++; xrv-densenet121-all@56524913"
+        },
+        "component": [
+          {
+            "code": {
+              "text": "calibrated probability"
+            },
+            "valueQuantity": {
+              "value": 0.593,
+              "unit": "1",
+              "system": "http://unitsofmeasure.org",
+              "code": "1"
+            }
+          },
+          {
+            "code": {
+              "text": "tier"
+            },
+            "valueString": "low"
+          },
+          {
+            "code": {
+              "text": "status"
+            },
+            "valueString": "uncertain"
+          },
+          {
+            "code": {
+              "text": "flags"
+            },
+            "valueString": "uncalibrated, second_reader_disagrees"
+          },
+          {
+            "code": {
+              "text": "second reader"
+            },
+            "valueString": "google/medgemma-1.5-4b-it: inconclusive"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "wall_clock_s_cached_run": 8.1,
+  "stages": [
+    {
+      "stage": "intake",
+      "ok": true,
+      "ms": 189,
+      "warnings": [],
+      "ledger_hash": "eb9ec3349ff75362dde1038697dec53000b96078ec385d2a8a44d8dae345e7b9",
+      "ts": "2026-10-07T12:01:56.535036+00:00"
+    },
+    {
+      "stage": "router",
+      "ok": true,
+      "ms": 0,
+      "warnings": [],
+      "ledger_hash": "dcaa6340b75eb5f64803212a99fbea1d9c5d359ff67efe82f4d0dc6eef456796",
+      "ts": "2026-10-07T12:01:56.558069+00:00"
+    },
+    {
+      "stage": "reader",
+      "ok": true,
+      "ms": 6478,
+      "warnings": [],
+      "ledger_hash": "1d98dfd20cbba2aa0e9b9399208a0ffaed43e8c2d76d82aa400d724751d1087c",
+      "ts": "2026-10-07T12:02:03.063723+00:00"
+    },
+    {
+      "stage": "faithfulness",
+      "ok": true,
+      "ms": 34528,
+      "warnings": [],
+      "ledger_hash": "e537377c590fc47e40e298b6b873aed2218f7cf1bf82e0cb7e017ee3212c4190",
+      "ts": "2026-10-07T12:02:03.097456+00:00"
+    },
+    {
+      "stage": "stability",
+      "ok": true,
+      "ms": 2649,
+      "warnings": [],
+      "ledger_hash": "885cbe44a16a6494cf4901132d59884c6761326385c15f10c64cd4728ea695ef",
+      "ts": "2026-10-07T12:02:03.125392+00:00"
+    },
+    {
+      "stage": "calibration",
+      "ok": false,
+      "ms": 0,
+      "warnings": [
+        "chest findings stay uncalibrated: the product's chest weights saw RSNA, and the fitted calibrator belongs to the external chex weights"
+      ],
+      "ledger_hash": "83bc9559de6243a39c82a3a3cc7014c9e46eee757b728a76f9d00b4d2752d290",
+      "ts": "2026-10-07T12:02:03.154917+00:00"
+    },
+    {
+      "stage": "second_read",
+      "ok": true,
+      "ms": 299,
+      "warnings": [
+        "labels not provided; derive them from the report text"
+      ],
+      "ledger_hash": "3e8ece0f2de156a997b1da7279e0e37ccd779e5461ce682e3a28a9612e624a07",
+      "ts": "2026-10-07T12:02:03.480708+00:00"
+    },
+    {
+      "stage": "context",
+      "ok": true,
+      "ms": 33,
+      "warnings": [],
+      "ledger_hash": "ba38f94879a8817ca171de130ba21c27d3d105af423401a4df2991d8e2316839",
+      "ts": "2026-10-07T12:02:03.547682+00:00"
+    },
+    {
+      "stage": "report",
+      "ok": true,
+      "ms": 11,
+      "warnings": [],
+      "ledger_hash": "f691f7f920f257c2f6b4ad0aeac6128eb42c8ec108dcf570b2e6c5fc9d93c57b",
+      "ts": "2026-10-07T12:02:03.593005+00:00"
+    },
+    {
+      "stage": "precedents",
+      "ok": false,
+      "ms": 5,
+      "warnings": [
+        "precedents stage failed (ModuleNotFoundError); continuing without it"
+      ],
+      "ledger_hash": "68c23451bfb8651a01db4dc808cd5992a4291d2931741b082f2d66381460129a",
+      "ts": "2026-10-07T12:02:03.623152+00:00"
+    }
+  ],
+  "ledger_verify": {
+    "ok": true,
+    "entries": 584,
+    "head": "68c23451bfb8651a01db4dc808cd5992a4291d2931741b082f2d66381460129a"
+  }
+}

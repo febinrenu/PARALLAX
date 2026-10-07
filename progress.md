@@ -106,7 +106,7 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P4.7 | WebGL viewer | done | main | 2026-10-07 | Own WebGL2 engine `web/src/gl/`; R16F full-depth path, W/L, overlays, keyboard map. 60 fps on 2048² not measured on a real GPU yet (see role section) |
 | P4.8 | Docker + CI + e2e + a11y | todo | | | |
 | P4.9 | Offline demo pack | todo | | | |
-| P4.10 | README | todo | | | |
+| P4.10 | README | done | main | 2026-10-07 | Submission README (what, pipeline, models, evidence, sample I/O, results with CIs, scope, install, configure, run, reproduce, licences); real chest run in `demo/sample_output/`; screenshots in `docs/screenshots/` |
 
 
 ## Role sections
@@ -705,3 +705,10 @@ Not run: real human speech; the warm-up on a machine with less memory.
 Next: P4 may want warm-up status in the UI; the team still has to pick one demo laptop.
 Decisions: see the two entries above. Contract change requests: none.
 
+### 2026-10-07 · P4 · Opus 5.5 · WP P4.10 (README for the submission)
+Did: wrote `README.md` against the submission guidelines: what Parallax does, the data pipeline (stage table, status rule, API routes, diagram), core models with ids, evidence and where the doctor sees it, a real sample input and output (`demo/sample_output/`: input, StudyResult, stage trace with ledger hashes and timestamps, FHIR bundle from a live chest run), validation headline with 95% CIs from `reports/metrics.json`, scope note (MVP vs stretch vs partial), technologies, install, model files, configuration, run (start.bat and manual), reproduction commands, demo order, layout, licences, limitations, team roles. Six screenshots in `docs/screenshots/` (CC0, CC BY and public-domain images only).
+State: P4.10 done. Every number is from `reports/metrics.json`, the committed sample run, or the code.
+Verified: all paths the README references exist; sample output has no local filesystem paths.
+Next: team to decide how the trained weights are distributed for reproduction (e.g. a GitHub release), then link it from the README's "Model files" table.
+Decisions: none new.
+Contract change requests: none.

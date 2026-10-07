@@ -1,0 +1,593 @@
+{
+  "study_id": "170b358f-19cf-4a11-97a5-8549e43bddcb",
+  "input_sha256": "4c7fcdf2ffec15dd9930e20a2329f00d26f67eafcc587c12b1c2509369548ce8",
+  "modality": "cxr",
+  "ood_score": 0.0,
+  "quality": {
+    "passed": true,
+    "flags": [],
+    "metrics": {
+      "min_side": 1010.0,
+      "blur": 0.51949,
+      "p1": 0.19327,
+      "p99": 0.97373,
+      "range": 0.78046,
+      "clip": 0.00639,
+      "noise_rel": 0.01457,
+      "aspect": 1.0,
+      "margin": 0.0,
+      "tilt_deg": -1.0,
+      "tilt_gain": 0.00258
+    },
+    "reasons": []
+  },
+  "findings": [
+    {
+      "finding_id": "f1",
+      "modality": "cxr",
+      "label": "Lung Opacity",
+      "prob_raw": 0.8832780718803406,
+      "prob_calibrated": 0.8832780718803406,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "high",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_1",
+          "kind": "heatmap",
+          "bbox_xyxy": [
+            139.0,
+            0.0,
+            482.0,
+            453.0
+          ],
+          "mask_ref": null,
+          "heatmap_ref": "/studies/170b358f-19cf-4a11-97a5-8549e43bddcb/artifacts/heatmap_f1.png",
+          "source_model": "xrv-densenet121-all@56524913",
+          "method": "gradcam++",
+          "region_name": "right upper zone",
+          "faithfulness_drop": 0.3693038821220398,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_1",
+          "note_id": "n1",
+          "span": [
+            77,
+            82
+          ],
+          "quote": "right",
+          "fact_type": "laterality",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_2",
+          "note_id": "n1",
+          "span": [
+            17,
+            22
+          ],
+          "quote": "fever",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_3",
+          "note_id": "n1",
+          "span": [
+            27,
+            43
+          ],
+          "quote": "productive cough",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_4",
+          "note_id": "n1",
+          "span": [
+            112,
+            134
+          ],
+          "quote": "No prior chest surgery",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_5",
+          "note_id": "n1",
+          "span": [
+            136,
+            146
+          ],
+          "quote": "No devices",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        }
+      ],
+      "second_read": {
+        "model": "google/medgemma-1.5-4b-it",
+        "label": "Lung Opacity",
+        "agrees": true,
+        "box_iou": null,
+        "raw_ref": "medgemma:b0f710f5714cf604"
+      },
+      "stability": {
+        "tests": 8,
+        "flip_rate": 0.0,
+        "worst_perturbation": null
+      },
+      "precedents": [],
+      "flags": [
+        "uncalibrated"
+      ]
+    },
+    {
+      "finding_id": "f2",
+      "modality": "cxr",
+      "label": "Pneumonia",
+      "prob_raw": 0.731354832649231,
+      "prob_calibrated": 0.731354832649231,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "moderate",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_2",
+          "kind": "heatmap",
+          "bbox_xyxy": [
+            149.0,
+            0.0,
+            464.0,
+            427.0
+          ],
+          "mask_ref": null,
+          "heatmap_ref": "/studies/170b358f-19cf-4a11-97a5-8549e43bddcb/artifacts/heatmap_f2.png",
+          "source_model": "xrv-densenet121-all@56524913",
+          "method": "gradcam++",
+          "region_name": "right upper zone",
+          "faithfulness_drop": 0.4549640715122223,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_6",
+          "note_id": "n1",
+          "span": [
+            77,
+            82
+          ],
+          "quote": "right",
+          "fact_type": "laterality",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_7",
+          "note_id": "n1",
+          "span": [
+            17,
+            22
+          ],
+          "quote": "fever",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_8",
+          "note_id": "n1",
+          "span": [
+            27,
+            43
+          ],
+          "quote": "productive cough",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_9",
+          "note_id": "n1",
+          "span": [
+            112,
+            134
+          ],
+          "quote": "No prior chest surgery",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_10",
+          "note_id": "n1",
+          "span": [
+            136,
+            146
+          ],
+          "quote": "No devices",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        }
+      ],
+      "second_read": {
+        "model": "google/medgemma-1.5-4b-it",
+        "label": "Lung Opacity",
+        "agrees": null,
+        "box_iou": null,
+        "raw_ref": "medgemma:b0f710f5714cf604"
+      },
+      "stability": {
+        "tests": 8,
+        "flip_rate": 0.0,
+        "worst_perturbation": null
+      },
+      "precedents": [],
+      "flags": [
+        "uncalibrated",
+        "second_reader_disagrees"
+      ]
+    },
+    {
+      "finding_id": "f3",
+      "modality": "cxr",
+      "label": "Consolidation",
+      "prob_raw": 0.698419451713562,
+      "prob_calibrated": 0.698419451713562,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "moderate",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_3",
+          "kind": "heatmap",
+          "bbox_xyxy": [
+            131.0,
+            0.0,
+            705.0,
+            730.0
+          ],
+          "mask_ref": null,
+          "heatmap_ref": "/studies/170b358f-19cf-4a11-97a5-8549e43bddcb/artifacts/heatmap_f3.png",
+          "source_model": "xrv-densenet121-all@56524913",
+          "method": "gradcam++",
+          "region_name": "right upper zone",
+          "faithfulness_drop": 0.17622721195220947,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_11",
+          "note_id": "n1",
+          "span": [
+            77,
+            82
+          ],
+          "quote": "right",
+          "fact_type": "laterality",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_12",
+          "note_id": "n1",
+          "span": [
+            17,
+            22
+          ],
+          "quote": "fever",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_13",
+          "note_id": "n1",
+          "span": [
+            27,
+            43
+          ],
+          "quote": "productive cough",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_14",
+          "note_id": "n1",
+          "span": [
+            112,
+            134
+          ],
+          "quote": "No prior chest surgery",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_15",
+          "note_id": "n1",
+          "span": [
+            136,
+            146
+          ],
+          "quote": "No devices",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        }
+      ],
+      "second_read": {
+        "model": "google/medgemma-1.5-4b-it",
+        "label": "Lung Opacity",
+        "agrees": null,
+        "box_iou": null,
+        "raw_ref": "medgemma:b0f710f5714cf604"
+      },
+      "stability": {
+        "tests": 8,
+        "flip_rate": 0.0,
+        "worst_perturbation": null
+      },
+      "precedents": [],
+      "flags": [
+        "uncalibrated",
+        "second_reader_disagrees"
+      ]
+    },
+    {
+      "finding_id": "f4",
+      "modality": "cxr",
+      "label": "Infiltration",
+      "prob_raw": 0.5932111144065857,
+      "prob_calibrated": 0.5932111144065857,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "low",
+      "status": "uncertain",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_4",
+          "kind": "heatmap",
+          "bbox_xyxy": [
+            123.0,
+            0.0,
+            531.0,
+            524.0
+          ],
+          "mask_ref": null,
+          "heatmap_ref": "/studies/170b358f-19cf-4a11-97a5-8549e43bddcb/artifacts/heatmap_f4.png",
+          "source_model": "xrv-densenet121-all@56524913",
+          "method": "gradcam++",
+          "region_name": "right upper zone",
+          "faithfulness_drop": null,
+          "faithful": null
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_16",
+          "note_id": "n1",
+          "span": [
+            77,
+            82
+          ],
+          "quote": "right",
+          "fact_type": "laterality",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_17",
+          "note_id": "n1",
+          "span": [
+            17,
+            22
+          ],
+          "quote": "fever",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_18",
+          "note_id": "n1",
+          "span": [
+            27,
+            43
+          ],
+          "quote": "productive cough",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        },
+        {
+          "evidence_id": "te_19",
+          "note_id": "n1",
+          "span": [
+            112,
+            134
+          ],
+          "quote": "No prior chest surgery",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_20",
+          "note_id": "n1",
+          "span": [
+            136,
+            146
+          ],
+          "quote": "No devices",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        }
+      ],
+      "second_read": {
+        "model": "google/medgemma-1.5-4b-it",
+        "label": "Lung Opacity",
+        "agrees": null,
+        "box_iou": null,
+        "raw_ref": "medgemma:b0f710f5714cf604"
+      },
+      "stability": {
+        "tests": 8,
+        "flip_rate": 0.0,
+        "worst_perturbation": null
+      },
+      "precedents": [],
+      "flags": [
+        "uncalibrated",
+        "second_reader_disagrees"
+      ]
+    },
+    {
+      "finding_id": "f5",
+      "modality": "cxr",
+      "label": "Mass",
+      "prob_raw": 0.5666180849075317,
+      "prob_calibrated": 0.5666180849075317,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "low",
+      "status": "rejected",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_5",
+          "kind": "heatmap",
+          "bbox_xyxy": [
+            117.0,
+            81.0,
+            682.0,
+            733.0
+          ],
+          "mask_ref": null,
+          "heatmap_ref": "/studies/170b358f-19cf-4a11-97a5-8549e43bddcb/artifacts/heatmap_f5.png",
+          "source_model": "xrv-densenet121-all@56524913",
+          "method": "gradcam++",
+          "region_name": "right upper zone",
+          "faithfulness_drop": null,
+          "faithful": null
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_21",
+          "note_id": "n1",
+          "span": [
+            77,
+            82
+          ],
+          "quote": "right",
+          "fact_type": "laterality",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_22",
+          "note_id": "n1",
+          "span": [
+            17,
+            22
+          ],
+          "quote": "fever",
+          "fact_type": "symptom",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_23",
+          "note_id": "n1",
+          "span": [
+            27,
+            43
+          ],
+          "quote": "productive cough",
+          "fact_type": "symptom",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_24",
+          "note_id": "n1",
+          "span": [
+            112,
+            134
+          ],
+          "quote": "No prior chest surgery",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        },
+        {
+          "evidence_id": "te_25",
+          "note_id": "n1",
+          "span": [
+            136,
+            146
+          ],
+          "quote": "No devices",
+          "fact_type": "negation",
+          "polarity": "neutral"
+        }
+      ],
+      "second_read": {
+        "model": "google/medgemma-1.5-4b-it",
+        "label": "Lung Opacity",
+        "agrees": null,
+        "box_iou": null,
+        "raw_ref": "medgemma:b0f710f5714cf604"
+      },
+      "stability": {
+        "tests": 8,
+        "flip_rate": 0.0,
+        "worst_perturbation": null
+      },
+      "precedents": [],
+      "flags": [
+        "uncalibrated",
+        "second_reader_disagrees"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "template": "Doctor, consider {f1.label} in the {f1.region} ({f1.tier}); the note states {te_2.quote}.",
+      "evidence_ids": [
+        "ie_1",
+        "te_2"
+      ],
+      "rendered": "Doctor, consider Lung Opacity in the right upper zone (high confidence); the note states \"fever\".",
+      "entailed": true,
+      "blocked_reason": null
+    },
+    {
+      "claim_id": "c2",
+      "template": "Doctor, consider {f2.label} in the {f2.region} ({f2.tier}); the note states {te_7.quote}.",
+      "evidence_ids": [
+        "ie_2",
+        "te_7"
+      ],
+      "rendered": "Doctor, consider Pneumonia in the right upper zone (moderate confidence); the note states \"fever\".",
+      "entailed": true,
+      "blocked_reason": null
+    },
+    {
+      "claim_id": "c3",
+      "template": "Doctor, consider {f3.label} in the {f3.region} ({f3.tier}); the note states {te_12.quote}.",
+      "evidence_ids": [
+        "ie_3",
+        "te_12"
+      ],
+      "rendered": "Doctor, consider Consolidation in the right upper zone (moderate confidence); the note states \"fever\".",
+      "entailed": true,
+      "blocked_reason": null
+    },
+    {
+      "claim_id": "c4",
+      "template": "Doctor, consider {f4.label} in the {f4.region} ({f4.tier}); the note states {te_17.quote}.",
+      "evidence_ids": [
+        "ie_4",
+        "te_17"
+      ],
+      "rendered": "Doctor, consider Infiltration in the right upper zone (low confidence); the note states \"fever\".",
+      "entailed": true,
+      "blocked_reason": null
+    }
+  ],
+  "ledger_head": "68c23451bfb8651a01db4dc808cd5992a4291d2931741b082f2d66381460129a",
+  "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+}
