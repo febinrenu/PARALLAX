@@ -31,6 +31,9 @@ FRAMES: dict[str, str] = {
     "context_missing": "Doctor, the notes do not mention history relevant to {F.label}; please add context.",
 }
 FRAME_NO_REGION = "Doctor, consider {F.label} ({F.tier})."
+# Chosen by code, never by the model: when the note and the image name different sides, saying the finding at its
+# model tier would hide the conflict, so the sentence asks for a review and states no confidence.
+FRAME_LATERALITY = "Doctor, the note and the image disagree about the side for {F.label}; please review the image directly."
 _PRIORITY = {"verified": 0, "uncertain": 1, "discordant": 2}
 
 
@@ -59,6 +62,8 @@ def to_claim(draft: ClaimDraft, n: int, view: StudyView) -> Claim:
     """Expand a draft into a slot template. Unknown ids are kept so the firewall can name the reason."""
     frame = FRAMES[draft.frame]
     found = view.findings.get(draft.finding)
+    if found is not None and "laterality_conflict" in found.flags and draft.frame in ("consider", "supported_by_note"):
+        return Claim(claim_id=f"c{n}", template=FRAME_LATERALITY.replace("{F.", "{" + draft.finding + "."), evidence_ids=_first_evidence(view, draft.finding) or ["ie_missing"])
     if draft.frame == "consider" and found is not None and not has_region(found):
         frame = FRAME_NO_REGION  # nobody named a region, so do not write a phrase about one
     template = frame.replace("{F.", "{" + draft.finding + ".")

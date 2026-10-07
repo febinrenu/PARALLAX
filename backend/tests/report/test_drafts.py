@@ -183,3 +183,39 @@ def test_a_named_region_is_still_used():
     view = StudyView.build([f], {}, {})
     claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
     assert "right lower zone" in (claims[0].rendered or "")
+
+
+# ---- a note and an image that disagree about the side must be said, not reported at full confidence
+
+def _conflicted(frame="consider"):
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import finding, ie
+
+    f = finding("f1", "Pneumonia", "high", "verified", [ie("ie_1", True)]).model_copy(update={"flags": ["laterality_conflict"]})
+    view = StudyView.build([f], {}, {})
+    return to_claim(ClaimDraft(frame=frame, finding="f1"), 1, view), view
+
+
+@pytest.mark.parametrize("frame", ["consider", "supported_by_note"])
+def test_a_laterality_conflict_replaces_the_confident_sentence_with_a_request_to_review(frame):
+    from medproof.report import firewall
+
+    claim, view = _conflicted(frame)
+    claims, _ = firewall.run([claim], view)
+    text = claims[0].rendered or ""
+    assert claims[0].blocked_reason is None, claims[0].blocked_reason
+    assert "disagree about the side" in text and "review the image" in text
+    assert "confidence" not in text  # it must not repeat the model's tier as if the conflict did not exist
+
+
+def test_a_finding_without_a_conflict_is_unchanged():
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import finding, ie
+
+    f = finding("f1", "Pneumonia", "high", "verified", [ie("ie_1", True)])
+    view = StudyView.build([f], {}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
+    assert "high confidence" in (claims[0].rendered or "")
