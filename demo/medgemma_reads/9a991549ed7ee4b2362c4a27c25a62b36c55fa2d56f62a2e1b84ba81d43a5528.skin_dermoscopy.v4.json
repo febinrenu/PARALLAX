@@ -1,0 +1,15 @@
+{
+ "ok": true,
+ "model": "google/medgemma-1.5-4b-it",
+ "quant": "nf4/bf16",
+ "labels": [],
+ "boxes": [],
+ "impression": "The lesion requires further evaluation by a dermatologist.",
+ "findings_text": "A dark, irregular, and asymmetric lesion is present.",
+ "raw": "FINDINGS:\nA dark, irregular, and asymmetric lesion is present.\n\nIMPRESSION:\nThe lesion requires further evaluation by a dermatologist.",
+ "error": null,
+ "warnings": [
+  "labels not provided; derive them from the report text"
+ ],
+ "ms": 3468
+}

@@ -1,0 +1,15 @@
+{
+ "ok": true,
+ "model": "google/medgemma-1.5-4b-it",
+ "quant": "nf4/bf16",
+ "labels": [],
+ "boxes": [],
+ "impression": "Large left temporal lobe lesion and small right cerebellar lesion.",
+ "findings_text": "There is a large area of low signal intensity in the left temporal lobe. There is a small area of low signal intensity in the right cerebellum. No other abnormalities are identified.",
+ "raw": "FINDINGS: There is a large area of low signal intensity in the left temporal lobe. There is a small area of low signal intensity in the right cerebellum. No other abnormalities are identified.\nIMPRESSION: Large left temporal lobe lesion and small right cerebellar lesion.",
+ "error": null,
+ "warnings": [
+  "labels not provided; derive them from the report text"
+ ],
+ "ms": 5258
+}

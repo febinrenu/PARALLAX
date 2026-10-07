@@ -3,6 +3,7 @@ return updated findings or claims in the StageResult payload."""
 
 from __future__ import annotations
 
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -235,3 +236,25 @@ def test_every_spec_returns_a_stage_result_even_with_an_empty_context(name):
     spec = next(s for s in stage_specs(services(pool=FakeLLM(), reader=FakeReader())) if s.name == name)
     out = spec.run(SimpleNamespace())
     assert isinstance(out, StageResult) and out.stage == name
+
+
+# ---------------------------------------------------------------- the shipped demo reads work with no GPU
+
+CASES = Path(__file__).resolve().parents[2] / "web" / "public" / "cases"
+SEEDS = Path(__file__).resolve().parents[2] / "demo" / "medgemma_reads"
+
+
+@pytest.mark.skipif(not (CASES / "chest" / "image.webp").is_file() or not SEEDS.is_dir(), reason="demo images or seeds not present")
+@pytest.mark.parametrize("case,modality", [("chest", "cxr"), ("bone", "bone_xray"), ("skin", "skin_dermoscopy"), ("brain", "brain_mri")])
+def test_every_demo_image_is_answered_from_its_shipped_seed(case, modality, monkeypatch, tmp_path):
+    from medproof.intake.decode import load_image
+    from medproof.readers.generalist import GeneralistReader
+
+    monkeypatch.delenv("MEDGEMMA_URL", raising=False)  # no service: only the seed can answer
+    image = load_image((CASES / case / "image.webp").read_bytes())
+    reader = GeneralistReader(cache_dir=tmp_path, seed_dir=SEEDS)
+    try:
+        read = reader.read(image, modality)
+    finally:
+        reader.close()
+    assert read.ok and read.source == "seed" and read.findings_text

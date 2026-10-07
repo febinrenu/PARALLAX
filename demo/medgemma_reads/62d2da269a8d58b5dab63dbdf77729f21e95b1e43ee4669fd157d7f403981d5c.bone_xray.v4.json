@@ -1,0 +1,15 @@
+{
+ "ok": true,
+ "model": "google/medgemma-1.5-4b-it",
+ "quant": "nf4/bf16",
+ "labels": [],
+ "boxes": [],
+ "impression": "The wrist appears normal.",
+ "findings_text": "No obvious fractures or dislocations are visible. The bones appear intact.",
+ "raw": "FINDINGS:\nNo obvious fractures or dislocations are visible. The bones appear intact.\n\nIMPRESSION:\nThe wrist appears normal.",
+ "error": null,
+ "warnings": [
+  "labels not provided; derive them from the report text"
+ ],
+ "ms": 3356
+}
