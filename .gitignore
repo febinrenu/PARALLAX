@@ -45,8 +45,9 @@ runs/
 *.tar
 *.tar.gz
 
-# Local tooling
-.claude/
+# Local tool and editor settings: every root dot-folder except the shared git hooks
+/.*/
+!/.githooks/
 
 # Editor / OS
 .vscode/
