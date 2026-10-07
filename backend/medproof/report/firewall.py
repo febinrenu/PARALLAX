@@ -43,9 +43,9 @@ def _norm(text: str) -> str:
 
 
 def is_supported(f: Finding) -> bool:
-    """Same evidence requirement as the status rule: faithful image evidence or supporting text."""
+    """Faithful image evidence or supporting text. A side word is consistency, not support, so it never counts."""
     return any(e.faithful is True for e in f.image_evidence) or any(
-        t.polarity == "supports" for t in f.text_evidence
+        t.polarity == "supports" and t.fact_type != "laterality" for t in f.text_evidence
     )
 
 

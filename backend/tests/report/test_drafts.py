@@ -3,7 +3,14 @@ from __future__ import annotations
 import pytest
 
 from medproof.llm.errors import LLMUnavailable
-from medproof.report.drafts import ClaimDraft, ClaimDrafts, build_input, draft_claims, template_drafts, to_claim
+from medproof.report.drafts import (
+    ClaimDraft,
+    ClaimDrafts,
+    build_input,
+    draft_claims,
+    template_drafts,
+    to_claim,
+)
 from medproof.report.firewall import run
 from tests.report.conftest import make_view
 
@@ -102,3 +109,28 @@ def test_draft_schema_only_allows_known_frames():
 def test_empty_study_gives_no_claims_and_a_clear_stage():
     claims, stage = draft_claims(make_view().__class__.build([], {}, {}), None)
     assert claims == [] and stage.ok
+
+
+def test_template_report_cites_a_clinical_quote_rather_than_a_side_word():
+    from medproof.core.schemas import TextEvidence
+    from medproof.report.drafts import template_drafts
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import NOTE, NOTE_ID, finding, ie
+
+    side = TextEvidence(evidence_id="te_1", note_id=NOTE_ID, span=(0, 3), quote=NOTE[0:3], fact_type="laterality", polarity="supports")
+    fever = TextEvidence(evidence_id="te_2", note_id=NOTE_ID, span=(NOTE.index("fever"), NOTE.index("fever") + 5), quote="fever",
+                         fact_type="symptom", polarity="supports")
+    f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True)], [side, fever])
+    d = template_drafts(StudyView.build([f], {NOTE_ID: NOTE}, {})).drafts[0]
+    assert d.frame == "supported_by_note" and d.note_ref == "te_2"
+
+
+def test_template_report_does_not_use_the_note_frame_when_only_a_side_word_supports():
+    from medproof.core.schemas import TextEvidence
+    from medproof.report.drafts import template_drafts
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import NOTE, NOTE_ID, finding, ie
+
+    side = TextEvidence(evidence_id="te_1", note_id=NOTE_ID, span=(0, 3), quote=NOTE[0:3], fact_type="laterality", polarity="supports")
+    f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True)], [side])
+    assert template_drafts(StudyView.build([f], {NOTE_ID: NOTE}, {})).drafts[0].frame == "consider"

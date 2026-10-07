@@ -175,7 +175,8 @@ def check(
             if side is None or fside is None:
                 attach(fact, "neutral")
             else:
-                attach(fact, "contradicts" if (conflict and fside != side) else "supports" if fside == side else "neutral")
+                # agreement is consistency, not support: a side word says nothing about whether the finding is real
+                attach(fact, "contradicts" if (conflict and fside != side) else "neutral")
         if conflict:
             flags.append("laterality_conflict")
 

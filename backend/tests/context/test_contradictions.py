@@ -47,9 +47,23 @@ def test_laterality_conflict_between_note_and_image_is_flagged_and_contradicts()
     assert res.stage.stage == "context" and res.stage.payload["flags"]["laterality_conflict"] == 1
 
 
-def test_matching_laterality_supports_the_finding():
+def test_matching_laterality_is_consistent_but_not_support_for_the_finding():
+    # agreement of side with side says the note and the image do not clash; it says nothing about whether the finding is real
     res = check([finding()], [fact("right", "laterality", "right")], Demographics())
-    assert "laterality_conflict" not in flags(res) and polarities(res) == {"right": "supports"}
+    assert "laterality_conflict" not in flags(res) and polarities(res) == {"right": "neutral"}
+
+
+def test_a_note_with_only_a_side_word_cannot_verify_a_finding():
+    from medproof.core.status_rule import compute_status
+
+    f = finding().model_copy(update={"image_evidence": [finding().image_evidence[0].model_copy(update={"faithful": None})]})
+    res = check([f], [fact("Right", "laterality", "right")], Demographics())
+    assert compute_status(res.findings[0]) == "rejected"
+
+
+def test_a_relevant_symptom_still_supports_the_finding():
+    res = check([finding(label="Pneumonia")], [fact("fever", "symptom", "fever")], Demographics())
+    assert polarities(res) == {"fever": "supports"}
 
 
 def test_note_mentioning_both_sides_is_not_a_conflict():

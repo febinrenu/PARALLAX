@@ -404,3 +404,16 @@ def _no_leak() -> Result:
     rep = report_step(ctx, services)
     shown = [c.get("rendered") or "" for c in rep.payload["claims"] if c.get("blocked_reason") is None]
     return not any("Ignore previous" in s for s in shown), f"{len(shown)} reportable claims"
+
+
+@case("policy_side_word_alone_does_not_verify_a_finding", "policy", "a note that only names a side gives no support and the finding stays rejected")
+def _side_word() -> Result:
+    from medproof.context.contradictions import Demographics, check
+    from medproof.core.status_rule import compute_status
+
+    f = finding(faithful=None)
+    note = "Right basal crackles."
+    res = check([f], [_fact(note, "Right", "laterality", "right")], Demographics(63, "F"), note_text=note, note_id="n1")
+    status = compute_status(res.findings[0])
+    support = [t for t in res.findings[0].text_evidence if t.polarity == "supports"]
+    return status == "rejected" and not support, f"status={status} supports={len(support)}"

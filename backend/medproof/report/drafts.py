@@ -72,7 +72,7 @@ def template_drafts(view: StudyView) -> ClaimDrafts:
         key=lambda f: (_PRIORITY.get(f.status, 3), f.finding_id),
     )
     for f in order:
-        support = next((t.evidence_id for t in f.text_evidence if t.polarity == "supports"), None)
+        support = next((t.evidence_id for t in f.text_evidence if t.polarity == "supports" and t.fact_type != "laterality"), None)
         if f.status == "discordant":
             chosen.append(ClaimDraft(frame="discordant_review", finding=f.finding_id))
         elif f.tier == "abstain":

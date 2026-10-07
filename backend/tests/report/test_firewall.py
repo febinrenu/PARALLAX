@@ -252,3 +252,15 @@ def test_run_never_raises_on_garbage(view):
 
     out, stage = run([Boom()], view)  # type: ignore[list-item]
     assert stage.stage == "report"
+
+
+def test_a_side_word_is_not_support_for_a_finding_whose_image_evidence_is_unverified():
+    from medproof.core.schemas import TextEvidence
+    from medproof.report.firewall import is_supported
+    from tests.report.conftest import finding, ie
+
+    side = TextEvidence(evidence_id="te_90", note_id=NOTE_ID, span=(0, 4), quote="63F ", fact_type="laterality", polarity="supports")
+    f = finding("f90", "Mass", "moderate", "uncertain", [ie("ie_90", None)], [side])
+    assert not is_supported(f)
+    symptom = TextEvidence(evidence_id="te_91", note_id=NOTE_ID, span=(0, 4), quote="63F ", fact_type="symptom", polarity="supports")
+    assert is_supported(f.model_copy(update={"text_evidence": [side, symptom]}))

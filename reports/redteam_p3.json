@@ -1,7 +1,7 @@
 {
   "scope": "P3 components, offline, language models replaced by fakes",
-  "cases": 96,
-  "passed": 96,
+  "cases": 97,
+  "passed": 97,
   "categories": {
     "notes_robustness": {
       "cases": 19,
@@ -29,8 +29,8 @@
       "failed": []
     },
     "policy": {
-      "cases": 2,
-      "passed": 2,
+      "cases": 3,
+      "passed": 3,
       "failed": []
     },
     "stages": {
