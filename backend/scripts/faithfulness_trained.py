@@ -25,20 +25,23 @@ def main(argv=None) -> int:
     ap.add_argument("--images", default=str(ROOT / "backend" / "data" / "router"))
     ap.add_argument("--artifacts", default=str(ROOT / "ml" / "artifacts"))
     ap.add_argument("-n", type=int, default=12)
-    ap.add_argument("--only", choices=("brain_cls", "skin_cls"), default=None, help="assess a single model")
+    ap.add_argument("--only", choices=("brain_cls", "skin_cls", "bone_det"), default=None, help="assess a single model")
     ap.add_argument("--min-prob", type=float, default=0.3, help="only findings at least this probable are assessed")
     ap.add_argument("--out", default=str(ROOT / "backend" / "medproof" / "verify" / "results" / "faithfulness_trained.json"))
     a = ap.parse_args(argv)
     from medproof.intake.decode import load_image
-    from medproof.readers import classifier
+    from medproof.readers import bone, classifier
     from medproof.verify import faithfulness as FA
     from medproof.verify import stability as ST
 
     report = {}
-    for name, modality, folder in (("brain_cls", "brain_mri", "brain_mri"), ("skin_cls", "skin_dermoscopy", "skin_dermoscopy")):
+    for name, modality, folder in (("brain_cls", "brain_mri", "brain_mri"), ("skin_cls", "skin_dermoscopy", "skin_dermoscopy"), ("bone_det", "bone_xray", "bone_xray")):
         if a.only and a.only != name:
             continue
-        reader = classifier.ImageClassifierReader.from_dir(Path(a.artifacts) / name, modality=modality, positive_threshold=0.0)
+        if name == "bone_det":  # box-only findings: the deletion test runs on the box region
+            reader = bone.BoneReader.from_dir(Path(a.artifacts) / name)
+        else:
+            reader = classifier.ImageClassifierReader.from_dir(Path(a.artifacts) / name, modality=modality, positive_threshold=0.0)
         files = sorted(glob.glob(str(Path(a.images) / folder / "**" / "*.*"), recursive=True))
         files = files[:: max(1, len(files) // a.n)][: a.n]
         rows = []
