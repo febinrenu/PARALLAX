@@ -202,6 +202,16 @@ def _weights_sha8(model: Any) -> str:
 _READER: CxrReader | None = None
 
 
+def _share(ctx, reader, out, findings) -> None:
+    """Leave the live reader, its raw output and the contract findings on the context so the faithfulness and
+    stability stages can re-score the same image. A context without writable attributes is left alone."""
+    for name, value in (("reader", reader), ("reader_output", out), ("findings", findings)):
+        try:
+            setattr(ctx, name, value)
+        except AttributeError:
+            return
+
+
 def get_reader() -> CxrReader:
     global _READER
     if _READER is None:
@@ -233,6 +243,7 @@ def run(ctx, reader: CxrReader | None = None) -> StageResult:
     except Exception as exc:  # any model, weight or runtime failure degrades to a failed stage
         msg = f"CXR reader unavailable ({type(exc).__name__})"
         return done(False, {"error": msg}, [msg])
+    _share(ctx, rdr, out, findings)
     payload = {
         "model_id": out.model_id,
         "labels": out.labels,

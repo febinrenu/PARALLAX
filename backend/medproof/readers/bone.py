@@ -119,4 +119,7 @@ def run(ctx, reader: BoneReader | None = None) -> StageResult:
     except Exception as exc:
         msg = f"bone reader unavailable ({type(exc).__name__})"
         return done(False, {"error": msg}, [msg])
+    from medproof.readers.cxr import _share
+
+    _share(ctx, reader, out, findings)
     return done(True, {"model_id": out.model_id, "probs": [round(float(p), 5) for p in out.probs], "findings": [f.model_dump() for f in findings]}, warnings)
