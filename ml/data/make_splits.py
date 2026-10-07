@@ -82,10 +82,11 @@ def _finish(name: str, df: pd.DataFrame, hashes: np.ndarray, fractions: dict[str
     if "loose_cluster" not in df:
         df["loose_cluster"] = -1
     df["phash"] = [f"{int(h):016x}" for h in hashes]
-    if "overlaps_brain_mri" in df:
-        newly = (df.dropped_reason == "") & df.overlaps_brain_mri
-        df.loc[newly, "dropped_reason"] = "duplicate_of_brain_mri"
-        rep["removed_by_reason"]["duplicate_of_brain_mri"] = int(newly.sum())
+    if "exclude_reason" in df:  # reasons the builder already knows (overlap with a training set, a class we do not model)
+        for reason in sorted(set(df.exclude_reason) - {""}):
+            newly = (df.dropped_reason == "") & (df.exclude_reason == reason)
+            df.loc[newly, "dropped_reason"] = reason
+            rep["removed_by_reason"][reason] = int(newly.sum())
         rep["images_removed"] = int((df.dropped_reason != "").sum())
     kept = df.dropped_reason == ""
     fixed = df["split"].notna() if "split" in df else pd.Series(False, index=df.index)  # rows pre-assigned (official tests)
@@ -293,8 +294,33 @@ def build_bdneuro(root: Path) -> tuple[pd.DataFrame, np.ndarray, dict]:
     ours = pd.read_csv(SPLITS_DIR / "brain_mri.csv", keep_default_na=False)
     oh = np.array([int(x, 16) for x in ours.phash], dtype=np.uint64)
     hit = {i for i, _, _ in ph.near_pairs(hashes, ph.DUP_MAX_DIST, other=oh)}
-    df["overlaps_brain_mri"] = [i in hit for i in range(len(df))]
+    df["exclude_reason"] = ["duplicate_of_brain_mri" if i in hit else "" for i in range(len(df))]
     extra = {"overlap_with_brain_mri_images": len(hit), "note": "external test only; images that duplicate a brain_mri image are excluded; labels follow the folder names (no_tumor -> notumor)"}
+    return df, hashes, extra
+
+
+def build_milk10k(root: Path) -> tuple[pd.DataFrame, np.ndarray, dict]:
+    """MILK10k dermoscopic images as an external skin test. Classes we do not model, and any image that duplicates a HAM10000 or ISIC 2018 image, are excluded."""
+    base = root / "milk10k"
+    gt = pd.read_csv(base / "training_gt.csv")
+    inp = pd.read_csv(base / "training_input.csv")
+    derm = inp[inp.image_type == "dermoscopic"].merge(gt, on="lesion_id")
+    cols = [c for c in gt.columns if c != "lesion_id"]
+    top = derm[cols].idxmax(axis=1)
+    ours = {"AKIEC": "akiec", "BCC": "bcc", "BKL": "bkl", "DF": "df", "MEL": "mel", "NV": "nv", "VASC": "vasc"}
+    site = {"trunk": "Trunk", "head_neck_face": "Head and neck", "lower_extremity": "Lower extremity", "upper_extremity": "Upper extremity", "hand": "Upper extremity", "foot": "Lower extremity", "genital": "Anogenital region"}
+    tone = derm.skin_tone_class.map(lambda t: "0-1 (darkest)" if t <= 1 else "5 (lightest)" if t >= 5 else str(int(t)))
+    df = pd.DataFrame({"dataset": "milk10k", "source_dir": "milk10k", "relpath": "images/" + derm.isic_id + ".jpg", "image_id": derm.isic_id.to_numpy(), "label": top.map(lambda c: ours.get(c, c.lower())).to_numpy(),
+                       "native_group": derm.lesion_id.to_numpy(), "orig_split": "none", "age": derm.age_approx.to_numpy(), "sex": derm.sex.to_numpy(), "site": derm.site.to_numpy(), "site_general": derm.site.map(site).to_numpy(),
+                       "skin_tone": tone.to_numpy(), "skin_tone_class": derm.skin_tone_class.to_numpy()})
+    df["exclude_reason"] = ["" if c in ours else f"unmapped_class:{c.lower()}" for c in top]
+    hashes = hash_dataset("milk10k", df.source_dir, df.relpath, root)
+    ham = pd.read_csv(SPLITS_DIR / "ham10000.csv", keep_default_na=False)
+    oh = np.array([int(x, 16) for x in ham.phash], dtype=np.uint64)
+    hit = {i for i, _, _ in ph.near_pairs(hashes, ph.DUP_MAX_DIST, other=oh)}
+    df.loc[[i in hit and df.exclude_reason.iloc[i] == "" for i in range(len(df))], "exclude_reason"] = "duplicate_of_ham10000"
+    extra = {"overlap_with_ham10000_images": len(hit), "classes_not_modelled": {c: int((top == c).sum()) for c in cols if c not in ours},
+             "note": "external test only; skin-tone grade 0 (very dark) to 5 (very light), grades 0 and 1 are merged because only 6 lesions have grade 0"}
     return df, hashes, extra
 
 
@@ -305,9 +331,10 @@ SPECS = {
     "brain_mri": (build_brain_mri, {"train": 0.70, "val": 0.10, "cal": 0.10, "test": 0.10}, "label", ["test"], {"loose_dist": 6, "use_loose_as_group": True}),
     "lgg_seg": (build_lgg_seg, {"train": 0.80, "val": 0.10, "test": 0.10}, "label", ["test"], {}),
     "bdneuro": (build_bdneuro, {"external_test": 1.0}, "label", ["external_test"], {}),
+    "milk10k": (build_milk10k, {"external_test": 1.0}, "label", ["external_test"], {}),
     "rsna": (build_rsna, {"cal": 0.30, "test": 0.70}, "label", ["test"], {}),
 }
-SOURCE_DIRS = {"fracatlas": "fracatlas", "ham10000": "isic2018_t3_train", "brain_mri": "brain_mri", "lgg_seg": "lgg_seg", "rsna": "rsna_pneumonia", "bdneuro": "bdneuro"}
+SOURCE_DIRS = {"fracatlas": "fracatlas", "ham10000": "isic2018_t3_train", "brain_mri": "brain_mri", "lgg_seg": "lgg_seg", "rsna": "rsna_pneumonia", "bdneuro": "bdneuro", "milk10k": "milk10k"}
 
 
 def run(name: str, root: Path) -> None:

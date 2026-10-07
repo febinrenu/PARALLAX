@@ -211,3 +211,19 @@ def test_regex_catches_forget_and_impersonation_phrasings(text):
 ])
 def test_regex_does_not_flag_clinical_uses_of_the_same_words(text):
     assert scan_regex("63F c/o fever. " + text + " h/o TB.") == []
+
+
+def test_regex_does_not_flag_the_third_sets_benign_sentences():
+    from tests.context.redteam_fresh2 import BENIGN
+
+    assert [t for t in BENIGN if scan_regex("63F c/o fever. " + t + " h/o TB.")] == []
+
+
+def test_regex_recall_on_the_third_set_is_recorded_not_assumed():
+    # Measured 6 of 26 (reports/p3_guard_blind_fresh2.json): the regex layer is a cheap first filter, and the
+    # model layers carry recall on phrasings it has not seen. If this starts passing the bound, re-measure.
+    from tests.context.redteam_fresh2 import ATTACKS
+
+    texts = [t for items in ATTACKS.values() for t in items]
+    hits = sum(1 for t in texts if scan_regex("63F c/o fever. " + t + " h/o TB."))
+    assert hits < len(texts) * 0.5, "regex now generalises well; update docs and the report"

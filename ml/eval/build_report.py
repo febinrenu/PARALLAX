@@ -126,10 +126,38 @@ def contamination_table() -> str:
     return "\n".join(rows)
 
 
+def ensemble_table() -> str:
+    e = M["models"]["skin_cls"].get("ensemble")
+    if not e:
+        return "not run"
+    rows = ["| Variant | Official test balanced accuracy [95% CI] | MILK10k (external) balanced accuracy [95% CI] |", "|---|---|---|"]
+    for name, v in e["variants"].items():
+        rows.append(f"| {name} | {ci(v['official_test']['balanced_accuracy'])} | {ci(v['milk10k']['balanced_accuracy'])} |")
+    g = e["gain_over_mean_single_seed"]
+    rows.append("")
+    rows.append(f"Gain of the 3-model ensemble with flip averaging over the mean single seed: {g['official_test']:+.3f} on the official test and {g['milk10k']:+.3f} on MILK10k. Recommendation: **{e['recommendation']}**. {e['note']}.")
+    return "\n".join(rows)
+
+
+def variants_table() -> str:
+    p = REPO / "reports" / "conformal_variants.json"
+    if not p.is_file():
+        return "not run"
+    d = json.loads(p.read_text())
+    rows = ["| Model | Set | Variant | Coverage (target 0.90) | Lowest class coverage | Mean set size |", "|---|---|---|---|---|---|"]
+    for m, sp in d["models"].items():
+        for s_, blk in sp.items():
+            for v, r in blk.items():
+                rows.append(f"| {m} | {s_} | {v} | {r['coverage']:.3f} | {r['min_class_coverage']:.2f} ({r['worst_class']}) | {r['mean_set_size']:.2f} |")
+    return "\n".join(rows)
+
+
 def main() -> int:
     inf = M["models"]["brain_cls"]["benchmark_inflation"]
     ext = M["models"]["brain_cls"]["external_bdneuro"]
     ch = M["chest_reader"]["models"]
+    tb = M['subgroups']['datasets']['skin_cls_milk10k']['by']['skin_tone']['subgroups']
+    TONE = ', '.join(f"{k} {r['accuracy']['point']:.2f}" for k, r in tb.items() if isinstance(r.get('accuracy'), dict) and 'point' in r['accuracy'])
     qs = [b["quality_gate"]["share_with_any_warning_or_failure"] for b in M["trust_signals"]["models"].values()]
     QLO, QHI = min(qs), max(qs)
     text = f"""# Validation report
@@ -143,6 +171,7 @@ def main() -> int:
 What the numbers say, in plain terms:
 
 - **The popular brain benchmark is inflated, and we can measure how much.** The model trained on the original Kaggle split scores {ci(inf['A_original_testing']['accuracy'])} on the original Testing folder. Remove the {inf['inflation']['n_testing_with_duplicate_in_training']} test images that have a near-duplicate in Training and the same model scores {ci(inf['A_testing_without_duplicates']['accuracy'])}; remove also the same-scan neighbours and it scores {ci(inf['A_testing_without_scan_neighbours']['accuracy'])}. On a completely independent set (non-duplicate BDNeuro-MRI images) our leakage-free model scores {ci(ext['accuracy'])}, and pituitary recall is only {ext['per_class_recall']['pituitary']['point']:.2f}.
+- **The skin model loses about 11 points outside its training data.** Balanced accuracy is {ci(M['models']['skin_cls']['external_milk10k']['balanced_accuracy'])} on the external MILK10k set, against {ci(M['models']['skin_cls']['splits']['official_test']['balanced_accuracy'])} on the official test, and the conformal sets cover only {M['calibration']['models']['skin_cls']['splits']['milk10k']['conformal']['alpha_0.1']['coverage']:.2f} of true labels there (target 0.90). MILK10k is also the only dataset with skin-tone grades, so it gives a skin-tone audit (section 8).
 - **A contaminated model looks much better.** On RSNA the chest model that saw RSNA in training scores AUROC {ci(ch['all']['labels']['Lung Opacity']['auroc'])}; the two models that never saw it score {ci(ch['chex']['labels']['Lung Opacity']['auroc'])} and {ci(ch['mimic_ch']['labels']['Lung Opacity']['auroc'])}.
 - **Our warnings mean something, with two exceptions.** Instability, abstention and an energy-based out-of-distribution flag all flag cases that are wrong several times as often (section 7). The image-quality gate, with its provisional thresholds, does not predict errors and flags {QLO:.0%} to {QHI:.0%} of clean images; it needs refitting.
 - **Calibration works, and conformal sets reach their target** on the official skin test set and the bone and chest false-negative controls; the brain classifier over-covers because its test split is easier than its calibration split (section 5).
@@ -207,7 +236,7 @@ Worst subgroup per metric (groups with fewer than 30 images are not reported; mi
 
 {subgroup_text()}
 
-Skin-tone labels do not exist in HAM10000 and the brain dataset has no demographic metadata, so those audits are not possible.
+Skin tone is audited on MILK10k only (grades 0 very dark to 5 very light; 0 and 1 merged, about 100 images): accuracy by grade is {TONE}, with no monotone trend; differences mix skin tone with class mix and dataset shift, and the darkest groups are too small to rule out a gap. HAM10000 has no skin-tone labels and the brain dataset no demographic metadata, so no other skin-tone audit is possible.
 
 ## 9. Corruption robustness
 
@@ -220,11 +249,21 @@ Figure: `reports/figures/corruption.png`. Segmentation uses photometric perturba
 - Bone: no patient identifiers, so another view of a test patient may be in training; the bone model has a single dataset and no external test.
 - Brain segmentation: one fold of ten (nine test groups), so its interval is wide; the product's single-channel T1-CE inputs are out of the training domain.
 - Brain classification: external accuracy ({ext['accuracy']['point']:.3f}) is far below in-source accuracy; do not present in-source numbers as general performance.
-- Skin: no skin-tone audit possible; run-to-run GPU nondeterminism is about 0.01 balanced accuracy.
+- Skin: skin-tone coverage is thin at the dark end (about 100 images in grades 0 and 1); run-to-run GPU nondeterminism is about 0.01 balanced accuracy; conformal coverage fails under dataset shift (MILK10k).
 - Pending: `discordant` and `unfaithful` signal validation (P3, P1.9); zero-shot MedSAM on ISIC 2018 Task 1 (P1.12); MedSigLIP out-of-distribution detector (P1.5); BDNeuro-MRI licence is unconfirmed; overlap of MedGemma and MedSAM training data with our test sets is unverified.
 - Reliability and risk-coverage curves for the segmenter are not defined (no per-case probability), so none is reported.
 
-## 11. Reproduce
+## 11. Optional extras
+
+**Skin ensemble.** Three ConvNeXt-Tiny models trained with different seeds, logits averaged, with optional four-way flip averaging at test time.
+
+{ensemble_table()}
+
+**Conformal variants.** The shipped randomised APS against class-conditional (Mondrian) APS and RAPS, all fitted on the same calibration split. Mondrian protects the weakest class at the price of larger sets; RAPS over-covers on in-distribution data but is the most robust under shift (MILK10k, BDNeuro). None restores the 90% guarantee outside the training distribution.
+
+{variants_table()}
+
+## 12. Reproduce
 
 ```
 python ml/eval/run_all.py --check     # recompute every number from cached predictions (about 100 s, CPU only)

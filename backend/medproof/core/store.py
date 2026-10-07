@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import threading
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Literal
 
 from medproof.core.schemas import StageResult, StudyResult
@@ -25,6 +26,7 @@ class StudyRecord:
     error: str | None = None
     queue: asyncio.Queue | None = None  # live subscribers; None once terminal and drained
     raw: bytes | None = None  # the upload, kept so the viewer can fetch display and full-depth pixels
+    completed_at: datetime | None = None  # when the result was stored; the FHIR report's issue time
 
 
 class StudyStore:
@@ -62,6 +64,7 @@ class StudyStore:
                 return
             record.status = "done"
             record.result = result
+            record.completed_at = datetime.now(UTC)
             if record.queue is not None:
                 record.queue.put_nowait(("done", result))
                 record.queue.put_nowait(None)  # sentinel: stop streaming

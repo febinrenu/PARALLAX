@@ -11,16 +11,17 @@ genuinely hung CPU-bound stage. `signal.alarm` isn't available on Windows (this 
 on Windows laptops and Kaggle/Colab Linux alike); multiprocessing was rejected as the pickling
 and model-reload cost per call is worse than the problem it solves.
 
-Current stage registry is deliberately short: only `intake` and the CXR `reader` stage exist
-anywhere in the repo today (no router, no verify stages, no brain/skin/bone readers, no
-generalist/MedGemma stage, no calibration, no report stage, no ledger). New stages append to
-`PIPELINE` as P1/P2/P3 land them; nothing else here needs to change for that.
+Stage registry: `intake`, the CXR `reader`, then P3's `second_read`, `context`, `report` and
+`precedents` (`medproof.reasoning_stages`). New stages append to `PIPELINE`. Each stage sees every
+earlier result on `ctx.stage_results`; a stage that updates findings returns the full list under
+`payload["findings"]`, and the study keeps one finding per id with the latest stage winning.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import time
 import uuid
 from collections.abc import Callable
@@ -32,7 +33,7 @@ from pathlib import Path
 from medproof.core.cache import StageCache, cache_key
 from medproof.core.config import PipelineConfig
 from medproof.core.context import StudyContext
-from medproof.core.schemas import Finding, Modality, StageResult, StudyResult
+from medproof.core.schemas import Claim, Finding, Modality, StageResult, StudyResult
 from medproof.core.status_rule import compute_status
 from medproof.intake.decode import sha256_hex
 
@@ -42,6 +43,8 @@ DISCLAIMER = (
 )
 
 _GENESIS_HASH = "0" * 64
+
+log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -85,12 +88,26 @@ def _reader_step(ctx: StudyContext) -> StageResult:
     return StageResult(stage="reader", ok=False, ms=0, payload={"error": msg}, warnings=[msg])
 
 
+def _reasoning_specs() -> list[StageSpec]:
+    """P3's stages (second read, context, report, precedents). They set their own timeouts and are
+    never cached: the notes change their output and the cache key is the image hash alone. Their
+    module pulls in optional dependencies (`backend[services]`); without them the API still runs
+    image-only and says why in the log, instead of failing to start."""
+    try:
+        from medproof.reasoning_stages import stage_specs
+    except ImportError as exc:
+        log.warning("reasoning stages unavailable (%s); install backend[services] to enable them", exc)
+        return []
+    return stage_specs()
+
+
 PIPELINE: list[StageSpec] = [
     StageSpec(name="intake", run=_intake_step, timeout_s=5.0, required=True, cacheable=False),
     # v3: artifacts are content-addressed and failures are no longer cached; older entries may
     # point at old artifact paths or replay a failure.
     StageSpec(name="reader", run=_reader_step, timeout_s=20.0, cache_version="v3"),
 ]
+PIPELINE.extend(_reasoning_specs())
 
 
 def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, config: PipelineConfig) -> StageResult:
@@ -129,18 +146,35 @@ def _run_stage(spec: StageSpec, ctx: StudyContext, cache: StageCache | None, con
 
 
 def _collect_findings(stage_results: list[StageResult]) -> list[Finding]:
-    """Union of every `payload["findings"]` across all stages, status recomputed by the real
-    rule. `evidence.to_findings` hardcodes every finding to "uncertain" on the way out of a
-    reader — this is the first place that rule actually gets applied. Merging findings that a
-    future verify stage updates in place (e.g. faithfulness setting `faithful=True`) is work
-    for whichever stage introduces that; nothing does yet, so there's nothing to merge today."""
-    findings: list[Finding] = []
+    """One finding per id across all stages, in first-seen order; a later stage's version replaces
+    an earlier one (verify, second-read and context stages return the full updated list). Same
+    semantics as `reasoning_stages.merge_findings`, pinned by a parity test, but defined here so
+    the orchestrator never depends on that module's optional imports. Status is then recomputed
+    by the real rule: readers hand findings out as "uncertain", and this is where it's decided."""
+    by_id: dict[str, Finding] = {}
     for sr in stage_results:
         for raw in sr.payload.get("findings", []) or []:
-            finding = Finding.model_validate(raw)
-            finding.status = compute_status(finding)
-            findings.append(finding)
+            try:
+                finding = raw if isinstance(raw, Finding) else Finding.model_validate(raw)
+            except ValueError:
+                continue  # one malformed entry must not lose the rest of the study
+            by_id[finding.finding_id] = finding
+    findings = list(by_id.values())
+    for finding in findings:
+        finding.status = compute_status(finding)
     return findings
+
+
+def _collect_claims(stage_results: list[StageResult]) -> list[Claim]:
+    """Every `payload["claims"]` in stage order (the report stage is the only producer today)."""
+    claims: list[Claim] = []
+    for sr in stage_results:
+        for raw in sr.payload.get("claims", []) or []:
+            try:
+                claims.append(raw if isinstance(raw, Claim) else Claim.model_validate(raw))
+            except ValueError:
+                continue
+    return claims
 
 
 def _fold_ledger_head(stage_results: list[StageResult]) -> str:
@@ -210,7 +244,7 @@ def _run(
         artifact_dir=config.artifact_root / input_sha256,
     )
 
-    stage_results: list[StageResult] = []
+    stage_results = ctx.stage_results  # later stages read earlier results from the context
     for spec in stages:
         result = _run_stage(spec, ctx, cache, config)
         stage_results.append(result)
@@ -230,7 +264,7 @@ def _run(
         ood_score=0.0,  # placeholder: P1.5 OOD score isn't built yet
         quality=quality,
         findings=_collect_findings(stage_results),
-        claims=[],  # placeholder: P3.9 slot-filled report isn't built yet
+        claims=_collect_claims(stage_results),
         ledger_head=_fold_ledger_head(stage_results),
         disclaimer=DISCLAIMER,
     )

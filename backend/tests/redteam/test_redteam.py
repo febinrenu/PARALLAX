@@ -7,7 +7,7 @@ from tests.redteam.cases import CASES
 
 def test_the_suite_has_at_least_fifty_cases_across_every_category():
     assert len(CASES) >= 50
-    assert {c.category for c in CASES} == {"notes_robustness", "contradictions", "injection", "firewall", "degradation"}
+    assert {c.category for c in CASES} == {"notes_robustness", "contradictions", "injection", "firewall", "degradation", "policy", "stages"}
     assert len({c.id for c in CASES}) == len(CASES)
 
 

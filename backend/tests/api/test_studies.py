@@ -13,7 +13,7 @@ from medproof.api import system
 from medproof.api.app import create_app
 from medproof.core.config import PipelineConfig
 from medproof.core.ledger import Ledger
-from medproof.core.schemas import StudyResult
+from medproof.core.schemas import StageResult, StudyResult
 from medproof.core.status_rule import compute_status
 from medproof.pipeline import PIPELINE, StageSpec
 from medproof.readers import cxr as cxr_reader
@@ -110,23 +110,46 @@ def test_unknown_study_id_is_404_on_every_route(tmp_path):
     assert client.post("/studies/nope/feedback", json={"finding_id": "f1", "decision": "accept"}).status_code == 404
 
 
-def test_fhir_metrics_and_model_cards_are_honest_placeholders(tmp_path, monkeypatch):
+def test_metrics_and_model_cards_are_honest_placeholders(tmp_path, monkeypatch):
     # Point at paths that don't exist: P2 publishes the real files, and once it has, the routes
     # serve them instead (covered by the next test).
     monkeypatch.setattr(system, "METRICS_PATH", tmp_path / "missing" / "metrics.json")
     monkeypatch.setattr(system, "MODEL_CARDS_DIR", tmp_path / "missing" / "model_cards")
     client = _client(tmp_path, stages=_stub_stages())
-    study_id = _upload(client).json()["study_id"]
-    _poll_until_done(client, study_id)
-
-    fhir = client.get(f"/studies/{study_id}/fhir").json()
-    assert fhir["available"] is False
 
     metrics = client.get("/metrics").json()
     assert metrics.get("available") is False
 
     cards = client.get("/model-cards").json()
     assert cards["cards"] == []
+
+
+def test_fhir_exports_the_finished_study_as_a_validated_bundle(tmp_path):
+    pytest.importorskip("fhir.resources")
+    claim = {"claim_id": "c1", "template": "{f1.label}", "evidence_ids": ["e1"], "rendered": "Doctor, consider a finding.", "entailed": True}
+    stages = [*_stub_stages(), StageSpec(name="report", run=lambda ctx: StageResult(stage="report", ok=True, ms=0, payload={"claims": [claim]}))]
+    client = _client(tmp_path, stages=stages)
+    study_id = _upload(client).json()["study_id"]
+    study = _poll_until_done(client, study_id)
+    assert [c["claim_id"] for c in study["claims"]] == ["c1"]
+
+    resp = client.get(f"/studies/{study_id}/fhir")
+    assert resp.status_code == 200
+    bundle = resp.json()
+    assert bundle["resourceType"] == "Bundle"
+    report = bundle["entry"][0]["resource"]
+    assert report["resourceType"] == "DiagnosticReport"
+    assert report["status"] == "preliminary"
+    assert {"system": "urn:parallax:ledger-head", "value": study["ledger_head"]} in report["identifier"]
+    assert "Doctor, consider a finding." in report["conclusion"]
+
+
+def test_fhir_is_refused_until_the_study_finishes(tmp_path):
+    # TestClient's POST returns only after the pipeline finishes, so register a running study
+    # directly instead of racing the worker.
+    client = _client(tmp_path, stages=_stub_stages())
+    client.app.state.store.create("still-running", queue=None)
+    assert client.get("/studies/still-running/fhir").status_code == 409
 
 
 def test_metrics_serves_the_published_report(tmp_path, monkeypatch):

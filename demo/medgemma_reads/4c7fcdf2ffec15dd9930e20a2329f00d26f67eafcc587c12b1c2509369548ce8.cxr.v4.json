@@ -1,0 +1,15 @@
+{
+ "ok": true,
+ "model": "google/medgemma-1.5-4b-it",
+ "quant": "nf4/bf16",
+ "labels": [],
+ "boxes": [],
+ "impression": "Right upper lobe opacity.",
+ "findings_text": "Right upper lobe opacity. No pleural effusion, pneumothorax, consolidation, or mass. Heart size is normal.",
+ "raw": "FINDINGS:\nRight upper lobe opacity. No pleural effusion, pneumothorax, consolidation, or mass. Heart size is normal.\nIMPRESSION:\nRight upper lobe opacity.",
+ "error": null,
+ "warnings": [
+  "labels not provided; derive them from the report text"
+ ],
+ "ms": 6128
+}

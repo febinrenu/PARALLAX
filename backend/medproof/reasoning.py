@@ -45,6 +45,73 @@ def _failed(stage: str, t0: float, exc: Exception) -> StageResult:
     return StageResult(stage=stage, ok=False, ms=int((time.perf_counter() - t0) * 1000), payload={"error": type(exc).__name__}, warnings=[msg])
 
 
+@dataclass
+class ContextOutput:
+    findings: list[Finding]
+    missing_context: list[str]
+    flagged_spans: dict[str, list[tuple[int, int]]]
+    stage: StageResult
+
+
+def run_context(
+    findings: list[Finding],
+    notes: dict[str, str],
+    demographics: Demographics,
+    text_pool: Any,
+    *,
+    evidence_start: int = 1,
+) -> ContextOutput:
+    """Guard each note, extract its facts, add the closed-class cues, and check them against the findings."""
+    t0 = time.perf_counter()
+    facts: list[ExtractedFact] = []
+    stage_warnings: list[str] = []
+    flagged: dict[str, list[tuple[int, int]]] = {}
+    ok = True
+    guard = InjectionGuard(text_pool)
+    for note_id, text in notes.items():
+        g = guard.check(text)
+        stage_warnings.extend(g.warnings)
+        if g.flagged:
+            flagged[note_id] = g.spans()
+        got = extract(text, note_id, text_pool, g) if text_pool is not None else None
+        if got is None or not got.ok:
+            ok = False
+            stage_warnings.extend(got.warnings if got else ["fact extraction unavailable: no language model configured"])
+        facts.extend(facts_with_cues(got.facts if got is not None else [], text, note_id))
+    res = check(findings, facts, demographics, evidence_start=evidence_start)
+    st = res.stage.model_copy(update={"ok": ok, "warnings": [*stage_warnings, *res.stage.warnings],
+                                      "ms": int((time.perf_counter() - t0) * 1000)})
+    st.payload["flagged_notes"] = len(flagged)
+    return ContextOutput(res.findings, res.missing_context, flagged, st)
+
+
+def run_report(
+    findings: list[Finding],
+    notes: dict[str, str],
+    flagged: dict[str, list[tuple[int, int]]],
+    report_pool: Any,
+    judge_pool: Any,
+) -> tuple[list[Claim], list[StageResult]]:
+    """Draft claims (the firewall runs inside), then have them checked by the entailment judge.
+
+    A failed draft gives no claims; a failed judge keeps the claims, unchecked."""
+    stages: list[StageResult] = []
+    view = StudyView.build(findings, notes, flagged)
+    t0 = time.perf_counter()
+    try:
+        claims, st = draft_claims(view, report_pool)
+        stages.append(st)
+    except Exception as exc:  # noqa: BLE001 - a stage must never take the study down
+        return [], [_failed("report", t0, exc)]
+    t0 = time.perf_counter()
+    try:
+        claims, st = judge(claims, view, judge_pool)
+        stages.append(st)
+    except Exception as exc:  # noqa: BLE001
+        stages.append(_failed("entailment", t0, exc))
+    return claims, stages
+
+
 def run_reasoning(
     findings: list[Finding],
     *,
@@ -61,7 +128,6 @@ def run_reasoning(
     evidence_start: int = 1,
 ) -> ReasoningResult:
     stages: list[StageResult] = []
-    warnings: list[str] = []
     current = list(findings)
     claims: list[Claim] = []
     missing: list[str] = []
@@ -84,47 +150,19 @@ def run_reasoning(
         guarded("concordance", concordance)
 
     def context() -> None:
-        nonlocal current, missing
-        t0 = time.perf_counter()
-        facts: list[ExtractedFact] = []
-        stage_warnings: list[str] = []
-        ok = True
-        guard = InjectionGuard(text_pool)
-        for note_id, text in notes.items():
-            g = guard.check(text)
-            stage_warnings.extend(g.warnings)
-            if g.flagged:
-                flagged[note_id] = g.spans()
-            got = extract(text, note_id, text_pool, g) if text_pool is not None else None
-            if got is None or not got.ok:
-                ok = False
-                stage_warnings.extend(got.warnings if got else ["fact extraction unavailable: no language model configured"])
-            note_facts = got.facts if got is not None else []
-            facts.extend(facts_with_cues(note_facts, text, note_id))
-        res = check(current, facts, demographics, evidence_start=evidence_start)
-        current, missing = res.findings, res.missing_context
-        st = res.stage.model_copy(update={"ok": ok, "warnings": [*stage_warnings, *res.stage.warnings],
-                                          "ms": int((time.perf_counter() - t0) * 1000)})
-        st.payload["flagged_notes"] = len(flagged)
-        stages.append(st)
+        nonlocal current, missing, flagged
+        out = run_context(current, notes, demographics, text_pool, evidence_start=evidence_start)
+        current, missing, flagged = out.findings, out.missing_context, out.flagged_spans
+        stages.append(out.stage)
 
     guarded("context", context)
 
-    view = StudyView.build(current, notes, flagged)
-
     def report() -> None:
         nonlocal claims
-        claims, st = draft_claims(view, report_pool)
-        stages.append(st)
+        claims, sts = run_report(current, notes, flagged, report_pool, judge_pool)
+        stages.extend(sts)
 
     guarded("report", report)
-
-    def entail() -> None:
-        nonlocal claims
-        claims, st = judge(claims, view, judge_pool)
-        stages.append(st)
-
-    guarded("entailment", entail)
 
     fhir: dict[str, Any] = {}
 
@@ -136,6 +174,7 @@ def run_reasoning(
                                   payload={"entries": len(fhir.get("entry", []))}))
 
     guarded("fhir", export)
+    warnings: list[str] = []
     for st in stages:
         warnings.extend(st.warnings)
     return ReasoningResult(current, claims, fhir, stages, missing, flagged, warnings)

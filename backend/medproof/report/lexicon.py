@@ -1,4 +1,8 @@
-"""Word lists the firewall and renderer share. Local to P3 until a shared vocab module exists.
+"""Word lists the firewall and renderer share.
+
+Label terms are the union of P4's core/vocab.py (spoken form: lower case, spaces for underscores) and the
+local aliases below (short forms such as "nevus" that a model might type), so a label added to the shared
+vocabulary is blocked outside a slot without editing this file.
 
 Everything here is lowercase. Terms are matched on word boundaries after whitespace is collapsed.
 """
@@ -6,6 +10,10 @@ Everything here is lowercase. Terms are matched on word boundaries after whitesp
 from __future__ import annotations
 
 import re
+
+from medproof.core.vocab import VOCAB
+
+CORE_LABEL_TERMS = frozenset(label.lower().replace("_", " ") for labels in VOCAB.values() for label in labels)
 
 # Labels per modality (TorchXRayVision CXR set, HAM10000 classes, brain classes, bone).
 CXR_LABELS = (
@@ -30,7 +38,7 @@ MODALITY_WORDS = ("x-ray", "xray", "radiograph", "mri", "ct", "dermoscopy", "der
 
 VOCAB_TERMS: tuple[str, ...] = tuple(
     sorted(
-        {*CXR_LABELS, *SKIN_LABELS, *BRAIN_LABELS, *GENERIC_CLINICAL, *REGION_WORDS, *MODALITY_WORDS},
+        {*CORE_LABEL_TERMS, *CXR_LABELS, *SKIN_LABELS, *BRAIN_LABELS, *GENERIC_CLINICAL, *REGION_WORDS, *MODALITY_WORDS},
         key=lambda t: (-len(t), t),
     )
 )

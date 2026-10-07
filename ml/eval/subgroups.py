@@ -107,6 +107,26 @@ def skin() -> dict:
     return out
 
 
+def skin_milk() -> dict:
+    """Skin-tone audit (and age, sex, site) of skin_cls on MILK10k, the only dataset here with skin-tone grades."""
+    meta = json.loads((ART / "skin_cls" / "model_meta.json").read_text())
+    classes = meta["classes"]
+    z = np.load(ART / "skin_cls" / "predictions" / "milk10k.npz", allow_pickle=False)
+    mel = classes.index("mel")
+    df = pd.DataFrame({"y": z["y"], "pred": z["logits"].argmax(1), "group": z["group"].astype(str), "skin_tone": z["skin_tone"], "age_band": [age_band(a) for a in z["age"]], "sex": z["sex"], "site": z["site"]})
+    df["correct"] = (df.y == df.pred).astype(int)
+    df["is_mel"] = (df.y == mel).astype(int)
+    metrics = {
+        "accuracy": (lambda s: float(s.correct.mean()), 0, None),
+        "balanced_accuracy": (lambda s: mt.balanced_accuracy(s.y.to_numpy(), s.pred.to_numpy(), len(classes)), 0, None),
+        "melanoma_sensitivity": (lambda s: float((s.pred[s.is_mel == 1] == mel).mean()), MIN_POS, "is_mel"),
+    }
+    out = _audit(df, ["skin_tone", "age_band", "sex", "site"], metrics)
+    out.update({"dataset": "MILK10k external dermoscopic images", "model": meta["model_id"], "metadata_source": "MILK10k: skin tone 0 (very dark) to 5 (very light), distinct from Fitzpatrick; grades 0 and 1 merged (6 lesions have grade 0)",
+                "note": "the only dataset with skin-tone grades; this measures the model outside its training distribution, so differences mix skin tone with dataset shift"})
+    return out
+
+
 # ----------------------------------------------------------------------------- brain
 
 
@@ -181,7 +201,7 @@ def cxr(tag: str = "chex") -> dict:
 
 def main() -> int:
     res = {"min_n": MIN_N, "min_positives": MIN_POS, "bootstrap_B": B, "datasets": {}}
-    for name, fn in (("skin_cls", skin), ("brain_cls", brain), ("bone_det", bone), ("cxr_chex", cxr)):
+    for name, fn in (("skin_cls", skin), ("skin_cls_milk10k", skin_milk), ("brain_cls", brain), ("bone_det", bone), ("cxr_chex", cxr)):
         try:
             res["datasets"][name] = fn()
         except FileNotFoundError as e:

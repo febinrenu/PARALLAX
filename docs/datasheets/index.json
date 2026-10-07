@@ -42,6 +42,13 @@
   "license": "Kaggle competition rules"
  },
  {
+  "id": "milk10k",
+  "title": "MILK10k (paired clinical and dermoscopic skin images)",
+  "path": "docs/datasheets/milk10k.md",
+  "type": "dataset",
+  "license": "CC BY-NC 4.0"
+ },
+ {
   "id": "cifar10_test",
   "title": "CIFAR-10 test set (natural images)",
   "path": "docs/datasheets/cifar10_test.md",

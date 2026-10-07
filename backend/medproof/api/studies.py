@@ -1,5 +1,5 @@
 """`/studies` routes (P4.4, P4.6): upload, SSE stage stream, fetch, feedback, pixels for the
-viewer, per-study artifacts and ledger, FHIR placeholder."""
+viewer, per-study artifacts and ledger, FHIR export."""
 
 from __future__ import annotations
 
@@ -248,5 +248,21 @@ async def post_feedback(request: Request, study_id: str, body: FeedbackIn) -> Fe
 
 @router.get("/studies/{study_id}/fhir")
 async def get_fhir(request: Request, study_id: str) -> dict:
-    _require(request, study_id)
-    return {"available": False, "note": "FHIR export not yet implemented, see plan.md P3.13"}
+    """FHIR R4B Bundle of the finished study (P3.13's `build_bundle`): a preliminary
+    DiagnosticReport with only reportable claims, Observations for supported findings, note quotes
+    redacted, and the ledger head as an identifier."""
+    record = _require(request, study_id)
+    if record.result is None or record.completed_at is None:
+        raise HTTPException(status_code=409, detail="study has not finished")
+    try:
+        from medproof.report.fhir import build_bundle
+    except ImportError:
+        return {"available": False, "note": "FHIR export needs backend[services] (fhir.resources)"}
+    study = record.result
+    return build_bundle(
+        study.findings,
+        study.claims,
+        study_id=study.study_id,
+        issued=record.completed_at,
+        ledger_head=study.ledger_head,
+    )

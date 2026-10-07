@@ -50,6 +50,14 @@
   "rows": 3929,
   "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
  },
+ "milk10k": {
+  "counts": {
+   "dropped": 674,
+   "external_test": 4566
+  },
+  "rows": 5240,
+  "split_hash": "643e96518ca81adb954d04b30e0a16c57a886301f70cee56c55e51144f7ee329"
+ },
  "rsna": {
   "counts": {
    "cal": 7621,
