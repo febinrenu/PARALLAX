@@ -1,0 +1,6 @@
+{
+  "image": "web/public/cases/chest/image.webp",
+  "image_credit": "Mikael Häggström, CC0 (see web/public/media/credits.json)",
+  "modality_hint": "cxr",
+  "notes": "62-year-old with fever and productive cough for four days. Crackles over the right upper chest on auscultation. No prior chest surgery. No devices."
+}
