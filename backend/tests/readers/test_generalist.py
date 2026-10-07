@@ -118,3 +118,59 @@ def test_color_and_grayscale_displays_both_encode(tmp_path):
     body = srv.requests[0].content
     start = body.index(b"\x89PNG")
     assert Image.open(io.BytesIO(body[start : body.index(b"IEND", start) + 8])).size == (400, 200)
+
+
+# ---- shipped reads for the offline demo (no GPU, no tunnel, no cache)
+
+def test_a_shipped_read_answers_without_any_service_or_cache(tmp_path):
+    seed = tmp_path / "seed"
+    live = reader(tmp_path / "a", Server())
+    live.export_seed(decoded(), "cxr", seed)
+    files = list(seed.glob("*.json"))
+    assert len(files) == 1 and files[0].name == f"{'a' * 64}.cxr.v4.json"
+    srv = Server(exc=httpx.ConnectError("no gpu here"))
+    offline = GeneralistReader("http://nowhere.test", cache_dir=tmp_path / "b", transport=httpx.MockTransport(srv), seed_dir=seed)
+    r = offline.read(decoded(), "cxr")
+    assert r.ok and r.source == "seed" and r.labels_state("Effusion") == "present" and srv.requests == []
+
+
+def test_a_seed_for_another_prompt_version_or_modality_is_not_used(tmp_path):
+    seed = tmp_path / "seed"
+    reader(tmp_path / "a", Server()).export_seed(decoded(), "cxr", seed)
+    srv = Server(exc=httpx.ConnectError("down"))
+    for modality, version in (("bone_xray", "v4"), ("cxr", "v9")):
+        r = GeneralistReader("http://x.test", cache_dir=tmp_path / f"c{modality}{version}", transport=httpx.MockTransport(srv),
+                             seed_dir=seed, prompt_version=version).read(decoded(), modality)
+        assert not r.ok and r.source == "unavailable"
+
+
+def test_export_seed_refuses_to_write_a_failed_read(tmp_path):
+    bad = dict(REPORT, ok=False, error="refusal", labels=[], boxes=[], impression="", findings_text="")
+    import pytest
+
+    with pytest.raises(ValueError):
+        reader(tmp_path / "a", Server(body=bad)).export_seed(decoded(), "cxr", tmp_path / "seed")
+    assert not (tmp_path / "seed").exists() or not list((tmp_path / "seed").glob("*.json"))
+
+
+def test_a_corrupt_seed_file_is_ignored(tmp_path):
+    seed = tmp_path / "seed"
+    seed.mkdir()
+    (seed / f"{'a' * 64}.cxr.v4.json").write_text("{not json", encoding="utf-8")
+    srv = Server()
+    r = GeneralistReader("http://x.test", cache_dir=tmp_path / "c", transport=httpx.MockTransport(srv), seed_dir=seed).read(decoded(), "cxr")
+    assert r.ok and r.source == "live"
+
+
+def test_export_folder_writes_one_file_per_image_and_reports_the_rest(tmp_path):
+    from medproof.readers.export_seed import export_folder
+
+    imgs = tmp_path / "imgs"
+    imgs.mkdir()
+    for name, shade in (("a.png", 40), ("b.png", 90)):
+        Image.new("L", (32, 32), shade).save(imgs / name)
+    (imgs / "broken.png").write_bytes(b"not an image")
+    out = tmp_path / "seed"
+    written, problems = export_folder(reader(tmp_path / "c", Server()), imgs, "cxr", out)
+    assert written == 2 and len(list(out.glob("*.json"))) == 2
+    assert len(problems) == 1 and "broken.png" in problems[0]

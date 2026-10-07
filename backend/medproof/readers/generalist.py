@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
@@ -31,7 +32,7 @@ PROMPT_VERSION = "v4"  # keep in step with services/medgemma/prompts/*.md
 class GeneralistRead:
     ok: bool
     modality: str
-    source: str  # "live" | "cache" | "unavailable"
+    source: str  # "live" | "cache" | "seed" | "unavailable"
     model: str = ""
     impression: str = ""
     findings_text: str = ""
@@ -76,8 +77,11 @@ class GeneralistReader:
         transport: httpx.BaseTransport | None = None,
         prompt_version: str = PROMPT_VERSION,
         env: Mapping[str, str] | None = None,
+        seed_dir: Path | str | None = None,
     ) -> None:
         env = os.environ if env is None else env
+        seed = seed_dir or env.get("MEDGEMMA_SEED_DIR")
+        self.seed_dir = Path(seed) if seed else None
         self.url = (url or env.get("MEDGEMMA_URL") or "").rstrip("/")
         self.prompt_version = prompt_version
         Path(cache_dir).mkdir(parents=True, exist_ok=True)
@@ -94,6 +98,9 @@ class GeneralistReader:
         cached = self._cache.get(key)
         if cached is not None:
             return self._build(cached, modality, image.shape, "cache", raw_ref)
+        shipped = self._load_seed(image.sha256, modality)
+        if shipped is not None:
+            return self._build(shipped, modality, image.shape, "seed", raw_ref)
         if not self.url:
             return self._unavailable(modality, raw_ref, "MEDGEMMA_URL is not set")
         try:
@@ -110,6 +117,34 @@ class GeneralistReader:
             return self._unavailable(modality, raw_ref, str(body.get("error") or "the service returned no read"))
         self._cache.set(key, body)
         return self._build(body, modality, image.shape, "live", raw_ref)
+
+    def _seed_path(self, directory: Path, sha256: str, modality: str) -> Path:
+        return directory / f"{sha256}.{modality}.{self.prompt_version}.json"
+
+    def _load_seed(self, sha256: str, modality: str) -> dict[str, Any] | None:
+        """A read shipped with the repo for a demo image; ignored when missing, corrupt or for another prompt."""
+        if self.seed_dir is None:
+            return None
+        path = self._seed_path(self.seed_dir, sha256, modality)
+        try:
+            body = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        return body if isinstance(body, dict) and body.get("ok") else None
+
+    def export_seed(self, image: DecodedImage, modality: str, directory: Path | str) -> Path:
+        """Write this image's read (from the cache or the live service) as a small committable file."""
+        read = self.read(image, modality)
+        if not read.ok:
+            raise ValueError(f"no usable read to export: {read.warnings}")
+        key = hashlib.sha256(f"{image.sha256}|{modality}|{self.prompt_version}".encode()).hexdigest()
+        body = self._cache.get(key) or self._load_seed(image.sha256, modality)
+        if body is None:
+            raise ValueError("the read is not in the cache")
+        out = self._seed_path(Path(directory), image.sha256, modality)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(body, indent=1), encoding="utf-8")
+        return out
 
     @staticmethod
     def _unavailable(modality: str, raw_ref: str, why: str) -> GeneralistRead:
@@ -131,7 +166,7 @@ class GeneralistReader:
         )
         parsed = labels_from_report(text, modality)
         boxes = [
-            (str(b.get("label", "")), norm_box_to_pixels(tuple(b["xyxy_norm"]), height=h, width=w))  # type: ignore[arg-type]
+            (str(b.get("label", "")), norm_box_to_pixels(tuple(b["xyxy_norm"]), height=h, width=w))
             for b in body.get("boxes", [])
         ]
         return GeneralistRead(

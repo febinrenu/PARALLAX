@@ -1,87 +1,292 @@
 {
   "what": "MedGemma 1.5 4B (4-bit) as second reader, scored against ground truth on P2's eval batches",
-  "specialist_vs_medgemma": "skin: from P2's saved official-test predictions (see datasets.ham10000); bone: pending P2's detector predictions",
+  "specialist_vs_medgemma": "from P2's saved test predictions: see datasets.<name>.specialist_vs_medgemma (skin official test, bone FracAtlas test)",
   "datasets": {
     "fracatlas": {
-      "n_reads": 403,
-      "n_ok": 398,
-      "ok_rate": 0.9876,
-      "n_fracture": 72,
-      "n_no_fracture": 326,
+      "n_reads": 569,
+      "n_ok": 563,
+      "ok_rate": 0.9895,
+      "n_fracture": 103,
+      "n_no_fracture": 460,
       "hedged_counts_as_positive": {
         "sensitivity": {
-          "point": 0.1944,
-          "lo": 0.1108,
-          "hi": 0.2917
+          "point": 0.1845,
+          "lo": 0.1154,
+          "hi": 0.2647
         },
         "specificity": {
-          "point": 0.9939,
-          "lo": 0.9847,
+          "point": 0.9935,
+          "lo": 0.9848,
           "hi": 1.0
         },
         "accuracy": {
-          "point": 0.8492,
-          "lo": 0.8317,
-          "hi": 0.8668
+          "point": 0.8455,
+          "lo": 0.831,
+          "hi": 0.8615
         },
         "kappa": {
-          "point": 0.2702,
-          "lo": 0.15,
-          "hi": 0.3816
+          "point": 0.2561,
+          "lo": 0.1604,
+          "hi": 0.3559
         }
       },
       "definite_only": {
         "sensitivity": {
-          "point": 0.1944,
-          "lo": 0.1108,
-          "hi": 0.2917
+          "point": 0.1748,
+          "lo": 0.1068,
+          "hi": 0.2547
         },
         "specificity": {
-          "point": 0.9939,
-          "lo": 0.9847,
+          "point": 0.9935,
+          "lo": 0.9848,
           "hi": 1.0
         },
         "accuracy": {
-          "point": 0.8492,
-          "lo": 0.8317,
-          "hi": 0.8668
+          "point": 0.8437,
+          "lo": 0.8295,
+          "hi": 0.8594
         },
         "kappa": {
-          "point": 0.2702,
-          "lo": 0.15,
-          "hi": 0.3816
+          "point": 0.2434,
+          "lo": 0.1467,
+          "hi": 0.3413
+        }
+      },
+      "specialist_vs_medgemma": {
+        "n_paired": 563,
+        "specialist_positive_rate": 0.4121,
+        "medgemma_positive_rate": 0.0391,
+        "agreement_rate": {
+          "point": 0.6092,
+          "lo": 0.5744,
+          "hi": 0.6435
+        },
+        "kappa": {
+          "point": 0.0673,
+          "lo": 0.0262,
+          "hi": 0.1054
+        },
+        "n_agree": 343,
+        "n_disagree": 220,
+        "specialist_accuracy_when_agree": {
+          "point": 0.9825,
+          "lo": 0.9688,
+          "hi": 0.9942
+        },
+        "specialist_accuracy_when_disagree": {
+          "point": 0.3682,
+          "lo": 0.3276,
+          "hi": 0.4137
+        },
+        "discordant_signal": {
+          "n_flagged": 220,
+          "n_unflagged": 343,
+          "share_flagged": 0.3907637655417407,
+          "error_rate_flagged": {
+            "point": 0.6318181818181818,
+            "lo": 0.5685217692703326,
+            "hi": 0.6944505899705015,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 563,
+            "n": 563,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "error_rate_unflagged": {
+            "point": 0.01749271137026239,
+            "lo": 0.003048318551367332,
+            "hi": 0.03170257866768836,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 563,
+            "n": 563,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "difference": {
+            "point": 0.6143254704479194,
+            "lo": 0.5506336495840748,
+            "hi": 0.6766694246251046,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 563,
+            "n": 563,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "risk_ratio": {
+            "point": 36.11893939393939,
+            "lo": 19.32084204110066,
+            "hi": 195.0862533343213,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 563,
+            "n": 563,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 997
+          },
+          "predicts_errors": true,
+          "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+        },
+        "correct_positive_reports_flagged": {
+          "n_correct_positive_reports": 95,
+          "share_flagged_discordant": 0.8316,
+          "note": "share of the specialist's correct fracture reports that a discordant-downgrade rule would also demote"
         }
       },
       "progress": {
-        "reads": 403,
+        "reads": 569,
         "planned": 569,
-        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+        "status": "complete"
       }
     },
     "ham10000": {
-      "n_reads": 22,
-      "n_ok": 22,
+      "n_reads": 1000,
+      "n_ok": 1000,
       "ok_rate": 1.0,
       "class_counts": {
-        "nv": 15,
-        "bkl": 4,
-        "mel": 2,
-        "bcc": 1
+        "nv": 599,
+        "bkl": 144,
+        "mel": 113,
+        "bcc": 62,
+        "akiec": 28,
+        "vasc": 25,
+        "df": 29
       },
       "prediction_counts": {
-        "none": 15,
-        "mel": 2,
-        "nv": 5
+        "none": 580,
+        "mel": 114,
+        "nv": 290,
+        "vasc": 8,
+        "bcc": 8
       },
-      "note": "too few reads for statistics yet",
+      "coverage": 0.42,
+      "balanced_accuracy": {
+        "point": 0.1071,
+        "lo": 0.0812,
+        "hi": 0.1355
+      },
+      "melanoma_sensitivity": {
+        "point": 0.115,
+        "lo": 0.056,
+        "hi": 0.177
+      },
+      "kappa": {
+        "point": 0.0341,
+        "lo": 0.0123,
+        "hi": 0.0562
+      },
+      "accuracy_on_mapped": {
+        "point": 0.5119,
+        "lo": 0.4663,
+        "hi": 0.5597
+      },
       "specialist_vs_medgemma": {
-        "n_paired": 22,
-        "note": "need at least 50 paired reads for statistics"
+        "n_paired": 1000,
+        "medgemma_coverage": 0.42,
+        "n_compared": 420,
+        "specialist_accuracy_on_compared": 0.8214,
+        "medgemma_accuracy_on_compared": 0.5119,
+        "agreement_rate": {
+          "point": 0.5333,
+          "lo": 0.4836,
+          "hi": 0.5809
+        },
+        "kappa": {
+          "point": 0.0649,
+          "lo": -0.012,
+          "hi": 0.1446
+        },
+        "n_agree": 224,
+        "n_disagree": 196,
+        "specialist_accuracy_when_agree": {
+          "point": 0.8482,
+          "lo": 0.7902,
+          "hi": 0.9014
+        },
+        "specialist_accuracy_when_disagree": {
+          "point": 0.7908,
+          "lo": 0.7302,
+          "hi": 0.85
+        },
+        "accuracy_gap_agree_minus_disagree": {
+          "point": 0.0574,
+          "lo": -0.0239,
+          "hi": 0.138
+        },
+        "discordant_signal": {
+          "n_flagged": 196,
+          "n_unflagged": 224,
+          "share_flagged": 0.4666666666666667,
+          "error_rate_flagged": {
+            "point": 0.20918367346938777,
+            "lo": 0.15383597883597885,
+            "hi": 0.26288659793814434,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 420,
+            "n": 420,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "error_rate_unflagged": {
+            "point": 0.15178571428571427,
+            "lo": 0.11012147065930593,
+            "hi": 0.20179372197309417,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 420,
+            "n": 420,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "difference": {
+            "point": 0.05739795918367349,
+            "lo": -0.01707392087126364,
+            "hi": 0.12533442533442532,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 420,
+            "n": 420,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "risk_ratio": {
+            "point": 1.378151260504202,
+            "lo": 0.8945214542813275,
+            "hi": 2.0579684141183,
+            "level": 0.95,
+            "B": 1000,
+            "method": "percentile",
+            "n_groups": 420,
+            "n": 420,
+            "stratified": false,
+            "seed": 20261006,
+            "n_valid": 1000
+          },
+          "predicts_errors": false,
+          "verdict": "no reliable difference in error rate between flagged and unflagged cases: do not use this signal to downgrade findings"
+        }
       },
       "progress": {
-        "reads": 22,
+        "reads": 1000,
         "planned": 1000,
-        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+        "status": "complete"
       }
     }
   }

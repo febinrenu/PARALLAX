@@ -141,3 +141,63 @@ def test_inputs_are_not_mutated_and_clean_notes_raise_no_flags():
     res = check([f], [fact("fever", "symptom"), fact("right", "laterality", "right", at=8)], Demographics(age=60, sex="F"))
     assert f.flags == [] and f.text_evidence == []
     assert flags(res) == set()
+
+
+# ---- deterministic cue scan: closed-class phrases found in the note text itself, independent of the model
+
+from medproof.context.contradictions import scan_cues  # noqa: E402
+
+
+@pytest.mark.parametrize(
+    "text,ftype,needle",
+    [
+        ("63M c/o fever. currently pregnant. h/o TB.", "demographic", "pregnant"),
+        ("Primigravida at 20 weeks. No pain.", "demographic", "Primigravida"),
+        ("She is 12 weeks pregnant.", "demographic", "pregnant"),
+        ("post-menopausal woman", "demographic", "menopausal"),
+        ("Patient is asymptomatic.", "symptom", "asymptomatic"),
+        ("reports no symptoms at all", "symptom", "no symptoms"),
+        ("h/o asthma, s/p right pneumonectomy 2019", "history", "right pneumonectomy"),
+        ("had a Lt pneumonectomy", "history", "Lt pneumonectomy"),
+    ],
+)
+def test_cues_are_found_with_exact_spans(text, ftype, needle):
+    cues = scan_cues(text, "n1")
+    hit = [c for c in cues if c.fact_type == ftype and needle in c.quote]
+    assert hit, (text, cues)
+    c = hit[0]
+    assert text[c.span[0] : c.span[1]] == c.quote and c.note_id == "n1"
+
+
+@pytest.mark.parametrize("text", ["No chest pain. h/o TB 2015.", "Pregnancy test not indicated, unknown.", "denies fever", "right basal crackles", ""])
+def test_cues_do_not_fire_on_ordinary_text(text):
+    assert scan_cues(text, "n") == []
+
+
+def test_pregnancy_word_alone_in_a_negated_context_is_not_a_cue():
+    assert [c for c in scan_cues("No history of pregnancy.", "n") if c.fact_type == "demographic"] == []
+    assert [c for c in scan_cues("not pregnant", "n") if c.fact_type == "demographic"] == []
+
+
+def test_check_uses_cues_from_the_note_text_when_the_model_missed_them():
+    f = finding(label="Effusion")
+    res = check([f], [fact("63M", "demographic")], Demographics(age=63, sex="M"), note_text="63M c/o cough. currently pregnant.", note_id="n1")
+    assert "demographic_implausible" in flags(res)
+    res2 = check([f], [], Demographics(), note_text="Patient is asymptomatic.", note_id="n1")
+    assert "symptom_finding_incoherent" in flags(res2)
+    res3 = check([finding(region="right upper zone", modality="cxr")], [fact("pneumonectomy", "history", at=7)], Demographics(),
+                 note_text="h/o s/p right pneumonectomy.", note_id="n1")
+    assert "history_conflict" in flags(res3)
+
+
+def test_cue_replaces_an_overlapping_model_fact_instead_of_duplicating_it():
+    f = finding(region="right upper zone")
+    text = "h/o s/p right pneumonectomy."
+    start = text.index("pneumonectomy")
+    res = check([f], [fact("pneumonectomy", "history", at=start)], Demographics(), note_text=text, note_id="n1")
+    hist = [t for t in next(x for x in res.findings).text_evidence if t.fact_type == "history"]
+    assert len(hist) == 1 and "right" in hist[0].quote
+
+
+def test_without_note_text_behaviour_is_unchanged():
+    assert flags(check([finding()], [fact("63F", "demographic")], Demographics(age=63, sex="F"))) == set()

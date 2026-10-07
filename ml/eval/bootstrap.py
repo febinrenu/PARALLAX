@@ -90,6 +90,9 @@ def ci(
 ) -> dict:
     point, vals, members = bootstrap_values(arrays, stat_fn, groups, strata, B, seed)
     vals_f = vals[np.isfinite(vals)]
+    if len(vals_f) == 0:  # the statistic is undefined in every replicate (e.g. a ratio whose denominator is always zero)
+        return {"point": point, "lo": float("nan"), "hi": float("nan"), "level": 1 - alpha, "B": int(B), "method": method, "n_groups": len(members), "n": int(len(next(iter(arrays.values())))),
+                "stratified": strata is not None, "seed": seed, "n_valid": 0}
     if method == "bca":
         n = len(next(iter(arrays.values())))
         jack = []

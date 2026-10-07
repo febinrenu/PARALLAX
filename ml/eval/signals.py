@@ -146,6 +146,8 @@ def compare(df: pd.DataFrame, flag: str) -> dict:
     d = bs.ci({"e": e, "f": f}, lambda e, f: float(e[f].mean() - e[~f].mean()) if f.any() and (~f).any() else float("nan"), **kw)
     r = bs.ci({"e": e, "f": f}, lambda e, f: float(e[f].mean() / e[~f].mean()) if f.any() and (~f).any() and e[~f].mean() > 0 else float("nan"), **kw)
     out["difference"], out["risk_ratio"] = d, r
+    if r["n_valid"] == 0:
+        out["risk_ratio_note"] = "undefined: no unflagged case is wrong"
     ok = d["lo"] > 0
     out["predicts_errors"] = bool(ok)
     out["verdict"] = ("flagged cases are wrong more often (difference CI excludes 0): the signal is usable" if ok else
