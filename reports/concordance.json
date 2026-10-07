@@ -150,131 +150,131 @@
       }
     },
     "ham10000": {
-      "n_reads": 531,
-      "n_ok": 531,
+      "n_reads": 1000,
+      "n_ok": 1000,
       "ok_rate": 1.0,
       "class_counts": {
-        "nv": 320,
-        "bkl": 65,
-        "mel": 67,
-        "bcc": 35,
-        "akiec": 14,
-        "vasc": 16,
-        "df": 14
+        "nv": 599,
+        "bkl": 144,
+        "mel": 113,
+        "bcc": 62,
+        "akiec": 28,
+        "vasc": 25,
+        "df": 29
       },
       "prediction_counts": {
-        "none": 301,
-        "mel": 68,
-        "nv": 150,
-        "vasc": 6,
-        "bcc": 6
+        "none": 580,
+        "mel": 114,
+        "nv": 290,
+        "vasc": 8,
+        "bcc": 8
       },
-      "coverage": 0.4331,
+      "coverage": 0.42,
       "balanced_accuracy": {
-        "point": 0.113,
-        "lo": 0.0774,
-        "hi": 0.1503
+        "point": 0.1071,
+        "lo": 0.0812,
+        "hi": 0.1355
       },
       "melanoma_sensitivity": {
-        "point": 0.1343,
-        "lo": 0.0462,
-        "hi": 0.2344
+        "point": 0.115,
+        "lo": 0.056,
+        "hi": 0.177
       },
       "kappa": {
-        "point": 0.0381,
-        "lo": 0.0073,
-        "hi": 0.0739
+        "point": 0.0341,
+        "lo": 0.0123,
+        "hi": 0.0562
       },
       "accuracy_on_mapped": {
-        "point": 0.5043,
-        "lo": 0.4384,
-        "hi": 0.5708
+        "point": 0.5119,
+        "lo": 0.4663,
+        "hi": 0.5597
       },
       "specialist_vs_medgemma": {
-        "n_paired": 531,
-        "medgemma_coverage": 0.4331,
-        "n_compared": 230,
-        "specialist_accuracy_on_compared": 0.8043,
-        "medgemma_accuracy_on_compared": 0.5043,
+        "n_paired": 1000,
+        "medgemma_coverage": 0.42,
+        "n_compared": 420,
+        "specialist_accuracy_on_compared": 0.8214,
+        "medgemma_accuracy_on_compared": 0.5119,
         "agreement_rate": {
-          "point": 0.4913,
-          "lo": 0.4208,
-          "hi": 0.5617
+          "point": 0.5333,
+          "lo": 0.4836,
+          "hi": 0.5809
         },
         "kappa": {
-          "point": 0.0428,
-          "lo": -0.0698,
-          "hi": 0.1625
+          "point": 0.0649,
+          "lo": -0.012,
+          "hi": 0.1446
         },
-        "n_agree": 113,
-        "n_disagree": 117,
+        "n_agree": 224,
+        "n_disagree": 196,
         "specialist_accuracy_when_agree": {
-          "point": 0.8584,
-          "lo": 0.7768,
-          "hi": 0.926
+          "point": 0.8482,
+          "lo": 0.7902,
+          "hi": 0.9014
         },
         "specialist_accuracy_when_disagree": {
-          "point": 0.7521,
-          "lo": 0.6639,
-          "hi": 0.8334
+          "point": 0.7908,
+          "lo": 0.7302,
+          "hi": 0.85
         },
         "accuracy_gap_agree_minus_disagree": {
-          "point": 0.1063,
-          "lo": -0.0073,
-          "hi": 0.2117
+          "point": 0.0574,
+          "lo": -0.0239,
+          "hi": 0.138
         },
         "discordant_signal": {
-          "n_flagged": 117,
-          "n_unflagged": 113,
-          "share_flagged": 0.508695652173913,
+          "n_flagged": 196,
+          "n_unflagged": 224,
+          "share_flagged": 0.4666666666666667,
           "error_rate_flagged": {
-            "point": 0.24786324786324787,
-            "lo": 0.16068802521008405,
-            "hi": 0.32694999999999996,
+            "point": 0.20918367346938777,
+            "lo": 0.15383597883597885,
+            "hi": 0.26288659793814434,
             "level": 0.95,
             "B": 1000,
             "method": "percentile",
-            "n_groups": 230,
-            "n": 230,
+            "n_groups": 420,
+            "n": 420,
             "stratified": false,
             "seed": 20261006,
             "n_valid": 1000
           },
           "error_rate_unflagged": {
-            "point": 0.1415929203539823,
-            "lo": 0.07894736842105263,
-            "hi": 0.20954887218045112,
+            "point": 0.15178571428571427,
+            "lo": 0.11012147065930593,
+            "hi": 0.20179372197309417,
             "level": 0.95,
             "B": 1000,
             "method": "percentile",
-            "n_groups": 230,
-            "n": 230,
+            "n_groups": 420,
+            "n": 420,
             "stratified": false,
             "seed": 20261006,
             "n_valid": 1000
           },
           "difference": {
-            "point": 0.10627032750926557,
-            "lo": -0.00869889385800101,
-            "hi": 0.20280790374533644,
+            "point": 0.05739795918367349,
+            "lo": -0.01707392087126364,
+            "hi": 0.12533442533442532,
             "level": 0.95,
             "B": 1000,
             "method": "percentile",
-            "n_groups": 230,
-            "n": 230,
+            "n_groups": 420,
+            "n": 420,
             "stratified": false,
             "seed": 20261006,
             "n_valid": 1000
           },
           "risk_ratio": {
-            "point": 1.750534188034188,
-            "lo": 0.9571147855266505,
-            "hi": 3.277298850574712,
+            "point": 1.378151260504202,
+            "lo": 0.8945214542813275,
+            "hi": 2.0579684141183,
             "level": 0.95,
             "B": 1000,
             "method": "percentile",
-            "n_groups": 230,
-            "n": 230,
+            "n_groups": 420,
+            "n": 420,
             "stratified": false,
             "seed": 20261006,
             "n_valid": 1000
@@ -284,9 +284,9 @@
         }
       },
       "progress": {
-        "reads": 531,
+        "reads": 1000,
         "planned": 1000,
-        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+        "status": "complete"
       }
     }
   }
