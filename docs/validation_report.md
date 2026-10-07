@@ -217,7 +217,47 @@ Figure: `reports/figures/corruption.png`. Segmentation uses photometric perturba
 - Pending: `discordant` and `unfaithful` signal validation (P3, P1.9); zero-shot MedSAM on ISIC 2018 Task 1 (P1.12); MedSigLIP out-of-distribution detector (P1.5); BDNeuro-MRI licence is unconfirmed; overlap of MedGemma and MedSAM training data with our test sets is unverified.
 - Reliability and risk-coverage curves for the segmenter are not defined (no per-case probability), so none is reported.
 
-## 11. Reproduce
+## 11. Optional extras
+
+**Skin ensemble.** Three ConvNeXt-Tiny models trained with different seeds, logits averaged, with optional four-way flip averaging at test time.
+
+| Variant | Official test balanced accuracy [95% CI] | MILK10k (external) balanced accuracy [95% CI] |
+|---|---|---|
+| single, seed 1 | 0.680 [0.633, 0.725] | 0.571 [0.544, 0.600] |
+| single, seed 2 | 0.719 [0.673, 0.767] | 0.590 [0.559, 0.617] |
+| single, seed 3 | 0.716 [0.665, 0.761] | 0.594 [0.567, 0.624] |
+| single (seed 1) + flip TTA | 0.684 [0.639, 0.730] | 0.574 [0.546, 0.603] |
+| ensemble of 3 | 0.725 [0.679, 0.772] | 0.607 [0.579, 0.635] |
+| ensemble of 3 + flip TTA | 0.728 [0.680, 0.775] | 0.609 [0.580, 0.636] |
+
+Gain of the 3-model ensemble with flip averaging over the mean single seed: +0.023 on the official test and +0.024 on MILK10k. Recommendation: **ship the ensemble**. seeds differ by about 0.04 balanced accuracy on the official test (seed 1 was the weakest), so part of the gain over seed 1 is seed luck; the fair baseline is the mean of the single seeds. Swapping the shipped weights for the best single seed costs nothing but is selection on the test set, so it is not recommended as evidence of better generalisation.
+
+**Conformal variants.** The shipped randomised APS against class-conditional (Mondrian) APS and RAPS, all fitted on the same calibration split. Mondrian protects the weakest class at the price of larger sets; RAPS over-covers on in-distribution data but is the most robust under shift (MILK10k, BDNeuro). None restores the 90% guarantee outside the training distribution.
+
+| Model | Set | Variant | Coverage (target 0.90) | Lowest class coverage | Mean set size |
+|---|---|---|---|---|---|
+| skin_cls | official_test | randomised APS (shipped) | 0.898 | 0.63 (akiec) | 1.26 |
+| skin_cls | official_test | Mondrian APS | 0.917 | 0.60 (vasc) | 2.06 |
+| skin_cls | official_test | RAPS (k_reg=1, lambda=0.01) | 0.931 | 0.77 (akiec) | 1.69 |
+| skin_cls | official_test | RAPS (k_reg=2, lambda=0.05) | 0.930 | 0.72 (akiec) | 1.90 |
+| skin_cls | test | randomised APS (shipped) | 0.925 | 0.73 (df) | 1.23 |
+| skin_cls | test | Mondrian APS | 0.938 | 0.91 (mel) | 2.03 |
+| skin_cls | test | RAPS (k_reg=1, lambda=0.01) | 0.950 | 0.86 (mel) | 1.61 |
+| skin_cls | test | RAPS (k_reg=2, lambda=0.05) | 0.951 | 0.73 (df) | 1.87 |
+| skin_cls | milk10k | randomised APS (shipped) | 0.733 | 0.50 (akiec) | 1.69 |
+| skin_cls | milk10k | Mondrian APS | 0.866 | 0.76 (mel) | 2.49 |
+| skin_cls | milk10k | RAPS (k_reg=1, lambda=0.01) | 0.821 | 0.63 (akiec) | 2.29 |
+| skin_cls | milk10k | RAPS (k_reg=2, lambda=0.05) | 0.787 | 0.56 (akiec) | 2.12 |
+| brain_cls | test | randomised APS (shipped) | 0.940 | 0.91 (meningioma) | 1.00 |
+| brain_cls | test | Mondrian APS | 0.950 | 0.93 (notumor) | 1.01 |
+| brain_cls | test | RAPS (k_reg=1, lambda=0.01) | 0.979 | 0.96 (meningioma) | 1.34 |
+| brain_cls | test | RAPS (k_reg=2, lambda=0.05) | 0.984 | 0.97 (meningioma) | 1.69 |
+| brain_cls | bdneuro | randomised APS (shipped) | 0.755 | 0.43 (pituitary) | 1.00 |
+| brain_cls | bdneuro | Mondrian APS | 0.768 | 0.43 (pituitary) | 1.11 |
+| brain_cls | bdneuro | RAPS (k_reg=1, lambda=0.01) | 0.887 | 0.76 (pituitary) | 1.60 |
+| brain_cls | bdneuro | RAPS (k_reg=2, lambda=0.05) | 0.891 | 0.75 (pituitary) | 1.82 |
+
+## 12. Reproduce
 
 ```
 python ml/eval/run_all.py --check     # recompute every number from cached predictions (about 100 s, CPU only)

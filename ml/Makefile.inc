@@ -26,7 +26,7 @@ ml-test: ## unit and synthetic end-to-end tests for ml/
 notebooks: ## rebuild ml/train/notebooks/*.ipynb from ml/train/src/*.py
 	$(PYTHON) ml/train/build_notebooks.py
 
-eval: ## recompute every metric from cached predictions into reports/metrics.json (about 100 s, CPU only)
+eval: ## recompute every metric from cached predictions into reports/metrics.json (about 2 minutes, CPU only)
 	$(PYTHON) ml/eval/run_all.py
 
 eval-check: ## fail if reports/metrics.json is not exactly reproduced

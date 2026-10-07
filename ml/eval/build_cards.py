@@ -61,6 +61,16 @@ def signal_lines(model: str) -> str:
     return "\n".join(out)
 
 
+def ensemble_para() -> str:
+    e = M["models"]["skin_cls"].get("ensemble")
+    if not e:
+        return "not evaluated"
+    b = e["variants"]["ensemble of 3 + flip TTA"]
+    g = e["gain_over_mean_single_seed"]
+    return (f"Three seeds of the same model (`skin_cls`, `skin_cls_s2`, `skin_cls_s3`, registry entry `skin_ens`) averaged with four-way flip averaging reach balanced accuracy {f(b['official_test']['balanced_accuracy'])} on the official test and {f(b['milk10k']['balanced_accuracy'])} on MILK10k, "
+            f"a gain of {g['official_test']:+.3f} and {g['milk10k']:+.3f} over the mean single seed. Single seeds differ by about 0.04 on the official test, so the ensemble also removes seed luck. Cost: three times the weights and inference time; recommendation: **{e['recommendation']}**. The ensemble has its own calibrator (`ml/artifacts/skin_ens/calibration.json`).")
+
+
 def skin_tone_lines() -> str:
     blk = M["subgroups"]["datasets"]["skin_cls_milk10k"]["by"]["skin_tone"]
     out = []
@@ -127,6 +137,9 @@ Official ISIC 2018 Task 3 test set ({sk_t['n']:,} images, never used in training
 - per-class recall: {', '.join(f"{c} {v['point']:.2f}" for c, v in sk_t['per_class_recall'].items())}
 A second identical run scored 0.689, so run-to-run GPU nondeterminism is about 0.01.
 - **External (MILK10k, {mk['n']:,} dermoscopic images, CC BY-NC, outside HAM10000; 94 duplicates of HAM10000 images and 576 images of classes the model does not cover were removed): balanced accuracy {f(mk['balanced_accuracy'])}**, accuracy {f(mk['accuracy'])}, melanoma sensitivity {f(mk['per_class_recall']['mel'])}, melanoma AUROC {f(mk['auroc_mel_vs_rest'])}. Performance falls about 11 points of balanced accuracy outside the training distribution (basal cell carcinoma dominates MILK10k: {mk['class_counts']['bcc']:,} of {mk['n']:,} images).
+
+## Ensemble option
+{ensemble_para()}
 
 ## Calibration and abstention
 {cal_lines('skin_cls', 'official_test')}
