@@ -447,15 +447,20 @@ def build_datasheets() -> dict[str, tuple[str, str, dict]]:
 def main() -> int:
     models = build_models()
     sheets = build_datasheets()
-    for sub, items in (("model_cards", models), ("datasheets", sheets)):
+    for sub, items, as_json in (("model_cards", models, True), ("datasheets", sheets, False)):
         d = DOCS / sub
         d.mkdir(parents=True, exist_ok=True)
+        for old_file in list(d.glob("*.json")):  # the API serves every *.json in model_cards as one card
+            old_file.unlink()
         index = []
         for ident, vals in items.items():
             title, text, meta = vals if len(vals) == 3 else (vals[0], vals[1], {})
             (d / f"{ident}.md").write_text(text, encoding="utf-8")
-            index.append({"id": ident, "title": title, "path": f"docs/{sub}/{ident}.md", **meta})
-        (d / "index.json").write_text(json.dumps(index, indent=1), encoding="utf-8")
+            entry = {"id": ident, "title": title, "path": f"docs/{sub}/{ident}.md", **meta}
+            index.append(entry)
+            if as_json:
+                (d / f"{ident}.json").write_text(json.dumps({**entry, "markdown": text}, indent=1), encoding="utf-8")
+        (DOCS / f"{sub}_index.json").write_text(json.dumps(index, indent=1), encoding="utf-8")
         print(f"wrote {len(items)} files in docs/{sub}")
     return 0
 
