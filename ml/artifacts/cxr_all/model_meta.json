@@ -1,0 +1,31 @@
+{
+ "model_id": "xrv-densenet121-all",
+ "task": "classification (multi-label, pretrained)",
+ "weights": "densenet121-res224-all",
+ "trained_on_rsna": true,
+ "note": "NIH, PadChest, CheXpert, MIMIC-CXR, Google, OpenI and RSNA: CONTAMINATED on RSNA, reference only",
+ "labels": [
+  "Atelectasis",
+  "Consolidation",
+  "Infiltration",
+  "Pneumothorax",
+  "Edema",
+  "Emphysema",
+  "Fibrosis",
+  "Effusion",
+  "Pneumonia",
+  "Pleural_Thickening",
+  "Cardiomegaly",
+  "Nodule",
+  "Mass",
+  "Hernia",
+  "Lung Lesion",
+  "Fracture",
+  "Lung Opacity",
+  "Enlarged Cardiomediastinum"
+ ],
+ "output_kind": "probability (operating-point scaled), not logits",
+ "preproc_spec": "cxr_xrv",
+ "torchxrayvision": "1.5.5",
+ "training": "none in this project (pretrained, Apache-2.0)"
+}

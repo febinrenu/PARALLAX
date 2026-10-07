@@ -1,0 +1,149 @@
+{
+  "split": "test",
+  "notes": 62,
+  "prompt_guard_model": "meta-llama/llama-prompt-guard-2-86m",
+  "extract_model": "openai/gpt-oss-20b",
+  "guard_note": "The regex rules were written while looking at these notes' payload lists, so regex numbers here are in-sample. Out-of-sample numbers for every layer are in reports/p3_guard_blind.json.",
+  "guard_regex_only": {
+    "attacks": 15,
+    "detected": 15,
+    "detection_rate": 1.0,
+    "per_family": {
+      "delimiter_breakout": "2/2",
+      "direct_override": "1/1",
+      "evidence_id_spoof": "1/1",
+      "exfiltration": "3/3",
+      "indirect_clinical": "4/4",
+      "obfuscated_multilingual": "4/4"
+    },
+    "detected_by_layer": {
+      "regex": 15
+    },
+    "false_positives": 0,
+    "false_positive_notes": [],
+    "non_attack_notes": 47,
+    "layer_warnings": 0
+  },
+  "guard_full": {
+    "attacks": 15,
+    "detected": 15,
+    "detection_rate": 1.0,
+    "per_family": {
+      "delimiter_breakout": "2/2",
+      "direct_override": "1/1",
+      "evidence_id_spoof": "1/1",
+      "exfiltration": "3/3",
+      "indirect_clinical": "4/4",
+      "obfuscated_multilingual": "4/4"
+    },
+    "detected_by_layer": {
+      "regex": 15
+    },
+    "false_positives": 0,
+    "false_positive_notes": [],
+    "non_attack_notes": 47,
+    "layer_warnings": 0
+  },
+  "extraction": {
+    "notes": 62,
+    "extraction_failures": 0,
+    "dropped_quotes": 1,
+    "exact_span": {
+      "precision": 0.9216,
+      "recall": 0.9171,
+      "f1": 0.9193,
+      "tp": 376,
+      "fp": 32,
+      "fn": 34
+    },
+    "exact_span_and_type": {
+      "precision": 0.9216,
+      "recall": 0.9171,
+      "f1": 0.9193,
+      "tp": 376,
+      "fp": 32,
+      "fn": 34
+    },
+    "overlap_lenient": {
+      "precision": 0.9802,
+      "recall": 0.9659,
+      "f1": 0.973,
+      "tp": 396,
+      "fp": 8,
+      "fn": 14
+    },
+    "by_type": {
+      "demographic": {
+        "precision": 1.0,
+        "recall": 0.9394,
+        "f1": 0.9688,
+        "tp": 62,
+        "fp": 0,
+        "fn": 4
+      },
+      "device": {
+        "precision": 0.7778,
+        "recall": 0.875,
+        "f1": 0.8235,
+        "tp": 7,
+        "fp": 2,
+        "fn": 1
+      },
+      "history": {
+        "precision": 0.7778,
+        "recall": 0.8167,
+        "f1": 0.7967,
+        "tp": 49,
+        "fp": 14,
+        "fn": 11
+      },
+      "lab": {
+        "precision": 1.0,
+        "recall": 0.9697,
+        "f1": 0.9846,
+        "tp": 32,
+        "fp": 0,
+        "fn": 1
+      },
+      "laterality": {
+        "precision": 0.825,
+        "recall": 0.75,
+        "f1": 0.7857,
+        "tp": 33,
+        "fp": 7,
+        "fn": 11
+      },
+      "medication": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 16,
+        "fp": 0,
+        "fn": 0
+      },
+      "negation": {
+        "precision": 1.0,
+        "recall": 0.9677,
+        "f1": 0.9836,
+        "tp": 60,
+        "fp": 0,
+        "fn": 2
+      },
+      "symptom": {
+        "precision": 0.9286,
+        "recall": 0.9669,
+        "f1": 0.9474,
+        "tp": 117,
+        "fp": 9,
+        "fn": 4
+      }
+    }
+  },
+  "differential": {
+    "pairs": 15,
+    "facts_overlapping_the_injected_text": 0,
+    "f1_vs_gold_injected_notes": 0.9538,
+    "f1_vs_gold_clean_twins": 0.936,
+    "identical_fact_sets": "5/15 (informational: run-to-run variance, not compliance)"
+  }
+}

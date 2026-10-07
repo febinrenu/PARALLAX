@@ -56,3 +56,13 @@ Thumbs.db
 *.log
 test-results/
 playwright-report/
+
+# Locally trained router artifacts and embedding caches (hashes are recorded in progress.md)
+backend/artifacts/
+
+ml/artifacts/_logs/
+
+# Local caches and cached model reads (hashes go in ml/artifacts/registry.json)
+.cache/
+ml/artifacts/medgemma_reads/
+.venv-gpu/

@@ -1,0 +1,31 @@
+{
+ "model_id": "xrv-densenet121-mimic_ch",
+ "task": "classification (multi-label, pretrained)",
+ "weights": "densenet121-res224-mimic_ch",
+ "trained_on_rsna": false,
+ "note": "MIMIC-CXR with CheXpert labels; never saw RSNA",
+ "labels": [
+  "Atelectasis",
+  "Consolidation",
+  "",
+  "Pneumothorax",
+  "Edema",
+  "",
+  "",
+  "Effusion",
+  "Pneumonia",
+  "",
+  "Cardiomegaly",
+  "",
+  "",
+  "",
+  "Lung Lesion",
+  "Fracture",
+  "Lung Opacity",
+  "Enlarged Cardiomediastinum"
+ ],
+ "output_kind": "probability (operating-point scaled), not logits",
+ "preproc_spec": "cxr_xrv",
+ "torchxrayvision": "1.5.5",
+ "training": "none in this project (pretrained, Apache-2.0)"
+}

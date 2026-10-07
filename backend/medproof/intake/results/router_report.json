@@ -1,0 +1,89 @@
+{
+  "classes": [
+    "cxr",
+    "brain_mri",
+    "skin_dermoscopy",
+    "bone_xray",
+    "other"
+  ],
+  "C": 100.0,
+  "temperature": 0.0500002729970587,
+  "seed": 0,
+  "val_nll_before": 0.015859462320804596,
+  "val_nll_after": 8.140074896800797e-06,
+  "sizes": {
+    "train": 220,
+    "val": 50,
+    "test": 50
+  },
+  "groups": {
+    "train": 210,
+    "val": 45,
+    "test": 45
+  },
+  "test": {
+    "n": 50,
+    "accuracy": 1.0,
+    "accuracy_ci95": [
+      0.9286499658256813,
+      1.0
+    ],
+    "per_class_recall": {
+      "cxr": 1.0,
+      "brain_mri": 1.0,
+      "skin_dermoscopy": 1.0,
+      "bone_xray": 1.0,
+      "other": 1.0
+    },
+    "confusion_matrix": [
+      [
+        6,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        11,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        15,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        9,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        9
+      ]
+    ]
+  },
+  "note": "Each class comes from its own source dataset, so a probe may partly learn the dataset; the number that counts is the mixed held-out set scored by the data owner.",
+  "body_part": {
+    "classes": [
+      "hand",
+      "leg",
+      "hip",
+      "shoulder"
+    ],
+    "n": 59,
+    "validated": false,
+    "note": "trained on all labelled bone images; no held-out split reported"
+  },
+  "skipped_unreadable": 0
+}

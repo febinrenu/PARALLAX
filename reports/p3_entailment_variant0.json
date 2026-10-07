@@ -1,0 +1,29 @@
+{
+  "variant": 0,
+  "cases": 60,
+  "judged": 60,
+  "unchecked": 0,
+  "accuracy": 1.0,
+  "entailed_sentences_kept": "30/30",
+  "defective_sentences_caught": "30/30",
+  "by_kind": {
+    "abstain": "1/1",
+    "consider": "6/6",
+    "context_missing": "6/6",
+    "discordant": "2/2",
+    "extra_claim": "3/3",
+    "flag_clause": "3/3",
+    "inflated_status": "3/3",
+    "invented_quote": "4/4",
+    "invented_second_read": "5/5",
+    "label_set": "1/1",
+    "second_read_clause": "6/6",
+    "supported_by_note": "5/5",
+    "wrong_label": "5/5",
+    "wrong_region": "5/5",
+    "wrong_tier": "5/5"
+  },
+  "errors": [],
+  "judge_model": "openai/gpt-oss-20b",
+  "stage_warnings": []
+}

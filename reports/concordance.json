@@ -1,0 +1,88 @@
+{
+  "what": "MedGemma 1.5 4B (4-bit) as second reader, scored against ground truth on P2's eval batches",
+  "specialist_vs_medgemma": "skin: from P2's saved official-test predictions (see datasets.ham10000); bone: pending P2's detector predictions",
+  "datasets": {
+    "fracatlas": {
+      "n_reads": 403,
+      "n_ok": 398,
+      "ok_rate": 0.9876,
+      "n_fracture": 72,
+      "n_no_fracture": 326,
+      "hedged_counts_as_positive": {
+        "sensitivity": {
+          "point": 0.1944,
+          "lo": 0.1108,
+          "hi": 0.2917
+        },
+        "specificity": {
+          "point": 0.9939,
+          "lo": 0.9847,
+          "hi": 1.0
+        },
+        "accuracy": {
+          "point": 0.8492,
+          "lo": 0.8317,
+          "hi": 0.8668
+        },
+        "kappa": {
+          "point": 0.2702,
+          "lo": 0.15,
+          "hi": 0.3816
+        }
+      },
+      "definite_only": {
+        "sensitivity": {
+          "point": 0.1944,
+          "lo": 0.1108,
+          "hi": 0.2917
+        },
+        "specificity": {
+          "point": 0.9939,
+          "lo": 0.9847,
+          "hi": 1.0
+        },
+        "accuracy": {
+          "point": 0.8492,
+          "lo": 0.8317,
+          "hi": 0.8668
+        },
+        "kappa": {
+          "point": 0.2702,
+          "lo": 0.15,
+          "hi": 0.3816
+        }
+      },
+      "progress": {
+        "reads": 403,
+        "planned": 569,
+        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+      }
+    },
+    "ham10000": {
+      "n_reads": 22,
+      "n_ok": 22,
+      "ok_rate": 1.0,
+      "class_counts": {
+        "nv": 15,
+        "bkl": 4,
+        "mel": 2,
+        "bcc": 1
+      },
+      "prediction_counts": {
+        "none": 15,
+        "mel": 2,
+        "nv": 5
+      },
+      "note": "too few reads for statistics yet",
+      "specialist_vs_medgemma": {
+        "n_paired": 22,
+        "note": "need at least 50 paired reads for statistics"
+      },
+      "progress": {
+        "reads": 22,
+        "planned": 1000,
+        "status": "partial: a random prefix of the planned batch (fixed shuffle)"
+      }
+    }
+  }
+}

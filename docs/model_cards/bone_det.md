@@ -1,0 +1,52 @@
+# Model card: Bone fracture detector
+
+> Decision support only. Not a medical device and not for clinical use. Output is phrased for a doctor to consider; it never states a diagnosis.
+
+**Registry:** `bone_det@8539baf9` · weights sha256 `6e81f1775688d5a7…` · split `b3736582c1ec…` · commit `8539baf9`
+**Task:** fracture detection on bone radiographs, single class, boxes plus an image-level score (highest box confidence).
+**Architecture:** Ultralytics YOLO26-nano, 640 px, 80 epochs, mosaic off, negatives kept with empty labels.
+**Licence:** AGPL-3.0 (Ultralytics), so the weights inherit AGPL-3.0; trained on FracAtlas (CC BY 4.0).
+
+## Intended use and out-of-scope use
+Flagging likely fracture regions on hand, leg, hip and shoulder radiographs for a doctor to review. Not for CT, not for the spine or skull, not for paediatric growth plates (not represented), and not a replacement for reading the film.
+
+## Training data
+FracAtlas (4,083 images, 719 fractured, boxes and masks). There are no patient identifiers, so images were grouped by near-duplicate (pHash) and split 65/10/10/15 stratified by body part and fracture status. The audit removed 281 images as duplicates or label noise. 59 negative images are truncated at the source and are rejected by the product's image decoder.
+
+## Evaluation (test split, 569 images, 103 fractured, 141 boxes)
+- **Image-level AUROC 0.923 (95% CI 0.885 to 0.957)**
+- mAP50 0.453 (95% CI 0.366 to 0.548) (Ultralytics' own implementation gives 0.467, a close cross-check)
+- sensitivity 0.835 (95% CI 0.755 to 0.904) at the threshold fixed on the validation split for 90% specificity; specificity on test at that threshold 0.880 (95% CI 0.852 to 0.910)
+
+## Calibration and abstention
+- Platt scaling on the logit of the max box confidence (the raw score is not a probability): ECE 0.061 (95% CI 0.049 to 0.085) → 0.035 (95% CI 0.023 to 0.057)
+- false-negative-rate control (target 10%): miss rate 0.078 (exact 95% interval 0.034 to 0.147), false-positive rate 0.300
+- abstention band [0.4, 0.6]: 3% of images fall inside it
+
+## Robustness
+- AUROC on 203 test images: 0.919 clean; mean over perturbations 0.914 at severity 1 and 0.871 at severity 3
+- three worst cells: noise/5 = 0.508, noise/4 = 0.621, jpeg/5 = 0.645
+
+## Subgroup audit
+- body_part, auroc: worst subgroup **leg** at 0.870 against 0.923 overall
+- body_part, sensitivity at val threshold: worst subgroup **leg** at 0.677 against 0.835 overall
+- body_part, specificity at val threshold: worst subgroup **mixed** at 0.767 against 0.880 overall
+- view, auroc: worst subgroup **lateral** at 0.891 against 0.923 overall
+- view, sensitivity at val threshold: worst subgroup **frontal** at 0.836 against 0.835 overall
+- view, specificity at val threshold: worst subgroup **oblique** at 0.857 against 0.880 overall
+- hardware, auroc: worst subgroup **no implant** at 0.920 against 0.923 overall
+- hardware, sensitivity at val threshold: worst subgroup **no implant** at 0.828 against 0.835 overall
+- hardware, specificity at val threshold: worst subgroup **no implant** at 0.880 against 0.880 overall
+
+## Trust signals measured on this model
+- `unstable`: error 0.429 when raised (n=21) against 0.126 when not; difference +0.302 (CI +0.071 to +0.524). **flagged cases are wrong more often (difference CI excludes 0): the signal is usable**
+- `low_quality`: error 0.168 when raised (n=185) against 0.056 when not; difference +0.112 (CI -0.017 to +0.212). **no reliable difference in error rate between flagged and unflagged cases: do not use this signal to downgrade findings**
+- `abstain`: too few flagged or unflagged cases to judge (n flagged 7)
+
+## Known failure modes
+- Lowest sensitivity on leg radiographs and on small or subtle fractures; the zero-shot second reader (MedGemma) is weaker still on bone (sensitivity about 0.19) and must not downgrade bone findings.
+- Noise degrades the image-level score quickly (AUROC about 0.51 at severity 5).
+- Another view of one patient may be in training because no patient ids exist, so test performance may be slightly optimistic.
+
+## Contamination status
+Trained and tested on FracAtlas only; no external test set exists for bone.

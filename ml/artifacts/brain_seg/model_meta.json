@@ -1,0 +1,59 @@
+{
+ "model_id": "brain_seg@d351f062",
+ "task": "segmentation",
+ "arch": "smp.Unet(resnet34)",
+ "classes": [
+  "background",
+  "tumour"
+ ],
+ "preproc_spec": {
+  "name": "brain_seg",
+  "size": 256,
+  "channels": 3,
+  "mean": [
+   0.485,
+   0.456,
+   0.406
+  ],
+  "std": [
+   0.229,
+   0.224,
+   0.225
+  ],
+  "resize": "stretch",
+  "value_range": [
+   0.0,
+   1.0
+  ]
+ },
+ "weights_file": "weights.pt",
+ "weights_sha256": "90eba65ab2b7c2b629dd9569ad7c1596cb948994edc2d5dec3149f41f98b8e91",
+ "split_name": "lgg_seg",
+ "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357",
+ "training_data": [
+  "lgg_seg (Kaggle mateuszbuda, TCGA-LGG)"
+ ],
+ "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+ "seed": 20261006,
+ "python": "3.13.15",
+ "torch": "2.11.0+cu128",
+ "wall_sec": 602.1972358226776,
+ "data": {
+  "git_commit": "d351f0621416769d2b1709b147f6daef58d7c14e",
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "cuda": true,
+  "gpu": "Tesla T4",
+  "datasets": {
+   "lgg_seg": {
+    "name": "lgg_seg",
+    "file_count": 15720,
+    "total_bytes": 2112621008,
+    "tree_sha256": "ea3e771349f81bb51c1b197a179a1fb33fabfdd5648d4a195fae643cc90aa5b1"
+   }
+  }
+ },
+ "threshold": 0.5,
+ "input_size": 256,
+ "shipped_fold": 0
+}

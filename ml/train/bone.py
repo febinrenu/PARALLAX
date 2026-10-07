@@ -60,11 +60,30 @@ def build_yolo_dataset(df: pd.DataFrame, src_root: Path, out_dir: Path) -> Path:
     return yaml
 
 
+def read_image_bgr(path: Path) -> np.ndarray:
+    """BGR array for Ultralytics. A few FracAtlas files lose their last bytes: OpenCV decodes them, PIL is the fallback."""
+    import cv2
+
+    img = cv2.imread(str(path), cv2.IMREAD_COLOR)
+    if img is not None:
+        return img
+    from PIL import Image, ImageFile
+
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
+    with Image.open(path) as im:
+        return cv2.cvtColor(np.asarray(im.convert("RGB")), cv2.COLOR_RGB2BGR)
+
+
 def predict_split(model, image_paths: list[Path], imgsz: int = 640, batch: int = 16) -> list[np.ndarray]:
-    """Per image an (n, 5) array: normalised xyxy + confidence, at a very low threshold so AP and ROC see every candidate."""
+    """Per image an (n, 5) array: normalised xyxy + confidence, at a very low threshold so AP and ROC see every candidate.
+
+    Images are decoded here and passed as arrays: handing Ultralytics a list of paths makes it open each with PIL,
+    which rejects the truncated files.
+    """
     out = []
     for i in range(0, len(image_paths), batch):
-        for r in model.predict([str(p) for p in image_paths[i : i + batch]], imgsz=imgsz, conf=0.001, iou=0.6, max_det=100, verbose=False):
+        arrays = [read_image_bgr(p) for p in image_paths[i : i + batch]]
+        for r in model.predict(arrays, imgsz=imgsz, conf=0.001, iou=0.6, max_det=100, verbose=False):
             b = r.boxes
             out.append(np.concatenate([b.xyxyn.cpu().numpy(), b.conf.cpu().numpy()[:, None]], 1) if len(b) else np.zeros((0, 5)))
     return out

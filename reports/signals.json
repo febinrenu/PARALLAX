@@ -1,0 +1,1273 @@
+{
+ "definition": "error = top-1 wrong (classifiers) or decision at calibrated probability 0.5 wrong (chest reader and bone detector, image level); the evaluation images are each model's corruption-benchmark subset, clean images only",
+ "models": {
+  "skin_cls": {
+   "n": 1000,
+   "error_rate_overall": 0.178,
+   "signals": {
+    "unstable": {
+     "n_flagged": 101,
+     "n_unflagged": 899,
+     "share_flagged": 0.101,
+     "error_rate_flagged": {
+      "point": 0.6138613861386139,
+      "lo": 0.5145631067961165,
+      "hi": 0.7094086021505377,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.12903225806451613,
+      "lo": 0.10902615451466931,
+      "hi": 0.15016816321253634,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.4848291280740977,
+      "lo": 0.39008312524032557,
+      "hi": 0.5814291867689376,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 4.757425742574258,
+      "lo": 3.7887407950475973,
+      "hi": 5.912905702334939,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    },
+    "low_quality": {
+     "n_flagged": 433,
+     "n_unflagged": 567,
+     "share_flagged": 0.433,
+     "error_rate_flagged": {
+      "point": 0.14549653579676675,
+      "lo": 0.11538248337028825,
+      "hi": 0.17889964472027345,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.20282186948853614,
+      "lo": 0.17190789473684212,
+      "hi": 0.23614998933219541,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": -0.0573253336917694,
+      "lo": -0.1020733878939864,
+      "hi": -0.010105750531913345,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 0.71736118084145,
+      "lo": 0.5454428384115885,
+      "hi": 0.9427786906710404,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": false,
+     "verdict": "flagged cases are wrong LESS often: the signal is miscalibrated"
+    },
+    "abstain": {
+     "n_flagged": 74,
+     "n_unflagged": 926,
+     "share_flagged": 0.074,
+     "error_rate_flagged": {
+      "point": 0.6216216216216216,
+      "lo": 0.5,
+      "hi": 0.7344366776315789,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.14254859611231102,
+      "lo": 0.12136597179938016,
+      "hi": 0.1652218857926858,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.4790730255093106,
+      "lo": 0.3560256852691777,
+      "hi": 0.5955719154908186,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 4.36076986076986,
+      "lo": 3.393694775723046,
+      "hi": 5.570270731208641,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    },
+    "ood_energy": {
+     "n_flagged": 51,
+     "n_unflagged": 949,
+     "share_flagged": 0.051,
+     "error_rate_flagged": {
+      "point": 0.5294117647058824,
+      "lo": 0.39021002710027103,
+      "hi": 0.6666666666666666,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.15911485774499473,
+      "lo": 0.13655227016179605,
+      "hi": 0.18220338983050846,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.37029690696088763,
+      "lo": 0.23137792655234515,
+      "hi": 0.5123695725800185,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 3.3272302298402807,
+      "lo": 2.4099567815230922,
+      "hi": 4.405481494957015,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 1000,
+      "n": 1000,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    }
+   },
+   "quality_gate": {
+    "n": 1000,
+    "share_with_any_warning_or_failure": 0.433,
+    "share_failing": 0.401,
+    "target_share_flagged_on_clean_images": 0.05,
+    "reasons": {
+     "blurred": 11,
+     "clipped": 28,
+     "low_contrast": 304,
+     "overexposed": 93,
+     "underexposed": 1
+    },
+    "metric_percentiles": {
+     "min_side": {
+      "p1": 450.0,
+      "p5": 450.0,
+      "p50": 450.0,
+      "p95": 450.0,
+      "p99": 450.0
+     },
+     "blur": {
+      "p1": 0.05793069880455729,
+      "p5": 0.10199214145541186,
+      "p50": 0.4917769134044647,
+      "p95": 2.483852100372314,
+      "p99": 5.182314143180846
+     },
+     "p1": {
+      "p1": 0.0,
+      "p5": 0.0822044788412749,
+      "p50": 0.2791646833717823,
+      "p95": 0.49648942424356923,
+      "p99": 0.5578033648490905
+     },
+     "p99": {
+      "p1": 0.6133796999156474,
+      "p5": 0.6589084158539772,
+      "p50": 0.7717061319947242,
+      "p95": 0.9308430305719375,
+      "p99": 0.970161259806156
+     },
+     "range": {
+      "p1": 0.20825983060598363,
+      "p5": 0.26982896849513044,
+      "p50": 0.4906339119374752,
+      "p95": 0.7554922063015399,
+      "p99": 0.8426952111380175
+     },
+     "clip": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.012567283950617252,
+      "p99": 0.04176544444444442
+     },
+     "noise_rel": {
+      "p1": 0.002390456618827774,
+      "p5": 0.00292161211800636,
+      "p50": 0.005596930635756,
+      "p95": 0.012378883814831768,
+      "p99": 0.01666666565270692
+     },
+     "aspect": {
+      "p1": 1.3333333333333333,
+      "p5": 1.3333333333333333,
+      "p50": 1.3333333333333333,
+      "p95": 1.3333333333333333,
+      "p99": 1.3333333333333333
+     },
+     "margin": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.0,
+      "p99": 0.0
+     }
+    }
+   },
+   "ood_energy_threshold_p95_of_validation": -2.4247185368196194
+  },
+  "brain_cls": {
+   "n": 563,
+   "error_rate_overall": 0.06039076376554174,
+   "signals": {
+    "unstable": {
+     "n_flagged": 23,
+     "n_unflagged": 540,
+     "share_flagged": 0.04085257548845471,
+     "error_rate_flagged": {
+      "point": 0.8695652173913043,
+      "lo": 0.7272727272727273,
+      "hi": 1.0,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.025925925925925925,
+      "lo": 0.01301054893062328,
+      "hi": 0.04059040590405904,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.8436392914653784,
+      "lo": 0.7009618861205127,
+      "hi": 0.9743500392210361,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 33.54037267080745,
+      "lo": 20.491919642857145,
+      "hi": 64.57631782280218,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    },
+    "low_quality": {
+     "n_flagged": 495,
+     "n_unflagged": 68,
+     "share_flagged": 0.8792184724689165,
+     "error_rate_flagged": {
+      "point": 0.06060606060606061,
+      "lo": 0.04101272926252556,
+      "hi": 0.08367774717248863,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.058823529411764705,
+      "lo": 0.014079616588419407,
+      "hi": 0.11596014492753622,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.0017825311942959027,
+      "lo": -0.056989719027139535,
+      "hi": 0.05919586665913355,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 1.0303030303030303,
+      "lo": 0.4734404422037296,
+      "hi": 4.2556285533293225,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 986
+     },
+     "predicts_errors": false,
+     "verdict": "no reliable difference in error rate between flagged and unflagged cases: do not use this signal to downgrade findings"
+    },
+    "abstain": {
+     "n_flagged": 5,
+     "n_unflagged": 558,
+     "share_flagged": 0.008880994671403197,
+     "verdict": "too few flagged or unflagged cases to judge"
+    },
+    "ood_energy": {
+     "n_flagged": 29,
+     "n_unflagged": 534,
+     "share_flagged": 0.05150976909413854,
+     "error_rate_flagged": {
+      "point": 0.2413793103448276,
+      "lo": 0.09669858870967742,
+      "hi": 0.40915775401069515,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.05056179775280899,
+      "lo": 0.03364329055656298,
+      "hi": 0.07102803738317758,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.19081751259201862,
+      "lo": 0.04357291742151469,
+      "hi": 0.36137127841248295,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 4.773946360153257,
+      "lo": 1.7348498996758759,
+      "hi": 9.556696428571426,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 563,
+      "n": 563,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    }
+   },
+   "quality_gate": {
+    "n": 563,
+    "share_with_any_warning_or_failure": 0.8792184724689165,
+    "share_failing": 0.5079928952042628,
+    "target_share_flagged_on_clean_images": 0.05,
+    "reasons": {
+     "blurred": 1,
+     "clipped": 472,
+     "low_resolution": 62,
+     "underexposed": 50,
+     "unusual_framing": 24
+    },
+    "metric_percentiles": {
+     "min_side": {
+      "p1": 197.72,
+      "p5": 225.0,
+      "p50": 512.0,
+      "p95": 512.0,
+      "p99": 578.3399999999998
+     },
+     "blur": {
+      "p1": 0.08689064070582384,
+      "p5": 0.14478935599327086,
+      "p50": 0.4412902295589447,
+      "p95": 0.8177719056606292,
+      "p99": 1.9153742909431457
+     },
+     "p1": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.003910824796184838,
+      "p99": 0.057038283123075864
+     },
+     "p99": {
+      "p1": 0.4063529467582702,
+      "p5": 0.510588264465332,
+      "p50": 0.6784313917160034,
+      "p95": 0.9428973916172982,
+      "p99": 0.9982184265255928
+     },
+     "range": {
+      "p1": 0.4063529467582702,
+      "p5": 0.5098039507865906,
+      "p50": 0.6784313917160034,
+      "p95": 0.9384740507602692,
+      "p99": 0.9962697367310525
+     },
+     "clip": {
+      "p1": 0.0001971068862895,
+      "p5": 0.01251167380550806,
+      "p50": 0.0447249353634013,
+      "p95": 0.3333808898925781,
+      "p99": 0.48037595785297593
+     },
+     "noise_rel": {
+      "p1": 0.000286222912778876,
+      "p5": 0.00054757954476476,
+      "p50": 0.0021259719858914,
+      "p95": 0.0030876636116373597,
+      "p99": 0.003572522645346806
+     },
+     "aspect": {
+      "p1": 0.7788854992881838,
+      "p5": 0.8998052214324769,
+      "p50": 1.0,
+      "p95": 1.0,
+      "p99": 1.1199372608068259
+     },
+     "margin": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.142578125,
+      "p95": 0.341796875,
+      "p99": 0.4175
+     }
+    }
+   },
+   "ood_energy_threshold_p95_of_validation": -1.3278133296088348
+  },
+  "cxr_chex": {
+   "n": 500,
+   "error_rate_overall": 0.22,
+   "signals": {
+    "unstable": {
+     "n_flagged": 8,
+     "n_unflagged": 492,
+     "share_flagged": 0.016,
+     "verdict": "too few flagged or unflagged cases to judge"
+    },
+    "low_quality": {
+     "n_flagged": 226,
+     "n_unflagged": 274,
+     "share_flagged": 0.452,
+     "error_rate_flagged": {
+      "point": 0.22566371681415928,
+      "lo": 0.1728889256471756,
+      "hi": 0.28327160366457577,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.21532846715328466,
+      "lo": 0.16885079116323745,
+      "hi": 0.2676183915084711,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.010335249660874624,
+      "lo": -0.05927537025193424,
+      "hi": 0.08180957247385376,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 1.047997600119994,
+      "lo": 0.7567737612041265,
+      "hi": 1.432669674413486,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": false,
+     "verdict": "no reliable difference in error rate between flagged and unflagged cases: do not use this signal to downgrade findings"
+    },
+    "abstain": {
+     "n_flagged": 84,
+     "n_unflagged": 416,
+     "share_flagged": 0.168,
+     "error_rate_flagged": {
+      "point": 0.5238095238095238,
+      "lo": 0.4197322322322322,
+      "hi": 0.630144431209053,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.15865384615384615,
+      "lo": 0.12559615582279782,
+      "hi": 0.1965642244330769,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.3651556776556777,
+      "lo": 0.2502882608475301,
+      "hi": 0.47458427313513535,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 3.301587301587302,
+      "lo": 2.41404154524682,
+      "hi": 4.550567201077674,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 500,
+      "n": 500,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    }
+   },
+   "quality_gate": {
+    "n": 500,
+    "share_with_any_warning_or_failure": 0.452,
+    "share_failing": 0.144,
+    "target_share_flagged_on_clean_images": 0.05,
+    "reasons": {
+     "blurred": 2,
+     "clipped": 191,
+     "rotated": 45
+    },
+    "metric_percentiles": {
+     "min_side": {
+      "p1": 1024.0,
+      "p5": 1024.0,
+      "p50": 1024.0,
+      "p95": 1024.0,
+      "p99": 1024.0
+     },
+     "blur": {
+      "p1": 0.08344473436474797,
+      "p5": 0.10670851580798621,
+      "p50": 0.3332998603582382,
+      "p95": 1.8147933363914455,
+      "p99": 2.573515806198118
+     },
+     "p1": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.0324019625782966,
+      "p99": 0.0901960805058479
+     },
+     "p99": {
+      "p1": 0.9377689168691703,
+      "p5": 0.9637255042791365,
+      "p50": 0.9882352948188782,
+      "p95": 0.9960784316062928,
+      "p99": 0.9970686721801759
+     },
+     "range": {
+      "p1": 0.8978823581058532,
+      "p5": 0.9401259421445428,
+      "p50": 0.9833333262940869,
+      "p95": 0.9950979948043824,
+      "p99": 0.9960784316062928
+     },
+     "clip": {
+      "p1": 0.005404634475707983,
+      "p5": 0.00577921867370597,
+      "p50": 0.0128240585327148,
+      "p95": 0.11491136550903314,
+      "p99": 0.23781908988952616
+     },
+     "noise_rel": {
+      "p1": 0.002187595380207927,
+      "p5": 0.002522850478735745,
+      "p50": 0.00446471940419315,
+      "p95": 0.005986915528854328,
+      "p99": 0.007233991972406755
+     },
+     "aspect": {
+      "p1": 1.0,
+      "p5": 1.0,
+      "p50": 1.0,
+      "p95": 1.0,
+      "p99": 1.0
+     },
+     "margin": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.04707031249999982,
+      "p99": 0.1430273437499996
+     },
+     "tilt_deg": {
+      "p1": -30.0,
+      "p5": -11.0,
+      "p50": 1.0,
+      "p95": 10.0,
+      "p99": 30.0
+     },
+     "tilt_gain": {
+      "p1": 0.0,
+      "p5": 0.0007510513067245204,
+      "p50": 0.017192512750625548,
+      "p95": 0.1541874825954431,
+      "p99": 0.2531934863328933
+     }
+    }
+   }
+  },
+  "bone_det": {
+   "n": 203,
+   "error_rate_overall": 0.15763546798029557,
+   "signals": {
+    "unstable": {
+     "n_flagged": 21,
+     "n_unflagged": 182,
+     "share_flagged": 0.10344827586206896,
+     "error_rate_flagged": {
+      "point": 0.42857142857142855,
+      "lo": 0.21419172932330827,
+      "hi": 0.6365259740259739,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.12637362637362637,
+      "lo": 0.08064516129032258,
+      "hi": 0.17838819266193567,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.3021978021978022,
+      "lo": 0.07075108816681851,
+      "hi": 0.5244015005932493,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 3.391304347826087,
+      "lo": 1.5647826086956522,
+      "hi": 6.266253869969041,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "predicts_errors": true,
+     "verdict": "flagged cases are wrong more often (difference CI excludes 0): the signal is usable"
+    },
+    "low_quality": {
+     "n_flagged": 185,
+     "n_unflagged": 18,
+     "share_flagged": 0.9113300492610837,
+     "error_rate_flagged": {
+      "point": 0.16756756756756758,
+      "lo": 0.1111111111111111,
+      "hi": 0.22041561485755493,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "error_rate_unflagged": {
+      "point": 0.05555555555555555,
+      "lo": 0.0,
+      "hi": 0.16666666666666666,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "difference": {
+      "point": 0.11201201201201202,
+      "lo": -0.01704312591305721,
+      "hi": 0.21164021164021163,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 1000
+     },
+     "risk_ratio": {
+      "point": 3.0162162162162165,
+      "lo": 0.8195904313156941,
+      "hi": 4.547301031687546,
+      "level": 0.95,
+      "B": 1000,
+      "method": "percentile",
+      "n_groups": 203,
+      "n": 203,
+      "stratified": false,
+      "seed": 20261006,
+      "n_valid": 626
+     },
+     "predicts_errors": false,
+     "verdict": "no reliable difference in error rate between flagged and unflagged cases: do not use this signal to downgrade findings"
+    },
+    "abstain": {
+     "n_flagged": 7,
+     "n_unflagged": 196,
+     "share_flagged": 0.034482758620689655,
+     "verdict": "too few flagged or unflagged cases to judge"
+    }
+   },
+   "quality_gate": {
+    "n": 203,
+    "share_with_any_warning_or_failure": 0.9113300492610837,
+    "share_failing": 0.12315270935960591,
+    "target_share_flagged_on_clean_images": 0.05,
+    "reasons": {
+     "blurred": 5,
+     "clipped": 10,
+     "low_contrast": 1,
+     "low_resolution": 182,
+     "underexposed": 17,
+     "unusual_framing": 3
+    },
+    "metric_percentiles": {
+     "min_side": {
+      "p1": 373.0,
+      "p5": 373.0,
+      "p50": 373.0,
+      "p95": 2304.0,
+      "p99": 2304.0
+     },
+     "blur": {
+      "p1": 0.03592824377119536,
+      "p5": 0.11710899919271468,
+      "p50": 0.6952779293060303,
+      "p95": 4.290952348709103,
+      "p99": 7.827159385681147
+     },
+     "p1": {
+      "p1": 0.0,
+      "p5": 0.0023249964462593014,
+      "p50": 0.0356448979675769,
+      "p95": 0.1281647226661443,
+      "p99": 0.16848429697155945
+     },
+     "p99": {
+      "p1": 0.4321029796838752,
+      "p5": 0.5201432421803472,
+      "p50": 0.8220031255483627,
+      "p95": 0.9254902005195618,
+      "p99": 0.9606338729143142
+     },
+     "range": {
+      "p1": 0.35108215936422343,
+      "p5": 0.48121172225847836,
+      "p50": 0.7559235417284071,
+      "p95": 0.8862260786350816,
+      "p99": 0.9336145467713476
+     },
+     "clip": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0010747481428115,
+      "p95": 0.013352859892997442,
+      "p99": 0.3179287858548972
+     },
+     "noise_rel": {
+      "p1": 0.000378122479510312,
+      "p5": 0.00041641968811727005,
+      "p50": 0.0008452319150676,
+      "p95": 0.0044183966647208086,
+      "p99": 0.0061654585013869905
+     },
+     "aspect": {
+      "p1": 0.8,
+      "p5": 0.8,
+      "p50": 0.8215859030837004,
+      "p95": 1.2171581769436997,
+      "p99": 1.2171581769436997
+     },
+     "margin": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p50": 0.0,
+      "p95": 0.11175971798780408,
+      "p99": 0.4393098323170721
+     }
+    }
+   }
+  }
+ },
+ "pending": {
+  "discordant": "needs the complete MedGemma batch from P3 for the same images; harness: compare(df, 'discordant')",
+  "unfaithful": "needs P1.9 faithfulness; harness: compare(df, 'unfaithful')"
+ },
+ "ood_auroc": {
+  "skin_cls": {
+   "cifar10_natural_images": {
+    "n_ood": 300,
+    "n_id": 1512,
+    "auroc_energy": {
+     "point": 0.8638734567901235,
+     "lo": 0.8433794091710758,
+     "hi": 0.8834006834215167,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.8576785714285714,
+     "lo": 0.8392805335097002,
+     "hi": 0.8742999338624338,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "brain_mri_other_modality": {
+    "n_ood": 300,
+    "n_id": 1512,
+    "auroc_energy": {
+     "point": 0.9778571428571429,
+     "lo": 0.9709319334215167,
+     "hi": 0.9838325066137565,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.9819907407407408,
+     "lo": 0.9755067239858907,
+     "hi": 0.9871127094356261,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "fracatlas_other_modality": {
+    "n_ood": 295,
+    "n_id": 1512,
+    "auroc_energy": {
+     "point": 0.9264057035243476,
+     "lo": 0.909055017487221,
+     "hi": 0.9416021545152902,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1807,
+     "n": 1807,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.8841561294951127,
+     "lo": 0.8674017464801363,
+     "hi": 0.8998321338893374,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1807,
+     "n": 1807,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "rsna_other_modality": {
+    "n_ood": 300,
+    "n_id": 1512,
+    "auroc_energy": {
+     "point": 0.8945414462081128,
+     "lo": 0.86678444664903,
+     "hi": 0.9199567350088182,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.8570436507936507,
+     "lo": 0.8270759479717814,
+     "hi": 0.8841676587301588,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 1812,
+     "n": 1812,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   }
+  },
+  "brain_cls": {
+   "cifar10_natural_images": {
+    "n_ood": 300,
+    "n_id": 563,
+    "auroc_energy": {
+     "point": 0.8257430432208408,
+     "lo": 0.7910657193605684,
+     "hi": 0.8596666666666667,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.6853582001184132,
+     "lo": 0.646053730017762,
+     "hi": 0.7244273238602723,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "ham10000_other_modality": {
+    "n_ood": 300,
+    "n_id": 563,
+    "auroc_energy": {
+     "point": 0.8275192421551214,
+     "lo": 0.7982440793368858,
+     "hi": 0.8534921551213737,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.8067910005920662,
+     "lo": 0.7750045885139136,
+     "hi": 0.8355571343990525,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "fracatlas_other_modality": {
+    "n_ood": 295,
+    "n_id": 563,
+    "auroc_energy": {
+     "point": 0.8770990757744528,
+     "lo": 0.8530053888069361,
+     "hi": 0.899661920101153,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 858,
+     "n": 858,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.8091700033115572,
+     "lo": 0.7781435710630099,
+     "hi": 0.8382764849324141,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 858,
+     "n": 858,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   },
+   "rsna_other_modality": {
+    "n_ood": 300,
+    "n_id": 563,
+    "auroc_energy": {
+     "point": 0.9382652457075193,
+     "lo": 0.9230840734162226,
+     "hi": 0.9528695973949083,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    },
+    "auroc_max_softmax": {
+     "point": 0.827643576080521,
+     "lo": 0.7992559206631142,
+     "hi": 0.8554419775014802,
+     "level": 0.95,
+     "B": 1000,
+     "method": "percentile",
+     "n_groups": 863,
+     "n": 863,
+     "stratified": true,
+     "seed": 20261006,
+     "n_valid": 1000
+    }
+   }
+  }
+ }
+}

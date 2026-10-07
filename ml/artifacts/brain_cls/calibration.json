@@ -1,0 +1,34 @@
+{
+ "classes": [
+  "glioma",
+  "meningioma",
+  "notumor",
+  "pituitary"
+ ],
+ "temperature": 0.6894624514476091,
+ "alpha": 0.1,
+ "qhat": 0.0,
+ "method": "aps_randomized",
+ "coverage_target": 0.9,
+ "tier_rule": {
+  "t_high": 0.6333719592353397,
+  "t_moderate": 0.5,
+  "t_low": 0.5,
+  "max_set_size": 2
+ },
+ "mondrian_qhat": [
+  0.0,
+  0.8445589187617473,
+  0.7271283440400611,
+  0.0
+ ],
+ "meta": {
+  "n_val": 456,
+  "n_cal": 457,
+  "model_id": "brain_cls@d351f062",
+  "fit_splits": {
+   "temperature": "val",
+   "conformal_and_tiers": "cal"
+  }
+ }
+}

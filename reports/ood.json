@@ -1,0 +1,246 @@
+{
+ "skin_cls": {
+  "cifar10_natural_images": {
+   "n_ood": 300,
+   "n_id": 1512,
+   "auroc_energy": {
+    "point": 0.8638734567901235,
+    "lo": 0.8433794091710758,
+    "hi": 0.8834006834215167,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.8576785714285714,
+    "lo": 0.8392805335097002,
+    "hi": 0.8742999338624338,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "brain_mri_other_modality": {
+   "n_ood": 300,
+   "n_id": 1512,
+   "auroc_energy": {
+    "point": 0.9778571428571429,
+    "lo": 0.9709319334215167,
+    "hi": 0.9838325066137565,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.9819907407407408,
+    "lo": 0.9755067239858907,
+    "hi": 0.9871127094356261,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "fracatlas_other_modality": {
+   "n_ood": 295,
+   "n_id": 1512,
+   "auroc_energy": {
+    "point": 0.9264057035243476,
+    "lo": 0.909055017487221,
+    "hi": 0.9416021545152902,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1807,
+    "n": 1807,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.8841561294951127,
+    "lo": 0.8674017464801363,
+    "hi": 0.8998321338893374,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1807,
+    "n": 1807,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "rsna_other_modality": {
+   "n_ood": 300,
+   "n_id": 1512,
+   "auroc_energy": {
+    "point": 0.8945414462081128,
+    "lo": 0.86678444664903,
+    "hi": 0.9199567350088182,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.8570436507936507,
+    "lo": 0.8270759479717814,
+    "hi": 0.8841676587301588,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 1812,
+    "n": 1812,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  }
+ },
+ "brain_cls": {
+  "cifar10_natural_images": {
+   "n_ood": 300,
+   "n_id": 563,
+   "auroc_energy": {
+    "point": 0.8257430432208408,
+    "lo": 0.7910657193605684,
+    "hi": 0.8596666666666667,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.6853582001184132,
+    "lo": 0.646053730017762,
+    "hi": 0.7244273238602723,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "ham10000_other_modality": {
+   "n_ood": 300,
+   "n_id": 563,
+   "auroc_energy": {
+    "point": 0.8275192421551214,
+    "lo": 0.7982440793368858,
+    "hi": 0.8534921551213737,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.8067910005920662,
+    "lo": 0.7750045885139136,
+    "hi": 0.8355571343990525,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "fracatlas_other_modality": {
+   "n_ood": 295,
+   "n_id": 563,
+   "auroc_energy": {
+    "point": 0.8770990757744528,
+    "lo": 0.8530053888069361,
+    "hi": 0.899661920101153,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 858,
+    "n": 858,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.8091700033115572,
+    "lo": 0.7781435710630099,
+    "hi": 0.8382764849324141,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 858,
+    "n": 858,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  },
+  "rsna_other_modality": {
+   "n_ood": 300,
+   "n_id": 563,
+   "auroc_energy": {
+    "point": 0.9382652457075193,
+    "lo": 0.9230840734162226,
+    "hi": 0.9528695973949083,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   },
+   "auroc_max_softmax": {
+    "point": 0.827643576080521,
+    "lo": 0.7992559206631142,
+    "hi": 0.8554419775014802,
+    "level": 0.95,
+    "B": 1000,
+    "method": "percentile",
+    "n_groups": 863,
+    "n": 863,
+    "stratified": true,
+    "seed": 20261006,
+    "n_valid": 1000
+   }
+  }
+ }
+}

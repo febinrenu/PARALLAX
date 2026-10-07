@@ -1,0 +1,19 @@
+{
+ "n_in": 20,
+ "n_out": 280,
+ "auroc": 0.05142857142857143,
+ "threshold": 2.0690195560455322,
+ "in_flagged": 0.0,
+ "out_flagged": 0.0,
+ "per_class_flagged": {
+  "cxr": 0.025,
+  "brain_mri": 0.0,
+  "skin_dermoscopy": 0.0,
+  "bone_xray": 0.0,
+  "other": 0.0
+ },
+ "model": "densenet121-res224-all",
+ "n_fit": 20,
+ "n_test_in": 20,
+ "note": "Threshold fitted on half of 40 public chest films, evaluated on the other half; out-of-distribution = skin, brain MRI, bone X-ray and natural images through the chest model. Provisional: tiny in-distribution sample."
+}

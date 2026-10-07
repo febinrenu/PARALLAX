@@ -3,6 +3,10 @@
   "bytes": 164670110,
   "sha256": "882817250048c78ef7a759cf23e540d7b581f2327b16663c9d3db12f5d2ffdb4"
  },
+ "cifar10_test/cifar-10-python.tar.gz": {
+  "bytes": 170498071,
+  "sha256": "6d958be074577803d12ecdefd02955f39262c83c16fe9348329d7fe0b5c001ce"
+ },
  "fracatlas/FracAtlas.zip": {
   "bytes": 338436460,
   "sha256": "b67ec2d290a022b3dcf47f78e9a37f7edcc80592c0571f439355bf00bd9f0e23"
@@ -34,5 +38,9 @@
  "lgg_seg/lgg-mri-segmentation.zip": {
   "bytes": 748584920,
   "sha256": "cac105de01272f0ca28dc56178f8d164a7df85d118a5b4baca388d6bcb4e854e"
+ },
+ "rsna_pneumonia/rsna-pneumonia-detection-challenge.zip": {
+  "bytes": 3932287530,
+  "sha256": "133acacf95aa68c4d219124b17937f31cec073052096b9f9b122180df9d9af18"
  }
 }

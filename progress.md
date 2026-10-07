@@ -46,52 +46,52 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 | P1.1 | Decode PNG/JPG/DICOM + hashing | done | p1/intake | 2026-10-06 | `intake/decode.py`, `intake/preprocess.py` |
 | P1.2 | DICOM PHI scrub | done | p1/intake | 2026-10-06 | `intake/phi.py` |
 | P1.3 | Quality gate | done | p1/intake | 2026-10-06 | thresholds provisional, refit on real data |
-| P1.4 | Router (MedSigLIP probe) | todo | | | |
-| P1.5 | OOD score | todo | | | |
+| P1.4 | Router (MedSigLIP probe) | done | p1/intake | 2026-10-07 | real MedSigLIP; held-out n=50 acc 1.00 (CI 0.93 to 1.00); zero-shot 95.6% on 320; classes come from separate datasets, so the 97% mixed-set number is P2's; body-part head unvalidated |
+| P1.5 | OOD score | done | p1/intake | 2026-10-07 | Mahalanobis per modality, AUROC 1.0 on held-out (small n); energy score tested and rejected (AUROC 0.05 on chest); thresholds provisional |
 | P1.6 | CXR reader + anatomy zones | done | p1/intake | 2026-10-07 | 67 reader tests incl. 5 on real weights; localization quality not yet benchmarked (P2.7) |
-| P1.7 | Bone reader wrapper | todo | | | |
-| P1.8 | Brain + skin inference wrappers | todo | | | |
-| P1.9 | Faithfulness test (D1) | todo | | | |
-| P1.10 | Saliency sanity check (D2) | todo | | | |
-| P1.11 | Stability score (D5) | doing | p1/intake | 2026-10-06 | perturbation library done; flip-rate logic todo |
-| P1.12 | MedSAM service | todo | | | |
+| P1.7 | Bone reader wrapper | blocked | p1/intake | 2026-10-07 | code and tests done, real YOLO26 loader checked with random weights; needs P2's trained weights.pt (not in repo) |
+| P1.8 | Brain + skin inference wrappers | blocked | p1/intake | 2026-10-07 | classifier+CAM, U-Net and MedSAM-mask code done and checked on real architectures and P2 metadata; needs P2's trained weights.pt (not in repo) |
+| P1.9 | Faithfulness test (D1) | done | p1/intake | 2026-10-07 | validated on real chest model: 0/18 findings pass on 12 films, random regions 0/18; brain/skin/bone rates wait for weights |
+| P1.10 | Saliency sanity check (D2) | done | p1/intake | 2026-10-07 | chest table committed; gradcam++ chosen, gradcam and hirescam collapse to empty maps; single film, repeat on more; other models wait for weights |
+| P1.11 | Stability score (D5) | done | p1/intake | 2026-10-07 | validated on real chest model; flip rate 0 at severity 2 on the sample film, severity 5 flips contrast |
+| P1.12 | MedSAM service | done | p1/intake | 2026-10-07 | real MedSAM on 30 ISIC 2018 validation lesions: mean Jaccard 0.878, Dice 0.934, 0 failures below 0.65; CPU about 30 s per image |
 
 ### P2 — Data, Training & Validation
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P2.1 | Dataset downloads + manifests | doing | p2/data | 2026-10-06 | credential-free sets done; Kaggle sets wait for token |
-| P2.2 | Leakage audit + group splits | doing | main | 2026-10-07 | fracatlas, ham10000, brain_mri, lgg_seg done; rsna waits for data |
-| P2.3 | Brain classifier (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
-| P2.4 | Brain segmenter (Kaggle) | doing | main | 2026-10-07 | queued, waiting for a free Kaggle GPU slot |
-| P2.5 | Skin classifier (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
-| P2.6 | Bone detector (Kaggle) | doing | main | 2026-10-07 | running on Kaggle since 01:00 |
-| P2.7 | CXR calibration + external validation | todo | | | |
-| P2.8 | Temperature scaling + conformal | todo | | | |
-| P2.9 | Selective prediction | todo | | | |
-| P2.10 | Trust-signal validation (D13) | todo | | | |
-| P2.11 | Subgroup audit | todo | | | |
-| P2.12 | Corruption benchmark | todo | | | |
-| P2.13 | Model cards + datasheets | todo | | | |
-| P2.14 | make eval | todo | | | |
+| P2.1 | Dataset downloads + manifests | done | main | 2026-10-07 | all Claude-fetchable sets present with manifests and a pinned lock file; BDNeuro registered from the manual download |
+| P2.2 | Leakage audit + group splits | done | main | 2026-10-07 | all six datasets audited; reports/leakage.json |
+| P2.3 | Brain classifier (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
+| P2.4 | Brain segmenter (Kaggle) | done | main | 2026-10-07 | done on Kaggle (second account); registered |
+| P2.5 | Skin classifier (Kaggle) | done | main | 2026-10-07 | official-test BMA 0.680 [0.632, 0.728]; registered |
+| P2.6 | Bone detector (Kaggle) | done | main | 2026-10-07 | mAP50 0.453, image AUROC 0.923; registered |
+| P2.7 | CXR calibration + external validation | done | main | 2026-10-07 | RSNA: chex AUROC 0.785, mimic_ch 0.749, contaminated all 0.875; pointing game and IoU in reports/cxr.json |
+| P2.8 | Temperature scaling + conformal | done | main | 2026-10-07 | backend/medproof/calibrate; skin official-test coverage 0.898 at the 0.90 target; chest and bone FNR within 3 points; brain over-covers (0.94) |
+| P2.9 | Selective prediction | done | main | 2026-10-07 | AURC and risk-coverage for skin, brain, chest, bone; reports/figures/risk_coverage.png |
+| P2.10 | Trust-signal validation (D13) | done | main | 2026-10-07 | unstable, abstain, OOD-energy predict errors; quality gate does not; discordant and unfaithful pending P3 and P1.9 (harness ready) |
+| P2.11 | Subgroup audit | done | main | 2026-10-07 | age, sex, site, body part, view; worst subgroups named in reports/subgroups.json |
+| P2.12 | Corruption benchmark | done | main | 2026-10-07 | 8 perturbations x 5 severities on 5 models; reports/corruption.json and figure |
+| P2.13 | Model cards + datasheets | done | main | 2026-10-07 | docs/model_cards (8) and docs/datasheets (7), generated from metrics.json |
+| P2.14 | make eval | done | main | 2026-10-07 | python ml/eval/run_all.py: about 100 s, byte-reproducible; reports/metrics.json is the single source |
 
 ### P3 — Clinical Reasoning & Trust
 
 | WP | Task | State | Branch | Updated | Note |
 |---|---|---|---|---|---|
-| P3.1 | MedGemma service + batch reads | todo | | | |
-| P3.2 | Generalist reader + concordance | todo | | | |
-| P3.3 | Groq pool | todo | | | |
-| P3.4 | Synthetic note generator | todo | | | |
-| P3.5 | Fact extraction with spans | todo | | | |
-| P3.6 | Injection guard | todo | | | |
-| P3.7 | Contradiction rules | todo | | | |
+| P3.1 | MedGemma service + batch reads | doing | p3/medgemma-groq | 2026-10-07 | real read verified on the local RTX 4060 (bf16 4-bit, 3.2 GiB, 5.5 s/read after a 23 s load); Kaggle/Colab notebooks untested; eval batch reads running (resumable) |
+| P3.2 | Generalist reader + concordance | doing | p3/medgemma-groq | 2026-10-07 | client, label mapping, concordance, kappa done and tested; reports/concordance.json waits for the batch reads; specialist-vs-MedGemma kappa waits for P2/P1 weights |
+| P3.3 | Groq pool | done | p3/medgemma-groq | 2026-10-07 | 27 tests with a mocked Groq; live call confirmed on gpt-oss-20b and 120b; Prompt Guard score() added |
+| P3.4 | Synthetic note generator | done | p3/medgemma-groq | 2026-10-07 | ml/data/gen_notes.py, 200 notes: 60 contradictions, 48 attacks in 8 families, 12 benign look-alikes, clean twins; notes_v1.jsonl committed |
+| P3.5 | Fact extraction with spans | doing | p3/medgemma-groq | 2026-10-07 | code and tests done; held-out numbers in reports/p3_context_test.json |
+| P3.6 | Injection guard | doing | p3/medgemma-groq | 2026-10-07 | regex + Prompt Guard + LLM layers done and tested; held-out numbers in reports/p3_context_test.json |
+| P3.7 | Contradiction rules | done | p3/medgemma-groq | 2026-10-07 | P/R 1.00/1.00 on gold facts (templated notes, so it shows the rules fire, not that they generalise); end-to-end with extracted facts not yet measured |
 | P3.8 | Retrieval / precedents | todo | | | |
-| P3.9 | Slot-filled report | todo | | | |
-| P3.10 | Hallucination firewall | todo | | | |
-| P3.11 | Entailment judge | todo | | | |
-| P3.12 | Voice (Whisper) | todo | | | |
-| P3.13 | FHIR export | todo | | | |
+| P3.9 | Slot-filled report | done | p3/medgemma-groq | 2026-10-07 | slot renderer, frames, model-chooses-frame drafts with offline template fallback; live gpt-oss-120b call verified |
+| P3.10 | Hallucination firewall | done | p3/medgemma-groq | 2026-10-07 | R1-R12; 100% of 100+ planted bad claims blocked, 0 of 10 good claims blocked; R5 treats faithful=None as unverified until P1.9 |
+| P3.11 | Entailment judge | done | main | 2026-10-07 | 60 labelled sentences: first pass 0.917; after fixing what the judge is shown, 59/60 on a fresh variant (kept 29/30 true, caught 30/30 defective) and 60/60 on the tuned one; judge outage leaves claims explicitly unchecked |
+| P3.12 | Voice (Whisper) | done | main | 2026-10-07 | real round trip: synthesized dictation -> Whisper on Groq -> guard -> facts; spoken injection flagged and kept out of the facts |
+| P3.13 | FHIR export | done | main | 2026-10-07 | collection Bundle (DiagnosticReport + Observations) validated with fhir.resources R4B; quotes redacted unless requested |
 
 ### P4 — Experience & Platform
 
@@ -112,9 +112,9 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
 ## Role sections
 
 ### P1 — Imaging Core
-**Now:** P1.1 to P1.3 and P1.6 done and tested (191 passed, 0 skipped: `cd backend && python -m pytest -q`). Perturbation library pulled forward from P1.11.
-**Next:** P1.4 router, then P1.9 faithfulness (re-scores through `CxrReader.score`), P1.11 flip-rate logic, P1.5 OOD, P1.10 saliency sanity.
-**Blockers:** none.
+**Now:** every P1 package is implemented and tested. Done and validated on real models or data: P1.1 to P1.6, P1.9 to P1.12. Blocked on P2's trained weights: P1.7 and P1.8 (code finished, see Blockers).
+**Next:** when `ml/artifacts/{bone_det,brain_cls,brain_seg,skin_cls}/weights.pt` exist, run `cd backend && python scripts/check_trained_models.py` and then mark P1.7 and P1.8 done; repeat the faithfulness, stability and saliency runs per modality; refit the quality, faithfulness and OOD thresholds on real validation sets.
+**Blockers:** (1) P1.7 and P1.8: the weight files are not in the repository (the registry lists them with hashes, but only metadata and predictions are committed). P2: please share `weights.pt` for bone_det, brain_cls, brain_seg and skin_cls (any private link; I verify against `weights_sha256` in `model_meta.json`) or put them at `ml/artifacts/<model_id>/weights.pt` locally. (2) none other.
 **For P2 (available now on branch `p1/intake`):**
 - Decode any upload: `from medproof.intake.decode import load_image` returns `DecodedImage` (`.display` uint8, `.analysis` float32 in [0,1], `.sha256`). DICOM handles rescale slope/intercept, window tags and MONOCHROME1 (RSNA). Raises `DecodeError` on bad input. Use this for pHash and for every eval loader so you see the pixels the product sees.
 - Training and serving preprocessing: `from medproof.intake.preprocess import prepare, get_spec`; specs `cxr_xrv`, `brain_effnet`, `skin_cls`, `bone_yolo`. Call `prepare(decoded_or_float_array, "brain_effnet")` to get a float32 CHW tensor. Change a spec only via a Decisions entry so train and serve stay equal.
@@ -128,30 +128,45 @@ States: `todo` · `doing` · `blocked` · `done` · `cut`
   - Full read with localization: `CxrReader.load(anatomy_fn=AnatomySegmenter.try_load()).predict(img)` then `evidence.to_findings(out, cfg, artifact_dir=...)` gives contract `Finding` and `ImageEvidence` (`prob_calibrated` equals `prob_raw`, flag `uncalibrated`, `conformal_set=[]`: calibration fills these). Stage entry point: `readers.cxr.run(ctx)`.
   - Localization eval: boxes are `bbox_xyxy` in original-image pixels (max edge exclusive); heatmaps are float32 [0,1] on the original grid. The model reads only the central square of non-square images; heatmap outside it is exactly 0 and the finding carries flag `partial_view`. RSNA images are square, so no effect there.
   - Preprocessing: `intake.preprocess.prepare(img, "cxr_xrv")` now centre-crops to a square then resizes to 224 (TorchXRayVision's own convention). The spec changed from stretch to centre-crop, so any notebook using it for CXR should re-run; brain, skin and bone specs are unchanged.
-- Setup: `cd backend`, Python 3.12 venv, `pip install numpy pillow opencv-python-headless pydicom scipy pydantic pytest hypothesis`, then `python -m pytest -q`.
+- **P1.4 to P1.12 handoff (all on `p1/intake` and `main`):**
+  - Router: `intake.router.Router(embedder, config)`; `run(ctx)` stage returns `payload = {modality, body_part, confidence, probs, method, flags, ood}`. Needs `pip install transformers scikit-learn` and the gated `google/medsiglip-448` (HF token in `.env`; or `MEDPROOF_ROUTER_MODEL=<local folder>`). `intake.run_bytes(raw, router=...)` routes before the quality checks. Artifacts are git-ignored; register these hashes: probe `router_probe.npz` sha256 `0f3042717e9230dd1be9c9e444a7b7c954115a48ef3f8f575099f07f44c97aba` (45 KB), OOD `ood.npz` sha256 `38d268cc045bfb56bd713abe751567283ebbbb2a1216dc2f0b5bf4ea0e07d8be` (21 MB). Both were trained on 320 public images; retrain with `python -m medproof.intake.router_train --data DIR` and `python -m medproof.intake.ood --data DIR` (DIR/<class>/... layout; `scripts/stage_router_data.py` builds a small one) on the full datasets for the final numbers.
+  - P2, router and OOD evaluation: `intake.router_train.evaluate_folder(embedder, DIR)` scores only the held-out groups; `intake.ood.score_folder(embedder, DIR, OODModel.load(path))` returns one row per image (distance, threshold, score, is_ood) for AUROC against other modalities and natural images. The 97% target is yours to report on the mixed held-out set; my staged set cannot show it (see Decisions).
+  - Faithfulness: `verify.faithfulness.assess_output(reader, decoded, reader_output)` then `apply_to_findings(findings, results)` fills `ImageEvidence.faithful` and `faithfulness_drop` and adds flag `unfaithful`. Stability: `verify.stability.assess_output` then `apply_to_findings` fills the contract `Stability` and flag `unstable` (flip rate above 0.25). Both are model-agnostic: any reader with `.score(img)` works (CXR, classifier, bone).
+  - P3: readers expose boxes as `bbox_xyxy` in original-image pixels (max edge exclusive), one `ImageEvidence` per finding plus a second mask-kind evidence when a U-Net or MedSAM mask exists; bone findings have no heatmap and use kind `bbox`.
+  - P4: stage entry points are `intake.run.run`, `intake.router.run`, `readers.cxr.run`, `readers.classifier.run`, `readers.bone.run`, `verify.faithfulness.run`, `verify.stability.run`, `segment.medsam.run_box`; each returns a `StageResult` and never raises. `backend/pyproject.toml` gained `ml` and `services` extras; please fold them into your `uv` setup. Real-model tests skip with a reason unless the weights are on disk.
+- Setup: `cd backend`, Python 3.12 venv, `pip install -e .[dev,ml,services]` (CPU torch from https://download.pytorch.org/whl/cpu), then `python -m pytest -q`. Real-model tests need `MEDPROOF_ROUTER_MODEL` (local MedSigLIP folder), `MEDPROOF_ROUTER_DATA` (staged images) and the cached chest and anatomy weights.
 
 ### P2 — Data, Training & Validation
-**Now:** P2.1 and P2.2 are done for everything that needs no credentials. Downloaded and hashed: ISIC 2018 Task 3 train and official test, HAM10000 metadata, ISIC API metadata for the official test (age, sex, site, lesion_id), FracAtlas. Splits and `reports/leakage.json` exist for `fracatlas` and `ham10000`. Merged to `main`. The four training notebooks (P2.3 to P2.6) are written under `ml/train/notebooks/` and tested.
-**Next:** push `p2/data` (the notebooks clone it), launch the four jobs once the Kaggle token exists, then brain_mri, lgg_seg and rsna splits as soon as their data arrives, then P2.7 onward.
-**Blockers:** (1) none for RSNA any more: rules accepted, download running. (2) BDNeuro-MRI licence: its README still says `[FILL IN]`; check the Mendeley page and record it before we show results on it.
-**Machine:** laptop, NVIDIA RTX 4050 6 GB (can run the smaller training jobs if Kaggle GPU quota runs out).
-**For P3 (all on branch `p2/data`, nothing here needs a P2 reply):**
-- Run `python ml/data/download.py core` once on your machine, or point `PARALLAX_DATA_ROOT` at a folder that has `<dataset>/...` as laid out in `ml/data/splits/*.csv` (`source_dir` + `relpath`). On Kaggle, symlink attached inputs into that layout.
-- `from ml.data.common import load_split, image_path, load_eval_index`. `load_split("ham10000")` gives one row per image with `label`, `split` (`train/val/cal/test`, `official_test` for the ISIC test set, `dropped` = removed by the audit), `age`, `sex`, `site_general` (note seeds), `group`, `eval_batch`.
-- `ml/data/eval_index.json` lists, per dataset, the test split and a bounded batch subset (`eval_batch == True`, at most 1,000 images, label-stratified, seeded). Use it for the MedGemma batch reads (P3.1/3.2): fracatlas 569 test images, ham10000 official test 1,000 of 1,512.
-- Retrieval index (P3.8): build it from `split == "train"` only, so a precedent can never be a test image.
-- Notes seeds: FracAtlas rows carry `body_part`, `view`, `hardware`, `label`; HAM rows carry `age`, `sex`, `site_general`, `label`. `gen_notes.py` is yours; P2 does not touch it.
-- brain_mri, lgg_seg and rsna split files appear after the Kaggle token arrives; `eval_index.json` updates itself.
+**Now:** every P2 work package is done and pushed to `main` (P2.1 to P2.14). `python ml/eval/run_all.py --check` reproduces `reports/metrics.json` exactly in about 100 s from committed files only; `docs/validation_report.md`, 8 model cards, 7 datasheets and 6 figures are generated from it. Tests: `python -m pytest ml/tests -q` and `cd backend && python -m pytest -q` (555 passed).
+**Next:** nothing blocking. Open items that need other roles are listed below. Optional P2 latitude if time remains: MILK10k external skin test (M4), a higher-resolution skin model or ensemble (official-test balanced accuracy is 0.68), the discordant and unfaithful signals once their inputs exist.
+**Blockers:** none. BDNeuro-MRI licence is unconfirmed (README placeholder); the datasheet says so.
+**Machine:** laptop, NVIDIA RTX 4050 6 GB.
+**For P1 (everything below is on `main`):**
+- Weights are not in git. They are in `ml/artifacts/<model>/weights.pt` on the P2 laptop and in the private Kaggle outputs (`rishijayanath/parallax-p2-6-bone-fracture-detector`; `johannshonigeorge/parallax-p2-3-brain-mri-classifier`, `parallax-p2-4-brain-tumour-segmenter`, `parallax-p2-5-skin-lesion-classifier`). Ask P2 to send them, or pull with the Kaggle CLI. `ml/artifacts/registry.json` has the class order, preprocessing spec name, sha256 and licence for each.
+- Rebuild a classifier with `timm.create_model(arch, pretrained=False, num_classes=len(classes))` and `load_state_dict(torch.load(weights.pt))`; the segmenter is `smp.Unet("resnet34", encoder_weights=None, in_channels=3, classes=1)`; the bone model loads with `ultralytics.YOLO(weights.pt)` and `predict(imgsz=640, conf=0.001)` (the library letterboxes itself). The segmenter uses a new spec `brain_seg` (256 px, 3 channels, ImageNet mean and std, stretch): please add it to `intake/preprocess.py` (its definition is `SEG_SPEC` in `ml/train/seg.py`).
+- Calibration to apply at serving time, no torch needed: `from medproof.calibrate.calibrator import Calibrator; Calibrator.load("ml/artifacts/skin_cls/calibration.json").calibrate(logits)` returns calibrated probabilities, a conformal set of class names (target coverage 90%) and a tier (`high`/`moderate`/`low`/`abstain`) per input; same for `brain_cls`. Binary readers: `BinaryCalibrator.load("ml/artifacts/bone_det/calibration.json")` and `ml/artifacts/cxr_chex/calibration_lung.json` (`.prob(score)`, `.decide(score)` with the FNR-controlled report flag and abstention band). The product demo reads the chest model `all`, which saw RSNA, so the calibrator fitted for it on RSNA is optimistic: either switch the product to the `chex` weights, or accept uncalibrated-looking confidence and say so.
+- **Quality gate needs refitting.** On real clean images it flags 43% (skin), 88% (brain), 45% (chest) and 91% (bone) of images, and flagged images are not wrong more often (reports/signals.json). Dominant reasons: `clipped` (black borders in MRI and chest films count as clipped pixels), `low_contrast` and `overexposed` for dermoscopy, `low_resolution` for small FracAtlas images. Percentile tables per metric are in the same file.
+- **Truncated JPEGs.** 59 FracAtlas negatives lose their last few bytes; `load_image` raises `DecodeError` on them although OpenCV and tolerant PIL decode them fine. A tolerant fallback in `intake/decode.py` would keep such uploads working.
+- fp16 inference on the brain classifier produced non-finite logits for one unusual image; serving on CPU float32 is unaffected, but guard against non-finite outputs.
+- Faithfulness (P1.9) and stability (P1.11): `ml/eval/signals.py::compare(df, flag)` validates any per-image boolean column against errors. The corruption benchmark already shows flip rate at severity 2 above 0.25 predicts errors strongly (skin 0.61 vs 0.13 error; brain 0.87 vs 0.03).
+**For P3:** specialist predictions on the same images as your MedGemma batches are cached: `ml/artifacts/skin_cls/predictions/official_test.npz` (ids, logits, y, group) and `ml/artifacts/bone_det/predictions/test.npz` (ids, packed boxes). Once the reads are complete, build a per-image `discordant` column and call `signals.compare`; a bone `discordant` flag must not downgrade findings until it passes. The chest reader is validated in `reports/cxr.json`.
+**For P4:** `reports/metrics.json` is the only file the validation page needs (headline rows with CIs and contamination status, calibration, selective prediction, trust signals, subgroups, corruption, OOD, leakage, registry); `docs/model_cards/index.json` and `docs/datasheets/index.json` list the cards and sheets for the `/models` page; `reports/figures/*.png` are static fallbacks. `ml/Makefile.inc` defines `data`, `eval`, `eval-check`, `figures`, `ml-test`: please include it and ack the `.gitignore` carve-out for `ml/data/` (Decisions, 2026-10-06).
 **Kaggle jobs:** (notebook slug, started, status, artifact hash)
-- rishijayanath/parallax-p2-5-skin-lesion-classifier: started 2026-10-07 01:00, running (15 epochs, ConvNeXt-Tiny)
-- rishijayanath/parallax-p2-6-bone-fracture-detector: started 2026-10-07 01:00, running (yolo26n, 80 epochs)
-- rishijayanath/parallax-p2-3-brain-mri-classifier and parallax-p2-4-brain-tumour-segmenter: queued; Kaggle allows 2 GPU sessions at once, a background loop pushes them when a slot frees
+- rishijayanath/parallax-p2-5-skin-lesion-classifier: 2026-10-07 01:00 to 01:17, COMPLETE. Official ISIC test balanced accuracy 0.689 [0.640, 0.738]; output not pulled (Kaggle rate limit), superseded by the rerun below
+- rishijayanath/parallax-p2-6-bone-fracture-detector: v1 trained 80 epochs then failed at prediction export on truncated JPEGs (fixed in 8539baf); v2 COMPLETE 2026-10-07 02:56, pulled, registered as bone_det@8539baf9. Test (569 images, 103 fractured): mAP50 0.453 [0.367, 0.547], image AUROC 0.923 [0.886, 0.957], sensitivity 0.835 [0.757, 0.903] at the validation-fixed 90%-specificity threshold (test specificity 0.880)
+- johannshonigeorge/parallax-p2-5-skin-lesion-classifier: rerun COMPLETE 2026-10-07 02:26, pulled, registered as skin_cls@a217517b. Official ISIC 2018 test balanced accuracy 0.680 [0.632, 0.728], melanoma recall 0.637, melanoma AUROC 0.924; the two runs differ by about 0.01 (GPU nondeterminism)
+- johannshonigeorge/parallax-p2-3-brain-mri-classifier: COMPLETE 2026-10-07, pulled, registered as brain_cls@d351f062. Leakage-free test accuracy 0.940 [0.921, 0.958]
+- johannshonigeorge/parallax-p2-4-brain-tumour-segmenter: COMPLETE, pulled, registered as brain_seg@d351f062. Mean per-patient Dice 0.831 [0.705, 0.891] over 9 test groups. A duplicate of this job also ran on rishijayanath (the launcher fired before I stopped it); its output is unused
 
 ### P3 — Clinical Reasoning & Trust
-**Now:**
-**Next:**
-**Blockers:**
-**MedGemma endpoint:** (where it runs, current URL, last health check)
+**Now:** MedGemma eval batch reads are running on the local RTX 4060 (two processes, one per dataset) (`python -m services.medgemma.batch --dataset fracatlas|ham10000`, resumable, fixed random order so any prefix is a random sample); afterwards `python -m ml.eval_p3.eval_second_reader` writes `reports/concordance.json`.
+**Next:** P3.8 retrieval (needs P1's MedSigLIP embedding fn and the train split); end-to-end context stage (guard -> extract -> contradictions) measured on extracted instead of gold facts; skin specialist-vs-MedGemma result and trust-signal check once the HAM10000 reads finish; wire stages into P4's pipeline once `StudyContext` exists.
+**Blockers:** none. `StudyContext` is not defined yet, so my stages take plain arguments (`StudyView`, facts, `Demographics`); P4 can adapt them.
+**MedGemma endpoint:** local only. `uvicorn services.medgemma.server:app --port 8001` on the RTX 4060 (nf4 weights, bf16 compute, 3.2 GiB VRAM, about 5.5 s per read after a 23 s load). Kaggle/Colab notebooks written but not run.
+**For P1:** `report/firewall.py::is_supported` treats `faithful=None` as unverified; set `faithful` (P1.9) and R5 tightens automatically. `readers/generalist.py` reads `DecodedImage.display` and `.sha256`; `verify/concordance.apply(findings, read)` fills `Finding.second_read` and adds flags only, never `status`.
+**For P2 / P4 (important):** the second reader is weak on bone: on a random 403-image prefix of the FracAtlas batch MedGemma 4B (4-bit, zero-shot) found about 19% of fractures (sensitivity 0.19, 95% CI 0.11-0.29) at 99.4% specificity (kappa 0.27, 0.15-0.38); the missed reads literally say "No obvious fractures are visible". A `discordant` status driven by `second_reader_disagrees` would downgrade most true bone positives. Per plan 9.4, validate the flag (D13) per modality before letting it downgrade anything; until then treat it as an audit flag for bone. Numbers will be in `reports/concordance.json`.
+**For P4 (stages ready to wire, in this order):** `context.voice.process_dictation` (optional audio) -> `context.injection_guard.InjectionGuard.check` -> `context.extract.extract` -> `context.contradictions.check` -> `report.drafts.draft_claims` (includes the firewall) -> `report.entailment.judge` -> `report.fhir.build_bundle`. A report consumer must show only claims with `blocked_reason is None`; a claim removed by the judge keeps its `rendered` text so the audit view can strike it through. `build_bundle` writes only reportable claims and redacts note quotes unless `include_quotes=True`.
+**For P4:** `report.drafts.draft_claims(view, pool)` returns claims + a `StageResult(stage="report")`; with `pool=None` or Groq down it returns the template-only report and says so in `warnings`. `context.contradictions.check(...)` returns findings with `TextEvidence` attached (one `te_n` id per finding/fact pair) plus `missing_context` prompts. The status rule can count `polarity == "supports"` text evidence.
 
 ### P4 — Experience & Platform
 **Now:** P4.1 to P4.7 done. P4.3 added the orchestrator (`pipeline.run_study`, `core/{context,config,cache}.py`) — see the shared log for that pass's detail. P4.4+P4.5 add:
@@ -230,6 +245,49 @@ Deviations from plan.md, newest last. Format: `date · role · decision · evide
 - 2026-10-07 · P4 · Wax red gets a text shade `--color-pencil-red-ink: #e8695e`; strokes keep plan §10.2's `#e2574c` · `#e2574c` text measures 4.48:1 on film-base and 3.97:1 on panel (below WCAG AA 4.5:1); found by the axe suite.
 - 2026-10-07 · P4 · Browser ledger verification recomputes the entry-hash chain (string-only material) for real entries; payload re-hashing in JS uses Python-compatible canonical JSON and refuses floats (Python prints `1.0`, JS `1`), so float payloads are verified server-side · parity test pins JS output to a Python-generated fixture.
 - 2026-10-07 · P4 · Pipeline caches are keyed by content: artifacts live under `artifact_root/<input sha256>`, intake is uncacheable (it must set the decoded image), failed stages are never cached; reader `cache_version` bumped to v3 · three real bugs found driving the UI against a live server.
+- 2026-10-07 · P2 · Brain classifier headline: the Kaggle benchmark inflation is measured inside one model. Model A scores 0.942 on the original Testing folder, 0.903 once the 727 images with a duplicate in Training are removed, and 0.865 once the 1,051 images with a same-scan neighbour are removed (n=549). The across-model difference A minus B (0.002, CI -0.020 to 0.026) shows no inflation and is confounded by different models and test sets, so it must not be quoted · B (leakage-free group split, test n=563) scores 0.940 [0.921, 0.958].
+- 2026-10-07 · P2 · Two Kaggle accounts: the first account's concurrent GPU limit of 2 stalled the brain jobs, so they ran on a second existing account (johannshonigeorge, owner agreed) · plan.md section 14 lists several accounts as the fallback; its token is kept in the gitignored `.env.kaggle2`.
+- 2026-10-06 · P3 · Slot `frame` enum on top of free templates, so the "Doctor, consider..." framing is structural · docs/report_slots.md
+- 2026-10-06 · P3 · Firewall rule R4 binds cited evidence to the finding named in a slot; adds a mandatory false-block test on good claims · docs/report_slots.md
+- 2026-10-06 · P3 · MedGemma service returns boxes on a normalized 0..1000 grid; pixel conversion happens in the reader (P3.2) · services/medgemma/README.md
+- 2026-10-06 · P3 · Groq pool adds RPM and daily counters, a total deadline, and `PoolResult.source` (live/cache/fallback) so degradation shows up in StageResult warnings · backend/tests/llm/test_groq_pool.py
+- 2026-10-06 · P3 · Pool defaults to `json_object` plus schema text in the system prompt, not strict `json_schema`; unsupported params (`reasoning_effort`, `response_format`) are dropped once on a 400 · live call succeeded without needing the drop
+- 2026-10-06 · P3 · Real-GPU smoke is a separate script (`python -m services.medgemma.smoke`); CI tests use a fake backend · services/medgemma/
+- 2026-10-06 · P3 · Added `.cache/` and `ml/artifacts/medgemma_reads/` to .gitignore (LLM cache can hold note text; cached reads are large) · plan.md 11.3
+
+- 2026-10-07 · P3 · MedGemma runs in bf16 compute, not fp16: fp16 returned an empty reply on the RTX 4060 (Gemma-family activations overflow). The loader picks bf16 when the GPU supports it, else fp32 · services/medgemma/loader.py, smoke log
+- 2026-10-07 · P3 · The second reader is asked for a short FINDINGS/IMPRESSION report with a research-evaluation framing, not strict JSON: the JSON-only prompt gave looping labels, refusals and reasoning-only output. Labels are derived deterministically from the text (negation and hedging aware) in `verify/report_labels.py`; boxes from MedGemma are not requested yet · services/medgemma/prompts, 44 label-mapping tests
+- 2026-10-07 · P3 · Injection guard is three layers (regex, Prompt Guard per sentence at 0.9, gpt-oss-20b classifier). On 28 fresh attacks: regex 4, Prompt Guard 4 (7 at 0.5), classifier 25, all three 27, with 1 false positive in 15 benign. The regex 15/15 on the corpus is in-sample and must not be quoted · reports/p3_guard_blind.json
+- 2026-10-07 · P3 · Gold quote conventions in gen_notes were changed after reading dev-split extraction errors (medication names without 'on', no compound symptoms, foreign negators kept, foreign age fact added). The test split had not been scored · commit "fix(notes): align gold quote conventions"
+- 2026-10-07 · P3 · Differential injection test measures (1) facts overlapping injected text and (2) F1 against gold on injected notes vs their clean twins, not identical fact sets, which only reflect run-to-run variance (5/15 identical) · ml/eval_p3/eval_context.py
+- 2026-10-07 · P3 · TextEvidence ids are unique per (finding, fact) pair so each id has one owner, as the firewall's evidence-owner rule (R4) assumes · context/contradictions.py
+- 2026-10-07 · P3 · Report claims are drafted as frames chosen by the model (ids only, no labels or quotes in its input), expanded by code into slot templates; offline fallback picks frames deterministically · report/drafts.py
+
+- 2026-10-07 · P3 · FHIR is validated against `fhir.resources.R4B` (the library ships R4B, R5 and STU3, no plain R4); the resources used are the same in R4 and R4B. The library checks structure and data types but not value-set codes, so status codes are kept as constants in report/fhir.py · backend/tests/report/test_fhir.py
+- 2026-10-07 · P3 · Entailment judge input shows the second reader as an explicit word ("agrees", "disagrees", "inconclusive", "unavailable"), a summary of what the notes contain (to verify "the notes do not mention history"), and readable flag phrases. These came from the first-pass errors on variant 0; variant 1 was written afterwards and is the fair measurement · reports/p3_entailment_*.json
+- 2026-10-07 · P3 · Voice: Whisper gets a static clinical-vocabulary prompt (no patient data) and the transcript is treated as an untrusted note: same guard and extraction as typed text · context/voice.py
+- 2026-10-07 · P3 · MedGemma service reads its prompt files once at start. A git rebase during a long batch removed a prompt file for a moment and killed the run; resumable by image id, so nothing was lost but time · services/medgemma/reader.py
+- 2026-10-07 · P2 · Conformal sets use the randomised APS with a zero conformity score for a true top class, and the set always contains the top class · the deterministic APS over-covered badly (coverage 0.985 at a 0.90 target on the brain set, 0.953 on skin), because wrong cases sit near score 1 and the quantile jumps the gap; forcing the top class into a randomised rule overshot too (0.958), so the score for a true top class is zero, which is valid split conformal and gives 0.898 on the official skin test. The per-input random draw is a hash of the logits, so a study always gets the same set.
+- 2026-10-07 · P2 · Binary readers (chest label, bone image score) use Platt scaling on logit(score) plus a conformal false-negative-rate threshold and an abstention band at calibrated probability 0.4 to 0.6, fitted on separate halves of the calibration data · temperature alone cannot fix the base rate of operating-point-scaled chest scores (ECE 0.220 to 0.018 with Platt); only Lung Opacity and Pneumonia can be calibrated on RSNA, the other 16 labels stay uncalibrated.
+- 2026-10-07 · P2 · `make eval` uses B=1000 bootstrap resamples (notebooks used 2000), B=500 for subgroup cells, B=300 for corruption cells and for the validation and calibration splits, and AUPRC and temperature-only ECE as point estimates · keeps the run near 100 s; intervals agree with the notebook ones to the third decimal on the headline metrics.
+- 2026-10-07 · P2 · Quality-gate flags and RSNA header demographics are committed (`ml/artifacts/<model>/predictions/quality.csv`, `ml/data/splits/rsna_meta.csv`) · both need the raw images, and `make eval` must run from a fresh clone.
+- 2026-10-07 · P2 · Brain similarity grouping uses Hamming radius 6, not 10, and LGG patients merge only on near-duplicate tumour slices · radius 10 chained 5,619 of 7,200 images into one group and dark top and bottom slices matched across LGG patients; both made the splits useless.
+- 2026-10-07 · P2 · The energy-score OOD baseline reaches AUROC 0.83 to 0.98 against other modalities and CIFAR-10, below the 0.95 target · P1.5 (MedSigLIP Mahalanobis) is still needed; the product decoder also rejects 59 truncated FracAtlas JPEGs (see For P1).
+
+- 2026-10-07 · P1 · Autonomous run: P1.4 to P1.12 were built without a fresh plan-mode approval per package, on the instruction to continue unattended; the approved roadmap plan covered the order and scope.
+- 2026-10-07 · P1 · Faithfulness pass rule is a permutation test, not a global threshold: a heatmap passes if its deletion drop at k=10% beats same-shaped random regions placed elsewhere (overlap at most 0.25) with p at most 0.10 and the drop is at least 0.05; `n_random` must be at least 9 or the config is rejected, because nothing could ever pass. Random regions pass at most 10% by construction; measured 0 of 18. Median fill is available beside blur because blur keeps silhouette evidence such as heart size (Cardiomegaly drop was negative under blur).
+- 2026-10-07 · P1 · Stability: severity 2, seed 0, a finding flips when it crosses its positive threshold in either direction; `worst_perturbation` is named only when something flipped; flag `unstable` above flip rate 0.25 (the plan's status-rule limit). Severity is configurable; P2.12 sweeps all five.
+- 2026-10-07 · P1 · Saliency sanity chooses among methods whose maps do not collapse to empty after randomisation (more than half the stages empty excludes a method). On the chest model gradcam and hirescam collapse once the classifier is randomised, so gradcam++ is chosen; the result is one image and should be repeated.
+- 2026-10-07 · P1 · Thread counts measured on the dev machine: chest DenseNet 0.33 s per image on 1 thread versus 4.3 s on 8 (default 1, `MEDPROOF_THREADS`); MedSigLIP 15 s on 1 thread versus 9 s on 6 (default 6, `MEDPROOF_ROUTER_THREADS`).
+- 2026-10-07 · P1 · Router uses a canonical `model_id` (default `google/medsiglip-448`, stored in the probe and cache keys) separate from an optional local `model_path`; a local folder used as the id overflowed Windows path limits and would have baked a machine path into the probe. Probe and OOD files are plain `.npz` (no pickle) and record the embedder id; a probe for another embedder is refused with a warning and routing falls back to zero-shot.
+- 2026-10-07 · P1 · Zero-shot fallback uses a softmax over cosine similarity times the model's logit scale across the five class prototypes (mean of several prompts per class, kept in `router_config.py`); SigLIP's own sigmoid and bias are not used because only the ranking across our classes matters, so its confidence is relative, not a calibrated probability.
+- 2026-10-07 · P1 · Router probe temperature fitted on the validation split reached its lower bound (0.05): the staged classes are almost perfectly separable, so the confidence is saturated and not informative. It needs harder, mixed data (P2's held-out mix, CT, fundus and pathology as `other`) before the confidence means anything. `other` is represented only by 60 CIFAR-10 natural images here.
+- 2026-10-07 · P1 · Router grouping: every image is its own group except brain MRI, where a patient folder is one group; FracAtlas patient ids were not used. Held-out evaluation counts only test groups.
+- 2026-10-07 · P1 · OOD threshold is the 95th percentile of cross-fitted (group k-fold) Mahalanobis distances over all non-test groups, with Ledoit-Wolf shrinkage; a plain 95th percentile of 6 to 15 validation points flagged up to a third of normal images. Energy score on the chest model's logits was implemented, calibrated and tested: AUROC 0.05 separating chest films from skin, brain, bone and natural images (the other images look more confident), so it is NOT used as a flag; the OOD flag is Mahalanobis only. Result in `intake/results/ood_energy_cxr.json`.
+- 2026-10-07 · P1 · MedSAM runs on CPU through transformers (`flaviagiammarino/medsam-vit-base`, Apache-2.0, from `pytorch_model.bin`); results cached by image hash, box and model id in memory and optionally on disk.
+- 2026-10-07 · P1 · Brain and skin readers are one generic `ImageClassifierReader` built from P2's `model_meta.json` (arch, classes, `preproc_spec` name or dict, weights hash); layer paths `bn2` (EfficientNet) and `stages.3` (ConvNeXt) were checked on the real timm models. Brain `notumor` is not reported as a finding. Bone image score is the highest box confidence, positive cut-off 0.25 until P2.8 calibrates it.
+- 2026-10-07 · P1 · Tests never download model weights: real-model tests run only when the weights are already on disk and otherwise skip with a reason; `MEDPROOF_ROUTER=0` is set in `tests/conftest.py` so a locally trained router does not change test behaviour.
+
 ## Contract change requests
 
 Format: `id · proposer · change · affected roles · P4 ack (yes/no) · applied in commit`.
@@ -244,6 +302,35 @@ Record anything marked [VERIFY] in plan.md once checked. Format: `date · role �
 - 2026-10-07 · P1 · Input convention · single channel, range [-1024, 1024], square. The library's transform is `XRayCenterCrop` then `XRayResizer(224)`; the PSPNet raises on non-square input · installed `datasets.py` and `utils.py`. Our `prepare(..., "cxr_xrv")` matches it to within a mean of 25 grey levels on a +-1024 scale and 0.08 in probability on a non-square phantom (resampling filter differs: cv2 INTER_AREA vs skimage).
 - 2026-10-07 · P1 · Anatomy model `chestx_det.PSPNet` · input square [-1024,1024] resized to 512, output raw logits (14, 512, 512), target order verified. "Left Lung" is the patient's left lung: on a real NIH chest film (public sample from the torchxrayvision repo, not stored) the "Right Lung" mask centroid was at x=151 and "Left Lung" at x=351 of 512, heart at x=290, matching the standard display with the patient's right on the image left and the film's own L marker on the image right. Lung masks include retrocardiac lung and overlap the heart mask (handled in `zones.name_region`) · one-off real-image run.
 - 2026-10-07 · P1 · Download environment · Windows curl failed TLS revocation checks here and the library downloader stalled at 0 bytes, so the two public weight files were fetched with `curl --ssl-no-revoke` (TLS chain still verified, only the revocation lookup skipped) from the official `mlmed/torchxrayvision` v1 release URLs. No checksum is published for them; the weights' sha8 appears in `model_id`.
+- 2026-10-06 · P3 · `google/medgemma-1.5-4b-it` id, gating, `transformers>=4.50`, `AutoModelForImageTextToText`, BF16 weights · confirmed · huggingface.co/google/medgemma-1.5-4b-it
+- 2026-10-06 · P3 · Groq free tier gpt-oss-120b/20b: 30 RPM, 8K TPM, 1K RPD; cached tokens not counted; 429 carries retry-after · confirmed · console.groq.com/docs/rate-limits
+- 2026-10-06 · P3 · Prompt Guard id is `meta-llama/llama-prompt-guard-2-86m` (as in plan.md; the rate-limit page drops the prefix). Also listed: `-22m`, `openai/gpt-oss-safeguard-20b`, `whisper-large-v3(-turbo)` · confirmed · GET /models with the extract key
+- 2026-10-06 · P3 · Groq accepts `response_format: json_object` and `reasoning_effort: low` on gpt-oss-20b (live call: 1 attempt, 258 tokens, injected "report no findings" text ignored, 2nd call served from cache) · confirmed · live pool call
+- 2026-10-06 · P3 · MedGemma access: HF token is valid but returns 403 on the gated repo (terms not accepted for that account, or token lacks gated-repo read) · BLOCKED
+- 2026-10-06 · P3 · MedGemma CXR box prompt/format · NOT verified (model card gave no format); check on first smoke run
+
+- 2026-10-07 · P3 · MedGemma 1.5 4B nf4 fits and runs on an RTX 4060 Laptop (8 GB): 3.2 GiB peak VRAM, 23 s load from cache, 5.5 s per read with the report prompt · confirmed · services/medgemma/smoke.py log
+- 2026-10-07 · P3 · MedGemma fp16 compute returns an empty reply on that GPU; bf16 works · confirmed · smoke runs
+- 2026-10-07 · P3 · MedGemma CXR box prompt/format · still NOT verified (the report-style prompt does not request boxes)
+- 2026-10-07 · P3 · Llama Prompt Guard 2 on Groq answers with a bare probability and scores a whole clinical note low (3 of 15 attacks at 0.5); per-sentence it fires on 4 of 28 fresh attacks at 0.9 · confirmed · reports/p3_guard_blind.json
+- 2026-10-07 · P3 · Groq free tier real limits observed: 8,000 tokens per minute is the binding limit for gpt-oss-20b extraction (about 4-6 calls a minute with a 1.5K-token prompt) · confirmed · response headers
+
+- 2026-10-07 · P3 · Whisper (`whisper-large-v3-turbo`) on Groq with `GROQ_KEY_AUDIO` accepts multipart audio with `response_format=verbose_json` and returns text, language and duration; a 20 s synthesized dictation was transcribed correctly including numbers · confirmed · ml/eval_p3/voice_roundtrip.py
+- 2026-10-07 · P3 · fhir.resources 8.3.0 does not enforce value-set bindings (an invalid `status` string validates); required fields and date formats are enforced · confirmed · test_fhir.py
+
+- 2026-10-07 · P1 · MedSigLIP (`google/medsiglip-448`) · gated; accessible with a personal read token after accepting the terms. Loads with `transformers.AutoModel` in transformers 5.19. Image tower input 448 px, embedding dimension 1152, text length 64, `logit_scale` parameter exp = 10.03; 3,513,309,984-byte `model.safetensors`. Embedding takes about 9 s per image on 6 CPU threads · downloaded model and runs.
+- 2026-10-07 · P1 · transformers 5.x `get_image_features` and `get_text_features` return an output object, not a tensor; its `pooler_output`, L2-normalised, equals the model's own `image_embeds` and `text_embeds` (checked on a public tiny random SigLIP). The embedder accepts both forms · `test_router_real.py`.
+- 2026-10-07 · P1 · MedSigLIP preprocessing assumption (448 px, mean and std 0.5, bilinear stretch) was applied by our own `prepare`, not by the model's processor; embeddings behaved sensibly (zero-shot 95.6%), but equality with the processor output was not checked.
+- 2026-10-07 · P1 · FracAtlas download · the plan's figshare file id 43283628 is outdated; article 22363012 now serves `FracAtlas.zip` (338,436,460 bytes, CC BY 4.0) as file 65518038 · figshare API.
+- 2026-10-07 · P1 · Brain Tumor Dataset (Cheng) · figshare article 1512427, CC BY 4.0, four ~215 MB zips of MATLAB v7.3 files with `cjdata/image` and `cjdata/PID`; used for brain MRI router images · figshare API.
+- 2026-10-07 · P1 · ISIC 2018 S3 archives support HTTP range requests (images read without full downloads); Task 1 validation ground-truth masks are `ISIC_xxxx_segmentation.png` · direct reads. NLM Montgomery CXR PNGs are readable per file with a browser user agent; the directory index returns 403.
+- 2026-10-07 · P1 · Windows: curl fails TLS revocation checks and the Hugging Face and torchxrayvision downloaders stalled; large files were fetched with `curl --ssl-no-revoke -C -` (TLS chain still verified). The `hf-xet` path stalled after 1 GB.
+- 2026-10-07 · P1 · P2's committed `model_meta.json` formats · classifier `preproc_spec` is a name (`brain_effnet`, `skin_cls`); segmenter `preproc_spec` is a dict (name, size, channels, mean, std, resize, value_range) and `threshold` 0.5; detector `imgsz` 640 and weights loadable with `ultralytics.YOLO`. ultralytics 8.4.174 builds `yolo26n.yaml` and its checkpoints load through `BoneReader.from_dir` · `tests/readers/test_real_architectures.py`.
+- 2026-10-07 · P1 · Chest model on 12 public Montgomery films (top two findings each, 18 total): median deletion drop at 10% was 0.012 (max 0.116); no finding passed the faithfulness test and no random region did either. Findings were mostly near their operating threshold (0.50 to 0.63), so this says the Grad-CAM++ regions are not demonstrably causal for weak findings, not that the test is broken · `verify/results/faithfulness_cxr.json`.
+- 2026-10-07 · P1 · Saliency sanity on the chest model, one real film, class Cardiomegaly, seed 0: mean absolute Spearman after cumulative randomisation gradcam 0.0004 (empty in 10 of 11 stages), gradcam++ 0.436 (empty in 5 of 11), hirescam 0.0004; chosen gradcam++ · `verify/results/saliency_sanity_cxr.json`.
+- 2026-10-07 · P1 · Router, 320 public images (cxr 40 Montgomery, brain 61 Brain Tumor Dataset, skin 100 ISIC, bone 59 FracAtlas, other 60 CIFAR-10), group split 70/15/15: held-out n=50, accuracy 1.00 (Wilson 95% 0.93 to 1.00), every class present; zero-shot over all 320: 0.956 (0.928 to 0.974), bone confused with cxr 5 times and CIFAR with brain 6 times · `intake/results/*.json`.
+- 2026-10-07 · P1 · OOD on the same set, held-out test: AUROC 1.0 for each of cxr, brain, skin, bone; flagged in-distribution rate cxr 0.17 (1 of 6), brain 0.09, skin 0.20, bone 0.0; every out-of-distribution image flagged · `intake/results/ood_report.json`.
+- 2026-10-07 · P1 · MedSAM zero-shot with reference-mask boxes, 30 ISIC 2018 Task 1 validation lesions: mean Jaccard 0.878, mean Dice 0.934, failures (Jaccard below 0.65) 0 of 30 · `verify/results/medsam_isic_val.json`.
 
 ## Shared log (append-only, newest at the bottom)
 
@@ -255,6 +342,12 @@ State: P1.1 to P1.3 done. Perturbation library done early (P1.11 logic still tod
 Verified: `cd backend && python -m pytest -q` gives 121 passed. Includes a pydicom-built MONOCHROME1 fixture, a PHI sentinel test on the serialized bytes, and six degraded images each giving the right reason.
 Next: CXR reader and anatomy zones (P1.6) so P2.7 can calibrate; then router.
 Decisions: see Decisions, entries dated 2026-10-06 for P1.
+### 2026-10-06 · P3 · Sonnet 5.5 · WP P3.1, P3.3, P3.4 (schema), P3.9/P3.10 (design)
+Did: Groq pool (cache, RPM/TPM budgeter, retry-after backoff, repair retry, fallback); MedGemma read service (loader, API, batch, Kaggle/Colab notebooks); note schema with injection taxonomy; slot grammar and firewall spec.
+State: P3.3 done. P3.1 code done, real-model smoke NOT run (no HF_TOKEN here). P3.4 schema done, generator todo.
+Verified: `.venv/Scripts/python -m pytest ml backend services -q` -> 48 passed, 1 skipped (the gpu-marked smoke); `mypy --strict backend/medproof/llm` clean. `make smoke` does not exist yet (P4.1).
+Next: run smoke on the local RTX 4060 once HF_TOKEN is set; check CXR box format; gen_notes.py; P3.2.
+Decisions: see Decisions section (7 entries).
 Contract change requests: none.
 
 ### 2026-10-07 · P1 · WP P1.6
@@ -303,3 +396,34 @@ Verified: `cd backend && python -m pytest -q` → 266 passed. `cd web && npx vit
 Next: P4.8 Docker + CI around these suites; model warm-up at startup for the first-stage target; P4.9, P4.10.
 Decisions: see Decisions, entries dated 2026-10-07 for P4 (landing scope, GSAP licence, two entries, sticky stages, article mode, brain image source, red text shade, browser ledger caveat, content-addressed caches).
 Contract change requests: none (API routes additive; `schemas.py` untouched).
+### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.1, P3.2, P3.4-P3.7, P3.9, P3.10
+Did: slot renderer + firewall + model-chosen frames with offline fallback; seeded 200-note generator; injection guard (regex, per-sentence Prompt Guard, classifier) and span-grounded extraction; contradiction rules; report-label mapping, MedGemma client, concordance; real MedGemma reads on the local GPU; eval scripts that recompute from cached output.
+State: P3.3, P3.4, P3.7, P3.9, P3.10 done. P3.1/P3.2 doing (eval batch reads running; concordance.json is partial until they finish). P3.5/P3.6 measured below.
+Verified: `.venv/Scripts/python -m pytest backend ml/tests/test_notes_schema.py ml/tests/test_gen_notes.py ml/tests/test_eval_second_reader.py ml/tests/test_eval_contradictions.py services -q` -> all pass (ml/ tests that need pandas/sklearn/torch are P2's and were not run in my light venv).
+Numbers (62 held-out test-split notes, live Groq, cached): extraction exact-span F1 0.919 (P 0.922, R 0.917), lenient 0.973, 0 failures; weakest types laterality 0.79, history 0.80, device 0.82. Guard on the corpus 15/15 attacks, 0/47 false positives (regex is in-sample). Guard on 28 fresh attacks / 15 fresh benign: regex 4/28, Prompt Guard@0.9 4/28, classifier 25/28 (1 FP), all three 27/28 (1 FP). Differential: 0 facts overlap the injected text; F1 0.954 on injected notes vs 0.936 on their clean twins. Contradiction rules P/R 1.00/1.00 on gold facts (templated notes: rules fire as designed, not a generalisation claim). Firewall: 104 planted bad claims all blocked, 10 good claims none blocked. Second reader on bone (275-read prefix, reports/concordance.json): sensitivity 0.19 (0.09-0.32), specificity 0.995, kappa 0.27 (0.12-0.43).
+Next: finish the batch reads and write reports/concordance.json; retrieval (needs P1's embeddings); entailment judge; end-to-end context stage on extracted facts; wire into P4's pipeline.
+Decisions: see Decisions (7 entries dated 2026-10-07).
+Contract change requests: none.
+
+### 2026-10-07 · P3 · Sonnet 5.5 · WP P3.11, P3.12, P3.13
+Did: entailment judge (second wall behind the firewall); Whisper transcription in the Groq pool plus voice dictation through the guard and extraction; FHIR bundle export. Pulled P2's skin-classifier push and wrote the specialist-vs-MedGemma comparison from its saved official-test predictions (agreement, kappa, and whether agreement predicts that the specialist is right); it runs when the HAM10000 reads are in. Found and fixed a crash in the long MedGemma batch (see Decisions).
+State: P3.11, P3.12, P3.13 done and pushed. HAM10000 reads have only just started, so the skin comparison has no numbers yet; FracAtlas reads about 70% done.
+Verified: pytest backend + ml/tests (mine) + services: 560+ passed, 5 skipped (the gpu-marked smoke and P2 tests that need torch/sklearn). Entailment: first pass 55/60; fixed judge 59/60 on the fresh variant (29/30 true sentences kept, 30/30 defective caught), 60/60 on the tuned variant; false rejections are the judge's main error (about 2-3%). Voice: real round trip OK. FHIR: bundle validates; 11 tests.
+Next: run `python -m ml.eval_p3.eval_second_reader` when the reads finish, then report whether specialist agreement predicts specialist correctness (D13 input for P2); retrieval needs P1's embedding function; wire stages into P4's pipeline.
+Decisions: see Decisions (4 entries dated 2026-10-07 added).
+Contract change requests: none.
+
+### 2026-10-07 · P1 · WP P1.4, P1.5, P1.7, P1.8, P1.9, P1.10, P1.11, P1.12
+Did: modality router (MedSigLIP embeddings, temperature-scaled probe, zero-shot fallback, routing before the quality checks); per-modality Mahalanobis OOD score with a cross-fitted threshold, plus an energy score that was tested and rejected; faithfulness (deletion, insertion, permutation test against random regions); stability (eight perturbations, flip rate); saliency sanity (cascading randomisation); MedSAM box-to-mask service with a cache; brain and skin classifier reader, U-Net and MedSAM mask attachment, bone detector wrapper; a script that checks the trained models once their weights are in place.
+State: P1.4, P1.5, P1.9 to P1.12 done and validated on real models or data. P1.7 and P1.8 blocked: P2's trained weight files are not in the repository (only metadata and predictions); the code is checked on the real timm, segmentation-models and ultralytics architectures with random weights and on P2's committed metadata.
+Verified: `cd backend && python -m pytest -q` with the real-model environment set gives 694 passed, 0 skipped. Without the local model folder the real-model tests skip with a reason. Real-data results: router held-out 50 of 50 (CI 0.93 to 1.00), zero-shot 0.956 on 320; OOD AUROC 1.0 held-out; faithfulness 0 of 18 on 12 chest films (random 0 of 18); stability 0 flips at severity 2; MedSAM mean Jaccard 0.878 on 30 lesions.
+Next: place P2's weights, run `python scripts/check_trained_models.py`, then close P1.7 and P1.8; retrain router and OOD on the full datasets; repeat faithfulness, stability and saliency per modality.
+Decisions: see Decisions and Verified facts log, entries dated 2026-10-07 (energy score rejected; faithfulness permutation rule; router confidence saturated on easy classes).
+### 2026-10-07 · P2 · Sonnet 5.5 · WP P2.1 to P2.14 complete
+Did: downloaded and audited all datasets (Kaggle brain, LGG and RSNA included); launched and registered the four Kaggle jobs (skin, brain classifier, segmenter, bone; two accounts because of the 2-GPU-session limit); calibration library and per-model calibration; chest-reader validation on RSNA with external and contaminated weights and Grad-CAM localisation scoring; external brain test on BDNeuro; corruption benchmark; trust-signal and subgroup audits; model cards, datasheets, figures, validation report; `make eval`.
+State: P2.1 to P2.14 done. P2.10 is partial by design: discordant needs P3's complete second-reader batch and unfaithful needs P1.9; the harness is ready.
+Verified: `cd backend && python -m pytest -q` gives 555 passed; `python -m pytest ml/tests -q` gives 129 passed; `python ml/eval/run_all.py --check` reproduces reports/metrics.json exactly in about 100 s.
+Headline: skin official-test balanced accuracy 0.680 [0.634, 0.726]; brain leakage-free accuracy 0.940 [0.921, 0.958], external BDNeuro 0.755 [0.735, 0.775]; segmenter mean per-patient Dice 0.831 [0.716, 0.890]; bone image AUROC 0.923 [0.885, 0.957]; chest AUROC on RSNA 0.785 (chex) and 0.749 (mimic_ch) against 0.875 for the contaminated all-data weights.
+Next: P1 to refit the quality gate and add the `brain_seg` spec; P3 to finish the second-reader batch; P4 to render `reports/metrics.json` and the cards.
+Decisions: see Decisions, entries dated 2026-10-07 for P2.
+Contract change requests: none.

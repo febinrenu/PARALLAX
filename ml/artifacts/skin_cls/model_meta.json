@@ -1,0 +1,51 @@
+{
+ "model_id": "skin_cls@a217517b",
+ "task": "classification",
+ "arch": "convnext_tiny.fb_in22k_ft_in1k",
+ "classes": [
+  "akiec",
+  "bcc",
+  "bkl",
+  "df",
+  "mel",
+  "nv",
+  "vasc"
+ ],
+ "preproc_spec": "skin_cls",
+ "weights_file": "weights.pt",
+ "weights_sha256": "1fb2ea5ab200743bb6b5ec45640e3fe6a63b003c3e35bd94ab7002322998bddb",
+ "split_name": "ham10000",
+ "split_hash": "9ef391891e85362415c58e44d8c261e03a77ce2d7dfcb834c8f2c581c9f584cb",
+ "training_data": [
+  "isic2018_t3_train (HAM10000)"
+ ],
+ "git_commit": "a217517bdb3083aaf6380ccd31598627dbd5361d",
+ "seed": 20261006,
+ "python": "3.13.15",
+ "torch": "2.11.0+cu128",
+ "wall_sec": 815.9241507053375,
+ "data": {
+  "git_commit": "a217517bdb3083aaf6380ccd31598627dbd5361d",
+  "python": "3.13.15",
+  "torch": "2.11.0+cu128",
+  "cuda": true,
+  "gpu": "Tesla T4",
+  "datasets": {
+   "isic2018_t3_train": {
+    "file_count": 10021,
+    "total_bytes": 2771168929,
+    "license": "CC-BY-NC 4.0",
+    "files_sha256_digest": "19eccbd6d166d26ea7b44fa87fe26e5062fc8d9202d3227ebfdd27432dd1c27c",
+    "retrieved_utc": "2026-10-06T20:37:17Z"
+   },
+   "isic2018_t3_test": {
+    "file_count": 1517,
+    "total_bytes": 420475622,
+    "license": "CC-BY-NC 4.0",
+    "files_sha256_digest": "f7a3f9106b24468961f0a58f7999446fdc7ee9e47711641bb427bfc2fa3d1c12",
+    "retrieved_utc": "2026-10-06T20:37:27Z"
+   }
+  }
+ },
+ "kaggle_kernel": "parallax-skin-cls"
+}

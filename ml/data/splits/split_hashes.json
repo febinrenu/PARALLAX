@@ -49,5 +49,14 @@
   },
   "rows": 3929,
   "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
+ },
+ "rsna": {
+  "counts": {
+   "cal": 7621,
+   "dropped": 1278,
+   "test": 17785
+  },
+  "rows": 26684,
+  "split_hash": "8f312ba53ea1256af1fb47c65d111db65c0cd09c3aad5d8a22ab5c9a10812621"
  }
 }

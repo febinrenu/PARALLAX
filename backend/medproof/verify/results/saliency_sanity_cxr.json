@@ -1,0 +1,163 @@
+{
+ "stages": [
+  "classifier",
+  "features.norm5",
+  "features.denseblock4",
+  "features.transition3",
+  "features.denseblock3",
+  "features.transition2",
+  "features.denseblock2",
+  "features.transition1",
+  "features.denseblock1",
+  "features.norm0",
+  "features.conv0"
+ ],
+ "seed": 0,
+ "class_idx": 10,
+ "methods": {
+  "gradcam": {
+   "spearman": [
+    0.0049,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ssim": [
+    0.1977,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381
+   ],
+   "empty": [
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mean_abs_spearman": 0.0004,
+   "mean_ssim": 0.5981,
+   "final_abs_spearman": 0.0,
+   "degenerate_fraction": 0.9091,
+   "passes": false
+  },
+  "gradcam++": {
+   "spearman": [
+    0.8292,
+    0.7943,
+    0.7853,
+    0.758,
+    0.7947,
+    0.8295,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ssim": [
+    0.6056,
+    0.2476,
+    0.175,
+    0.1437,
+    0.1419,
+    0.148,
+    0.0285,
+    0.0285,
+    0.0285,
+    0.0285,
+    0.0285
+   ],
+   "empty": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mean_abs_spearman": 0.4355,
+   "mean_ssim": 0.1458,
+   "final_abs_spearman": 0.0,
+   "degenerate_fraction": 0.4545,
+   "passes": true
+  },
+  "hirescam": {
+   "spearman": [
+    0.0049,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "ssim": [
+    0.1977,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381,
+    0.6381
+   ],
+   "empty": [
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+   ],
+   "mean_abs_spearman": 0.0004,
+   "mean_ssim": 0.5981,
+   "final_abs_spearman": 0.0,
+   "degenerate_fraction": 0.9091,
+   "passes": false
+  }
+ },
+ "chosen": "gradcam++",
+ "pass_threshold": 0.5,
+ "model": "densenet121-res224-all (torchxrayvision 1.5.5)",
+ "label": "Cardiomegaly",
+ "image": "one real public NIH chest film (not stored in the repo)",
+ "note": "single image; repeat on more films before relying on the choice"
+}
