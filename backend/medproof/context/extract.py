@@ -8,6 +8,7 @@ overlap a flagged span.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
@@ -82,6 +83,27 @@ def _find_free(text: str, quote: str, taken: set[tuple[int, int]], flagged: list
         start = at + 1
 
 
+# Small words a speaker or a model leaves out when it shortens a phrase ("tuberculosis in 2015" -> "tuberculosis 2015").
+_FILLERS = r"(?:in|of|the|a|an|on|at|for|with|to|from|since|and)"
+
+
+def _find_loose(text: str, quote: str, taken: set[tuple[int, int]], flagged: list[tuple[int, int]]) -> tuple[int, int] | None:
+    """Locate a multi-word quote whose words appear in order in the note with at most two small filler words between them.
+
+    The span is taken from the note, so the fact's quote is always the note's own text. Needs two or more words: a single
+    word is either found exactly or not there."""
+    words = quote.split()
+    if len(words) < 2:
+        return None
+    gap = rf"(?:\s+{_FILLERS}){{0,2}}\s+"
+    pattern = re.compile(gap.join(re.escape(w) for w in words), re.IGNORECASE)
+    for m in pattern.finditer(text):
+        span = (m.start(), m.end())
+        if span not in taken and not any(span[0] < fe and fs < span[1] for fs, fe in flagged):
+            return span
+    return None
+
+
 def extract(
     text: str, note_id: str, pool: _Pool, guard: GuardResult | None = None, *, service: str = "extract"
 ) -> ExtractionResult:
@@ -99,11 +121,12 @@ def extract(
             result.dropped.append(f"unknown fact type '{raw.type}': {raw.quote!r}")
             continue
         quote = raw.quote.strip()
-        span = _find_free(text, quote, taken, flagged) if quote else None
+        span = (_find_free(text, quote, taken, flagged) or _find_loose(text, quote, taken, flagged)) if quote else None
         if span is None:
             result.dropped.append(f"quote not found in note: {raw.quote!r}")
             continue
         taken.add(span)
+        quote = text[span[0] : span[1]]  # the note's own words (identical to the model's unless a filler word was dropped)
         result.facts.append(ExtractedFact(note_id, span, quote, raw.type, raw.value, raw.polarity))
     result.facts.sort(key=lambda f: f.span)
     return result

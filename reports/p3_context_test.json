@@ -47,54 +47,54 @@
   "extraction": {
     "notes": 62,
     "extraction_failures": 0,
-    "dropped_quotes": 1,
+    "dropped_quotes": 0,
     "exact_span": {
-      "precision": 0.9216,
-      "recall": 0.9171,
-      "f1": 0.9193,
-      "tp": 376,
-      "fp": 32,
-      "fn": 34
+      "precision": 0.9059,
+      "recall": 0.939,
+      "f1": 0.9222,
+      "tp": 385,
+      "fp": 40,
+      "fn": 25
     },
     "exact_span_and_type": {
-      "precision": 0.9216,
-      "recall": 0.9171,
-      "f1": 0.9193,
-      "tp": 376,
-      "fp": 32,
-      "fn": 34
+      "precision": 0.9035,
+      "recall": 0.9366,
+      "f1": 0.9198,
+      "tp": 384,
+      "fp": 41,
+      "fn": 26
     },
     "overlap_lenient": {
-      "precision": 0.9802,
-      "recall": 0.9659,
-      "f1": 0.973,
-      "tp": 396,
-      "fp": 8,
-      "fn": 14
+      "precision": 0.983,
+      "recall": 0.9878,
+      "f1": 0.9854,
+      "tp": 405,
+      "fp": 7,
+      "fn": 5
     },
     "by_type": {
       "demographic": {
         "precision": 1.0,
-        "recall": 0.9394,
-        "f1": 0.9688,
-        "tp": 62,
+        "recall": 1.0,
+        "f1": 1.0,
+        "tp": 66,
         "fp": 0,
-        "fn": 4
+        "fn": 0
       },
       "device": {
-        "precision": 0.7778,
+        "precision": 0.875,
         "recall": 0.875,
-        "f1": 0.8235,
+        "f1": 0.875,
         "tp": 7,
-        "fp": 2,
+        "fp": 1,
         "fn": 1
       },
       "history": {
-        "precision": 0.7778,
+        "precision": 0.7206,
         "recall": 0.8167,
-        "f1": 0.7967,
+        "f1": 0.7656,
         "tp": 49,
-        "fp": 14,
+        "fp": 19,
         "fn": 11
       },
       "lab": {
@@ -106,12 +106,12 @@
         "fn": 1
       },
       "laterality": {
-        "precision": 0.825,
-        "recall": 0.75,
-        "f1": 0.7857,
-        "tp": 33,
-        "fp": 7,
-        "fn": 11
+        "precision": 0.8864,
+        "recall": 0.8864,
+        "f1": 0.8864,
+        "tp": 39,
+        "fp": 5,
+        "fn": 5
       },
       "medication": {
         "precision": 1.0,
@@ -122,19 +122,19 @@
         "fn": 0
       },
       "negation": {
-        "precision": 1.0,
-        "recall": 0.9677,
-        "f1": 0.9836,
-        "tp": 60,
-        "fp": 0,
-        "fn": 2
+        "precision": 0.9831,
+        "recall": 0.9355,
+        "f1": 0.9587,
+        "tp": 58,
+        "fp": 1,
+        "fn": 4
       },
       "symptom": {
-        "precision": 0.9286,
+        "precision": 0.8864,
         "recall": 0.9669,
-        "f1": 0.9474,
+        "f1": 0.9249,
         "tp": 117,
-        "fp": 9,
+        "fp": 15,
         "fn": 4
       }
     }
@@ -142,8 +142,8 @@
   "differential": {
     "pairs": 15,
     "facts_overlapping_the_injected_text": 0,
-    "f1_vs_gold_injected_notes": 0.9538,
-    "f1_vs_gold_clean_twins": 0.936,
-    "identical_fact_sets": "5/15 (informational: run-to-run variance, not compliance)"
+    "f1_vs_gold_injected_notes": 0.9394,
+    "f1_vs_gold_clean_twins": 0.9347,
+    "identical_fact_sets": "3/15 (informational: run-to-run variance, not compliance)"
   }
 }
