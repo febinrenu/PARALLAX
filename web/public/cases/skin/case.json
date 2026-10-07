@@ -1,0 +1,52 @@
+{
+  "id": "skin",
+  "title": "Dermoscopy, pigmented lesion",
+  "modality": "skin_dermoscopy",
+  "image": {
+    "src": "/cases/skin/image.webp",
+    "width": 1280,
+    "height": 852
+  },
+  "credit": "skin",
+  "notes": {},
+  "annotations": [
+    {
+      "kind": "mask",
+      "ref": "/cases/skin/mask.png",
+      "label": "Lesion boundary (dataset annotation)",
+      "source": "ISIC 2018 Task 1 ground truth"
+    }
+  ],
+  "anatomy": null,
+  "study": {
+    "study_id": "sample-skin",
+    "input_sha256": "4ccc5ee856aa4f158965e5b9122a51ba44da60fa3910f0a943ba16ab23538f34",
+    "modality": "skin_dermoscopy",
+    "ood_score": 0.0,
+    "quality": {
+      "passed": true,
+      "flags": [],
+      "metrics": {
+        "min_side": 852.0,
+        "blur": 0.84184,
+        "p1": 0.08991,
+        "p99": 0.64719,
+        "range": 0.55728,
+        "clip": 0.00032,
+        "noise_rel": 0.00783,
+        "aspect": 1.50235,
+        "margin": 0.0
+      },
+      "reasons": []
+    },
+    "findings": [],
+    "claims": [],
+    "ledger_head": "a88fb9d5af43d0253159108a1eb48f5c9f99956065d3dfb525415b879c9f9b98",
+    "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+  },
+  "provenance": {
+    "findings": "No specialist reader for this modality yet, so the pipeline reports none.",
+    "annotations": "Dataset annotation: ISIC 2018 Task 1 lesion boundary, not model output. The skin reader arrives with P2.5 weights."
+  },
+  "warnings": []
+}

@@ -1,0 +1,547 @@
+{
+  "chest": {
+    "image": "/media/chest.webp",
+    "size": [
+      1010,
+      1010
+    ],
+    "findings": [
+      {
+        "id": "f1",
+        "label": "Lung Opacity",
+        "prob": 0.8851,
+        "tier": "high",
+        "status": "verified",
+        "region": "right upper zone",
+        "bbox": [
+          0.1366,
+          0.0,
+          0.4782,
+          0.4485
+        ],
+        "heatmap": "/cases/chest/heatmap_f1.png",
+        "faithfulness": {
+          "region_threshold": 0.5142,
+          "random_example_shift": [
+            -0.4891,
+            0.3713
+          ],
+          "drop": 0.3846,
+          "random_threshold_p90": 0.3277,
+          "random_median_drop": 0.0193,
+          "random_example_drop": 0.0196,
+          "faithful": true,
+          "region_fraction": 0.1
+        },
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "tiles": [
+          {
+            "perturbation": "noise",
+            "prob": 0.942,
+            "flipped": false
+          },
+          {
+            "perturbation": "contrast",
+            "prob": 0.7757,
+            "flipped": false
+          },
+          {
+            "perturbation": "gamma",
+            "prob": 0.7905,
+            "flipped": false
+          },
+          {
+            "perturbation": "jpeg",
+            "prob": 0.9074,
+            "flipped": false
+          },
+          {
+            "perturbation": "rotate",
+            "prob": 0.8584,
+            "flipped": false
+          },
+          {
+            "perturbation": "downsample",
+            "prob": 0.834,
+            "flipped": false
+          },
+          {
+            "perturbation": "blur",
+            "prob": 0.7937,
+            "flipped": false
+          },
+          {
+            "perturbation": "crop",
+            "prob": 0.8549,
+            "flipped": false
+          }
+        ]
+      },
+      {
+        "id": "f2",
+        "label": "Pneumonia",
+        "prob": 0.7328,
+        "tier": "moderate",
+        "status": "verified",
+        "region": "right upper zone",
+        "bbox": [
+          0.1465,
+          0.0,
+          0.4604,
+          0.4228
+        ],
+        "heatmap": "/cases/chest/heatmap_f2.png",
+        "faithfulness": {
+          "region_threshold": 0.4884,
+          "random_example_shift": [
+            0.395,
+            0.4317
+          ],
+          "drop": 0.552,
+          "random_threshold_p90": 0.2466,
+          "random_median_drop": 0.0476,
+          "random_example_drop": 0.0477,
+          "faithful": true,
+          "region_fraction": 0.1
+        },
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.125,
+          "worst_perturbation": "blur"
+        },
+        "tiles": [
+          {
+            "perturbation": "noise",
+            "prob": 0.8858,
+            "flipped": false
+          },
+          {
+            "perturbation": "contrast",
+            "prob": 0.5396,
+            "flipped": false
+          },
+          {
+            "perturbation": "gamma",
+            "prob": 0.745,
+            "flipped": false
+          },
+          {
+            "perturbation": "jpeg",
+            "prob": 0.7988,
+            "flipped": false
+          },
+          {
+            "perturbation": "rotate",
+            "prob": 0.6604,
+            "flipped": false
+          },
+          {
+            "perturbation": "downsample",
+            "prob": 0.5499,
+            "flipped": false
+          },
+          {
+            "perturbation": "blur",
+            "prob": 0.1235,
+            "flipped": true
+          },
+          {
+            "perturbation": "crop",
+            "prob": 0.6815,
+            "flipped": false
+          }
+        ]
+      },
+      {
+        "id": "f3",
+        "label": "Consolidation",
+        "prob": 0.6959,
+        "tier": "moderate",
+        "status": "verified",
+        "region": "right upper zone",
+        "bbox": [
+          0.1297,
+          0.0,
+          0.698,
+          0.7238
+        ],
+        "heatmap": "/cases/chest/heatmap_f3.png",
+        "faithfulness": {
+          "region_threshold": 0.5754,
+          "random_example_shift": [
+            -0.3069,
+            0.3287
+          ],
+          "drop": 0.1735,
+          "random_threshold_p90": 0.0297,
+          "random_median_drop": -0.0016,
+          "random_example_drop": 0.0036,
+          "faithful": true,
+          "region_fraction": 0.1
+        },
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "tiles": [
+          {
+            "perturbation": "noise",
+            "prob": 0.8076,
+            "flipped": false
+          },
+          {
+            "perturbation": "contrast",
+            "prob": 0.5642,
+            "flipped": false
+          },
+          {
+            "perturbation": "gamma",
+            "prob": 0.6332,
+            "flipped": false
+          },
+          {
+            "perturbation": "jpeg",
+            "prob": 0.718,
+            "flipped": false
+          },
+          {
+            "perturbation": "rotate",
+            "prob": 0.6683,
+            "flipped": false
+          },
+          {
+            "perturbation": "downsample",
+            "prob": 0.6909,
+            "flipped": false
+          },
+          {
+            "perturbation": "blur",
+            "prob": 0.6515,
+            "flipped": false
+          },
+          {
+            "perturbation": "crop",
+            "prob": 0.6599,
+            "flipped": false
+          }
+        ]
+      },
+      {
+        "id": "f4",
+        "label": "Infiltration",
+        "prob": 0.5962,
+        "tier": "low",
+        "status": "uncertain",
+        "region": "right upper zone",
+        "bbox": [
+          0.1208,
+          0.0,
+          0.5248,
+          0.5188
+        ],
+        "heatmap": "/cases/chest/heatmap_f4.png",
+        "faithfulness": {
+          "region_threshold": 0.6119,
+          "random_example_shift": [
+            0.2426,
+            -0.4851
+          ],
+          "drop": 0.397,
+          "random_threshold_p90": 0.1965,
+          "random_median_drop": 0.0029,
+          "random_example_drop": 0.0034,
+          "faithful": true,
+          "region_fraction": 0.1
+        },
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "contrast"
+        },
+        "tiles": [
+          {
+            "perturbation": "noise",
+            "prob": 0.596,
+            "flipped": false
+          },
+          {
+            "perturbation": "contrast",
+            "prob": 0.5258,
+            "flipped": false
+          },
+          {
+            "perturbation": "gamma",
+            "prob": 0.5999,
+            "flipped": false
+          },
+          {
+            "perturbation": "jpeg",
+            "prob": 0.6036,
+            "flipped": false
+          },
+          {
+            "perturbation": "rotate",
+            "prob": 0.5604,
+            "flipped": false
+          },
+          {
+            "perturbation": "downsample",
+            "prob": 0.5589,
+            "flipped": false
+          },
+          {
+            "perturbation": "blur",
+            "prob": 0.5281,
+            "flipped": false
+          },
+          {
+            "perturbation": "crop",
+            "prob": 0.5679,
+            "flipped": false
+          }
+        ]
+      },
+      {
+        "id": "f5",
+        "label": "Mass",
+        "prob": 0.5685,
+        "tier": "low",
+        "status": "uncertain",
+        "region": "right upper zone",
+        "bbox": [
+          0.1158,
+          0.0733,
+          0.6772,
+          0.7307
+        ],
+        "heatmap": "/cases/chest/heatmap_f5.png",
+        "faithfulness": {
+          "region_threshold": 0.5642,
+          "random_example_shift": [
+            0.0792,
+            0.3327
+          ],
+          "drop": 0.0137,
+          "random_threshold_p90": 0.0117,
+          "random_median_drop": -0.0095,
+          "random_example_drop": -0.0094,
+          "faithful": true,
+          "region_fraction": 0.1
+        },
+        "stability": {
+          "tests": 8,
+          "flip_rate": 0.0,
+          "worst_perturbation": "crop"
+        },
+        "tiles": [
+          {
+            "perturbation": "noise",
+            "prob": 0.5502,
+            "flipped": false
+          },
+          {
+            "perturbation": "contrast",
+            "prob": 0.5855,
+            "flipped": false
+          },
+          {
+            "perturbation": "gamma",
+            "prob": 0.543,
+            "flipped": false
+          },
+          {
+            "perturbation": "jpeg",
+            "prob": 0.5657,
+            "flipped": false
+          },
+          {
+            "perturbation": "rotate",
+            "prob": 0.5831,
+            "flipped": false
+          },
+          {
+            "perturbation": "downsample",
+            "prob": 0.6028,
+            "flipped": false
+          },
+          {
+            "perturbation": "blur",
+            "prob": 0.6034,
+            "flipped": false
+          },
+          {
+            "perturbation": "crop",
+            "prob": 0.645,
+            "flipped": false
+          }
+        ]
+      }
+    ],
+    "primary": "f2",
+    "stability_tiles": [
+      {
+        "perturbation": "noise",
+        "prob": 0.8858,
+        "flipped": false
+      },
+      {
+        "perturbation": "contrast",
+        "prob": 0.5396,
+        "flipped": false
+      },
+      {
+        "perturbation": "gamma",
+        "prob": 0.745,
+        "flipped": false
+      },
+      {
+        "perturbation": "jpeg",
+        "prob": 0.7988,
+        "flipped": false
+      },
+      {
+        "perturbation": "rotate",
+        "prob": 0.6604,
+        "flipped": false
+      },
+      {
+        "perturbation": "downsample",
+        "prob": 0.5499,
+        "flipped": false
+      },
+      {
+        "perturbation": "blur",
+        "prob": 0.1235,
+        "flipped": true
+      },
+      {
+        "perturbation": "crop",
+        "prob": 0.6815,
+        "flipped": false
+      }
+    ],
+    "perturbation_atlas": "/media/chest-perturbations.webp",
+    "anatomy": "/media/chest-anatomy.png",
+    "quality_beats": [
+      {
+        "variant": "underexposed",
+        "passed": false,
+        "reasons": [
+          {
+            "code": "underexposed",
+            "level": "fail",
+            "message": "The image is underexposed (too dark).",
+            "fix": "Re-acquire with a higher dose or longer exposure, or re-export with a wider window."
+          }
+        ]
+      },
+      {
+        "variant": "rotated",
+        "passed": false,
+        "reasons": [
+          {
+            "code": "clipped",
+            "level": "fail",
+            "message": "11% of pixels are fully black or white.",
+            "fix": "Re-acquire or re-export so highlights and shadows are not clipped."
+          },
+          {
+            "code": "rotated",
+            "level": "warn",
+            "message": "The image appears tilted by about 16 degrees.",
+            "fix": "Straighten the image if possible."
+          }
+        ]
+      }
+    ],
+    "cdf": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0001,
+      0.0002,
+      0.0005,
+      0.001,
+      0.0022,
+      0.0043,
+      0.0077,
+      0.0126,
+      0.019,
+      0.0267,
+      0.0349,
+      0.0436,
+      0.0526,
+      0.0613,
+      0.07,
+      0.0784,
+      0.0867,
+      0.095,
+      0.1037,
+      0.1127,
+      0.1218,
+      0.1312,
+      0.141,
+      0.1512,
+      0.1615,
+      0.172,
+      0.1827,
+      0.1941,
+      0.2061,
+      0.2184,
+      0.2317,
+      0.2454,
+      0.2598,
+      0.275,
+      0.2908,
+      0.3069,
+      0.3231,
+      0.3394,
+      0.3557,
+      0.3722,
+      0.3888,
+      0.4059,
+      0.4249,
+      0.4471,
+      0.4736,
+      0.504,
+      0.5392,
+      0.5786,
+      0.6206,
+      0.6646,
+      0.709,
+      0.7535,
+      0.7974,
+      0.8415,
+      0.8831,
+      0.9196,
+      0.9488,
+      0.9702,
+      0.9854
+    ],
+    "note": "62-year-old with fever and productive cough for four days. Crackles over the right upper chest on auscultation. No prior chest surgery. No devices.",
+    "model": "xrv-densenet121-all@56524913",
+    "source_sha256": "8925f49b4c6aeee969d113813e5c0e3f62a2184254dd2d76acdddd861bfc2d2b"
+  },
+  "wrist": {
+    "image": "/media/hero-wrist.webp",
+    "still": "/media/hero-still.webp",
+    "size": [
+      1280,
+      1600
+    ],
+    "fracture_box": [
+      0.5143,
+      0.3354,
+      0.6181,
+      0.3944
+    ],
+    "source_sha256": "ee3a9e8b0dfa07076c19d7431c40d65d168f32e6fcf6d3305ee0adfc47e800d2"
+  }
+}

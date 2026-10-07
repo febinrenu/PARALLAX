@@ -9,10 +9,15 @@ dependencies = [
     "pydicom>=2.4",
     "scipy",
     "pydantic>=2",
+    "diskcache",
+    "fastapi",
+    "uvicorn",
+    "sse-starlette",
+    "python-multipart",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "hypothesis"]
+dev = ["pytest", "hypothesis", "ruff", "mypy", "httpx"]
 # CPU torch comes from https://download.pytorch.org/whl/cpu
 ml = ["torch", "torchvision", "torchxrayvision", "transformers", "scikit-learn", "timm", "segmentation-models-pytorch", "h5py", "ultralytics"]
 # needed by the context, report and second-reader modules and their tests

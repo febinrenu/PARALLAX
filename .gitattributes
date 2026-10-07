@@ -1,3 +1,4 @@
 # Append-only shared log: keep both sides on concurrent edits.
 progress.md merge=union
 *.ipynb linguist-documentation
+*.bat text eol=crlf

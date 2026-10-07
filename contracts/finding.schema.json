@@ -1,0 +1,374 @@
+{
+  "$defs": {
+    "ImageEvidence": {
+      "properties": {
+        "bbox_xyxy": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence_id": {
+          "type": "string"
+        },
+        "faithful": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "faithfulness_drop": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "heatmap_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "kind": {
+          "enum": [
+            "heatmap",
+            "mask",
+            "bbox"
+          ],
+          "type": "string"
+        },
+        "mask_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "method": {
+          "type": "string"
+        },
+        "region_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "source_model": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "kind",
+        "source_model",
+        "method"
+      ],
+      "type": "object"
+    },
+    "Precedent": {
+      "properties": {
+        "case_id": {
+          "type": "string"
+        },
+        "dataset": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "similarity": {
+          "type": "number"
+        },
+        "thumb_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "dataset",
+        "label",
+        "similarity",
+        "thumb_ref"
+      ],
+      "type": "object"
+    },
+    "SecondRead": {
+      "properties": {
+        "agrees": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "box_iou": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model": {
+          "type": "string"
+        },
+        "raw_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "label",
+        "agrees",
+        "box_iou",
+        "raw_ref"
+      ],
+      "type": "object"
+    },
+    "Stability": {
+      "properties": {
+        "flip_rate": {
+          "type": "number"
+        },
+        "tests": {
+          "type": "integer"
+        },
+        "worst_perturbation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "tests",
+        "flip_rate",
+        "worst_perturbation"
+      ],
+      "type": "object"
+    },
+    "TextEvidence": {
+      "properties": {
+        "evidence_id": {
+          "type": "string"
+        },
+        "fact_type": {
+          "type": "string"
+        },
+        "note_id": {
+          "type": "string"
+        },
+        "polarity": {
+          "enum": [
+            "supports",
+            "contradicts",
+            "neutral"
+          ],
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        },
+        "span": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "note_id",
+        "span",
+        "quote",
+        "fact_type",
+        "polarity"
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "conformal_set": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "coverage_target": {
+      "default": 0.9,
+      "type": "number"
+    },
+    "finding_id": {
+      "type": "string"
+    },
+    "flags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "image_evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ImageEvidence"
+      },
+      "type": "array"
+    },
+    "label": {
+      "type": "string"
+    },
+    "modality": {
+      "enum": [
+        "cxr",
+        "brain_mri",
+        "skin_dermoscopy",
+        "bone_xray",
+        "other"
+      ],
+      "type": "string"
+    },
+    "precedents": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Precedent"
+      },
+      "type": "array"
+    },
+    "prob_calibrated": {
+      "type": "number"
+    },
+    "prob_raw": {
+      "type": "number"
+    },
+    "second_read": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SecondRead"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "stability": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Stability"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "enum": [
+        "verified",
+        "uncertain",
+        "discordant",
+        "rejected"
+      ],
+      "type": "string"
+    },
+    "text_evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/TextEvidence"
+      },
+      "type": "array"
+    },
+    "tier": {
+      "enum": [
+        "high",
+        "moderate",
+        "low",
+        "abstain"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "finding_id",
+    "modality",
+    "label",
+    "prob_raw",
+    "prob_calibrated",
+    "conformal_set",
+    "tier",
+    "status"
+  ],
+  "type": "object"
+}

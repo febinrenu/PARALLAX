@@ -1,0 +1,63 @@
+{
+  "study_id": "demo-skin-001",
+  "input_sha256": "2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1",
+  "modality": "skin_dermoscopy",
+  "ood_score": 0.05,
+  "quality": {"passed": true, "reasons": [], "metrics": {"blur": 0.98, "exposure_clip_pct": 0.001}},
+  "findings": [
+    {
+      "finding_id": "f1",
+      "modality": "skin_dermoscopy",
+      "label": "melanoma",
+      "prob_raw": 0.74,
+      "prob_calibrated": 0.69,
+      "conformal_set": ["melanoma", "melanocytic_nevus"],
+      "coverage_target": 0.9,
+      "tier": "moderate",
+      "status": "discordant",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_1",
+          "kind": "mask",
+          "mask_ref": "demo/cases/skin-001/mask_f1.png",
+          "source_model": "medsam-vit-base@c3d4e5f6",
+          "method": "medsam",
+          "region_name": null,
+          "faithfulness_drop": 0.29,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_1",
+          "note_id": "n1",
+          "span": [0, 33],
+          "quote": "lesion changed size over 3 months",
+          "fact_type": "history",
+          "polarity": "supports"
+        }
+      ],
+      "second_read": {
+        "model": "medgemma-1.5-4b-it",
+        "label": "melanocytic_nevus",
+        "agrees": false,
+        "box_iou": null,
+        "raw_ref": "ml/artifacts/medgemma_reads/demo-skin-001.json"
+      },
+      "stability": {"tests": 8, "flip_rate": 0.25, "worst_perturbation": "rotation_7"},
+      "precedents": [
+        {
+          "case_id": "ham-00981",
+          "dataset": "ham10000",
+          "label": "melanoma",
+          "similarity": 0.81,
+          "thumb_ref": "demo/precedents/ham-00981_thumb.png"
+        }
+      ],
+      "flags": ["uncalibrated"]
+    }
+  ],
+  "claims": [],
+  "ledger_head": "sha256:5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4",
+  "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+}

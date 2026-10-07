@@ -1,0 +1,58 @@
+{
+  "study_id": "demo-bone-001",
+  "input_sha256": "8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7",
+  "modality": "bone_xray",
+  "ood_score": 0.09,
+  "quality": {"passed": true, "reasons": [], "metrics": {"blur": 0.9, "exposure_clip_pct": 0.0}},
+  "findings": [
+    {
+      "finding_id": "f1",
+      "modality": "bone_xray",
+      "label": "fracture",
+      "prob_raw": 0.93,
+      "prob_calibrated": 0.9,
+      "conformal_set": ["fracture"],
+      "coverage_target": 0.9,
+      "tier": "high",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_1",
+          "kind": "bbox",
+          "bbox_xyxy": [220.0, 140.0, 300.0, 210.0],
+          "source_model": "yolo26n-fracatlas@d4e5f607",
+          "method": "yolo",
+          "region_name": "distal radius",
+          "faithfulness_drop": null,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_1",
+          "note_id": "n1",
+          "span": [0, 27],
+          "quote": "fall onto outstretched hand",
+          "fact_type": "history",
+          "polarity": "supports"
+        }
+      ],
+      "second_read": null,
+      "stability": {"tests": 8, "flip_rate": 0.0, "worst_perturbation": null},
+      "precedents": [],
+      "flags": ["uncalibrated"]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "template": "Doctor, consider {f1.label} at the {f1.region} ({f1.tier} confidence).",
+      "evidence_ids": ["ie_1", "te_1"],
+      "rendered": "Doctor, consider fracture at the distal radius (high confidence).",
+      "entailed": true,
+      "blocked_reason": null
+    }
+  ],
+  "ledger_head": "sha256:a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f9",
+  "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+}

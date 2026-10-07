@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "ms": {
+      "type": "integer"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "payload": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "stage": {
+      "type": "string"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "stage",
+    "ok",
+    "ms",
+    "payload"
+  ],
+  "type": "object"
+}

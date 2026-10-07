@@ -1,0 +1,26 @@
+[
+  {
+    "id": "chest",
+    "title": "Chest radiograph, posteroanterior",
+    "modality": "cxr",
+    "thumb": "/cases/chest/thumb.webp"
+  },
+  {
+    "id": "bone",
+    "title": "Wrist radiograph, posteroanterior",
+    "modality": "bone_xray",
+    "thumb": "/cases/bone/thumb.webp"
+  },
+  {
+    "id": "skin",
+    "title": "Dermoscopy, pigmented lesion",
+    "modality": "skin_dermoscopy",
+    "thumb": "/cases/skin/thumb.webp"
+  },
+  {
+    "id": "brain",
+    "title": "Brain MRI, axial, contrast-enhanced",
+    "modality": "brain_mri",
+    "thumb": "/cases/brain/thumb.webp"
+  }
+]
