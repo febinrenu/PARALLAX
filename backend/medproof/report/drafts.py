@@ -17,6 +17,7 @@ from pydantic import BaseModel
 from medproof.core.schemas import Claim, StageResult
 from medproof.llm.errors import LLMError
 from medproof.report.firewall import is_supported, run
+from medproof.report.render import has_region
 from medproof.report.study_view import StudyView
 
 Frame = Literal["consider", "supported_by_note", "discordant_review", "abstain_note", "context_missing"]
@@ -29,6 +30,10 @@ FRAMES: dict[str, str] = {
     "abstain_note": "Doctor, there is no confident reading for {F.label}; clinical correlation is needed.",
     "context_missing": "Doctor, the notes do not mention history relevant to {F.label}; please add context.",
 }
+FRAME_NO_REGION = "Doctor, consider {F.label} ({F.tier})."
+# Chosen by code, never by the model: when the note and the image name different sides, saying the finding at its
+# model tier would hide the conflict, so the sentence asks for a review and states no confidence.
+FRAME_LATERALITY = "Doctor, the note and the image disagree about the side for {F.label}; please review the image directly."
 _PRIORITY = {"verified": 0, "uncertain": 1, "discordant": 2}
 
 
@@ -55,7 +60,13 @@ def _first_evidence(view: StudyView, fid: str) -> list[str]:
 
 def to_claim(draft: ClaimDraft, n: int, view: StudyView) -> Claim:
     """Expand a draft into a slot template. Unknown ids are kept so the firewall can name the reason."""
-    template = FRAMES[draft.frame].replace("{F.", "{" + draft.finding + ".")
+    frame = FRAMES[draft.frame]
+    found = view.findings.get(draft.finding)
+    if found is not None and "laterality_conflict" in found.flags and draft.frame in ("consider", "supported_by_note"):
+        return Claim(claim_id=f"c{n}", template=FRAME_LATERALITY.replace("{F.", "{" + draft.finding + "."), evidence_ids=_first_evidence(view, draft.finding) or ["ie_missing"])
+    if draft.frame == "consider" and found is not None and not has_region(found):
+        frame = FRAME_NO_REGION  # nobody named a region, so do not write a phrase about one
+    template = frame.replace("{F.", "{" + draft.finding + ".")
     ids = _first_evidence(view, draft.finding)
     if draft.frame == "supported_by_note":
         ref = draft.note_ref or "te_0"

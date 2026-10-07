@@ -215,3 +215,39 @@ def test_cue_replaces_an_overlapping_model_fact_instead_of_duplicating_it():
 
 def test_without_note_text_behaviour_is_unchanged():
     assert flags(check([finding()], [fact("63F", "demographic")], Demographics(age=63, sex="F"))) == set()
+
+
+# ---- a note cannot rescue image evidence that failed the faithfulness test (plan D1: the region must be shown to matter)
+
+def _with_faithful(*flags, label="Pneumonia"):
+    base = finding(label=label)
+    evs = [base.image_evidence[0].model_copy(update={"evidence_id": f"ie_{i + 1}", "faithful": fl}) for i, fl in enumerate(flags)]
+    return base.model_copy(update={"image_evidence": evs})
+
+
+def test_support_from_the_note_does_not_rescue_a_heatmap_that_failed_the_deletion_test():
+    from medproof.core.status_rule import compute_status
+
+    res = check([_with_faithful(False)], [fact("fever", "symptom", "fever")], Demographics())
+    assert polarities(res) == {"fever": "neutral"}
+    assert compute_status(res.findings[0]) == "rejected"
+
+
+@pytest.mark.parametrize("flags,expected,status", [
+    ((True,), "supports", "verified"),
+    ((None,), "supports", "verified"),  # not assessable (a box detector has no heatmap): the note may still support it
+    ((False, True), "supports", "verified"),  # one faithful region is enough
+    ((False, None), "supports", "verified"),
+])
+def test_support_stands_unless_every_image_evidence_failed(flags, expected, status):
+    from medproof.core.status_rule import compute_status
+
+    res = check([_with_faithful(*flags)], [fact("fever", "symptom", "fever")], Demographics())
+    assert polarities(res) == {"fever": expected}
+    assert compute_status(res.findings[0]) == status
+
+
+def test_a_contradiction_still_counts_when_the_heatmap_failed():
+    res = check([_with_faithful(False, label="Consolidation")], [fact("Asymptomatic", "symptom", "asymptomatic", polarity="absent")],
+                Demographics(), note_text="Asymptomatic.", note_id="n1")
+    assert "symptom_finding_incoherent" in flags(res)

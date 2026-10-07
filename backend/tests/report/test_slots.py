@@ -1,8 +1,8 @@
+import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from medproof.report.slots import Slot, TemplateSyntaxError, parse_template
-import pytest
 
 SLOT_STRINGS = ["{f1.label}", "{f1.region}", "{te_1.quote}", "{ie_1.region}", "{f2.tier}"]
 chunks = st.one_of(st.sampled_from(SLOT_STRINGS), st.text(max_size=12))

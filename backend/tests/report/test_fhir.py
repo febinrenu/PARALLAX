@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from fhir.resources.R4B.bundle import Bundle
@@ -11,7 +11,7 @@ from medproof.report.fhir import DISCLAIMER, build_bundle, validate_bundle
 from medproof.report.firewall import run
 from tests.report.conftest import build_findings, make_view
 
-ISSUED = datetime(2026, 10, 7, 12, 0, tzinfo=timezone.utc)
+ISSUED = datetime(2026, 10, 7, 12, 0, tzinfo=UTC)
 
 
 def claims_for(view):

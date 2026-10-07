@@ -8,7 +8,7 @@ from medproof.llm.errors import LLMUnavailable
 from medproof.report.drafts import template_drafts, to_claim
 from medproof.report.entailment import ClaimVerdict, Verdicts, evidence_for, judge
 from medproof.report.firewall import run
-from tests.report.conftest import claim, make_view
+from tests.report.conftest import claim
 
 
 class FakePool:

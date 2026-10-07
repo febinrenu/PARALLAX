@@ -134,3 +134,88 @@ def test_template_report_does_not_use_the_note_frame_when_only_a_side_word_suppo
     side = TextEvidence(evidence_id="te_1", note_id=NOTE_ID, span=(0, 3), quote=NOTE[0:3], fact_type="laterality", polarity="supports")
     f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True)], [side])
     assert template_drafts(StudyView.build([f], {NOTE_ID: NOTE}, {})).drafts[0].frame == "consider"
+
+
+# ---- wording a doctor reads: names, not dataset codes, and no phrase about a region nobody named
+
+@pytest.mark.parametrize("modality,code,spoken", [
+    ("skin_dermoscopy", "mel", "melanoma"),
+    ("skin_dermoscopy", "nv", "melanocytic nevus"),
+    ("skin_dermoscopy", "bcc", "basal cell carcinoma"),
+    ("skin_dermoscopy", "akiec", "actinic keratosis"),
+    ("skin_dermoscopy", "bkl", "benign keratosis"),
+    ("skin_dermoscopy", "df", "dermatofibroma"),
+    ("skin_dermoscopy", "vasc", "vascular lesion"),
+    ("brain_mri", "pituitary", "pituitary tumour"),
+    ("brain_mri", "glioma", "glioma"),
+    ("cxr", "Pleural_Thickening", "pleural thickening"),
+    ("bone_xray", "fracture", "fracture"),
+])
+def test_findings_are_named_for_a_doctor_not_by_dataset_code(modality, code, spoken):
+    from medproof.report.render import display_label
+
+    assert display_label(modality, code).lower() == spoken
+
+
+def test_a_claim_names_the_finding_in_words_and_skips_an_unnamed_region():
+    from medproof.core.schemas import Finding, ImageEvidence
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+
+    ev = ImageEvidence(evidence_id="ie_1", kind="heatmap", source_model="m@abcd1234", method="g", faithful=True)  # no region name
+    f = Finding(finding_id="f1", modality="skin_dermoscopy", label="bcc", prob_raw=0.9, prob_calibrated=0.9, conformal_set=[], tier="high",
+                status="verified", image_evidence=[ev])
+    view = StudyView.build([f], {}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
+    text = claims[0].rendered or ""
+    assert claims[0].blocked_reason is None, claims[0].blocked_reason
+    assert text == "Doctor, consider basal cell carcinoma (high confidence)."
+
+
+def test_a_named_region_is_still_used():
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import finding, ie
+
+    f = finding("f1", "Pneumonia", "moderate", "verified", [ie("ie_1", True)])
+    view = StudyView.build([f], {}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
+    assert "right lower zone" in (claims[0].rendered or "")
+
+
+# ---- a note and an image that disagree about the side must be said, not reported at full confidence
+
+def _conflicted(frame="consider"):
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import finding, ie
+
+    f = finding("f1", "Pneumonia", "high", "verified", [ie("ie_1", True)]).model_copy(update={"flags": ["laterality_conflict"]})
+    view = StudyView.build([f], {}, {})
+    return to_claim(ClaimDraft(frame=frame, finding="f1"), 1, view), view
+
+
+@pytest.mark.parametrize("frame", ["consider", "supported_by_note"])
+def test_a_laterality_conflict_replaces_the_confident_sentence_with_a_request_to_review(frame):
+    from medproof.report import firewall
+
+    claim, view = _conflicted(frame)
+    claims, _ = firewall.run([claim], view)
+    text = claims[0].rendered or ""
+    assert claims[0].blocked_reason is None, claims[0].blocked_reason
+    assert "disagree about the side" in text and "review the image" in text
+    assert "confidence" not in text  # it must not repeat the model's tier as if the conflict did not exist
+
+
+def test_a_finding_without_a_conflict_is_unchanged():
+    from medproof.report import firewall
+    from medproof.report.drafts import ClaimDraft, to_claim
+    from medproof.report.study_view import StudyView
+    from tests.report.conftest import finding, ie
+
+    f = finding("f1", "Pneumonia", "high", "verified", [ie("ie_1", True)])
+    view = StudyView.build([f], {}, {})
+    claims, _ = firewall.run([to_claim(ClaimDraft(frame="consider", finding="f1"), 1, view)], view)
+    assert "high confidence" in (claims[0].rendered or "")
