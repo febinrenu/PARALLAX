@@ -282,3 +282,9 @@ def test_a_second_read_runs_from_ctx_findings_alone():
 def test_malformed_ctx_findings_are_ignored():
     assert prior_findings(SimpleNamespace(findings=[None, 3, "x"])) == []
     assert prior_findings(SimpleNamespace(findings="not a list")) == []
+
+
+def test_every_modality_with_a_built_index_has_a_precedent_dataset():
+    from medproof.reasoning_stages import PRECEDENT_DATASET
+
+    assert PRECEDENT_DATASET == {"skin_dermoscopy": "ham10000", "bone_xray": "fracatlas", "brain_mri": "brain_mri"}

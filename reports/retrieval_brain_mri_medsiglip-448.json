@@ -1,0 +1,246 @@
+{
+  "dataset": "brain_mri",
+  "embedder": "medsiglip-448",
+  "k": 5,
+  "index_size": 3349,
+  "queries": 563,
+  "skipped_unreadable": 0,
+  "train_only": true,
+  "excludes_query_id_and_group": true,
+  "precision_at_5": {
+    "point": 0.9176,
+    "lo": 0.8951,
+    "hi": 0.9442
+  },
+  "precision_at_5_if_chosen_by_chance": 0.273,
+  "majority_vote_accuracy": {
+    "point": 0.9449,
+    "lo": 0.9216,
+    "hi": 0.9734
+  },
+  "majority_vote_balanced_accuracy": {
+    "point": 0.9523,
+    "lo": 0.935,
+    "hi": 0.9741
+  },
+  "precision_at_5_by_class": {
+    "glioma": 0.8704,
+    "meningioma": 0.9231,
+    "notumor": 0.9123,
+    "pituitary": 0.9787
+  },
+  "train_label_counts": {
+    "glioma": 1038,
+    "meningioma": 964,
+    "notumor": 402,
+    "pituitary": 945
+  },
+  "note": "MedSigLIP, the plan's preferred embedder",
+  "demo": [
+    {
+      "query": "Tr_glioma_Tr-gl_10",
+      "query_label": "glioma",
+      "precedents": [
+        {
+          "case_id": "Te_glioma_Te-gl_98",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9515442252159119,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_98.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_1346",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9394122362136841,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1346.jpg"
+        },
+        {
+          "case_id": "Te_glioma_Te-gl_89",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9368413686752319,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_89.jpg"
+        },
+        {
+          "case_id": "Te_glioma_Te-gl_367",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9346919059753418,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_367.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_451",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9323573708534241,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_451.jpg"
+        }
+      ]
+    },
+    {
+      "query": "Tr_glioma_Tr-gl_1002",
+      "query_label": "glioma",
+      "precedents": [
+        {
+          "case_id": "Tr_glioma_Tr-gl_297",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9899314641952515,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_297.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_438",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9434698820114136,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_438.jpg"
+        },
+        {
+          "case_id": "Te_glioma_Te-gl_179",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9344011545181274,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_179.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_842",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9332699179649353,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_842.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_609",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9311709403991699,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_609.jpg"
+        }
+      ]
+    },
+    {
+      "query": "Tr_glioma_Tr-gl_1003",
+      "query_label": "glioma",
+      "precedents": [
+        {
+          "case_id": "Tr_glioma_Tr-gl_28",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9943844079971313,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_28.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_392",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.963504433631897,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_392.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_578",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9508729577064514,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_578.jpg"
+        },
+        {
+          "case_id": "Te_glioma_Te-gl_26",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9475947618484497,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_26.jpg"
+        },
+        {
+          "case_id": "Te_glioma_Te-gl_104",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9472863674163818,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_104.jpg"
+        }
+      ]
+    },
+    {
+      "query": "Tr_glioma_Tr-gl_1011",
+      "query_label": "glioma",
+      "precedents": [
+        {
+          "case_id": "Te_glioma_Te-gl_360",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9265824556350708,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Te_glioma_Te-gl_360.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_1382",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9243447780609131,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1382.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_224",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9221011400222778,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_224.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_1155",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9195281267166138,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1155.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_1287",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9195232391357422,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1287.jpg"
+        }
+      ]
+    },
+    {
+      "query": "Tr_glioma_Tr-gl_1042",
+      "query_label": "glioma",
+      "precedents": [
+        {
+          "case_id": "Tr_glioma_Tr-gl_1124",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9545673131942749,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1124.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_236",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.947611391544342,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_236.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_991",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9466527700424194,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_991.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_623",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9433578848838806,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_623.jpg"
+        },
+        {
+          "case_id": "Tr_glioma_Tr-gl_1169",
+          "dataset": "brain_mri",
+          "label": "glioma",
+          "similarity": 0.9398211240768433,
+          "thumb_ref": "ml/artifacts/retrieval/thumbs/brain_mri/Tr_glioma_Tr-gl_1169.jpg"
+        }
+      ]
+    }
+  ]
+}
