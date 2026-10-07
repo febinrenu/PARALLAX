@@ -332,6 +332,75 @@
    },
    "split_hash": "8637d82d7d71be3e9a042773c18124e20c1c5edc0fea54e39ba79ba5c7de9357"
   },
+  "milk10k": {
+   "classes_not_modelled": {
+    "BEN_OTH": 44,
+    "INF": 50,
+    "MAL_OTH": 9,
+    "SCCKA": 473
+   },
+   "duplicate_clusters": 6,
+   "duplicate_pairs": 8,
+   "flat_images_excluded_from_matching": 0,
+   "images_removed": 674,
+   "images_with_duplicate_in_another_original_split": {},
+   "label_conflict_clusters": 0,
+   "label_noise_max_hamming": 1,
+   "largest_cluster": 4,
+   "max_hamming": 4,
+   "n_images": 5240,
+   "note": "external test only; skin-tone grade 0 (very dark) to 5 (very light), grades 0 and 1 are merged because only 6 lesions have grade 0",
+   "overlap_with_ham10000_images": 96,
+   "pairs_across_original_splits": 0,
+   "pairs_by_distance": {
+    "0": 3,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 5
+   },
+   "pairs_within_original_split": 8,
+   "removed_by_reason": {
+    "duplicate": 4,
+    "duplicate_of_ham10000": 94,
+    "duplicate_of_immutable_test_image": 0,
+    "label_conflict": 0,
+    "unmapped_class:ben_oth": 44,
+    "unmapped_class:inf": 50,
+    "unmapped_class:mal_oth": 9,
+    "unmapped_class:sccka": 473
+   },
+   "seed": 20261006,
+   "split_class_counts": {
+    "dropped": {
+     "bcc": 18,
+     "ben_oth": 44,
+     "bkl": 15,
+     "df": 3,
+     "inf": 50,
+     "mal_oth": 9,
+     "mel": 20,
+     "nv": 38,
+     "sccka": 473,
+     "vasc": 4
+    },
+    "external_test": {
+     "akiec": 303,
+     "bcc": 2504,
+     "bkl": 529,
+     "df": 49,
+     "mel": 430,
+     "nv": 708,
+     "vasc": 43
+    }
+   },
+   "split_counts": {
+    "dropped": 674,
+    "external_test": 4566
+   },
+   "split_hash": "643e96518ca81adb954d04b30e0a16c57a886301f70cee56c55e51144f7ee329",
+   "truncated_source_files": 0
+  },
   "rsna": {
    "duplicate_clusters": 692,
    "duplicate_pairs": 1851,
@@ -385,7 +454,7 @@
    "truncated_source_files": 0
   }
  },
- "generated_utc": "2026-10-06T20:30:56Z",
+ "generated_utc": "2026-10-07T05:29:29Z",
  "method": {
   "duplicate_max_hamming": 4,
   "hash": "64-bit DCT pHash",
