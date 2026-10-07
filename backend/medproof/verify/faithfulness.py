@@ -6,6 +6,9 @@ area (permutation test), so a random region passes at most `alpha` of the time b
 The insertion curve (reveal the most salient pixels first, from a blurred image) is reported as
 supporting evidence and does not decide the pass.
 
+Findings that carry only a box (the bone detector) get the same test on the box region: the box is
+blurred and the drop is compared with equally sized boxes placed elsewhere (`assess_box`).
+
 `score` is any callable image -> probabilities over all labels; the CXR reader's `.score` fits.
 """
 
@@ -172,6 +175,70 @@ def assess_heatmap(
     return FaithfulnessResult(faithful, drop, drops, p, auc, why)
 
 
+# ---- box-only findings -------------------------------------------------------------------
+MAX_BOX_AREA_FRAC = 0.35  # above this a same-sized box cannot be placed away from the real one
+
+
+def box_iou(a, b) -> float:
+    ix = max(0.0, min(a[2], b[2]) - max(a[0], b[0]))
+    iy = max(0.0, min(a[3], b[3]) - max(a[1], b[1]))
+    inter = ix * iy
+    union = (a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - inter
+    return float(inter / union) if union > 0 else 0.0
+
+
+def random_box_like(box, hw, rng: np.random.Generator, max_iou: float = 0.25) -> tuple:
+    """A box with the same width and height as `box`, placed at random inside the image and off the real box."""
+    h, w = hw
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    best = None
+    for _ in range(100):
+        x0 = float(rng.uniform(0, max(0.0, w - bw)))
+        y0 = float(rng.uniform(0, max(0.0, h - bh)))
+        cand = (x0, y0, x0 + bw, y0 + bh)
+        iou = box_iou(cand, box)
+        if best is None or iou < best[0]:
+            best = (iou, cand)
+        if iou <= max_iou:
+            break
+    return best[1]
+
+
+def _box_mask(box, hw) -> np.ndarray:
+    h, w = hw
+    x0, y0 = max(0, int(round(box[0]))), max(0, int(round(box[1])))
+    x1, y1 = min(w, int(round(box[2]))), min(h, int(round(box[3])))
+    mask = np.zeros((h, w), bool)
+    mask[y0:y1, x0:x1] = True
+    return mask
+
+
+def assess_box(score: Score, img: np.ndarray, box, label_idx: int, cfg: FaithfulnessConfig | None = None, seed: int = 0) -> FaithfulnessResult:
+    """Deletion test on a box: blur it, compare the probability drop with equally sized boxes elsewhere."""
+    cfg = cfg or FaithfulnessConfig()
+    if box is None:
+        return FaithfulnessResult(None, None, reason="no box")
+    hw = img.shape[:2]
+    mask = _box_mask(box, hw)
+    area = int(mask.sum())
+    if area == 0 or not (box[2] > box[0] and box[3] > box[1]):
+        return FaithfulnessResult(None, None, reason="empty or degenerate box")
+    if area / mask.size > MAX_BOX_AREA_FRAC:
+        return FaithfulnessResult(None, None, reason="box too large to compare with other regions")
+    base = float(score(img)[label_idx])
+    blurred = _replacement(img, cfg.baseline)
+    drop = base - float(score(_apply(img, blurred, mask))[label_idx])
+    rng = np.random.default_rng(seed)
+    random_drops = []
+    for _ in range(cfg.n_random):
+        rb = random_box_like(box, hw, rng)
+        random_drops.append(base - float(score(_apply(img, blurred, _box_mask(rb, hw)))[label_idx]))
+    p = float((np.sum(np.asarray(random_drops) >= drop) + 1) / (cfg.n_random + 1)) if cfg.n_random else 1.0
+    faithful = bool(p <= cfg.alpha and drop >= cfg.min_drop)
+    why = "" if faithful else ("drop no larger than random boxes" if p > cfg.alpha else f"drop below {cfg.min_drop}")
+    return FaithfulnessResult(faithful, drop, {"box": drop}, p, None, why)
+
+
 # ---- reader integration ------------------------------------------------------------------
 def assess_output(reader, img, out, cfg: FaithfulnessConfig | None = None, seed: int = 0) -> dict[str, FaithfulnessResult]:
     """Assess every finding of a ReaderOutput. `img` must be the image the reader saw."""
@@ -179,7 +246,10 @@ def assess_output(reader, img, out, cfg: FaithfulnessConfig | None = None, seed:
     results = {}
     for i, rf in enumerate(out.findings):
         idx = out.labels.index(rf.label)
-        results[rf.label] = assess_heatmap(reader.score, arr, rf.heatmap, idx, cfg, seed + i)
+        if rf.heatmap is None and rf.boxes_xyxy:  # box-only finding (bone detector): test the box region
+            results[rf.label] = assess_box(reader.score, arr, rf.boxes_xyxy[0], idx, cfg, seed + i)
+        else:
+            results[rf.label] = assess_heatmap(reader.score, arr, rf.heatmap, idx, cfg, seed + i)
     return results
 
 
@@ -191,9 +261,12 @@ def apply_to_findings(findings: list[Finding], results: dict[str, FaithfulnessRe
         if res is None or not f.image_evidence:
             updated.append(f)
             continue
-        ev = f.image_evidence[0].model_copy(update={"faithful": res.faithful, "faithfulness_drop": res.drop})
+        faithful = res.faithful
+        if faithful and "heatmap_off_target" in f.flags:
+            faithful = False  # causal for the model, but not on the segmented lesion: it cannot prove the finding
+        ev = f.image_evidence[0].model_copy(update={"faithful": faithful, "faithfulness_drop": res.drop})
         flags = list(f.flags)
-        if res.faithful is False and "unfaithful" not in flags:
+        if faithful is False and "unfaithful" not in flags:
             flags.append("unfaithful")
         updated.append(f.model_copy(update={"image_evidence": [ev, *f.image_evidence[1:]], "flags": flags}))
     return updated
