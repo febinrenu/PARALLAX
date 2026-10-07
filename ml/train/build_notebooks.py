@@ -26,6 +26,7 @@ JOBS = {
     "brain_cls": ("parallax-p2-3-brain-mri-classifier", "PARALLAX P2.3 brain MRI classifier", ["masoudnickparvar/brain-tumor-mri-dataset"]),
     "brain_seg": ("parallax-p2-4-brain-tumour-segmenter", "PARALLAX P2.4 brain tumour segmenter", ["mateuszbuda/lgg-mri-segmentation"]),
     "skin_cls": ("parallax-p2-5-skin-lesion-classifier", "PARALLAX P2.5 skin lesion classifier", []),
+    "medsiglip_embed": ("parallax-p2-extra-medsiglip-embeddings", "PARALLAX P2 extra MedSigLIP embeddings", ["masoudnickparvar/brain-tumor-mri-dataset"]),
     "skin_cls_s2": ("parallax-p2-5b-skin-classifier-seed-2", "PARALLAX P2.5b skin classifier seed 2", [], {"SLUG_SUFFIX": "_s2", "SEED": "2"}),
     "skin_cls_s3": ("parallax-p2-5c-skin-classifier-seed-3", "PARALLAX P2.5c skin classifier seed 3", [], {"SLUG_SUFFIX": "_s3", "SEED": "3"}),
     "bone_det": ("parallax-p2-6-bone-fracture-detector", "PARALLAX P2.6 bone fracture detector", []),
