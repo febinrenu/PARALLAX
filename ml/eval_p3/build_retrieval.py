@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(ROOT))
 
+from medproof.intake.decode import load_image  # noqa: E402
 from medproof.retrieval.embedder import embed_images  # noqa: E402
 from medproof.retrieval.index import PrecedentIndex, to_precedents  # noqa: E402
 
@@ -32,6 +33,9 @@ from ml.data.common import image_path, load_eval_index, load_split  # noqa: E402
 from ml.eval.bootstrap import ci  # noqa: E402
 
 OUT = ROOT / "ml" / "artifacts" / "retrieval"
+# RSNA has no train split (the chest model is pretrained), so its reference set is the calibration split; queries come
+# from the test split, and the split is by image with each image its own patient, after near-duplicates were removed.
+INDEX_SPLIT = {"rsna": "cal"}
 K = 5
 
 
@@ -45,20 +49,27 @@ def make_embedder(name: str):  # noqa: ANN201
     return MedSigLipEmbedder()
 
 
+def open_image(path: Path) -> Image.Image:
+    """PIL for ordinary images; the product's own decoder for DICOM (rescale, windowing, MONOCHROME1)."""
+    if Path(path).suffix.lower() == ".dcm":
+        return Image.fromarray(load_image(Path(path).read_bytes()).display).convert("RGB")
+    return Image.open(path)
+
+
 def items_for(df) -> list:  # noqa: ANN001
-    return [(str(r["image_id"]), (lambda p=image_path(r): Image.open(p))) for _, r in df.iterrows()]
+    return [(str(r["image_id"]), (lambda p=image_path(r): open_image(p))) for _, r in df.iterrows()]
 
 
 def thumbnail(src: Path, dst: Path, size: int = 160) -> None:
     dst.parent.mkdir(parents=True, exist_ok=True)
-    im = Image.open(src).convert("RGB")
+    im = open_image(src).convert("RGB")
     im.thumbnail((size, size))
     im.save(dst, "JPEG", quality=80)
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", choices=["fracatlas", "ham10000", "brain_mri"], required=True)
+    ap.add_argument("--dataset", choices=["fracatlas", "ham10000", "brain_mri", "rsna"], required=True)
     ap.add_argument("--embedder", choices=["biomedclip", "medsiglip"], default="biomedclip")
     ap.add_argument("--limit-train", type=int, default=None)
     ap.add_argument("--limit-test", type=int, default=None)
@@ -67,7 +78,7 @@ def main(argv: list[str] | None = None) -> int:
 
     df = load_split(args.dataset)
     spec = load_eval_index()["datasets"][args.dataset]
-    train = df[(df["split"] == "train") & (df["dropped_reason"].isna())]
+    train = df[(df["split"] == INDEX_SPLIT.get(args.dataset, "train")) & (df["dropped_reason"].isna())]
     test = df[df["split"].isin(spec["test_splits"]) & (df["eval_batch"].astype(str) == "True")]
     if args.limit_train:
         train = train.sample(n=min(args.limit_train, len(train)), random_state=1)
