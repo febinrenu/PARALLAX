@@ -29,10 +29,10 @@ if not defined PY (
 )
 
 pushd backend
-"%PY%" -c "import fastapi, uvicorn, sse_starlette, multipart, diskcache, medproof.api.app" >nul 2>nul
+"%PY%" -c "import fastapi, uvicorn, sse_starlette, multipart, diskcache, fhir.resources, requests, medproof.api.app" >nul 2>nul
 if errorlevel 1 (
   echo Installing the analysis API dependencies...
-  "%PY%" -m pip install -e . || (popd & echo Python dependency install failed. & exit /b 1)
+  "%PY%" -m pip install -e ".[services]" || (popd & echo Python dependency install failed. & exit /b 1)
 )
 "%PY%" -c "import torchxrayvision" >nul 2>nul
 if errorlevel 1 (
