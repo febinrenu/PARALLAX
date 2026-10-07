@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import threading
 import time
 import uuid
@@ -101,7 +102,8 @@ def _router_step(ctx: StudyContext, router: Any = None) -> StageResult:
         return result
     payload = result.payload
     ctx.router_flags = [f for f in payload.get("flags", []) or [] if isinstance(f, str)]
-    if payload.get("ood") and "ood" not in ctx.router_flags:
+    ood = payload.get("ood")  # a dict {distance, threshold, score, is_ood}; only is_ood=True flags the study
+    if (ood is True or (isinstance(ood, dict) and ood.get("is_ood") is True)) and "ood" not in ctx.router_flags:
         ctx.router_flags.append("ood")
     confidence = float(payload.get("confidence") or 0.0)
     trusted = confidence >= RouterConfig().trust_confidence and payload.get("modality") in READER_STEPS
@@ -149,16 +151,54 @@ def _run_cxr(ctx: StudyContext, reader: Any) -> StageResult:
     return cxr.run(ctx, reader=reader)
 
 
+# Mask models (P1-A): the brain U-Net and MedSAM. Loaded once per process; a model that cannot load is
+# remembered as missing for `_MASK_RETRY_S`, so a MedSAM load that has to give up on an unreachable hub does
+# not stall every study. Without a mask model the reader still returns its heatmap or box evidence.
+_MASK_MODELS: dict[str, tuple[Any, float]] = {}
+_MASK_LOCK = threading.Lock()
+_MASK_RETRY_S = 300.0
+
+
+def _build_mask_model(kind: str, config: PipelineConfig) -> Any:
+    if kind == "unet":
+        from medproof.readers.segmenter import UNetSegmenter
+
+        return UNetSegmenter.from_dir(config.models_root / "brain_seg")
+    from medproof.segment.medsam import MedSAM
+
+    return MedSAM.load(cache_dir=config.cache_dir / "medsam")  # MEDPROOF_MEDSAM_MODEL names a local folder
+
+
+def _mask_model(kind: str, config: PipelineConfig) -> Any:
+    if os.environ.get("MEDPROOF_MASKS", "1") == "0":
+        return None
+    key = f"{kind}:{config.models_root}:{config.cache_dir}"
+    with _MASK_LOCK:
+        hit = _MASK_MODELS.get(key)
+        if hit is not None and (hit[0] is not None or time.monotonic() - hit[1] < _MASK_RETRY_S):
+            return hit[0]
+        try:
+            model = _build_mask_model(kind, config)
+        except Exception as exc:  # missing weights, no segmentation-models-pytorch, hub unreachable
+            log.warning("%s mask model unavailable (%s: %s)", kind, type(exc).__name__, exc)
+            model = None
+        _MASK_MODELS[key] = (model, time.monotonic())
+        return model
+
+
 def _run_classifier(ctx: StudyContext, reader: Any) -> StageResult:
     from medproof.readers import classifier
 
-    return classifier.run(ctx, reader=reader)
+    config = ctx.config or PipelineConfig()
+    unet = _mask_model("unet", config) if ctx.modality_hint == "brain_mri" else None
+    medsam = _mask_model("medsam", config) if ctx.modality_hint == "skin_dermoscopy" else None
+    return classifier.run(ctx, reader=reader, unet=unet, medsam=medsam)
 
 
 def _run_bone(ctx: StudyContext, reader: Any) -> StageResult:
     from medproof.readers import bone
 
-    return bone.run(ctx, reader=reader)
+    return bone.run(ctx, reader=reader, medsam=_mask_model("medsam", ctx.config or PipelineConfig()))
 
 
 READER_STEPS: dict[str, Callable[[StudyContext, Any], StageResult]] = {
@@ -421,6 +461,22 @@ def _collect_claims(stage_results: list[StageResult]) -> list[Claim]:
     return claims
 
 
+def _ood_score(stage_results: list[StageResult]) -> float:
+    """The router's out-of-distribution score (distance over the modality's threshold; 1 or more is flagged),
+    0.0 when the router did not run. A bare `ood: true` without a score counts as 1.0."""
+    for sr in stage_results:
+        if sr.stage != "router":
+            continue
+        ood = sr.payload.get("ood")
+        if isinstance(ood, dict):
+            try:
+                return float(ood["score"])
+            except (KeyError, TypeError, ValueError):
+                return 0.0
+        return 1.0 if ood is True else 0.0
+    return 0.0
+
+
 def _fold_ledger_head(stage_results: list[StageResult]) -> str:
     """A real, order-and-content-dependent hash so `StudyResult.ledger_head` isn't a fake
     placeholder string — but it is provisional, not the ledger. No persistence, no append-only
@@ -506,7 +562,7 @@ def _run(
         study_id=ctx.study_id,
         input_sha256=ctx.input_sha256,
         modality=ctx.modality_hint or "other",  # the router may have set it
-        ood_score=0.0,  # placeholder: P1.5 OOD score isn't built yet
+        ood_score=_ood_score(stage_results),
         quality=quality,
         findings=_collect_findings(stage_results),
         claims=_collect_claims(stage_results),
