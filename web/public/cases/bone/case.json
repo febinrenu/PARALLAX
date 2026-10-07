@@ -1,0 +1,57 @@
+{
+  "id": "bone",
+  "title": "Wrist radiograph, posteroanterior",
+  "modality": "bone_xray",
+  "image": {
+    "src": "/cases/bone/image.webp",
+    "width": 1152,
+    "height": 1440
+  },
+  "credit": "wrist",
+  "notes": {},
+  "annotations": [
+    {
+      "kind": "bbox",
+      "bbox": [
+        0.5143,
+        0.3354,
+        0.6181,
+        0.3944
+      ],
+      "label": "Fracture (dataset annotation)",
+      "source": "FracAtlas ground truth"
+    }
+  ],
+  "anatomy": null,
+  "study": {
+    "study_id": "sample-bone",
+    "input_sha256": "ad7ec665e4c768e6d61add5bbc2ac44d8e48d0f6e2a873b1c90e3734f3e7fcfe",
+    "modality": "bone_xray",
+    "ood_score": 0.0,
+    "quality": {
+      "passed": true,
+      "flags": [],
+      "metrics": {
+        "min_side": 1152.0,
+        "blur": 4.54115,
+        "p1": 0.07991,
+        "p99": 0.76085,
+        "range": 0.68093,
+        "clip": 0.00213,
+        "noise_rel": 0.00413,
+        "aspect": 0.8,
+        "margin": 0.0
+      },
+      "reasons": []
+    },
+    "findings": [],
+    "claims": [],
+    "ledger_head": "ee5bff43603262295911244889ac079f30ec58e011ea0314ab2605a68f2e643e",
+    "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+  },
+  "provenance": {
+    "findings": "No specialist reader for this modality yet, so the pipeline reports none.",
+    "annotations": "Dataset annotation: FracAtlas ground-truth box, not model output. The bone reader arrives with P2.6 weights."
+  },
+  "warnings": []
+}

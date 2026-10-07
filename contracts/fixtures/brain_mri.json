@@ -1,0 +1,89 @@
+{
+  "study_id": "demo-brain-001",
+  "input_sha256": "9a8b7c6d5e4f3021a9b8c7d6e5f4032198f7e6d5c4b3a291807f6e5d4c3b2a19",
+  "modality": "brain_mri",
+  "ood_score": 0.11,
+  "quality": {"passed": true, "reasons": [], "metrics": {"blur": 0.95, "exposure_clip_pct": 0.0}},
+  "findings": [
+    {
+      "finding_id": "f1",
+      "modality": "brain_mri",
+      "label": "meningioma",
+      "prob_raw": 0.91,
+      "prob_calibrated": 0.88,
+      "conformal_set": ["meningioma"],
+      "coverage_target": 0.9,
+      "tier": "high",
+      "status": "verified",
+      "image_evidence": [
+        {
+          "evidence_id": "ie_1",
+          "kind": "mask",
+          "mask_ref": "demo/cases/brain-001/mask_f1.png",
+          "source_model": "smp-unet-resnet34@b2c3d4e5",
+          "method": "unet",
+          "region_name": "left parietal lobe",
+          "faithfulness_drop": 0.41,
+          "faithful": true
+        }
+      ],
+      "text_evidence": [
+        {
+          "evidence_id": "te_1",
+          "note_id": "n1",
+          "span": [0, 24],
+          "quote": "new-onset focal seizures",
+          "fact_type": "symptom",
+          "polarity": "supports"
+        }
+      ],
+      "second_read": {
+        "model": "medgemma-1.5-4b-it",
+        "label": "meningioma",
+        "agrees": true,
+        "box_iou": null,
+        "raw_ref": "ml/artifacts/medgemma_reads/demo-brain-001.json"
+      },
+      "stability": {"tests": 8, "flip_rate": 0.0, "worst_perturbation": null},
+      "precedents": [
+        {
+          "case_id": "lgg-0042",
+          "dataset": "lgg_mri_segmentation",
+          "label": "meningioma",
+          "similarity": 0.84,
+          "thumb_ref": "demo/precedents/lgg-0042_thumb.png"
+        }
+      ],
+      "flags": []
+    },
+    {
+      "finding_id": "f2",
+      "modality": "brain_mri",
+      "label": "glioma",
+      "prob_raw": 0.21,
+      "prob_calibrated": 0.18,
+      "conformal_set": [],
+      "coverage_target": 0.9,
+      "tier": "abstain",
+      "status": "rejected",
+      "image_evidence": [],
+      "text_evidence": [],
+      "second_read": null,
+      "stability": null,
+      "precedents": [],
+      "flags": ["uncalibrated", "no_localization"]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "template": "Doctor, consider {f1.label} in the {f1.region} ({f1.tier} confidence).",
+      "evidence_ids": ["ie_1", "te_1"],
+      "rendered": "Doctor, consider meningioma in the left parietal lobe (high confidence).",
+      "entailed": true,
+      "blocked_reason": null
+    }
+  ],
+  "ledger_head": "sha256:1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f80",
+  "disclaimer": "Decision support only. Not a diagnosis. A qualified clinician must confirm every finding before acting on it."
+}

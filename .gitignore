@@ -19,9 +19,11 @@ htmlcov/
 # Node / web
 node_modules/
 dist/
+dist-ssr/
 build/
 .next/
 .vite/
+*.tsbuildinfo
 
 # Data, weights, and artifacts (never commit datasets or model files)
 data/
@@ -52,6 +54,8 @@ runs/
 .DS_Store
 Thumbs.db
 *.log
+test-results/
+playwright-report/
 
 # Locally trained router artifacts and embedding caches (hashes are recorded in progress.md)
 backend/artifacts/

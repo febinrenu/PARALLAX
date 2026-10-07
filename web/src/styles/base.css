@@ -1,0 +1,122 @@
+@import "tailwindcss";
+@import "@fontsource-variable/atkinson-hyperlegible-next/wght.css";
+@import "@fontsource/atkinson-hyperlegible-mono/latin-400.css";
+@import "@fontsource/atkinson-hyperlegible-mono/latin-500.css";
+
+/*
+  Tokens from plan.md section 10.2. The reading room is the default theme; the hero's lit
+  lightbox is the one deliberate switch. Separation comes from tone steps, never drop shadows.
+  Radius rule: viewport 0, panels 6, controls 4, chips full.
+*/
+@theme {
+  --color-film-base: #162029;
+  --color-film-panel: #1e2a35;
+  --color-film-raised: #253442;
+  --color-film-line: #31424f;
+  --color-lightbox: #eaf1f5;
+  --color-lightbox-ink: #14202a;
+  --color-ink: #dce4ea;
+  --color-ink-dim: #8fa1af;
+  --color-pencil-yellow: #f3c846;
+  --color-pencil-red: #e2574c;
+  /* Wax red for text: the stroke red is 4.48:1 on film-base, this clears 4.5:1 on base and panel. */
+  --color-pencil-red-ink: #e8695e;
+
+  --font-sans: "Atkinson Hyperlegible Next Variable", "Atkinson Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --radius-panel: 6px;
+  --radius-control: 4px;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+/* Metric-matched fallback so the swap to Atkinson does not shift layout (CLS). */
+@font-face {
+  font-family: "Atkinson Fallback";
+  src: local("Arial");
+  size-adjust: 103%;
+  ascent-override: 92%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  html {
+    background: var(--color-film-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "kern";
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    font-size: 1rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-pencil-yellow) 35%, transparent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-pencil-yellow);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Cross-document View Transition: the hero film flies into the workstation viewport. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(film),
+::view-transition-new(film) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out-quint);
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

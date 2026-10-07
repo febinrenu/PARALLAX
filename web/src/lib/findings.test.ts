@@ -1,0 +1,49 @@
+import { describe, expect, it } from "vitest";
+import chest from "../../public/cases/chest/case.json";
+import type { CaseFile } from "../api/types";
+import { chainFor, displayLabel, leadMarker, strokeFor } from "./findings";
+
+const study = (chest as unknown as CaseFile).study;
+
+describe("status is drawn as stroke style, not new colours", () => {
+  it("uses yellow for verified and uncertain, red for discordant and rejected", () => {
+    expect(strokeFor("verified").cssColor).toBe(strokeFor("uncertain").cssColor);
+    expect(strokeFor("discordant").cssColor).toBe(strokeFor("rejected").cssColor);
+    expect(strokeFor("verified").cssColor).not.toBe(strokeFor("discordant").cssColor);
+  });
+
+  it("dashes uncertainty", () => {
+    expect(strokeFor("verified").dashed).toBe(false);
+    expect(strokeFor("uncertain").dashed).toBe(true);
+  });
+});
+
+describe("labels", () => {
+  it("derives the lead marker from the patient-side region", () => {
+    expect(leadMarker("right upper zone")).toBe("R");
+    expect(leadMarker("left lower zone")).toBe("L");
+    expect(leadMarker("cardiac region")).toBeNull();
+  });
+
+  it("puts labels in sentence case", () => {
+    expect(displayLabel("Pleural_Thickening")).toBe("Pleural thickening");
+    expect(displayLabel("Lung Opacity")).toBe("Lung opacity");
+  });
+});
+
+describe("verification chain on the real baked chest case", () => {
+  const pneumonia = study.findings.find((f) => f.label === "Pneumonia")!;
+
+  it("passes reader, faithfulness and stability with real numbers", () => {
+    const chain = chainFor(pneumonia, study, [], false);
+    const by = Object.fromEntries(chain.map((s) => [s.stage, s.state]));
+    expect(by.Reader).toBe("pass");
+    expect(by.Faithfulness).toBe("pass");
+    expect(by.Stability).toBe("pass");
+  });
+
+  it("marks stages that do not exist yet as unavailable after the run, pending during it", () => {
+    expect(chainFor(pneumonia, study, [], false).find((s) => s.stage === "Second read")!.state).toBe("unavailable");
+    expect(chainFor(pneumonia, study, [], true).find((s) => s.stage === "Second read")!.state).toBe("pending");
+  });
+});

@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Chest radiograph in influenza and H. influenzae, posteroanterior",
+    "author": "Mikael Häggström, M.D.",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "page": "https://commons.wikimedia.org/wiki/File:Chest_radiograph_in_influensa_and_H_influenzae,_posteroanterior.jpg",
+    "modifications": "Converted to grayscale, centre-cropped to a square, resized.",
+    "id": "chest",
+    "source_sha256": "8925f49b4c6aeee969d113813e5c0e3f62a2184254dd2d76acdddd861bfc2d2b"
+  },
+  {
+    "title": "Glioblastoma, contrast-enhanced axial MRI (AFIP 00405558)",
+    "author": "Armed Forces Institute of Pathology (US Government)",
+    "license": "Public domain",
+    "license_url": "https://commons.wikimedia.org/wiki/File:AFIP-00405558-Glioblastoma-Radiology.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:AFIP-00405558-Glioblastoma-Radiology.jpg",
+    "modifications": "Converted to grayscale.",
+    "id": "brain",
+    "source_sha256": "b0e7ae59ebed84825a132ba2aa95bd0bab998357a62ccc8a5314e4fdb3a4e56d"
+  },
+  {
+    "title": "Dermoscopic image ISIC_0015552 with ISIC 2018 Task 1 lesion boundary",
+    "author": "Anonymous, via the ISIC Archive",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "page": "https://api.isic-archive.com/images/ISIC_0015552/",
+    "modifications": "Resized.",
+    "id": "skin",
+    "source_sha256": "992b25f189bf87550f89fa1b16405ebaa3a24d2b7433e835fc75156cfde20df4"
+  },
+  {
+    "title": "FracAtlas IMG0002311, right wrist with distal radius fracture",
+    "author": "Abedeen et al., FracAtlas (Scientific Data, 2023)",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "page": "https://figshare.com/articles/dataset/The_dataset/22363012",
+    "modifications": "Resized; fracture box from the dataset's own annotation.",
+    "id": "wrist",
+    "source_sha256": "ee3a9e8b0dfa07076c19d7431c40d65d168f32e6fcf6d3305ee0adfc47e800d2"
+  }
+]

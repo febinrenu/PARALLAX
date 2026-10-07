@@ -1,0 +1,72 @@
+[
+  {
+    "actor": "system",
+    "event": "stage_completed",
+    "hash": "89c2f372d0155fb42424c38579269752dc5c056aac60223382d6be2482b1ab69",
+    "index": 0,
+    "payload": {
+      "ms": 12,
+      "ok": true,
+      "payload": {
+        "a": [
+          1,
+          2,
+          {
+            "b": null
+          }
+        ],
+        "z": 1
+      },
+      "stage": "intake",
+      "warnings": [
+        "tilt: re-acquire"
+      ]
+    },
+    "payload_hash": "574542076335717d2b43b76706b985019fb5b6f3a59c6aaed33009409958812d",
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "study_id": "s-1",
+    "ts": "2026-10-06T22:21:36.218768+00:00"
+  },
+  {
+    "actor": "system",
+    "event": "stage_completed",
+    "hash": "1aad9b42c082a3faf06a09b94f66b71f0bf50fb6339e33ab8adf111c47a608c6",
+    "index": 1,
+    "payload": {
+      "note": "Crackles over the right upper chest. Temp 38°C, \"quoted\", back\\slash, tab\there, café — 😀",
+      "stage": "reader"
+    },
+    "payload_hash": "dde6be8e79eae9b92c03791f17c7745c6404f76dc8279975f38acae147e0aeef",
+    "prev_hash": "89c2f372d0155fb42424c38579269752dc5c056aac60223382d6be2482b1ab69",
+    "study_id": "s-1",
+    "ts": "2026-10-06T22:21:36.228711+00:00"
+  },
+  {
+    "actor": "dr_ines",
+    "event": "finding_feedback",
+    "hash": "af76a9eef2a738f6150028928131a3d8e62f62752e353291e4b101e6e330ef85",
+    "index": 2,
+    "payload": {
+      "actor": "dr_ines",
+      "decision": "accept",
+      "finding_id": "f2"
+    },
+    "payload_hash": "e277bb2ec0fd2077c07a758732f0d44bcd891d5c68555d81511175c7aece0156",
+    "prev_hash": "1aad9b42c082a3faf06a09b94f66b71f0bf50fb6339e33ab8adf111c47a608c6",
+    "study_id": "s-1",
+    "ts": "2026-10-06T22:21:36.246369+00:00"
+  },
+  {
+    "actor": "system",
+    "event": "system_note",
+    "hash": "2a86232f27559478559908324d6cb616cc7a35931efba62e143f5c12ca7201f4",
+    "index": 3,
+    "payload": {
+      "msg": "no study"
+    },
+    "payload_hash": "aad6123c4342d769dcac375f53c83b0e18c33197c9a2c49fb82ff8cdcf0cfad5",
+    "prev_hash": "af76a9eef2a738f6150028928131a3d8e62f62752e353291e4b101e6e330ef85",
+    "study_id": null,
+    "ts": "2026-10-06T22:21:36.265289+00:00"
+  }
+]
